@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#define DEBUG 1
+#define DEBUG 0
 
 #if DEBUG == 1
 #define debugPrint(...) printf(__VA_ARGS__)
@@ -11,10 +11,10 @@
 #define fdebugPrint(...) fprintf(__VA_ARGS__)
 #define fdebugPrintln(...) fprintf(__VA_ARGS__)
 #else
-#define debugPrint(x)
-#define debugPrintln(x)
-#define fdebugPrint(x)
-#define fdebugPrintln(x)
+#define debugPrint(...)
+#define debugPrintln(...)
+#define fdebugPrint(...)
+#define fdebugPrintln(...)
 #endif
 
 #endif
