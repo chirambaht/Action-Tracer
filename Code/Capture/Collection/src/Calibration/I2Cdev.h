@@ -47,8 +47,9 @@ THE SOFTWARE.
 #ifndef TRUE
 #define TRUE	(1==1)
 #define FALSE	(0==1)
-#endif
+#endif 
 
+#include <stdint.h>
 class I2Cdev {
     public:
         I2Cdev();
