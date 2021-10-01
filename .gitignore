@@ -30,3 +30,4 @@
 *.exe
 *.out
 *.app
+Code/.clang-format
