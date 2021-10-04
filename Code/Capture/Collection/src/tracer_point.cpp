@@ -87,11 +87,14 @@ void ActionTracer::TracePoint::print_last_data_packet() {
 
 void ActionTracer::TracePoint::get_data() {
 	_select_me();
+
 	_fifo_count = _device->getFIFOBytes( _fifo_buffer, _packet_size );
+
 	if( _fifo_count >= 1024 ) {
 		debugPrint( "%s: FIFO overflow!\n", _device_name );
 		_device->resetFIFO();
 	}
+
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
 			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
@@ -113,7 +116,32 @@ void ActionTracer::TracePoint::get_data() {
 		default:
 			break;
 	}
+
 	_deselect_me();
+}
+
+float *ActionTracer::TracePoint::read_data() {
+	_fifo_count = _device->getFIFOBytes( _fifo_buffer, _packet_size );
+
+	if( _fifo_count >= 1024 ) {
+		debugPrint( "%s: FIFO overflow!\n", _device_name );
+		_device->resetFIFO();
+	}
+
+	switch( _output_data_type ) {
+		case GET_DATA_QUATERNION:
+			return _quaternion_packet;
+		case GET_DATA_EULER:
+			return _euler_packet;
+		case GET_DATA_ACCELEROMETER:
+			return _acceleration_packet;
+		case GET_DATA_GYROSCOPE:
+			return _gyroscope_packet;
+		case GET_DATA_YAWPITCHROLL:
+			return _yaw_pitch_roll_packet;
+		default:
+			return _quaternion_packet;
+	}
 }
 
 void ActionTracer::TracePoint::set_output_data_type( int data_type ) {

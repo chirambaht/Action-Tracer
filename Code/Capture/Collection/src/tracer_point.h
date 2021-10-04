@@ -51,7 +51,8 @@ namespace ActionTracer {
 		~TracePoint();
 		std::string get_name();
 		MPU6050		get_device();
-		int			get_data( int type );			  // Gets data from the device it is attached to
+		void		get_data();						  // Gets data from the device it is attached to
+		float *		read_data();					  // Reads the internally stored data
 		std::string identify();						  // Blinks the sensor for 5 seconds. Realistically, it is raising the interupt line for the device in quesion
 		void		print_last_data_packet();		  // Prints the last data packet obtained by this node
 		void		set_output_data_type( int type ); // Set which data type to get back in the packets.
