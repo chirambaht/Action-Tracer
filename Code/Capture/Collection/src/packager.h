@@ -7,21 +7,21 @@
 #include <string.h> //strlen
 #include <sys/socket.h>
 
-namespace IMU_Tools {
-class Packager {
-private:
-  std::string _dest;
-  int _port;
-  int _descriptor;
-  __uint32_t _count;
+namespace ActionTracer {
+	class Packager {
+	  private:
+		std::string _dest;
+		int			_port;
+		int			_descriptor;
+		__uint32_t	_count;
 
-  std::string _float_to_string(float value);
+		std::string _float_to_string( float value );
 
-public:
-  Packager();
-  Packager(std::string destination, int port);
-  int send_packet(float *data);
-  ~Packager();
-};
+	  public:
+		Packager();
+		Packager( std::string destination, int port );
+		int send_packet( float *data, uint8_t length );
+		~Packager();
+	};
 
-} // namespace IMU_Tools
+} // namespace ActionTracer
