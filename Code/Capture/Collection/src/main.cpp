@@ -13,9 +13,13 @@ void setup() {
 	communicator = new Packager( SERVER_IP, PORT ); // Initialize the communicator that will send data packets to the server
 
 	// The following are the sensors being used to obtain data from the body.
-	body_sensor[0] = new TracePoint( new MPU6050( MPU6050_ADDRESS_AD0_HIGH ), "Left Shoulder", 2, 1 );
-	body_sensor[1] = new TracePoint( new MPU6050( MPU6050_ADDRESS_AD0_HIGH ), "Left Forearm", 2, 1 );
-	body_sensor[2] = new TracePoint( new MPU6050( MPU6050_ADDRESS_AD0_HIGH ), "Left Hand", 2, 1 );
+	MPU6050 *d0 = new MPU6050( MPU6050_ADDRESS_AD0_HIGH );
+	MPU6050 *d1 = new MPU6050( MPU6050_ADDRESS_AD0_HIGH );
+	MPU6050 *d2 = new MPU6050( MPU6050_ADDRESS_AD0_HIGH );
+
+	body_sensor[0] = new TracePoint( d0, "Left Shoulder", 2, 1 );
+	body_sensor[1] = new TracePoint( d1, "Left Forearm", 2, 1 );
+	body_sensor[2] = new TracePoint( d2, "Left Hand", 2, 1 );
 
 	debugPrint( "Looking at sensor 0, Left Shoulder" );
 	body_sensor[0].identify();
@@ -27,7 +31,7 @@ void setup() {
 void loop() {
 	float data_package[N * 4];
 	for( size_t i = 0; i < N; i++ ) {
-		data_package[N * 4] = body_sensor[i].read_data();
+		data_package[i * 4] = body_sensor[i].read_data( 0 );
 	}
 	communicator.send_packet( data_package, N * 4 );
 	usleep( LOOP_DELAY * 1000 );
