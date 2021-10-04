@@ -9,6 +9,7 @@
 #define N		   3		   // Number of points track on the body.
 #define LOOP_DELAY 1000		   // ms to wait per loop cycle
 
+#include "MPU6050_6Axis_MotionApps20.h"
 #include "packager.h"
 #include "tracer_point.h"
 

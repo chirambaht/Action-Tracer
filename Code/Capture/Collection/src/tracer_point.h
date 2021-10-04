@@ -2,7 +2,6 @@
 #define _TRACER_POINT_H_
 
 #include "I2Cdev.h"
-#include "MPU6050.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 #include "debug_printer.h"
 
