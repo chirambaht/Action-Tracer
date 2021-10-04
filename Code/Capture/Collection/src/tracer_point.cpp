@@ -50,13 +50,6 @@ TracePoint ActionTracer::TracePoint::operator=( const TracePoint &other ) const 
 	return result;
 }
 
-complx complx::operator+( const complx &c ) const {
-	complx result;
-	result.real = ( this->real + c.real );
-	result.imag = ( this->imag + c.imag );
-	return result;
-}
-
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
  * @return 0 if all gows well.
 */
