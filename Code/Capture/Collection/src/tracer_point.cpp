@@ -10,8 +10,8 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 	_pin_number		  = wiring_Pi_pin_number;
 	_output_data_type = output_data;
 
-		// Set pin information
-		pinMode( _pin_number, OUTPUT );
+	// Set pin information
+	pinMode( _pin_number, OUTPUT );
 
 	debugPrint( "Initilizing %s...\n", _device_name );
 	_select_me();
@@ -31,10 +31,10 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 	}
 
 	// Reset the FIFO
-	_device->resetFIFO;
+	_device->resetFIFO();
 	_device->dmpGetFIFOPacketSize();
 
-	_device._deselect_me();
+	_device->_deselect_me();
 }
 
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
@@ -66,16 +66,16 @@ std::string ActionTracer::TracePoint::identify() {
 void ActionTracer::TracePoint::print_last_data_packet() {
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
-			debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _device_name, _quaternion_packet[0], _quaternion_packet[1], _quaternion_packet[2], _quaternion_packet[3] );
+			debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _device_name, _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
 			break;
 		case GET_DATA_EULER:
 			debugPrint( "Output data type: Euler\nLast packet was: %5f, %5f, %5f\n", _device_name, _euler_packet[0], _euler_packet[1], _euler_packet[2] );
 			break;
 		case GET_DATA_ACCELEROMETER:
-			debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _device_name, _acceleration_packet[0], _acceleration_packet[1], _acceleration_packet[2] );
+			debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _device_name, _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
 			break;
 		case GET_DATA_GYROSCOPE:
-			debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _device_name, _gyroscope_packet[0], _gyroscope_packet[1], _gyroscope_packet[2] );
+			debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _device_name, _gyroscope_float_packet[0], _gyroscope_float_packet[1], _gyroscope_float_packet[2] );
 			break;
 		case GET_DATA_YAWPITCHROLL:
 			debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _device_name, _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
@@ -99,15 +99,25 @@ void ActionTracer::TracePoint::get_data() {
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
 			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+			_quaternopn_float_packet[0] = _quaternion_packet.w;
+			_quaternopn_float_packet[1] = _quaternion_packet.x;
+			_quaternopn_float_packet[2] = _quaternion_packet.y;
+			_quaternopn_float_packet[3] = _quaternion_packet.z;
 			break;
 		case GET_DATA_EULER:
 			_device->dmpGetEuler( &_euler_packet, _fifo_buffer );
 			break;
 		case GET_DATA_ACCELEROMETER:
 			_device->dmpGetAccel( &_acceleration_packet );
+			_acceleration_float_packet[0] = _acceleration_packet.x;
+			_acceleration_float_packet[1] = _acceleration_packet.y;
+			_acceleration_float_packet[2] = _acceleration_packet.z;
 			break;
 		case GET_DATA_GYROSCOPE:
-			_device->dmpGetGyro( &_acceleration_packet );
+			_device->dmpGetGyro( &_gyroscope_packet );
+			_gyroscope_float_packet[0] = _gyroscope_packet.x;
+			_gyroscope_float_packet[1] = _gyroscope_packet.y;
+			_gyroscope_float_packet[2] = _gyroscope_packet.z;
 			break;
 		case GET_DATA_YAWPITCHROLL:
 			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
@@ -128,17 +138,17 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
-			return _quaternion_packet;
+			return _quaternion_float_packet;
 		case GET_DATA_EULER:
 			return _euler_packet;
 		case GET_DATA_ACCELEROMETER:
-			return _acceleration_packet;
+			return _acceleration_float_packet;
 		case GET_DATA_GYROSCOPE:
-			return _gyroscope_packet;
+			return _gyroscope_float_packet;
 		case GET_DATA_YAWPITCHROLL:
 			return _yaw_pitch_roll_packet;
 		default:
-			return _quaternion_packet;
+			return _quaternion_float_packet;
 	}
 }
 
