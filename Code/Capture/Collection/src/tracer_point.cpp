@@ -39,7 +39,11 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 	this->_deselect_me();
 }
 
+<<<<<<< HEAD
 TracePoint ActionTracer::TracePoint::operator=( const TracePoint &other ) const {
+=======
+TracePoint ActionTracer::TracePoint::operator=( const Tracepoint &other ) const {
+>>>>>>> 635a659e6b128da86142edab63caee296dd6cd20
 	TracePoint result;
 
 	result._device			 = _device;
