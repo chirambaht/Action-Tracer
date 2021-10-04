@@ -1,8 +1,8 @@
 all: collect_data
 
-HDRS = helper_3dmath.h I2Cdev.h MPU6050_6Axis_MotionApps20.h MPU6050.h packager.h tracer_point.h
-CMN_OBJS = I2Cdev.o MPU6050.o
-CLD_OBJS = packager.o tracer_point.o
+HDRS = helper_3dmath.h I2Cdev.h MPU6050_6Axis_MotionApps20.h MPU6050.h packager.h tracer_point.h main.h
+CMN_OBJS = I2Cdev.o MPU6050.o 
+CLD_OBJS = packager.o tracer_point.o main.o
  
 # Set DMP FIFO rate to 100Hz.  See comments in
 # MPU6050_6Axis_MotionApps20.h for details.
