@@ -4,6 +4,7 @@ using namespace ActionTracer;
 
 ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring_Pi_pin_number, int output_data = 0 ) {
 	debugPrintln( "Constructing the device as is needed. Name = %s\n", name );
+
 	_device			  = dev;
 	_device_name	  = name;
 	_pin_number		  = wiring_Pi_pin_number;
@@ -120,12 +121,9 @@ void ActionTracer::TracePoint::get_data() {
 	_deselect_me();
 }
 
-float *ActionTracer::TracePoint::read_data() {
-	_fifo_count = _device->getFIFOBytes( _fifo_buffer, _packet_size );
-
-	if( _fifo_count >= 1024 ) {
-		debugPrint( "%s: FIFO overflow!\n", _device_name );
-		_device->resetFIFO();
+float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
+	if( read_first ) {
+		this->get_data();
 	}
 
 	switch( _output_data_type ) {
