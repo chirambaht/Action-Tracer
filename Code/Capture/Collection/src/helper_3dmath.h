@@ -32,7 +32,7 @@ THE SOFTWARE.
 #ifndef _HELPER_3DMATH_H_
 #define _HELPER_3DMATH_H_
 
-#include <cmath.h>
+#include <math.h>
 
 class Quaternion {
   public:
