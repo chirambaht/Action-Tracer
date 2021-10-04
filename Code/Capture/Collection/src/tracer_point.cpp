@@ -89,7 +89,7 @@ void ActionTracer::TracePoint::print_last_data_packet() {
 void ActionTracer::TracePoint::get_data() {
 	this->_select_me();
 
-	_fifo_count = _device->getFIFOBytes( _fifo_buffer, _packet_size );
+	_device->getFIFOBytes( _fifo_buffer, _packet_size );
 
 	if( _fifo_count >= 1024 ) {
 		debugPrint( "%s: FIFO overflow!\n", _device_name );
@@ -106,7 +106,7 @@ void ActionTracer::TracePoint::get_data() {
 			break;
 		case GET_DATA_EULER:
 			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-			_device->dmpGetEuler( &_euler_packet, &_quaternion_packet );
+			_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
 			break;
 		case GET_DATA_ACCELEROMETER:
 			_device->dmpGetAccel( &_acceleration_packet );
@@ -123,7 +123,7 @@ void ActionTracer::TracePoint::get_data() {
 		case GET_DATA_YAWPITCHROLL:
 			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
 			_device->dmpGetGravity( &_gravity_packet, &_quaternion_packet );
-			_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet, &_quaternion_packet, &_gravity_packet );
+			_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet[0], &_quaternion_packet, &_gravity_packet );
 			break;
 		default:
 			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
