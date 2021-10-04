@@ -2,6 +2,8 @@
 
 using namespace ActionTracer;
 
+ActionTracer::TracePoint::TracePoint() {}
+
 ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring_Pi_pin_number, int output_data = 0 ) {
 	debugPrintln( "Constructing the device as is needed. Name = %s\n", name );
 

@@ -52,6 +52,7 @@ namespace ActionTracer {
 		// Creates and inits a device
 		//I dont know what this is but I love you
 		TracePoint( MPU6050 *dev, std::string name, int wiring_Pi_pin_number, int output_data );
+		TracePoint();
 
 		~TracePoint();
 		std::string get_name();
