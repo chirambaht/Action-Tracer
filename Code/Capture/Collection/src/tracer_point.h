@@ -31,16 +31,17 @@ namespace ActionTracer {
 
 		uint8_t	 _fifo_buffer[64];
 		uint16_t _packet_size;
+		uint16_t _fifo_count;
 
 		Quaternion _quaternion_packet;
 
 		VectorInt16 _acceleration_packet;
 		VectorInt16 _gyroscope_packet;
-		VectorInt16 _gravity_packet;
+		VectorFloat _gravity_packet;
 		float		_gyroscope_float_packet[3];
 		float		_acceleration_float_packet[3];
 		float		_gravity_float_packet[3];
-		float		_quaternopn_float_packet[4];
+		float		_quaternion_float_packet[4];
 		float		_euler_packet[3];
 		float		_yaw_pitch_roll_packet[3];
 

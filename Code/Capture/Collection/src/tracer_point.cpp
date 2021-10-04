@@ -14,9 +14,9 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 	pinMode( _pin_number, OUTPUT );
 
 	debugPrint( "Initilizing %s...\n", _device_name );
-	_select_me();
+	this->_select_me();
 	_device->initialize();
-	debugPrint( _device.testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name );
+	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name );
 
 	// DMP Initialization
 	_dmp_status = _device->dmpInitialize();
@@ -34,7 +34,7 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 	_device->resetFIFO();
 	_device->dmpGetFIFOPacketSize();
 
-	_device->_deselect_me();
+	this->_deselect_me();
 }
 
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
@@ -87,7 +87,7 @@ void ActionTracer::TracePoint::print_last_data_packet() {
 }
 
 void ActionTracer::TracePoint::get_data() {
-	_select_me();
+	this->_select_me();
 
 	_fifo_count = _device->getFIFOBytes( _fifo_buffer, _packet_size );
 
@@ -99,13 +99,14 @@ void ActionTracer::TracePoint::get_data() {
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
 			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-			_quaternopn_float_packet[0] = _quaternion_packet.w;
-			_quaternopn_float_packet[1] = _quaternion_packet.x;
-			_quaternopn_float_packet[2] = _quaternion_packet.y;
-			_quaternopn_float_packet[3] = _quaternion_packet.z;
+			_quaternion_float_packet[0] = _quaternion_packet.w;
+			_quaternion_float_packet[1] = _quaternion_packet.x;
+			_quaternion_float_packet[2] = _quaternion_packet.y;
+			_quaternion_float_packet[3] = _quaternion_packet.z;
 			break;
 		case GET_DATA_EULER:
-			_device->dmpGetEuler( &_euler_packet, _fifo_buffer );
+			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+			_device->dmpGetEuler( &_euler_packet, &_quaternion_packet );
 			break;
 		case GET_DATA_ACCELEROMETER:
 			_device->dmpGetAccel( &_acceleration_packet );
@@ -125,10 +126,15 @@ void ActionTracer::TracePoint::get_data() {
 			_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet, &_quaternion_packet, &_gravity_packet );
 			break;
 		default:
+			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+			_quaternion_float_packet[0] = _quaternion_packet.w;
+			_quaternion_float_packet[1] = _quaternion_packet.x;
+			_quaternion_float_packet[2] = _quaternion_packet.y;
+			_quaternion_float_packet[3] = _quaternion_packet.z;
 			break;
 	}
 
-	_deselect_me();
+	this->_deselect_me();
 }
 
 float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
