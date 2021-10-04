@@ -32,7 +32,7 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 
 	// Reset the FIFO
 	_device->resetFIFO();
-	_device->dmpGetFIFOPacketSize();
+	_packet_size = _device->dmpGetFIFOPacketSize();
 
 	this->_deselect_me();
 }
@@ -122,7 +122,7 @@ void ActionTracer::TracePoint::get_data() {
 			break;
 		case GET_DATA_YAWPITCHROLL:
 			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-			_device->dmpGetGravity( &_gravity_packet, _fifo_buffer );
+			_device->dmpGetGravity( &_gravity_packet, &_quaternion_packet );
 			_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet, &_quaternion_packet, &_gravity_packet );
 			break;
 		default:
