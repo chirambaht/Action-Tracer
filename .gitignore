@@ -31,3 +31,4 @@
 *.out
 *.app
 Code/.clang-format
+Code/.vscode/settings.json

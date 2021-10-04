@@ -55,6 +55,9 @@ namespace ActionTracer {
 		TracePoint();
 
 		~TracePoint();
+
+		TracePoint operator=( TracePoint other );
+
 		std::string get_name();
 		MPU6050		get_device();
 		void		get_data();						  // Gets data from the device it is attached to

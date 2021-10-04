@@ -39,6 +39,24 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 	this->_deselect_me();
 }
 
+TracePoint ActionTracer::TracePoint::operator=( const Tracepoint &other ) const {
+	TracePoint result;
+
+	result._device			 = _device;
+	result._device_name		 = _device_name;
+	result._pin_number		 = _pin_number;
+	result._output_data_type = _output_data_type;
+
+	return result;
+}
+
+complx complx::operator+( const complx &c ) const {
+	complx result;
+	result.real = ( this->real + c.real );
+	result.imag = ( this->imag + c.imag );
+	return result;
+}
+
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
  * @return 0 if all gows well.
 */
