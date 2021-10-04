@@ -8,7 +8,7 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 	_device			  = dev;
 	_device_name	  = name;
 	_pin_number		  = wiring_Pi_pin_number;
-	_output_data_type = output_data
+	_output_data_type = output_data;
 
 		// Set pin information
 		pinMode( _pin_number, OUTPUT );

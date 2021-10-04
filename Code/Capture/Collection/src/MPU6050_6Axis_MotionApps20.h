@@ -39,6 +39,7 @@ THE SOFTWARE.
 #include "helper_3dmath.h"
 
 #include <cstring>
+#include <unistd.h>
 #include <math.h>
 
 // MotionApps 2.0 DMP implementation, built using the MPU-6050EVB evaluation board
