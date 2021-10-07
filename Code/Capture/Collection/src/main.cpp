@@ -25,6 +25,8 @@ using namespace ActionTracer;
 */
 
 void setup() {
+	wiringPiSetup();
+
 	communicator = new Packager( SERVER_IP, PORT ); // Initialize the communicator that will send data packets to the server
 
 	// The following are the sensors being used to obtain data from the body.
