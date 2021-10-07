@@ -56,7 +56,7 @@ namespace ActionTracer {
 
 		~TracePoint();
 
-		TracePoint operator=( const TracePoint other );
+		// TracePoint operator=( const TracePoint other );
 
 		std::string get_name();
 		MPU6050		get_device();
