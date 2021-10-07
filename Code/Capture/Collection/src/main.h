@@ -30,8 +30,8 @@
 
 using namespace ActionTracer;
 
-TracePoint body_sensor[N]; // These are the N sensors on the body.
-Packager   communicator;
+TracePoint *body_sensor[N]; // These are the N sensors on the body.
+Packager *	communicator;
 
 // Packager mobile = new Packager( MOBILE_IP, PORT );
 

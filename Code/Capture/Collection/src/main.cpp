@@ -26,18 +26,24 @@ void setup() {
 	body_sensor[2] = c;
 
 	debugPrint( "Looking at sensor 0, Left Shoulder" );
-	body_sensor[0].identify();
+	body_sensor[0]->identify();
 }
 
 /*
   Main work loop for all the code. This will always run every cycle.
 */
 void loop() {
-	float data_package[N * 4];
+	float  data_package[N * 4];
+	float *body = body_sensor->read_data( 0 );
+
 	for( size_t i = 0; i < N; i++ ) {
-		data_package[i * 4] = body_sensor[i].read_data( 0 );
+		for( size_t j = 0; j < 4; j++ ) {
+			data_package[j + ( i * 4 )] = *body;
+			body++;
+		}
 	}
-	communicator.send_packet( data_package, N * 4 );
+
+	communicator->send_packet( data_package, N * 4 );
 	usleep( LOOP_DELAY * 1000 );
 }
 
