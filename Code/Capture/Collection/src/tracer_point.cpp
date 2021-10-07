@@ -5,9 +5,9 @@
 
 using namespace ActionTracer;
 
-ActionTracer::TracePoint::TracePoint() {}
+TracePoint() {}
 
-ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring_Pi_pin_number, int output_data = 0 ) {
+TracePoint( MPU6050 *dev, std::string name, int wiring_Pi_pin_number, int output_data = 0 ) {
 	debugPrintln( "Constructing the device as is needed. Name = %s\n", name );
 
 	_device			  = dev;
@@ -42,7 +42,7 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 	this->_deselect_me();
 }
 
-// ActionTracer::TracePoint ActionTracer::TracePoint::operator=( const ActionTracer::TracePoint &other ) const {
+// ActionTracer::TracePoint operator=( const ActionTracer::TracePoint &other ) const {
 // 	TracePoint result;
 
 // 	result._device			 = _device;
@@ -56,7 +56,7 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
  * @return 0 if all gows well.
 */
-int ActionTracer::TracePoint::_select_me() {
+int _select_me() {
 	debugPrintln( "Selected %s\n", _device_name );
 	digitalWrite( _pin_number, LOW );
 	return OK;
@@ -65,7 +65,7 @@ int ActionTracer::TracePoint::_select_me() {
 /** Deselects a given MPU6050 node.
  * @return 0 if all gows well.
 */
-int ActionTracer::TracePoint::_deselect_me() {
+int _deselect_me() {
 	debugPrintln( "Deselected %s\n", _device_name );
 	digitalWrite( _pin_number, LOW );
 	return OK;
@@ -74,12 +74,12 @@ int ActionTracer::TracePoint::_deselect_me() {
 /** Calls on the selected sensor to identify itself by its given name.
  * @return Device name/id
 */
-std::string ActionTracer::TracePoint::identify() {
+std::string identify() {
 	debugPrint( "I am %s\n", _device_name );
 	return _device_name;
 }
 
-void ActionTracer::TracePoint::print_last_data_packet() {
+void print_last_data_packet() {
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
 			debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _device_name, _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
@@ -102,7 +102,7 @@ void ActionTracer::TracePoint::print_last_data_packet() {
 	}
 }
 
-void ActionTracer::TracePoint::get_data() {
+void get_data() {
 	this->_select_me();
 
 	_device->getFIFOBytes( _fifo_buffer, _packet_size );
@@ -153,7 +153,7 @@ void ActionTracer::TracePoint::get_data() {
 	this->_deselect_me();
 }
 
-float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
+float *read_data( int read_first = 0 ) {
 	if( read_first ) {
 		this->get_data();
 	}
@@ -174,7 +174,7 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 	}
 }
 
-void ActionTracer::TracePoint::set_output_data_type( int data_type ) {
+void set_output_data_type( int data_type ) {
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
 			debugPrint( "Name: %s\tOutput data type: Quaternion\n", _device_name );
