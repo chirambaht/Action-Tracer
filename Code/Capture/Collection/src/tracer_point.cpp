@@ -83,19 +83,19 @@ std::string ActionTracer::TracePoint::identify() {
 void ActionTracer::TracePoint::print_last_data_packet() {
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
-			debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _device_name, _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
+			debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
 			break;
 		case GET_DATA_EULER:
-			debugPrint( "Output data type: Euler\nLast packet was: %5f, %5f, %5f\n", _device_name, _euler_packet[0], _euler_packet[1], _euler_packet[2] );
+			debugPrint( "Output data type: Euler\nLast packet was: %5f, %5f, %5f\n", _euler_packet[0], _euler_packet[1], _euler_packet[2] );
 			break;
 		case GET_DATA_ACCELEROMETER:
-			debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _device_name, _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
+			debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
 			break;
 		case GET_DATA_GYROSCOPE:
-			debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _device_name, _gyroscope_float_packet[0], _gyroscope_float_packet[1], _gyroscope_float_packet[2] );
+			debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _gyroscope_float_packet[0], _gyroscope_float_packet[1], _gyroscope_float_packet[2] );
 			break;
 		case GET_DATA_YAWPITCHROLL:
-			debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _device_name, _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
+			debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
 			break;
 		default:
 			this->identify();
