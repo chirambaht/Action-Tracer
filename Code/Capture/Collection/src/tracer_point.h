@@ -1,6 +1,8 @@
 #ifndef _TRACER_POINT_H_
 #define _TRACER_POINT_H_
 
+#include "MPU6050.h"
+
 #include <string>
 
 #define OK	  0
