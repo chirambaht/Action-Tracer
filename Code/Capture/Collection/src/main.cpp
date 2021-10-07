@@ -1,6 +1,20 @@
 // This is the main file that will be used to run the program for data
 // collection from the 3 IMU's and send them to the server as is necesarry.
 #include "main.h"
+
+#include <dirent.h>
+#include <filesystem>
+#include <iostream>
+#include <math.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/timeb.h>
+#include <unistd.h>
+#include <wiringPi.h>
 /// Outline
 
 using namespace ActionTracer;
@@ -33,10 +47,10 @@ void setup() {
   Main work loop for all the code. This will always run every cycle.
 */
 void loop() {
-	float  data_package[N * 4];
-	float *body = body_sensor->read_data( 0 );
+	float data_package[N * 4];
 
 	for( size_t i = 0; i < N; i++ ) {
+		float *body = body_sensor[0]->read_data( 0 );
 		for( size_t j = 0; j < 4; j++ ) {
 			data_package[j + ( i * 4 )] = *body;
 			body++;

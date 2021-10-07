@@ -14,6 +14,7 @@ CXXFLAGS = -DDMP_FIFO_RATE=1 -Wall -g -O2 `pkg-config gtkmm-3.0 --cflags --libs`
 collect_data: $(CMN_OBJS) $(CLD_OBJS)
 	@ echo "Compiled data collection program"
 	@ $(CXX) -o $@ $^ -l wiringPi -lm
+	@ echo "Program made!"
 
 clean:
 	@ echo "Ahh clean!"

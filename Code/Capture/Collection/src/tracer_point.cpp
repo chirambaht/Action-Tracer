@@ -1,4 +1,7 @@
+#include "debug_printer.h"
 #include "tracer_point.h"
+
+#include <wiringPi.h>
 
 using namespace ActionTracer;
 

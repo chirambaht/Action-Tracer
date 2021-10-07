@@ -1,12 +1,7 @@
 #ifndef _TRACER_POINT_H_
 #define _TRACER_POINT_H_
 
-#include "I2Cdev.h"
-#include "MPU6050_6Axis_MotionApps20.h"
-#include "debug_printer.h"
-
 #include <string>
-#include <wiringPi.h>
 
 #define OK	  0
 #define ERROR 1

@@ -9,24 +9,8 @@
 #define N		   3		   // Number of points track on the body.
 #define LOOP_DELAY 1000		   // ms to wait per loop cycle
 
-#include "I2Cdev.h"
-#include "MPU6050_6Axis_MotionApps20.h"
 #include "packager.h"
 #include "tracer_point.h"
-
-#include <dirent.h>
-#include <filesystem>
-#include <iostream>
-#include <math.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/timeb.h>
-#include <unistd.h>
-#include <wiringPi.h>
 
 using namespace ActionTracer;
 
