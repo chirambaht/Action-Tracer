@@ -114,7 +114,7 @@ void ActionTracer::TracePoint::get_data() {
 
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
-			_device->dmpGetQuaternionFloat( &_quaternion_packet, _fifo_buffer );
+			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
 			_quaternion_float_packet[0] = _quaternion_packet.w;
 			_quaternion_float_packet[1] = _quaternion_packet.x;
 			_quaternion_float_packet[2] = _quaternion_packet.y;
