@@ -43,6 +43,9 @@ THE SOFTWARE.
 
 #include "MPU6050.h"
 
+#include <cstring>
+#include <unistd.h>
+
 // Tom Carpenter's conditional PROGMEM code
 // http://forum.arduino.cc/index.php?topic=129407.0
 #ifdef __AVR__
@@ -2322,10 +2325,6 @@ uint8_t MPU6050::dmpReadAndProcessFIFOPacket( uint8_t numPackets, uint8_t *proce
 
 uint16_t MPU6050::dmpGetFIFOPacketSize() {
 	return dmpPacketSize;
-}
-
-uint8_t MPU6050::dmpGetCurrentFIFOPacket( uint8_t *data ) { // overflow proof
-	return ( GetCurrentFIFOPacket( data, dmpPacketSize ) );
 }
 
 #endif /* _MPU6050_6AXIS_MOTIONAPPS20_H_ */
