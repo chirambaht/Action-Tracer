@@ -32,7 +32,7 @@ THE SOFTWARE.
 #ifndef _HELPER_3DMATH_H_
 #define _HELPER_3DMATH_H_
 
-#include <math.h>
+#include <cmath>
 
 class Quaternion {
   public:
@@ -41,18 +41,11 @@ class Quaternion {
 	float y;
 	float z;
 
-	// New hack
-	float packed[4];
-
 	Quaternion() {
-		w		  = 1.0f;
-		x		  = 0.0f;
-		y		  = 0.0f;
-		z		  = 0.0f;
-		packed[0] = w;
-		packed[1] = x;
-		packed[2] = y;
-		packed[3] = z;
+		w = 1.0f;
+		x = 0.0f;
+		y = 0.0f;
+		z = 0.0f;
 	}
 
 	Quaternion( float nw, float nx, float ny, float nz ) {
@@ -60,12 +53,6 @@ class Quaternion {
 		x = nx;
 		y = ny;
 		z = nz;
-
-		// part of hack
-		packed[0] = w;
-		packed[1] = x;
-		packed[2] = y;
-		packed[3] = z;
 	}
 
 	Quaternion getProduct( Quaternion q ) {
