@@ -1,3 +1,4 @@
+#include "MPU6050_6Axis_MotionApps20.h"
 #include "debug_printer.h"
 #include "tracer_point.h"
 
