@@ -15,7 +15,7 @@ namespace ActionTracer {
 		int			_descriptor;
 		__uint32_t	_count;
 
-		std::string _float_to_string( float value );
+		std::string _float_to_string( float value, int prec );
 
 	  public:
 		Packager();

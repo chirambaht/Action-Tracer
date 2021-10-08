@@ -26,11 +26,11 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 	}
 }
 
-ActionTracer::Packager::~Packager() { 1; }
+// ActionTracer::Packager::~Packager() {}
 
-std::string ActionTracer::Packager::_float_to_string( float value ) {
+std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 ) {
 	std::stringstream stream;
-	stream << std::fixed << std::setprecision( 6 ) << value;
+	stream << std::fixed << std::setprecision( prec ) << value;
 	std::string s = stream.str();
 
 	return s;
@@ -38,10 +38,19 @@ std::string ActionTracer::Packager::_float_to_string( float value ) {
 
 int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 	std::string arr = "";
+#if DEBUG == 1
+	std::string db_arr = "";
+	for( int i = 0; i < length; i++ ) {
+		db_arr += _float_to_string( data[i], 2 );
+		if( i != length - 1 ) {
+			db_arr += ", ";
+		}
+	}
 
+#endif
 	// Convert floats to string
 	for( int i = 0; i < length; i++ ) {
-		arr += _float_to_string( data[i] );
+		arr += _float_to_string( data[i], 6 );
 		if( i != length - 1 ) {
 			arr += ", ";
 		}
