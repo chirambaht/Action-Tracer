@@ -7,11 +7,12 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 	_dest  = destination;
 	_port  = port;
 	_count = 0;
+	debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest );
 	struct sockaddr_in server;
 	// Create socket
 	_descriptor = socket( AF_INET, SOCK_DGRAM, 0 );
 	if( _descriptor == -1 )
-		debugPrint( "Could not create socket" );
+		debugPrint( "Could not create socket\n" );
 
 	server.sin_addr.s_addr = inet_addr( _dest.c_str() ); // Destination address
 	server.sin_family	   = AF_INET;
@@ -19,9 +20,9 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 
 	// Connect to remote server
 	if( connect( _descriptor, ( struct sockaddr * ) &server, sizeof( server ) ) < 0 ) {
-		debugPrint( "connect error" );
+		debugPrint( "connect error\n" );
 	} else {
-		debugPrint( "Connected\n" );
+		debugPrint( "UDP client ready!\n" );
 	}
 }
 
@@ -46,12 +47,11 @@ int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 		}
 	}
 
-	debugPrint( arr.c_str() );
 	// Send some data
 	if( send( _descriptor, arr.c_str(), strlen( arr.c_str() ), 0 ) < 0 ) {
 		debugPrint( "Send failed" );
 		return 1;
 	}
-	debugPrint( "%7d - Sent", _count++ );
+	debugPrint( "%7d - %s:%d\n%s\n\n", _count++, _dest, _port, arr.c_str() );
 	return 0;
 }
