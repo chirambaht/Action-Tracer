@@ -197,7 +197,7 @@ void ActionTracer::TracePoint::set_output_data_type( int data_type ) {
 			debugPrint( "Name: %s\tOutput data type: Gyroscope\n", _device_name.c_str() );
 			break;
 		case GET_DATA_YAWPITCHROLL:
-			debugPrint( "Output data type: Yaw, Pitch and Roll\n", _device_name.c_str() );
+			debugPrint( "Name: %s\tOutput data type: Yaw, Pitch and Roll\n", _device_name.c_str() );
 			break;
 		default:
 			this->identify();

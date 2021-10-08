@@ -42,7 +42,7 @@ void setup() {
 	body_sensor[1] = b;
 	body_sensor[2] = c;
 
-	debugPrint( "Looking at sensor 0, Left Shoulder" );
+	debugPrint( "Looking at sensor 0, Left Shoulder\n" );
 	body_sensor[0]->identify();
 }
 
