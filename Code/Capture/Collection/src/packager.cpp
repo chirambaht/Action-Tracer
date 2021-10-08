@@ -7,7 +7,7 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 	_dest  = destination;
 	_port  = port;
 	_count = 0;
-	debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest );
+	debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
 	struct sockaddr_in server;
 	// Create socket
 	_descriptor = socket( AF_INET, SOCK_DGRAM, 0 );
@@ -52,6 +52,6 @@ int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 		debugPrint( "Send failed" );
 		return 1;
 	}
-	debugPrint( "%7d - %s:%d\n%s\n\n", _count++, _dest, _port, arr.c_str() );
+	debugPrint( "%7d - %s:%d\n%s\n\n", _count++, _dest.c_str(), _port, arr.c_str() );
 	return 0;
 }
