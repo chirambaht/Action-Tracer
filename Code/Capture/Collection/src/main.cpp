@@ -34,9 +34,9 @@ void setup() {
 	MPU6050 *d1 = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
 	MPU6050 *d2 = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
 
-	TracePoint *a = new TracePoint( d0, "Left Shoulder", 2, 1 );
-	TracePoint *b = new TracePoint( d1, "Left Forearm", 2, 1 );
-	TracePoint *c = new TracePoint( d2, "Left Hand", 2, 1 );
+	TracePoint *a = new TracePoint( d0, "Left Shoulder", 2, 0 );
+	TracePoint *b = new TracePoint( d1, "Left Forearm", 2, 0 );
+	TracePoint *c = new TracePoint( d2, "Left Hand", 2, 0 );
 
 	body_sensor[0] = a;
 	body_sensor[1] = b;
