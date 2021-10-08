@@ -158,6 +158,8 @@ void ActionTracer::TracePoint::get_data() {
 			break;
 	}
 
+	debugPrint( "Data fetched\n" );
+
 	this->_deselect_me();
 }
 
