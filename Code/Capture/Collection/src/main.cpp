@@ -30,9 +30,9 @@ void setup() {
 	communicator = new Packager( SERVER_IP, PORT ); // Initialize the communicator that will send data packets to the server
 
 	// The following are the sensors being used to obtain data from the body.
-	MPU6050 *d0 = new MPU6050( MPU6050_ADDRESS_AD0_HIGH );
-	MPU6050 *d1 = new MPU6050( MPU6050_ADDRESS_AD0_HIGH );
-	MPU6050 *d2 = new MPU6050( MPU6050_ADDRESS_AD0_HIGH );
+	MPU6050 *d0 = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
+	MPU6050 *d1 = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
+	MPU6050 *d2 = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
 
 	TracePoint *a = new TracePoint( d0, "Left Shoulder", 2, 1 );
 	TracePoint *b = new TracePoint( d1, "Left Forearm", 2, 1 );

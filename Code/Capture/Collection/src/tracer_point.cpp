@@ -75,7 +75,7 @@ int ActionTracer::TracePoint::_select_me() {
 */
 int ActionTracer::TracePoint::_deselect_me() {
 	debugPrintln( "Deselected %s\n", _device_name.c_str() );
-	digitalWrite( _pin_number, LOW );
+	digitalWrite( _pin_number, HIGH );
 	return OK;
 }
 
