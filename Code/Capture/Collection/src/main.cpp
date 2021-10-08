@@ -61,6 +61,7 @@ void loop() {
 	}
 
 	communicator->send_packet( data_package, N * 4 );
+
 	usleep( LOOP_DELAY * 1000 );
 }
 

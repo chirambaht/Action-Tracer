@@ -168,6 +168,7 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
+			debugPrint( "Fetched: x: %4.2f, y: %4.2f, z: %4.2f, w: %4.2f", _quaternion_packet.x, _quaternion_packet.y, _quaternion_packet.z, _quaternion_packet.w );
 			return _quaternion_float_packet;
 		case GET_DATA_EULER:
 			return _euler_packet;
@@ -178,6 +179,7 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 		case GET_DATA_YAWPITCHROLL:
 			return _yaw_pitch_roll_packet;
 		default:
+			debugPrint( "Fetched: x: %4.2f, y: %4.2f, z: %4.2f, w: %4.2f", _quaternion_packet.x, _quaternion_packet.y, _quaternion_packet.z, _quaternion_packet.w );
 			return _quaternion_float_packet;
 	}
 }
