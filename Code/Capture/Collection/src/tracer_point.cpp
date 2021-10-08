@@ -9,7 +9,7 @@ using namespace ActionTracer;
 ActionTracer::TracePoint::TracePoint() {}
 
 ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring_Pi_pin_number, int output_data = 0 ) {
-	debugPrintln( "Constructing the device as is needed. Name = %s\n", name );
+	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
 
 	_device			  = dev;
 	_device_name	  = name;
@@ -19,10 +19,10 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 	// Set pin information
 	pinMode( _pin_number, OUTPUT );
 
-	debugPrint( "Initilizing %s...\n", _device_name );
+	debugPrint( "Initilizing %s...\n", _device_name.c_str() );
 	this->_select_me();
 	_device->initialize();
-	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name );
+	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
 
 	_device->setXAccelOffset( 33 );
 	_device->setYAccelOffset( 29 );
@@ -65,7 +65,7 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
  * @return 0 if all gows well.
 */
 int ActionTracer::TracePoint::_select_me() {
-	debugPrintln( "Selected %s\n", _device_name );
+	debugPrintln( "Selected %s\n", _device_name.c_str() );
 	digitalWrite( _pin_number, LOW );
 	return OK;
 }
@@ -74,7 +74,7 @@ int ActionTracer::TracePoint::_select_me() {
  * @return 0 if all gows well.
 */
 int ActionTracer::TracePoint::_deselect_me() {
-	debugPrintln( "Deselected %s\n", _device_name );
+	debugPrintln( "Deselected %s\n", _device_name.c_str() );
 	digitalWrite( _pin_number, LOW );
 	return OK;
 }
@@ -83,7 +83,7 @@ int ActionTracer::TracePoint::_deselect_me() {
  * @return Device name/id
 */
 std::string ActionTracer::TracePoint::identify() {
-	debugPrint( "I am %s\n", _device_name );
+	debugPrint( "I am %s\n", _device_name.c_str() );
 	return _device_name;
 }
 
@@ -116,7 +116,7 @@ void ActionTracer::TracePoint::get_data() {
 	_device->getFIFOBytes( _fifo_buffer, _packet_size );
 
 	if( _fifo_count >= 1024 ) {
-		debugPrint( "%s: FIFO overflow!\n", _device_name );
+		debugPrint( "%s: FIFO overflow!\n", _device_name.c_str() );
 		_device->resetFIFO();
 	}
 
@@ -185,19 +185,19 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 void ActionTracer::TracePoint::set_output_data_type( int data_type ) {
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
-			debugPrint( "Name: %s\tOutput data type: Quaternion\n", _device_name );
+			debugPrint( "Name: %s\tOutput data type: Quaternion\n", _device_name.c_str() );
 			break;
 		case GET_DATA_EULER:
-			debugPrint( "Name: %s\tOutput data type: Euler\n", _device_name );
+			debugPrint( "Name: %s\tOutput data type: Euler\n", _device_name.c_str() );
 			break;
 		case GET_DATA_ACCELEROMETER:
-			debugPrint( "Name: %s\tOutput data type: Accelerometer\n", _device_name );
+			debugPrint( "Name: %s\tOutput data type: Accelerometer\n", _device_name.c_str() );
 			break;
 		case GET_DATA_GYROSCOPE:
-			debugPrint( "Name: %s\tOutput data type: Gyroscope\n", _device_name );
+			debugPrint( "Name: %s\tOutput data type: Gyroscope\n", _device_name.c_str() );
 			break;
 		case GET_DATA_YAWPITCHROLL:
-			debugPrint( "Output data type: Yaw, Pitch and Roll\n", _device_name );
+			debugPrint( "Output data type: Yaw, Pitch and Roll\n", _device_name.c_str() );
 			break;
 		default:
 			this->identify();
