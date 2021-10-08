@@ -47,7 +47,7 @@ int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 			db_arr += ", ";
 		}
 	}
-	debugPrint( "%7d - %s:%d\n%s\n\n", _count, _dest.c_str(), _port, arr.c_str() );
+	debugPrint( "%7d - %s:%d\n%s\n\n", _count, _dest.c_str(), _port, db_arr.c_str() );
 #endif
 	// Convert floats to string
 	for( int i = 0; i < length; i++ ) {
