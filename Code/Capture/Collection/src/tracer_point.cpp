@@ -55,7 +55,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	_packet_size = _device->dmpGetFIFOPacketSize();
 
 	uint8_t ints = _device->getIntStatus();
-	debugPrint( "Interrupts: %8b", ints );
+	debugPrintln( "Interrupts: %d", ints );
 	this->_deselect_me();
 }
 
@@ -123,7 +123,7 @@ void ActionTracer::TracePoint::get_data() {
 	this->_select_me();
 
 	uint8_t ints = _device->getIntStatus();
-	debugPrint( "Interrupts 1: %8b", ints );
+	debugPrint( "Interrupts 1: %d", ints );
 
 	if( !_dmp_ready ) {
 		debugPrint( "DMP not initialised" );
@@ -133,7 +133,7 @@ void ActionTracer::TracePoint::get_data() {
 	_fifo_count = _device->getFIFOCount();
 
 	if( _fifo_count >= 1024 ) {
-		debugPrint( "%s: FIFO overflow!\n", _device_name.c_str() );
+		debugPrintln( "%s: FIFO overflow!\n", _device_name.c_str() );
 		_device->resetFIFO();
 	}
 
@@ -144,7 +144,7 @@ void ActionTracer::TracePoint::get_data() {
 	_device->getFIFOBytes( _fifo_buffer, _packet_size );
 
 	uint8_t ints = _device->getIntStatus();
-	debugPrint( "Interrupts 2: %8b", ints );
+	debugPrintln( "Interrupts 2: %d", ints );
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
 			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
