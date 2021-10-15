@@ -50,7 +50,7 @@ void loop() {
 	float data_package[N * 4];
 
 	for( size_t i = 0; i < N; i++ ) {
-		float *body = body_sensor[0]->read_data( 1 );
+		float *body = body_sensor[i]->read_data( 1 );
 		for( size_t j = 0; j < 4; j++ ) {
 			data_package[j + ( i * 4 )] = *body;
 			body++;
