@@ -43,11 +43,11 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	if( _dmp_status == 0 ) {
 		debugPrint( "Enabling DMP..." );
 		_device->setDMPEnabled( true );
-		_dmp_ready = OK;
+		_dmp_ready = 1;
 		debugPrint( "Enabled!\n" );
 	} else {
 		debugPrint( "Can't initialise DMP\n" );
-		_dmp_ready = ERROR;
+		_dmp_ready = 0;
 	}
 
 	// Reset the FIFO
