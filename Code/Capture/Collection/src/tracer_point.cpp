@@ -11,7 +11,6 @@ ActionTracer::TracePoint::TracePoint() {}
 ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number, int output_data = 0 ) {
 	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
 
-	_device			  = dev;
 	_device_name	  = name;
 	_pin_number		  = wiring_Pi_pin_number;
 	_output_data_type = output_data;
