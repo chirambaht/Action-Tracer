@@ -24,12 +24,19 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 	_device->initialize();
 	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
 
-	_device->setXAccelOffset( 33 );
-	_device->setYAccelOffset( 29 );
-	_device->setZAccelOffset( 61 );
-	_device->setXGyroOffset( -105 );
-	_device->setYGyroOffset( 1443 );
-	_device->setZGyroOffset( 4945 );
+	// _device->setXAccelOffset( 33 );
+	// _device->setYAccelOffset( 29 );
+	// _device->setZAccelOffset( 61 );
+	// _device->setXGyroOffset( -105 );
+	// _device->setYGyroOffset( 1443 );
+	// _device->setZGyroOffset( 4945 );
+
+	_device->setXAccelOffset(44);
+	_device->setYAccelOffset(25);
+	_device->setZAccelOffset(74);
+	_device->setXGyroOffset(-57);
+	_device->setYGyroOffset(1449);
+	_device->setZGyroOffset(4973);
 
 	// DMP Initialization
 	_dmp_status = _device->dmpInitialize();
