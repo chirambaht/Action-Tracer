@@ -143,7 +143,7 @@ void ActionTracer::TracePoint::get_data() {
 
 	_device->getFIFOBytes( _fifo_buffer, _packet_size );
 
-	uint8_t inters = _device->getIntStatus();
+	inters = _device->getIntStatus();
 	debugPrintln( "Interrupts 2: %d", inters );
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
