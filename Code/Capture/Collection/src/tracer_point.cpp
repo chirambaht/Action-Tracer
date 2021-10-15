@@ -120,17 +120,23 @@ void ActionTracer::TracePoint::print_last_data_packet() {
 void ActionTracer::TracePoint::get_data() {
 	this->_select_me();
 
-	_device->getFIFOBytes( _fifo_buffer, _packet_size );
-	_fifo_count = _device->getFIFOCount();
-
-	while( _fifo_count < 42 ) {
-		_fifo_count = _device->getFIFOCount();
+	if( !_dmp_ready ) {
+		debugPrint( "DMP not initialised" );
+		return;
 	}
+
+	_fifo_count = _device->getFIFOCount();
 
 	if( _fifo_count >= 1024 ) {
 		debugPrint( "%s: FIFO overflow!\n", _device_name.c_str() );
 		_device->resetFIFO();
 	}
+
+	while( _fifo_count < 42 ) {
+		_fifo_count = _device->getFIFOCount();
+	}
+
+	_device->getFIFOBytes( _fifo_buffer, _packet_size );
 
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
