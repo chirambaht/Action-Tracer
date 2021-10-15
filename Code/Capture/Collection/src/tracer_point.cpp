@@ -8,7 +8,7 @@ using namespace ActionTracer;
 
 ActionTracer::TracePoint::TracePoint() {}
 
-ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring_Pi_pin_number, int output_data = 0 ) {
+ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number, int output_data = 0 ) {
 	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
 
 	_device			  = dev;
@@ -21,6 +21,7 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 
 	debugPrint( "Initilizing %s...\n", _device_name.c_str() );
 	this->_select_me();
+	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
 	_device->initialize();
 	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
 
@@ -31,12 +32,12 @@ ActionTracer::TracePoint::TracePoint( MPU6050 *dev, std::string name, int wiring
 	// _device->setYGyroOffset( 1443 );
 	// _device->setZGyroOffset( 4945 );
 
-	_device->setXAccelOffset(44);
-	_device->setYAccelOffset(25);
-	_device->setZAccelOffset(74);
-	_device->setXGyroOffset(-57);
-	_device->setYGyroOffset(1449);
-	_device->setZGyroOffset(4973);
+	_device->setXAccelOffset( 44 );
+	_device->setYAccelOffset( 25 );
+	_device->setZAccelOffset( 74 );
+	_device->setXGyroOffset( -57 );
+	_device->setYGyroOffset( 1449 );
+	_device->setZGyroOffset( 4973 );
 
 	// DMP Initialization
 	_dmp_status = _device->dmpInitialize();
