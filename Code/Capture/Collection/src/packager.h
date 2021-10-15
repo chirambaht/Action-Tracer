@@ -11,13 +11,13 @@
 namespace ActionTracer {
 	class Packager {
 	  private:
-		std::string	  _dest;
-		int			  _port;
-		int			  _descriptor;
-		__uint32_t	  _count;
-		std::ofstream logger;
-		std::string	  _float_to_string( float value, int prec );
-		void		  _log( std::string data );
+		std::string _dest;
+		int			_port;
+		int			_descriptor;
+		__uint32_t	_count;
+		File *		_logger;
+		std::string _float_to_string( float value, int prec );
+		void		_log( std::string data );
 
 	  public:
 		Packager();

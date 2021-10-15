@@ -10,8 +10,6 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 	_port  = port;
 	_count = 0;
 
-	logger = std::ofstream( "packager.log" );
-
 	debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
 	struct sockaddr_in server;
 	// Create socket
@@ -65,6 +63,7 @@ int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 	// Send some data
 	if( send( _descriptor, arr.c_str(), strlen( arr.c_str() ), 0 ) < 0 ) {
 		debugPrint( "Send failed" );
+		logger.open();
 		_log( "Send failed" );
 		return 1;
 	}
@@ -77,5 +76,7 @@ int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 void ActionTracer::Packager::_log( std::string data ) {
 	std::time_t t	= std::time( 0 ); // get time now
 	std::tm *	now = std::localtime( &t );
-	logger << ( now->tm_year + 1900 ) << '-' << ( now->tm_mon + 1 ) << '-' << now->tm_mday << " : " << data.c_str() << "\n";
+	_logger			= fopen( "packager.log", "w" );
+	fprintf( _logger, "%4d-%2d-%2d @  %2d:%2d:%2d-> %s\n", now->tm_year + 1900, ( now->tm_mon + 1 ), now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec, data.c_str() );
+	fclose( _logger );
 }
