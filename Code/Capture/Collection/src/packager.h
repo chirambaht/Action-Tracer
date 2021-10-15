@@ -1,4 +1,5 @@
 #include <arpa/inet.h> //inet_addr
+#include <cstdio>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -7,6 +8,7 @@
 #include <stdio.h>
 #include <string.h> //strlen
 #include <sys/socket.h>
+
 
 namespace ActionTracer {
 	class Packager {
