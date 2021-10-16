@@ -472,7 +472,7 @@ class MPU6050 {
 	uint8_t getGyroYSelfTestFactoryTrim();
 	uint8_t getGyroZSelfTestFactoryTrim();
 
-	uint8_t MPU6050::dmpReadInterrupts();
+	uint8_t dmpReadInterrupts();
 
 	// ACCEL_CONFIG register
 	bool	getAccelXSelfTest();
