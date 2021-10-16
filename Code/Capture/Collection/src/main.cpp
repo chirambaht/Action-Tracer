@@ -48,7 +48,7 @@ void loop() {
 #if DEBUG == 1
 	debugPrint( "Devices connected are:\n" );
 	for( size_t i = 0; i < N; i++ ) {
-		debugPrint( "%2d - %s\n", i + 1, body_sensor[i].identify() );
+		debugPrint( "%2d - %s\n", i + 1, body_sensor[i]->identify() );
 	}
 #endif
 	float data_package[N * 4];
