@@ -1,5 +1,6 @@
-#include "debug_printer.h"
 #include "packager.h"
+
+#include "debug_printer.h"
 
 #include <ctime>
 
@@ -63,8 +64,8 @@ int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 	// Send some data
 	if( send( _descriptor, arr.c_str(), strlen( arr.c_str() ), 0 ) < 0 ) {
 		debugPrint( "Send failed" );
-		logger.open();
-		_log( "Send failed" );
+		// logger.open();
+		// _log( "Send failed" );
 		return 1;
 	}
 	_count++;
@@ -73,10 +74,10 @@ int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 	return 0;
 }
 
-void ActionTracer::Packager::_log( std::string data ) {
-	std::time_t t	= std::time( 0 ); // get time now
-	std::tm *	now = std::localtime( &t );
-	_logger			= fopen( "packager.log", "w" );
-	fprintf( _logger, "%4d-%2d-%2d @  %2d:%2d:%2d-> %s\n", now->tm_year + 1900, ( now->tm_mon + 1 ), now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec, data.c_str() );
-	fclose( _logger );
-}
+// void ActionTracer::Packager::_log( std::string data ) {
+// 	std::time_t t	= std::time( 0 ); // get time now
+// 	std::tm *	now = std::localtime( &t );
+// 	_logger			= fopen( "packager.log", "w" );
+// 	fprintf( _logger, "%4d-%2d-%2d @  %2d:%2d:%2d-> %s\n", now->tm_year + 1900, ( now->tm_mon + 1 ), now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec, data.c_str() );
+// 	fclose( _logger );
+// }

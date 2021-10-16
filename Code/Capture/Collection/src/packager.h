@@ -9,7 +9,6 @@
 #include <string.h> //strlen
 #include <sys/socket.h>
 
-
 namespace ActionTracer {
 	class Packager {
 	  private:
@@ -17,7 +16,6 @@ namespace ActionTracer {
 		int			_port;
 		int			_descriptor;
 		__uint32_t	_count;
-		File *		_logger;
 		std::string _float_to_string( float value, int prec );
 		void		_log( std::string data );
 

@@ -3,7 +3,7 @@
 
 #define SEND_TO_MOBILE
 
-#define SERVER_IP  "192.168.137.1" // Server IP where data will be sent to
+#define SERVER_IP  "192.168.1.102" // Server IP where data will be sent to
 #define MOBILE_IP  "127.0.0.1"	   // Mobile IP where data will be sent to
 #define PORT	   9022			   // Main UDP data port for the data to be sent through
 #define N		   3			   // Number of points track on the body.
