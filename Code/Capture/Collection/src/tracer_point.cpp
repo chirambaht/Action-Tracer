@@ -55,14 +55,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 #if DEBUG == 1
 	debugPrint( "Init variable dump\n" );
 
-	debugPrint( """
-		Device Name:		%s
-		Pin number:			%d
-		Output data:		%d
-		DMP Status:			%d
-
-		FIFO Packet Size:	%d
-	""",_device_name.c_str(), _pin_number, output_data, _dmp_status, _packet_size);
+	debugPrint( "\n\tDevice Name:\t\t%s\tPin number:\t\t\t%d\tOutput data:\t\t%d\tDMP Status:\t\t\t%d\tFIFO Packet Size:\t%d", _device_name.c_str(), _pin_number, output_data, _dmp_status, _packet_size );
 #endif
 }
 
