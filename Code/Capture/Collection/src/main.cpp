@@ -51,6 +51,7 @@ void loop() {
 		debugPrint( "%2d - %s\n", i + 1, body_sensor[i]->identify().c_str() );
 	}
 #endif
+
 	float data_package[N * 4];
 
 	for( size_t i = 0; i < N; i++ ) {

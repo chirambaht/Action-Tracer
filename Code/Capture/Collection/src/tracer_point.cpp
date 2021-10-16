@@ -25,13 +25,6 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	_device->initialize();
 	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
 
-	// _device->setXAccelOffset( 33 );
-	// _device->setYAccelOffset( 29 );
-	// _device->setZAccelOffset( 61 );
-	// _device->setXGyroOffset( -105 );
-	// _device->setYGyroOffset( 1443 );
-	// _device->setZGyroOffset( 4945 );
-
 	_device->setXAccelOffset( 44 );
 	_device->setYAccelOffset( 25 );
 	_device->setZAccelOffset( 74 );
@@ -58,18 +51,20 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	uint8_t inters = _device->getIntStatus();
 	debugPrintln( "Interrupts: %d", inters );
 	this->_deselect_me();
+
+#if DEBUG == 1
+	debugPrint( "Init variable dump\n" );
+
+	debugPrint( """
+		Device Name:		%s
+		Pin number:			%d
+		Output data:		%d
+		DMP Status:			%d
+
+		FIFO Packet Size:	%d
+	""",_device_name.c_str(), _pin_number, output_data, _dmp_status, _packet_size);
+#endif
 }
-
-// ActionTracer::TracePoint ActionTracer::TracePoint::operator=( const ActionTracer::TracePoint &other ) const {
-// 	TracePoint result;
-
-// 	result._device			 = _device;
-// 	result._device_name		 = _device_name;
-// 	result._pin_number		 = _pin_number;
-// 	result._output_data_type = _output_data_type;
-
-// 	return result;
-// }
 
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
  * @return 0 if all gows well.
