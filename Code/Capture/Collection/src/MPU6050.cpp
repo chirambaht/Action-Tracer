@@ -2728,6 +2728,12 @@ uint16_t MPU6050::getFIFOCount() {
 	return ( ( ( uint16_t ) buffer[0] ) << 8 ) | buffer[1];
 }
 
+uint8_t MPU6050::dmpReadInterrupts() {
+	uint8_t v = 0;
+	I2Cdev::readBytes( devAddr, MPU6050_RA_DMP_INT_STATUS, 1, &v );
+	return v;
+}
+
 // FIFO_R_W register
 
 /** Get byte from FIFO buffer.
