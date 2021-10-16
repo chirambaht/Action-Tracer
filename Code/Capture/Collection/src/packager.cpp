@@ -69,7 +69,7 @@ int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 		return 1;
 	}
 	_count++;
-	_log( arr.c_str() );
+	// _log( arr.c_str() );
 
 	return 0;
 }
