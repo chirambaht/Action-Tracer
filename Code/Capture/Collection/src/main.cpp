@@ -1,7 +1,8 @@
 // This is the main file that will be used to run the program for data
 // collection from the 3 IMU's and send them to the server as is necesarry.
-#include "debug_printer.h"
 #include "main.h"
+
+#include "debug_printer.h"
 
 #include <dirent.h>
 #include <filesystem>
@@ -33,20 +34,23 @@ void setup() {
 
 	TracePoint *a = new TracePoint( "Left Shoulder", 2, 0 );
 	TracePoint *b = new TracePoint( "Left Forearm", 2, 0 );
-	TracePoint *c = new TracePoint( "Left Hand", 2, 0 );
+	// TracePoint *c = new TracePoint( "Left Hand", 2, 0 );
 
 	body_sensor[0] = a;
 	body_sensor[1] = b;
-	body_sensor[2] = c;
-
-	debugPrint( "Looking at sensor 0, Left Shoulder\n" );
-	body_sensor[0]->identify();
+	// body_sensor[2] = c;
 }
 
 /*
   Main work loop for all the code. This will always run every cycle.
 */
 void loop() {
+#if DEBUG == 1
+	debugPrint( "Devices connected are:\n" );
+	for( size_t i = 0; i < N; i++ ) {
+		debugPrint( "%2d - %s\n", i + 1, body_sensor[i].identify() );
+	}
+#endif
 	float data_package[N * 4];
 
 	for( size_t i = 0; i < N; i++ ) {

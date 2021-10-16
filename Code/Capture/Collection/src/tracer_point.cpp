@@ -1,6 +1,7 @@
+#include "tracer_point.h"
+
 #include "MPU6050_6Axis_MotionApps20.h"
 #include "debug_printer.h"
-#include "tracer_point.h"
 
 #include <wiringPi.h>
 
@@ -133,7 +134,7 @@ void ActionTracer::TracePoint::get_data() {
 	_fifo_count = _device->getFIFOCount();
 
 	if( _fifo_count >= 1024 ) {
-		debugPrintln( "%s: FIFO overflow!\n", _device_name.c_str() );
+		debugPrintln( "\n == == == == == == == == ==\n\n%s: FIFO overflow!\n\n == == == == == == == == ==\n\n\n", _device_name.c_str() );
 		_device->resetFIFO();
 	}
 
