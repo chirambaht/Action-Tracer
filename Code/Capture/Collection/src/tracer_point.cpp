@@ -121,7 +121,7 @@ void ActionTracer::TracePoint::get_data() {
 	_fifo_count = _device->getFIFOCount();
 
 	if( _fifo_count >= 1024 ) {
-		debugPrintln( "\n == == == == == == == == ==\n\n%s: FIFO overflow!\n\n == == == == == == == == ==\n\n\n", _device_name.c_str() );
+		debugPrintln( "\n == == == == == == == == ==\n\n%s: FIFO overflow!\n\n == == == == == == == == ==\n\nFifo count is: %d\n", _device_name.c_str(), _fifo_count );
 		_device->resetFIFO();
 	}
 
