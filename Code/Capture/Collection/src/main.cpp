@@ -39,19 +39,20 @@ void setup() {
 	body_sensor[0] = a;
 	body_sensor[1] = b;
 	// body_sensor[2] = c;
+
+#if DEBUG == 1
+	debugPrint( "Devices connected are:\n" );
+	for( size_t i = 0; i < N; i++ ) {
+		debugPrint( "%2d - ", i + 1 );
+		body_sensor[i]->identify();
+	}
+#endif
 }
 
 /*
   Main work loop for all the code. This will always run every cycle.
 */
 void loop() {
-#if DEBUG == 1
-	debugPrint( "Devices connected are:\n" );
-	for( size_t i = 0; i < N; i++ ) {
-		debugPrint( "%2d - %s\n", i + 1, body_sensor[i]->identify().c_str() );
-	}
-#endif
-
 	float data_package[N * 4];
 
 	for( size_t i = 0; i < N; i++ ) {
