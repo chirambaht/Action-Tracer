@@ -2083,6 +2083,10 @@ const unsigned char dmpMemory[MPU6050_DMP_CODE_SIZE] PROGMEM = {
 	#define MPU6050_DMP_FIFO_RATE_DIVISOR 0x01 // The New instance of the Firmware has this as the default
 #endif
 
+uint8_t MPU6050::dmpReadInterrupts() {
+	I2Cdev::readBytes( devAddr, MPU6050_RA_DMP_INT_STATUS, 1, buffer );
+	return buffer;
+}
 // I Simplified this:
 uint8_t MPU6050::dmpInitialize() {
 	// reset device

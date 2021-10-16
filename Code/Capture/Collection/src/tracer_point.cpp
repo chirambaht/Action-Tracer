@@ -133,6 +133,7 @@ void ActionTracer::TracePoint::get_data() {
 
 	inters = _device->getIntStatus();
 	debugPrintln( "Interrupts 2: %d\n", inters );
+	debugPrintln( "DMP Interrupt: %d\n", _device->dmpReadInterrupts() );
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
 			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
