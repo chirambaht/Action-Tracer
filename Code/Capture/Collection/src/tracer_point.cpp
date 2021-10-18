@@ -153,6 +153,7 @@ void ActionTracer::TracePoint::get_data() {
 			_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
 			break;
 		case GET_DATA_ACCELEROMETER:
+			debugPrint( "Getting accel data\n" );
 			_device->dmpGetAccel( &_acceleration_packet );
 
 			_acceleration_float_packet[0] = _acceleration_packet.x;
@@ -160,6 +161,7 @@ void ActionTracer::TracePoint::get_data() {
 			_acceleration_float_packet[2] = _acceleration_packet.z;
 
 			_device->getAcceleration( &x, &y, &z );
+			debugPrint( "Obtained: %d - %d - %d\n", x, y, z );
 			switch( fsrHere ) {
 				case 0:
 					divisorHere = 8.192;
