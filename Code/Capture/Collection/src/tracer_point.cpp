@@ -154,29 +154,30 @@ void ActionTracer::TracePoint::get_data() {
 			_acceleration_float_packet[2] = _acceleration_packet.z;
 
 #if DEBUG == 1
-			uint8_t fsr		= _device->getFullScaleAccelRange();
-			float	divisor = 0.0;
+			uint8_t fsrHere		= _device->getFullScaleAccelRange();
+			float	divisorHere = 0.0;
 			int16_t x, y, z;
 			_device->getAcceleration( &x, &y, &z );
-			switch( fsr ) {
+			switch( fsrHere ) {
 				case 0:
-					divisor = 8.192;
+					divisorHere = 8.192;
 					break;
 				case 1:
-					divisor = 4.096;
+					divisorHere = 4.096;
 					break;
 				case 2:
-					divisor = 2.048;
+					divisorHere = 2.048;
 					break;
 				case 3:
-					divisor = 1.024;
+					divisorHere = 1.024;
 					break;
 
 				default:
+					divisorHere = 1.024;
 					break;
 			}
 
-			debugPrint( "Got: \n%7f %7f %7f\nvs\n%7f %7f %7f", x * divisor, y * divisor, z * divisor, _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[3] )
+			debugPrint( "Got: \n%7f %7f %7f\nvs\n%7f %7f %7f", x * divisorHere, y * divisorHere, z * divisorHere, _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[3] )
 #endif
 				break;
 		case GET_DATA_GYROSCOPE:
