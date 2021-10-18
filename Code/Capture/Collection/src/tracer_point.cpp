@@ -137,7 +137,7 @@ void ActionTracer::TracePoint::get_data() {
 	// This has to go
 	uint8_t fsrHere		= _device->getFullScaleAccelRange();
 	float	divisorHere = 0.0;
-	int16_t x, y, z;
+	int16_t x = 0, y = 0, z = 0;
 
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
@@ -155,11 +155,12 @@ void ActionTracer::TracePoint::get_data() {
 		case GET_DATA_ACCELEROMETER:
 			debugPrint( "Getting accel data\n" );
 			_device->dmpGetAccel( &_acceleration_packet );
-
+			debugPrint( "Got from dmp\n" );
 			_acceleration_float_packet[0] = _acceleration_packet.x;
 			_acceleration_float_packet[1] = _acceleration_packet.y;
 			_acceleration_float_packet[2] = _acceleration_packet.z;
 
+			debugPrint( "Packaged\n" );
 			_device->getAcceleration( &x, &y, &z );
 			debugPrint( "Obtained: %d - %d - %d\n", x, y, z );
 			switch( fsrHere ) {
