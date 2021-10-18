@@ -154,7 +154,7 @@ void ActionTracer::TracePoint::get_data() {
 			break;
 		case GET_DATA_ACCELEROMETER:
 			debugPrint( "Getting accel data\n" );
-			_device->dmpGetAccel( &_acceleration_packet );
+			_device->dmpGetAccel( &_acceleration_packet, _fifo_buffer );
 			debugPrint( "Got from dmp\n" );
 			_acceleration_float_packet[0] = _acceleration_packet.x;
 			_acceleration_float_packet[1] = _acceleration_packet.y;
