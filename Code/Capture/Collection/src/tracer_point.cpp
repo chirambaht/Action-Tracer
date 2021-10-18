@@ -178,7 +178,7 @@ void ActionTracer::TracePoint::get_data() {
 					break;
 			}
 
-			debugPrint( "Got: \n%7f %7f %7f\nvs\n%7f %7f %7f", x * divisorHere, y * divisorHere, z * divisorHere, _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[3] );
+			debugPrint( "Got: \n%7f %7f %7f\nvs\n%7f %7f %7f", x * divisorHere, y * divisorHere, z * divisorHere, _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
 			break;
 		case GET_DATA_GYROSCOPE:
 			_device->dmpGetGyro( &_gyroscope_packet );
