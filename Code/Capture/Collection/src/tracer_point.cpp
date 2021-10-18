@@ -1,7 +1,6 @@
-#include "tracer_point.h"
-
 #include "MPU6050_6Axis_MotionApps20.h"
 #include "debug_printer.h"
+#include "tracer_point.h"
 
 #include <wiringPi.h>
 
@@ -149,10 +148,37 @@ void ActionTracer::TracePoint::get_data() {
 			break;
 		case GET_DATA_ACCELEROMETER:
 			_device->dmpGetAccel( &_acceleration_packet );
+
 			_acceleration_float_packet[0] = _acceleration_packet.x;
 			_acceleration_float_packet[1] = _acceleration_packet.y;
 			_acceleration_float_packet[2] = _acceleration_packet.z;
-			break;
+
+#if DEBUG == 1
+			uint8_t fsr		= _device->getFullScaleAccelRange();
+			float	divisor = 0.0;
+			int16_t x, y, z;
+			_device->getAcceleration( &x, &y, &z );
+			switch( fsr ) {
+				case 0:
+					divisor = 8.192;
+					break;
+				case 1:
+					divisor = 4.096;
+					break;
+				case 2:
+					divisor = 2.048;
+					break;
+				case 3:
+					divisor = 1.024;
+					break;
+
+				default:
+					break;
+			}
+
+			debugPrint( "Got: \n%7f %7f %7f\nvs\n%7f %7f %7f", x * divisor, y * divisor, z * divisor, _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[3] )
+#endif
+				break;
 		case GET_DATA_GYROSCOPE:
 			_device->dmpGetGyro( &_gyroscope_packet );
 			_gyroscope_float_packet[0] = _gyroscope_packet.x;
@@ -186,7 +212,6 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
-			debugPrint( "\tFetched: x: %4.2f, y: %4.2f, z: %4.2f, w: %4.2f\n", _quaternion_packet.x, _quaternion_packet.y, _quaternion_packet.z, _quaternion_packet.w );
 			return _quaternion_float_packet;
 		case GET_DATA_EULER:
 			return _euler_packet;
@@ -197,7 +222,6 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 		case GET_DATA_YAWPITCHROLL:
 			return _yaw_pitch_roll_packet;
 		default:
-			debugPrint( "Fetched: x: %4.2f, y: %4.2f, z: %4.2f, w: %4.2f", _quaternion_packet.x, _quaternion_packet.y, _quaternion_packet.z, _quaternion_packet.w );
 			return _quaternion_float_packet;
 	}
 }

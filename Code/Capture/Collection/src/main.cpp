@@ -1,8 +1,7 @@
 // This is the main file that will be used to run the program for data
 // collection from the 3 IMU's and send them to the server as is necesarry.
-#include "main.h"
-
 #include "debug_printer.h"
+#include "main.h"
 
 #include <dirent.h>
 #include <filesystem>
