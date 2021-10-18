@@ -133,6 +133,12 @@ void ActionTracer::TracePoint::get_data() {
 	inters = _device->getIntStatus();
 	debugPrintln( "Interrupts 2: %d\n", inters );
 	debugPrintln( "DMP Interrupt: %d\n", _device->dmpReadInterrupts() );
+
+	// This has to go
+	uint8_t fsrHere		= _device->getFullScaleAccelRange();
+	float	divisorHere = 0.0;
+	int16_t x, y, z;
+
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
 			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
@@ -153,9 +159,6 @@ void ActionTracer::TracePoint::get_data() {
 			_acceleration_float_packet[1] = _acceleration_packet.y;
 			_acceleration_float_packet[2] = _acceleration_packet.z;
 
-			uint8_t fsrHere		= _device->getFullScaleAccelRange();
-			float	divisorHere = 0.0;
-			int16_t x, y, z;
 			_device->getAcceleration( &x, &y, &z );
 			switch( fsrHere ) {
 				case 0:
