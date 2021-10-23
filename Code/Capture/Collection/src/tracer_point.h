@@ -1,7 +1,7 @@
 #ifndef _TRACER_POINT_H_
 #define _TRACER_POINT_H_
 
-#include "MPU6050.h"
+#include "MPU6050_6Axis_MotionApps20.h"
 
 #include <string>
 
