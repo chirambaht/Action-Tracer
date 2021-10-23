@@ -68,10 +68,8 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	}
 	this->_deselect_me();
 
-#ifdef DEBUG == 1
 	debugPrint( "Init variable dump\n" );
 	debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
-#endif
 }
 
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
