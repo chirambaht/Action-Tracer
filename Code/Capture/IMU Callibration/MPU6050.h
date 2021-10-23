@@ -43,7 +43,7 @@ THE SOFTWARE.
 // supporting link:  http://forum.arduino.cc/index.php?&topic=143444.msg1079517#msg1079517
 // also: http://forum.arduino.cc/index.php?&topic=141571.msg1062899#msg1062899s
 
-#define MPU6050_INCLUDE_DMP_MOTIONAPPS20
+// #define MPU6050_INCLUDE_DMP_MOTIONAPPS20
 #define pgm_read_byte( p ) ( *( uint8_t * ) ( p ) )
 
 #define MPU6050_ADDRESS_AD0_LOW	 0x68 // address pin low (GND), default for InvenSense evaluation board
