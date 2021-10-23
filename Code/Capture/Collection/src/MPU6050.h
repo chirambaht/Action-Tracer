@@ -926,11 +926,12 @@ class MPU6050 {
 	uint32_t dmpGetAccelSumOfSquare();
 	void	 dmpOverrideQuaternion( long *q );
 	uint16_t dmpGetFIFOPacketSize();
+	uint8_t	 dmpGetCurrentFIFOPacket( uint8_t *data ) // overflow
 #endif
 
 // special methods for MotionApps 4.1 implementation
 #ifdef MPU6050_INCLUDE_DMP_MOTIONAPPS41
-	uint8_t *dmpPacketBuffer;
+		uint8_t *dmpPacketBuffer;
 	uint16_t dmpPacketSize;
 
 	uint8_t dmpInitialize();
