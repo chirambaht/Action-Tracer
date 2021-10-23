@@ -34,9 +34,14 @@ THE SOFTWARE.
 
 // MotionApps 2.0 DMP implementation, built using the MPU-6050EVB evaluation board
 #define MPU6050_INCLUDE_DMP_MOTIONAPPS20
-
 #include "MPU6050.h"
 #include "debug_printer.h"
+
+#include <cmath>
+#include <cstring>
+#include <unistd.h>
+
+#define delay( x ) usleep( x * 1000 )
 
 // Tom Carpenter's conditional PROGMEM code
 // http://forum.arduino.cc/index.php?topic=129407.0
@@ -2085,7 +2090,7 @@ uint8_t MPU6050::dmpInitialize() {
 	setMemoryStartAddress( 0x06 );
 	debugPrintln( F( "Checking hardware revision..." ) );
 	debugPrint( F( "Revision @ user[16][6] = " ) );
-	debugPrintln( readMemoryByte() );
+	debugPrintln( "%d", readMemoryByte() );
 	debugPrintln( F( "Resetting memory bank selection to 0..." ) );
 
 	setMemoryBank( 0, false, false );
@@ -2125,7 +2130,7 @@ uint8_t MPU6050::dmpInitialize() {
 
 	// load DMP code into memory banks
 	debugPrint( F( "Writing DMP code to MPU memory banks (" ) );
-	debugPrint( MPU6050_DMP_CODE_SIZE );
+	debugPrint( "%d", MPU6050_DMP_CODE_SIZE );
 	debugPrintln( F( " bytes)" ) );
 	if( !writeProgMemoryBlock( dmpMemory, MPU6050_DMP_CODE_SIZE ) )
 		return 1; // Failed
