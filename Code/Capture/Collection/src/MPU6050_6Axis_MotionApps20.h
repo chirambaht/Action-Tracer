@@ -2095,7 +2095,7 @@ uint8_t MPU6050::dmpInitialize() {
 	// get MPU hardware revision
 	setMemoryBank( 0x10, true, true );
 	setMemoryStartAddress( 0x06 );
-	debugPrintln( "Hardware revision %d.\n" );
+	debugPrintln( "Hardware revision %d.\n", readMemoryByte() );
 
 	setMemoryBank( 0, false, false );
 
@@ -2114,7 +2114,6 @@ uint8_t MPU6050::dmpInitialize() {
 
 	setRate( 4 ); // 1khz / (1 + 4) = 200 Hz
 
-	DEBUG_PRINTLN( F( "Setting external frame sync to TEMP_OUT_L[0]..." ) );
 	setExternalFrameSync( MPU6050_EXT_SYNC_TEMP_OUT_L );
 
 	setDLPFMode( MPU6050_DLPF_BW_42 );
