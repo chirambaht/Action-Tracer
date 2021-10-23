@@ -35,8 +35,8 @@ namespace ActionTracer {
 		float		_euler_packet[3];
 		float		_yaw_pitch_roll_packet[3];
 
-		int _select_me();
-		int _deselect_me();
+		void _select_me();
+		void _deselect_me();
 
 	  public:
 		// Creates and inits a device
