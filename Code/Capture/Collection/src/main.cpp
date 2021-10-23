@@ -62,10 +62,10 @@ void loop() {
 			data_package[j + ( i * 4 )] = *body;
 			body++;
 		}
-		debugPrintln( "\n===== === %s === ====\n", "END" );
 	}
 
 	communicator->send_packet( data_package, N * 4 );
+	debugPrintln( "\n===== === %s === ====\n", "END" );
 
 	usleep( LOOP_DELAY * 1000 );
 }
