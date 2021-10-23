@@ -43,16 +43,6 @@ std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 
 int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 	std::string arr = "";
 
-#if DEBUG == 1
-	std::string db_arr = "";
-	for( int i = 0; i < length; i++ ) {
-		db_arr += _float_to_string( data[i], 2 );
-		if( i != length - 1 ) {
-			db_arr += ", ";
-		}
-	}
-	debugPrint( "%7d - %s:%d\n%s\n\n", _count, _dest.c_str(), _port, db_arr.c_str() );
-#endif
 	// Convert floats to string
 	for( int i = 0; i < length; i++ ) {
 		arr += _float_to_string( data[i], 6 );
@@ -60,6 +50,8 @@ int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 			arr += ", ";
 		}
 	}
+
+	debugPrint( "%7d - %s:%d\n%s\n\n", _count, _dest.c_str(), _port, arr.c_str() );
 
 	// Send some data
 	if( send( _descriptor, arr.c_str(), strlen( arr.c_str() ), 0 ) < 0 ) {

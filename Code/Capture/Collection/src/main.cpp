@@ -62,10 +62,11 @@ void loop() {
 			data_package[j + ( i * 4 )] = *body;
 			body++;
 		}
+		debugPrintln( "\n=^^== =^= %s =^= =^^=\n", body_sensor[i]->get_name().c_str() );
 	}
 
 	communicator->send_packet( data_package, N * 4 );
-	debugPrintln( "\n===== === %s === ====\n", "END" );
+	debugPrintln( "\n===== === %s === ====\n", "END OF CYCLE" );
 
 	usleep( LOOP_DELAY * 1000 );
 }
