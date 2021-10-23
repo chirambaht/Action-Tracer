@@ -2086,7 +2086,7 @@ const unsigned char dmpMemory[MPU6050_DMP_CODE_SIZE] PROGMEM = {
 // I Simplified this:
 uint8_t MPU6050::dmpInitialize() {
 	// reset device
-	DEBUG_PRINTLN( F( "\n\nResetting MPU6050..." ) );
+	debugPrint( F( "\n\nResetting MPU6050..." ) );
 	reset();
 	usleep( 30000 ); //delay(30); // wait after reset
 
@@ -2095,14 +2095,19 @@ uint8_t MPU6050::dmpInitialize() {
 	// get MPU hardware revision
 	setMemoryBank( 0x10, true, true );
 	setMemoryStartAddress( 0x06 );
+	debugPrintln( "Hardware revision %d.\n" );
 
 	setMemoryBank( 0, false, false );
 
+	debugPrintln( "OTP bank is %s\n", ( getOTPBankValid() ) ? "valid" : "invalid" );
+
 	setSlaveAddress( 0, 0x7F );
+
 	setI2CMasterModeEnabled( false );
+
 	setSlaveAddress( 0, 0x68 );
 	resetI2CMaster();
-	usleep( 30000 ); //delay(20);
+	usleep( 20000 ); //delay(20);
 	setClockSource( MPU6050_CLOCK_PLL_ZGYRO );
 
 	setIntEnabled( 1 << MPU6050_INTERRUPT_FIFO_OFLOW_BIT | 1 << MPU6050_INTERRUPT_DMP_INT_BIT );
