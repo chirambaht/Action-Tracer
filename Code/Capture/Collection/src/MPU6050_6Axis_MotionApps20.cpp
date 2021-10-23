@@ -37,10 +37,10 @@ THE SOFTWARE.
 #include "MPU6050.h"
 #include "debug_printer.h"
 
-#include <cmath>
 #include <cstring>
 #include <unistd.h>
 
+#define PI		   3.14159265358979323846 /* pi */
 #define delay( x ) usleep( x * 1000 )
 
 // Tom Carpenter's conditional PROGMEM code
