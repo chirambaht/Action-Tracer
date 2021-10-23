@@ -5,23 +5,12 @@
 
 #include <string>
 
-#define OK	  0
-#define ERROR 1
-
-#define GET_DATA_QUATERNION	   0
-#define GET_DATA_EULER		   1
-#define GET_DATA_ALL		   2
-#define GET_DATA_GYROSCOPE	   3
-#define GET_DATA_ACCELEROMETER 4
-#define GET_DATA_YAWPITCHROLL  5
-
 namespace ActionTracer {
 	class TracePoint {
 	  private:
 		MPU6050 *	_device;
 		std::string _device_name;
 		int			_pin_number;
-		uint8_t		_output_data_type;
 
 		uint8_t _device_status;
 
@@ -52,7 +41,7 @@ namespace ActionTracer {
 	  public:
 		// Creates and inits a device
 		//I dont know what this is but I love you
-		TracePoint( std::string name, int wiring_Pi_pin_number, int output_data );
+		TracePoint( std::string name, int wiring_Pi_pin_number );
 		TracePoint();
 
 		~TracePoint();
@@ -61,11 +50,10 @@ namespace ActionTracer {
 
 		std::string get_name();
 		MPU6050		get_device();
-		void		get_data();						  // Gets data from the device it is attached to
-		float *		read_data( int get_data );		  // Reads the internally stored data and optionally fetches data first
-		std::string identify();						  // Blinks the sensor for 5 seconds. Realistically, it is raising the interupt line for the device in quesion
-		void		print_last_data_packet();		  // Prints the last data packet obtained by this node
-		void		set_output_data_type( int type ); // Set which data type to get back in the packets.
+		void		get_data();				   // Gets data from the device it is attached to
+		float *		read_data( int get_data ); // Reads the internally stored data and optionally fetches data first
+		std::string identify();				   // Blinks the sensor for 5 seconds. Realistically, it is raising the interupt line for the device in quesion
+		void		print_last_data_packet();  // Prints the last data packet obtained by this node
 	};
 } // namespace ActionTracer
 
