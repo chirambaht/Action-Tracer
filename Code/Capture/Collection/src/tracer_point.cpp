@@ -181,19 +181,19 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 		debugPrint( "Obtained data from %s:\n", _device_name.c_str() );
 	}
 
-#if GET_DATA_QUATERNION:
+#if GET_DATA_QUATERNION
 	return _quaternion_float_packet;
 #endif
-#if GET_DATA_EULER:
+#if GET_DATA_EULER
 	return _euler_packet;
 #endif
-#if GET_DATA_ACCELEROMETER:
+#if GET_DATA_ACCELEROMETER
 	return _acceleration_float_packet;
 #endif
-#if GET_DATA_GYROSCOPE:
+#if GET_DATA_GYROSCOPE
 	return _gyroscope_float_packet;
 #endif
-#if GET_DATA_YAWPITCHROLL:
+#if GET_DATA_YAWPITCHROLL
 	return _yaw_pitch_roll_packet;
 #endif
 }
