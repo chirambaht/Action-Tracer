@@ -9,8 +9,8 @@
 #define GET_DATA_QUATERNION
 // #define GET_DATA_EULER
 // #define GET_DATA_ALL
-#define GET_DATA_GYROSCOPE
-#define GET_DATA_ACCELEROMETER
+// #define GET_DATA_GYROSCOPE
+// #define GET_DATA_ACCELEROMETER
 // #define GET_DATA_YAWPITCHROLL
 
 using namespace ActionTracer;
