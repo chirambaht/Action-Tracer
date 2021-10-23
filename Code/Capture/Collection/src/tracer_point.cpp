@@ -132,15 +132,6 @@ void ActionTracer::TracePoint::get_data() {
 	_device_interrupt_flag	 = false;
 	_device_interrupt_status = _device->getIntStatus();
 
-	inters = _device->getIntStatus();
-	debugPrintln( "Interrupts 2: %d\n", inters );
-	debugPrintln( "DMP Interrupt: %d\n", _device->dmpReadInterrupts() );
-
-	// This has to go
-	uint8_t fsrHere		= _device->getFullScaleAccelRange();
-	float	divisorHere = 0.0;
-	int16_t x = 0, y = 0, z = 0;
-
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
 			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
@@ -155,35 +146,9 @@ void ActionTracer::TracePoint::get_data() {
 			_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
 			break;
 		case GET_DATA_ACCELEROMETER:
-			debugPrint( "Getting accel data\n" );
-			_device->dmpGetAccel( &_acceleration_packet, _fifo_buffer );
-			debugPrint( "Got from dmp\n" );
 			_acceleration_float_packet[0] = _acceleration_packet.x;
 			_acceleration_float_packet[1] = _acceleration_packet.y;
 			_acceleration_float_packet[2] = _acceleration_packet.z;
-
-			debugPrint( "Packaged\n" );
-			_device->getAcceleration( &x, &y, &z );
-			debugPrint( "Obtained: %d - %d - %d\n", x, y, z );
-			switch( fsrHere ) {
-				case 0:
-					divisorHere = 8.192;
-					break;
-				case 1:
-					divisorHere = 4.096;
-					break;
-				case 2:
-					divisorHere = 2.048;
-					break;
-				case 3:
-					divisorHere = 1.024;
-					break;
-				default:
-					divisorHere = 1.024;
-					break;
-			}
-
-			debugPrint( "Got: \n%7f %7f %7f\nvs\n%7f %7f %7f", x * divisorHere, y * divisorHere, z * divisorHere, _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
 			break;
 		case GET_DATA_GYROSCOPE:
 			_device->dmpGetGyro( &_gyroscope_packet );
