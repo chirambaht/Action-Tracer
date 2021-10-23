@@ -68,7 +68,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	}
 	this->_deselect_me();
 
-#if DEBUG == 1
+#ifdef DEBUG == 1
 	debugPrint( "Init variable dump\n" );
 	debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
 #endif
@@ -99,19 +99,23 @@ std::string ActionTracer::TracePoint::identify() {
 }
 
 void ActionTracer::TracePoint::print_last_data_packet() {
-#if GET_DATA_QUATERNION
+#ifdef GET_DATA_QUATERNION
 	debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
 #endif
-#if GET_DATA_EULER
+
+#ifdef GET_DATA_EULER
 	debugPrint( "Output data type: Euler\nLast packet was: %5f, %5f, %5f\n", _euler_packet[0], _euler_packet[1], _euler_packet[2] );
 #endif
-#if GET_DATA_ACCELEROMETER
+
+#ifdef GET_DATA_ACCELEROMETER
 	debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
 #endif
-#if GET_DATA_GYROSCOPE
+
+#ifdef GET_DATA_GYROSCOPE
 	debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _gyroscope_float_packet[0], _gyroscope_float_packet[1], _gyroscope_float_packet[2] );
 #endif
-#if GET_DATA_YAWPITCHROLL
+
+#ifdef GET_DATA_YAWPITCHROLL
 	debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
 #endif
 }
@@ -132,7 +136,7 @@ void ActionTracer::TracePoint::get_data() {
 	_device_interrupt_flag	 = false;
 	_device_interrupt_status = _device->getIntStatus();
 
-#if GET_DATA_QUATERNION
+#ifdef GET_DATA_QUATERNION
 	_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
 
 	_quaternion_float_packet[0] = _quaternion_packet.w;
@@ -141,20 +145,20 @@ void ActionTracer::TracePoint::get_data() {
 	_quaternion_float_packet[3] = _quaternion_packet.z;
 #endif
 
-#if GET_DATA_EULER
+#ifdef GET_DATA_EULER
 	_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
 	_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
 #endif
 
-#if GET_DATA_ACCELEROMETER
-
+#ifdef GET_DATA_ACCELEROMETER
 	_device->dmpGetAccel( &_acceleration_packet, _fifo_buffer );
+
 	_acceleration_float_packet[0] = _acceleration_packet.x;
 	_acceleration_float_packet[1] = _acceleration_packet.y;
 	_acceleration_float_packet[2] = _acceleration_packet.z;
 #endif
 
-#if GET_DATA_GYROSCOPE
+#ifdef GET_DATA_GYROSCOPE
 	_device->dmpGetGyro( &_gyroscope_packet, _fifo_buffer );
 
 	_gyroscope_float_packet[0] = _gyroscope_packet.x;
@@ -162,7 +166,7 @@ void ActionTracer::TracePoint::get_data() {
 	_gyroscope_float_packet[2] = _gyroscope_packet.z;
 #endif
 
-#if GET_DATA_YAWPITCHROLL
+#ifdef GET_DATA_YAWPITCHROLL
 	_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
 	_device->dmpGetGravity( &_gravity_packet, &_quaternion_packet );
 	_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet[0], &_quaternion_packet, &_gravity_packet );
@@ -179,19 +183,19 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 		debugPrint( "Obtained data from %s:\n", _device_name.c_str() );
 	}
 
-#if GET_DATA_QUATERNION
+#ifdef GET_DATA_QUATERNION
 	return _quaternion_float_packet;
 #endif
-#if GET_DATA_EULER
+#ifdef GET_DATA_EULER
 	return _euler_packet;
 #endif
-#if GET_DATA_ACCELEROMETER
+#ifdef GET_DATA_ACCELEROMETER
 	return _acceleration_float_packet;
 #endif
-#if GET_DATA_GYROSCOPE
+#ifdef GET_DATA_GYROSCOPE
 	return _gyroscope_float_packet;
 #endif
-#if GET_DATA_YAWPITCHROLL
+#ifdef GET_DATA_YAWPITCHROLL
 	return _yaw_pitch_roll_packet;
 #endif
 }
