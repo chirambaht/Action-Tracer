@@ -23,8 +23,12 @@ namespace ActionTracer {
 		int			_pin_number;
 		uint8_t		_output_data_type;
 
-		uint8_t _dmp_status;
+		uint8_t _device_status;
+
 		uint8_t _dmp_ready;
+
+		uint8_t _device_interrupt_status;
+		bool	_device_interrupt_flag;
 
 		uint8_t	 _fifo_buffer[64];
 		uint16_t _packet_size;

@@ -18,13 +18,23 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	// Set pin information
 	pinMode( _pin_number, OUTPUT );
+	_device_interrupt_flag = false;
 
 	debugPrint( "Initilizing %s...\n", _device_name.c_str() );
 	this->_select_me();
 	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
+
 	_device->initialize();
+
+	//TODO: At this stage an interrupt pin is initialised
+
 	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
 
+	// DMP Initialization
+	debugPrint( "Initalising DMP\n" );
+	_device_status = _device->dmpInitialize();
+
+	// Set up the offsets for the device
 	_device->setXAccelOffset( 44 );
 	_device->setYAccelOffset( 25 );
 	_device->setZAccelOffset( 74 );
@@ -32,24 +42,23 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	_device->setYGyroOffset( 1449 );
 	_device->setZGyroOffset( 4973 );
 
-	// DMP Initialization
-	_dmp_status = _device->dmpInitialize();
-	if( _dmp_status == 0 ) {
+	if( _device_status == 0 ) {
 		debugPrint( "Enabling DMP..." );
 		_device->setDMPEnabled( true );
+
+		//TODO: Attach interrupt here
+
+		_device_interrupt_status = _device->getIntStatus();
+
 		_dmp_ready = 1;
+
+		_packet_size = _device->dmpGetFIFOPacketSize();
+
 		debugPrint( "Enabled!\n" );
 	} else {
 		debugPrint( "Can't initialise DMP\n" );
 		_dmp_ready = 0;
 	}
-
-	// Reset the FIFO
-	_device->resetFIFO();
-	_packet_size = _device->dmpGetFIFOPacketSize();
-
-	uint8_t inters = _device->getIntStatus();
-	debugPrintln( "Interrupts: %d\n", inters );
 	this->_deselect_me();
 
 #if DEBUG == 1
@@ -110,67 +119,74 @@ void ActionTracer::TracePoint::print_last_data_packet() {
 void ActionTracer::TracePoint::get_data() {
 	this->_select_me();
 
-	uint8_t inters = _device->getIntStatus();
-	debugPrint( "Interrupts 1: %d\n", inters );
-
 	if( !_dmp_ready ) {
-		debugPrint( "DMP not initialised" );
+		debugPrint( "DMP not initialised\n" );
 		return;
 	}
 
+	if( _device_interrupt_flag && _fifo_count < _packet_size ) {
+		debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
+		return;
+	}
+
+	_device_interrupt_flag	 = false;
+	_device_interrupt_status = _device->getIntStatus();
+
 	_fifo_count = _device->getFIFOCount();
 
-	if( _fifo_count >= 1024 ) {
-		debugPrintln( "\n == == == == == == == == ==\n\n%s: FIFO overflow!\n\n == == == == == == == == ==\n\nFifo count is: %d\n", _device_name.c_str(), _fifo_count );
+	if( _device_interrupt_status & 0x10 || _fifo_count == 1024 ) {
 		_device->resetFIFO();
-	}
+		debugPrintln( "FIFO Overload (Inefficeint code)\n" );
+	} else if( _device_interrupt_status & 0x02 ) {
+		// Wait for the proper data length
+		while( _fifo_count < _packet_size ) {
+			_fifo_count = _device->getFIFOCount();
+		}
 
-	while( _fifo_count < 42 ) {
-		_fifo_count = _device->getFIFOCount();
-	}
+		// Read FIFO packet
+		_device->getFIFOBytes( _fifo_buffer, _packet_size );
 
-	_device->getFIFOBytes( _fifo_buffer, _packet_size );
+		// Track the FIFO (for more than one packet) and also allows reading without interrupt
+		_fifo_count -= _packet_size;
 
-	inters = _device->getIntStatus();
-	debugPrintln( "Interrupts 2: %d\n", inters );
-	debugPrintln( "DMP Interrupt: %d\n", _device->dmpReadInterrupts() );
-	switch( _output_data_type ) {
-		case GET_DATA_QUATERNION:
-			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+		switch( _output_data_type ) {
+			case GET_DATA_QUATERNION:
+				_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
 
-			_quaternion_float_packet[0] = _quaternion_packet.w;
-			_quaternion_float_packet[1] = _quaternion_packet.x;
-			_quaternion_float_packet[2] = _quaternion_packet.y;
-			_quaternion_float_packet[3] = _quaternion_packet.z;
-			break;
-		case GET_DATA_EULER:
-			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-			_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
-			break;
-		case GET_DATA_ACCELEROMETER:
-			_device->dmpGetAccel( &_acceleration_packet );
-			_acceleration_float_packet[0] = _acceleration_packet.x;
-			_acceleration_float_packet[1] = _acceleration_packet.y;
-			_acceleration_float_packet[2] = _acceleration_packet.z;
-			break;
-		case GET_DATA_GYROSCOPE:
-			_device->dmpGetGyro( &_gyroscope_packet );
-			_gyroscope_float_packet[0] = _gyroscope_packet.x;
-			_gyroscope_float_packet[1] = _gyroscope_packet.y;
-			_gyroscope_float_packet[2] = _gyroscope_packet.z;
-			break;
-		case GET_DATA_YAWPITCHROLL:
-			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-			_device->dmpGetGravity( &_gravity_packet, &_quaternion_packet );
-			_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet[0], &_quaternion_packet, &_gravity_packet );
-			break;
-		default:
-			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-			_quaternion_float_packet[0] = _quaternion_packet.w;
-			_quaternion_float_packet[1] = _quaternion_packet.x;
-			_quaternion_float_packet[2] = _quaternion_packet.y;
-			_quaternion_float_packet[3] = _quaternion_packet.z;
-			break;
+				_quaternion_float_packet[0] = _quaternion_packet.w;
+				_quaternion_float_packet[1] = _quaternion_packet.x;
+				_quaternion_float_packet[2] = _quaternion_packet.y;
+				_quaternion_float_packet[3] = _quaternion_packet.z;
+				break;
+			case GET_DATA_EULER:
+				_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+				_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
+				break;
+			case GET_DATA_ACCELEROMETER:
+				_device->dmpGetAccel( &_acceleration_packet );
+				_acceleration_float_packet[0] = _acceleration_packet.x;
+				_acceleration_float_packet[1] = _acceleration_packet.y;
+				_acceleration_float_packet[2] = _acceleration_packet.z;
+				break;
+			case GET_DATA_GYROSCOPE:
+				_device->dmpGetGyro( &_gyroscope_packet );
+				_gyroscope_float_packet[0] = _gyroscope_packet.x;
+				_gyroscope_float_packet[1] = _gyroscope_packet.y;
+				_gyroscope_float_packet[2] = _gyroscope_packet.z;
+				break;
+			case GET_DATA_YAWPITCHROLL:
+				_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+				_device->dmpGetGravity( &_gravity_packet, &_quaternion_packet );
+				_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet[0], &_quaternion_packet, &_gravity_packet );
+				break;
+			default:
+				_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+				_quaternion_float_packet[0] = _quaternion_packet.w;
+				_quaternion_float_packet[1] = _quaternion_packet.x;
+				_quaternion_float_packet[2] = _quaternion_packet.y;
+				_quaternion_float_packet[3] = _quaternion_packet.z;
+				break;
+		}
 	}
 
 	debugPrint( "Data fetched\n" );
