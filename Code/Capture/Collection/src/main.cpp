@@ -1,8 +1,7 @@
 // This is the main file that will be used to run the program for data
 // collection from the 3 IMU's and send them to the server as is necesarry.
-#include "main.h"
-
 #include "debug_printer.h"
+#include "main.h"
 
 #include <dirent.h>
 #include <filesystem>
@@ -32,7 +31,7 @@ void setup() {
 
 	// The following are the sensors being used to obtain data from the body.
 
-	TracePoint *a = new TracePoint( "Left Shoulder", 2, 0 );
+	TracePoint *a = new TracePoint( "Left Shoulder", 2, 4 );
 	// TracePoint *b = new TracePoint( "Left Forearm", 3, 0 );
 	// TracePoint *c = new TracePoint( "Left Hand", 2, 0 );
 

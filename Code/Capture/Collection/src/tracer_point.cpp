@@ -132,61 +132,77 @@ void ActionTracer::TracePoint::get_data() {
 	_device_interrupt_flag	 = false;
 	_device_interrupt_status = _device->getIntStatus();
 
-	_fifo_count = _device->getFIFOCount();
+	inters = _device->getIntStatus();
+	debugPrintln( "Interrupts 2: %d\n", inters );
+	debugPrintln( "DMP Interrupt: %d\n", _device->dmpReadInterrupts() );
 
-	if( _device_interrupt_status & 0x10 || _fifo_count == 1024 ) {
-		_device->resetFIFO();
-		debugPrintln( "FIFO Overload (Inefficeint code)\n" );
-	} else if( _device_interrupt_status & 0x02 ) {
-		// Wait for the proper data length
-		while( _fifo_count < _packet_size ) {
-			_fifo_count = _device->getFIFOCount();
-		}
+	// This has to go
+	uint8_t fsrHere		= _device->getFullScaleAccelRange();
+	float	divisorHere = 0.0;
+	int16_t x = 0, y = 0, z = 0;
 
-		// Read FIFO packet
-		_device->getFIFOBytes( _fifo_buffer, _packet_size );
+	switch( _output_data_type ) {
+		case GET_DATA_QUATERNION:
+			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
 
-		// Track the FIFO (for more than one packet) and also allows reading without interrupt
-		_fifo_count -= _packet_size;
+			_quaternion_float_packet[0] = _quaternion_packet.w;
+			_quaternion_float_packet[1] = _quaternion_packet.x;
+			_quaternion_float_packet[2] = _quaternion_packet.y;
+			_quaternion_float_packet[3] = _quaternion_packet.z;
+			break;
+		case GET_DATA_EULER:
+			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+			_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
+			break;
+		case GET_DATA_ACCELEROMETER:
+			debugPrint( "Getting accel data\n" );
+			_device->dmpGetAccel( &_acceleration_packet, _fifo_buffer );
+			debugPrint( "Got from dmp\n" );
+			_acceleration_float_packet[0] = _acceleration_packet.x;
+			_acceleration_float_packet[1] = _acceleration_packet.y;
+			_acceleration_float_packet[2] = _acceleration_packet.z;
 
-		switch( _output_data_type ) {
-			case GET_DATA_QUATERNION:
-				_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+			debugPrint( "Packaged\n" );
+			_device->getAcceleration( &x, &y, &z );
+			debugPrint( "Obtained: %d - %d - %d\n", x, y, z );
+			switch( fsrHere ) {
+				case 0:
+					divisorHere = 8.192;
+					break;
+				case 1:
+					divisorHere = 4.096;
+					break;
+				case 2:
+					divisorHere = 2.048;
+					break;
+				case 3:
+					divisorHere = 1.024;
+					break;
+				default:
+					divisorHere = 1.024;
+					break;
+			}
 
-				_quaternion_float_packet[0] = _quaternion_packet.w;
-				_quaternion_float_packet[1] = _quaternion_packet.x;
-				_quaternion_float_packet[2] = _quaternion_packet.y;
-				_quaternion_float_packet[3] = _quaternion_packet.z;
-				break;
-			case GET_DATA_EULER:
-				_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-				_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
-				break;
-			case GET_DATA_ACCELEROMETER:
-				_device->dmpGetAccel( &_acceleration_packet );
-				_acceleration_float_packet[0] = _acceleration_packet.x;
-				_acceleration_float_packet[1] = _acceleration_packet.y;
-				_acceleration_float_packet[2] = _acceleration_packet.z;
-				break;
-			case GET_DATA_GYROSCOPE:
-				_device->dmpGetGyro( &_gyroscope_packet );
-				_gyroscope_float_packet[0] = _gyroscope_packet.x;
-				_gyroscope_float_packet[1] = _gyroscope_packet.y;
-				_gyroscope_float_packet[2] = _gyroscope_packet.z;
-				break;
-			case GET_DATA_YAWPITCHROLL:
-				_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-				_device->dmpGetGravity( &_gravity_packet, &_quaternion_packet );
-				_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet[0], &_quaternion_packet, &_gravity_packet );
-				break;
-			default:
-				_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-				_quaternion_float_packet[0] = _quaternion_packet.w;
-				_quaternion_float_packet[1] = _quaternion_packet.x;
-				_quaternion_float_packet[2] = _quaternion_packet.y;
-				_quaternion_float_packet[3] = _quaternion_packet.z;
-				break;
-		}
+			debugPrint( "Got: \n%7f %7f %7f\nvs\n%7f %7f %7f", x * divisorHere, y * divisorHere, z * divisorHere, _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
+			break;
+		case GET_DATA_GYROSCOPE:
+			_device->dmpGetGyro( &_gyroscope_packet );
+			_gyroscope_float_packet[0] = _gyroscope_packet.x;
+			_gyroscope_float_packet[1] = _gyroscope_packet.y;
+			_gyroscope_float_packet[2] = _gyroscope_packet.z;
+			break;
+		case GET_DATA_YAWPITCHROLL:
+			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+			_device->dmpGetGravity( &_gravity_packet, &_quaternion_packet );
+			_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet[0], &_quaternion_packet, &_gravity_packet );
+			break;
+		default:
+			_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+			_quaternion_float_packet[0] = _quaternion_packet.w;
+			_quaternion_float_packet[1] = _quaternion_packet.x;
+			_quaternion_float_packet[2] = _quaternion_packet.y;
+			_quaternion_float_packet[3] = _quaternion_packet.z;
+			break;
 	}
 
 	debugPrint( "Data fetched\n" );
@@ -202,7 +218,6 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 
 	switch( _output_data_type ) {
 		case GET_DATA_QUATERNION:
-			debugPrint( "\tFetched: x: %4.2f, y: %4.2f, z: %4.2f, w: %4.2f\n", _quaternion_packet.x, _quaternion_packet.y, _quaternion_packet.z, _quaternion_packet.w );
 			return _quaternion_float_packet;
 		case GET_DATA_EULER:
 			return _euler_packet;
@@ -213,7 +228,6 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 		case GET_DATA_YAWPITCHROLL:
 			return _yaw_pitch_roll_packet;
 		default:
-			debugPrint( "Fetched: x: %4.2f, y: %4.2f, z: %4.2f, w: %4.2f", _quaternion_packet.x, _quaternion_packet.y, _quaternion_packet.z, _quaternion_packet.w );
 			return _quaternion_float_packet;
 	}
 }
