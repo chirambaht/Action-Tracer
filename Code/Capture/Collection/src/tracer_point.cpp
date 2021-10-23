@@ -220,3 +220,7 @@ void ActionTracer::TracePoint::set_output_data_type( int data_type ) {
 	}
 	_output_data_type = data_type;
 }
+
+std::string ActionTracer::TracePoint::get_name() {
+	return _device_name;
+}
