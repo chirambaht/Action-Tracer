@@ -29,7 +29,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	debugPrint( "Initilizing %s...\n", _device_name.c_str() );
 	this->_select_me();
-	_device = new MPU6050( MPU6050_ADDRESS_AD0_HIGH );
+	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
 
 	_device->initialize();
 
@@ -67,6 +67,9 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		_dmp_ready = 0;
 	}
 
+	uint8_t sleep_status = _device->getSleepEnabled();
+
+	debugPrint( "Sleep status is %d\n", sleep_status );
 	this->_deselect_me();
 
 	debugPrint( "Init variable dump\n" );
@@ -74,7 +77,6 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 }
 
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
- * @return 0 if all gows well.
 */
 void ActionTracer::TracePoint::_select_me() {
 	debugPrintln( "Selected %s\n", _device_name.c_str() );
@@ -82,7 +84,6 @@ void ActionTracer::TracePoint::_select_me() {
 }
 
 /** Deselects a given MPU6050 node.
- * @return 0 if all gows well.
 */
 void ActionTracer::TracePoint::_deselect_me() {
 	debugPrintln( "Deselected %s\n", _device_name.c_str() );
