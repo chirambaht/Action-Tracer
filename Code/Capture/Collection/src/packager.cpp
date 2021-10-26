@@ -33,6 +33,9 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 
 std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 ) {
 	std::stringstream stream;
+	if( value < 0 ) {
+		prec -= 1;
+	}
 	stream << std::fixed << std::setprecision( prec ) << value;
 	std::string s = stream.str();
 
