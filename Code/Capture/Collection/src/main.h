@@ -6,7 +6,7 @@
 #define SERVER_IP  "192.168.1.102" // Server IP where data will be sent to
 #define MOBILE_IP  "127.0.0.1"	   // Mobile IP where data will be sent to
 #define PORT	   9022			   // Main UDP data port for the data to be sent through
-#define N		   2			   // Number of points track on the body.
+#define N		   20			   // Number of points track on the body.
 #define LOOP_DELAY 0			   // ms to wait per loop cycle
 
 #include "packager.h"
