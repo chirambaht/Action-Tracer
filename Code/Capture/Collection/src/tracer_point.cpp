@@ -42,12 +42,19 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	_device_status = _device->dmpInitialize();
 
 	// Set up the offsets for the device
-	_device->setXAccelOffset( 44 );
+	// _device->setXAccelOffset( 44 );
+	// _device->setYAccelOffset( 25 );
+	// _device->setZAccelOffset( 74 );
+	// _device->setXGyroOffset( -57 );
+	// _device->setYGyroOffset( 1449 );
+	// _device->setZGyroOffset( 4973 );
+
+	_device->setXAccelOffset( 43 );
 	_device->setYAccelOffset( 25 );
-	_device->setZAccelOffset( 74 );
-	_device->setXGyroOffset( -57 );
-	_device->setYGyroOffset( 1449 );
-	_device->setZGyroOffset( 4973 );
+	_device->setZAccelOffset( 73 );
+	_device->setXGyroOffset( -17 );
+	_device->setYGyroOffset( 1477 );
+	_device->setZGyroOffset( 4971 );
 
 	if( _device_status == 0 ) {
 		debugPrint( "Enabling DMP..." );
@@ -67,7 +74,10 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		_dmp_ready = false;
 	}
 
-	this->_deselect_me();
+	_device->setMotionDetectionDuration( 0xFF );
+	_device->setMotionDetectionThreshold
+
+		this->_deselect_me();
 
 	debugPrint( "Init variable dump\n" );
 	debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
