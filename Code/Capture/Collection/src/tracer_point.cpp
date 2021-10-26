@@ -7,11 +7,11 @@
 
 // Select the data you want out here
 #define GET_DATA_QUATERNION
-#define GET_DATA_EULER
-#define GET_DATA_ALL
-#define GET_DATA_GYROSCOPE
-#define GET_DATA_ACCELEROMETER
-#define GET_DATA_YAWPITCHROLL
+// #define GET_DATA_EULER
+// #define GET_DATA_ALL
+// #define GET_DATA_GYROSCOPE
+// #define GET_DATA_ACCELEROMETER
+// #define GET_DATA_YAWPITCHROLL
 
 using namespace ActionTracer;
 
@@ -83,9 +83,6 @@ void ActionTracer::TracePoint::_select_me() {
 /** Deselects a given MPU6050 node.
 */
 void ActionTracer::TracePoint::_deselect_me() {
-	debugPrint( "Sleep status is %d\n", _device->getSleepEnabled() );
-	debugPrint( "Clock status is %d\n", _device->getClockSource() );
-	debugPrint( "Clock output enabled status is %d\n", _device->getClockOutputEnabled() );
 	debugPrintln( "Deselected %s\n", _device_name.c_str() );
 	digitalWrite( _pin_number, HIGH );
 }

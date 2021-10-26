@@ -7,7 +7,7 @@
 #define MOBILE_IP  "127.0.0.1"	   // Mobile IP where data will be sent to
 #define PORT	   9022			   // Main UDP data port for the data to be sent through
 #define N		   1			   // Number of points track on the body.
-#define LOOP_DELAY 50			   // ms to wait per loop cycle
+#define LOOP_DELAY 5			   // ms to wait per loop cycle
 
 #include "packager.h"
 #include "tracer_point.h"
