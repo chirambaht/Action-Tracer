@@ -67,9 +67,6 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		_dmp_ready = 0;
 	}
 
-	uint8_t sleep_status = _device->getSleepEnabled();
-
-	debugPrint( "Sleep status is %d\n", sleep_status );
 	this->_deselect_me();
 
 	debugPrint( "Init variable dump\n" );
@@ -86,6 +83,9 @@ void ActionTracer::TracePoint::_select_me() {
 /** Deselects a given MPU6050 node.
 */
 void ActionTracer::TracePoint::_deselect_me() {
+	debugPrint( "Sleep status is %d\n", _device->getSleepEnabled() );
+	debugPrint( "Clock status is %d\n", _device->getClockSource() );
+	debugPrint( "Clock output enabled status is %d\n", _device->getClockOutputEnabled() );
 	debugPrintln( "Deselected %s\n", _device_name.c_str() );
 	digitalWrite( _pin_number, HIGH );
 }
