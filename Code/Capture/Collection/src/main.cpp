@@ -55,17 +55,14 @@ void loop() {
 	float data_package[N * 4];
 
 	for( size_t i = 0; i < N; i++ ) {
-		debugPrintln( "\n----- --- %s --- ----\n", body_sensor[i]->get_name().c_str() );
 		float *body = body_sensor[i]->read_data( 1 );
 		for( size_t j = 0; j < 4; j++ ) {
 			data_package[j + ( i * 4 )] = *body;
 			body++;
 		}
-		debugPrintln( "\n=^^== =^= %s =^= =^^=\n", body_sensor[i]->get_name().c_str() );
 	}
 
 	communicator->send_packet( data_package, N * 4 );
-	debugPrintln( "\n===== === %s === ====\n", "END OF CYCLE" );
 
 	usleep( LOOP_DELAY * 1000 );
 }

@@ -76,14 +76,12 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
 */
 void ActionTracer::TracePoint::_select_me() {
-	debugPrintln( "Selected %s\n", _device_name.c_str() );
 	digitalWrite( _pin_number, LOW );
 }
 
 /** Deselects a given MPU6050 node.
 */
 void ActionTracer::TracePoint::_deselect_me() {
-	debugPrintln( "Deselected %s\n", _device_name.c_str() );
 	digitalWrite( _pin_number, HIGH );
 }
 
@@ -91,7 +89,6 @@ void ActionTracer::TracePoint::_deselect_me() {
  * @return Device name/id
 */
 std::string ActionTracer::TracePoint::identify() {
-	debugPrint( "I am %s\n", _device_name.c_str() );
 	return _device_name;
 }
 
@@ -170,15 +167,12 @@ void ActionTracer::TracePoint::get_data() {
 	_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet[0], &_quaternion_packet, &_gravity_packet );
 #endif
 
-	debugPrint( "Data fetched\n" );
-
 	this->_deselect_me();
 }
 
 float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 	if( read_first ) {
 		this->get_data();
-		debugPrint( "Obtained data from %s:\n", _device_name.c_str() );
 	}
 
 #ifdef GET_DATA_QUATERNION
