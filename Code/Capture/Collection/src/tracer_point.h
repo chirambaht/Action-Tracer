@@ -15,7 +15,7 @@ namespace ActionTracer {
 
 		uint8_t _device_status;
 
-		uint8_t _dmp_ready;
+		bool _dmp_ready;
 
 		uint8_t _device_interrupt_status;
 		bool	_device_interrupt_flag;

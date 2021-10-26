@@ -57,14 +57,14 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 		_device_interrupt_status = _device->getIntStatus();
 
-		_dmp_ready = 1;
+		_dmp_ready = true;
 
 		_packet_size = _device->dmpGetFIFOPacketSize();
 
 		debugPrint( "Enabled!\n" );
 	} else {
 		debugPrint( "Can't initialise DMP\n" );
-		_dmp_ready = 0;
+		_dmp_ready = false;
 	}
 
 	this->_deselect_me();
@@ -136,9 +136,10 @@ void ActionTracer::TracePoint::get_data() {
 	_device_interrupt_flag	 = false;
 	_device_interrupt_status = _device->getIntStatus();
 
+	_device->getFIFOBytes( _fifo_buffer, _packet_size );
+
 #ifdef GET_DATA_QUATERNION
 	_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-	debugPrintln( "%5f and %5f and %5f are the quants with %5f\n", _quaternion_packet.x, _quaternion_packet.y, _quaternion_packet.z, _quaternion_packet.w );
 	_quaternion_float_packet[0] = _quaternion_packet.w;
 	_quaternion_float_packet[1] = _quaternion_packet.x;
 	_quaternion_float_packet[2] = _quaternion_packet.y;
