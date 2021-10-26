@@ -32,11 +32,11 @@ void setup() {
 	// The following are the sensors being used to obtain data from the body.
 
 	TracePoint *a = new TracePoint( "Left Shoulder", 2 );
-	// TracePoint *b = new TracePoint( "Left Forearm", 3, 0 );
+	TracePoint *b = new TracePoint( "Left Forearm", 3, 0 );
 	// TracePoint *c = new TracePoint( "Left Hand", 2, 0 );
 
 	body_sensor[0] = a;
-	// body_sensor[1] = b;
+	body_sensor[1] = b;
 	// body_sensor[2] = c;
 
 	debugPrint( "Devices connected are:\n" );
