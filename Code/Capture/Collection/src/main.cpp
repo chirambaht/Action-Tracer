@@ -39,7 +39,7 @@ void setup() {
 	// body_sensor[1] = b;
 	// body_sensor[2] = c;
 
-	for( size_t i = 0; i < 2; i++ ) {
+	for( size_t i = 0; i < N; i++ ) {
 		TracePoint *temp = new TracePoint( "Body p", 2 );
 		body_sensor[i]	 = temp;
 	}
