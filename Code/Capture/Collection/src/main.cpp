@@ -70,6 +70,10 @@ void loop() {
 }
 
 int main( int argc, char const *argv[] ) {
+	for( size_t i = 0; i < argc; i++ ) {
+		debugPrint( "Argument %d: %s", i, argv[i] );
+	}
+
 	setup();
 	while( 1 ) {
 		loop();
