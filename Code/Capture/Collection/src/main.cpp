@@ -1,8 +1,7 @@
 // This is the main file that will be used to run the program for data
 // collection from the 3 IMU's and send them to the server as is necesarry.
-#include "main.h"
-
 #include "debug_printer.h"
+#include "main.h"
 
 #include <dirent.h>
 #include <filesystem>
@@ -58,6 +57,7 @@ void loop() {
 	for( size_t i = 0; i < N; i++ ) {
 		debugPrintln( "\n----- --- %s --- ----\n", body_sensor[i]->get_name().c_str() );
 		float *body = body_sensor[i]->read_data( 1 );
+		body_sensor[i]->print_last_data_packet();
 		for( size_t j = 0; j < 4; j++ ) {
 			data_package[j + ( i * 4 )] = *body;
 			body++;
