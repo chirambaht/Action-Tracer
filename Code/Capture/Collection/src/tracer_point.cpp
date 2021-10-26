@@ -29,7 +29,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	debugPrint( "Initilizing %s...\n", _device_name.c_str() );
 	this->_select_me();
-	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
+	_device = new MPU6050( MPU6050_ADDRESS_AD0_HIGH );
 
 	_device->initialize();
 
@@ -66,6 +66,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		debugPrint( "Can't initialise DMP\n" );
 		_dmp_ready = 0;
 	}
+
 	this->_deselect_me();
 
 	debugPrint( "Init variable dump\n" );
