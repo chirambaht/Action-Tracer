@@ -82,7 +82,7 @@ int main( int argc, char const *argv[] ) {
 	auto result = options.parse( argc, argv );
 
 	if( result.count( "help" ) ) {
-		std::cout << options.help() << std::endl;
+		printf( "%s", options.help().c_str() );
 		exit( 0 );
 	}
 
