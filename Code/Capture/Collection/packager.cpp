@@ -1,5 +1,5 @@
-#define debugPrint( ... )
-#define debugPrintln( ... )
+#define debugPrint( ... )	printf( __VA_ARGS__ )
+#define debugPrintln( ... ) printf( __VA_ARGS__ )
 
 #include "packager.h"
 

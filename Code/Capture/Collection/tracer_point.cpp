@@ -1,9 +1,7 @@
 #include "tracer_point.h"
 
-// #include "MPU6050_6Axis_MotionApps20.h"
-
-#define debugPrint( ... )
-#define debugPrintln( ... )
+#define debugPrint( ... )	printf( __VA_ARGS__ )
+#define debugPrintln( ... ) printf( __VA_ARGS__ )
 
 #include <wiringPi.h>
 
