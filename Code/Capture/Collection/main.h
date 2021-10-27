@@ -19,7 +19,7 @@ Packager *	communicator;
 
 // Packager mobile = new Packager( MOBILE_IP, PORT );
 
-void setup();
+void setup( int );
 void loop();
 // namespace ActionTracer
 

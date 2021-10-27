@@ -25,11 +25,11 @@ using namespace ActionTracer;
     Initialise all the devices in the network. Store them in objects in main.h
 */
 
-void setup() {
+void setup( int debug_value ) {
 	wiringPiSetup();
 
 	communicator = new Packager( SERVER_IP, PORT ); // Initialize the communicator that will send data packets to the server
-
+	communicator->set_debug( value );
 	// The following are the sensors being used to obtain data from the body.
 
 	// TracePoint *a = new TracePoint( "Left Shoulder", 2 );
@@ -42,12 +42,8 @@ void setup() {
 
 	for( size_t i = 0; i < N; i++ ) {
 		TracePoint *temp = new TracePoint( "Body p", 2 );
-		body_sensor[i]	 = temp;
-	}
-
-	debugPrint( "Devices connected are:\n" );
-	for( size_t i = 0; i < N; i++ ) {
-		debugPrint( "%2d - %s\n", i + 1, body_sensor[i]->get_name().c_str() );
+		temp->set_debug( debug_value );
+		body_sensor[i] = temp;
 	}
 }
 
@@ -77,7 +73,7 @@ int main( int argc, char const *argv[] ) {
 	options.add_options()( "d,debug", "Enable debugging", cxxopts::value<bool>()->default_value( "false" ) );
 	options.add_options()( "f,file", "Define variables using a file", cxxopts::value<std::string>()->default_value( "" ) );
 	options.add_options()( "h,help", "Print usage" );
-	options.add_options()( "t,tracepoints", "Number of body devices being used on the body", cxxopts::value<int>()->default_value( 0 ) );
+	options.add_options()( "t,tracepoints", "Number of body devices being used on the body", cxxopts::value<int>()->default_value( "0" ) );
 
 	auto result = options.parse( argc, argv );
 
@@ -88,7 +84,10 @@ int main( int argc, char const *argv[] ) {
 
 	bool debug = result["debug"].as<bool>();
 
-	setup();
+	if( debug ) {
+		setup( debug );
+	}
+
 	while( 1 ) {
 		loop();
 	}
