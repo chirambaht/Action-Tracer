@@ -3,14 +3,14 @@ clean:
 	@ cd Collection/ && $(MAKE) clean && cd ../
 
 all: 
-	@ cd Collection/ && $(Make)
-	@ cd Offsets/ && $(Make)
+	@ cd Collection/ && $(MAKE) all
+	@ cd Offsets/ && $(MAKE) all
 
 compile_collection:
-	@  cd Collection/ && $(Make)
+	@  cd Collection/ && $(MAKE) all
 
 compile_offsets:
-	@  cd Offsets/ && $(Make)
+	@  cd Offsets/ && $(MAKE) all
 
 collect:
 	@ cd Collection/ && ./collect_data
