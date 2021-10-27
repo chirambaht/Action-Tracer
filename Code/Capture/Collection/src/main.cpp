@@ -86,7 +86,7 @@ int main( int argc, char const *argv[] ) {
 		exit( 0 );
 	}
 
-	bool debug = result["debug"].as<bool>;
+	bool debug = result["debug"].as<bool>();
 
 	setup();
 	while( 1 ) {
