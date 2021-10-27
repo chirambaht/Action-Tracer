@@ -35,7 +35,9 @@ THE SOFTWARE.
 // MotionApps 2.0 DMP implementation, built using the MPU-6050EVB evaluation board
 #define MPU6050_INCLUDE_DMP_MOTIONAPPS20
 #include "MPU6050.h"
-#include "debug_printer.h"
+
+#define debugPrint( ... )
+#define debugPrintln( ... )
 
 #include <cstring>
 #include <unistd.h>

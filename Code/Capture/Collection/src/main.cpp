@@ -71,11 +71,22 @@ void loop() {
 }
 
 int main( int argc, char const *argv[] ) {
-	cxxopts::Options options( "test", "A brief description" );
+	cxxopts::Options options( "Action Tracer", "This program runs a given number of MPU6050 IMU's and sends the data packets via UDP." );
 
-	options.add_options()( "b,bar", "Param bar", cxxopts::value<std::string>() )( "d,debug", "Enable debugging", cxxopts::value<bool>()->default_value( "false" ) )( "f,foo", "Param foo", cxxopts::value<int>()->default_value( "10" ) )( "h,help", "Print usage" );
+	options.add_options()( "a,address", "Address to send UDP packets to", cxxopts::value<std::string>()->default_value( "127.0.0.1" ) );
+	options.add_options()( "d,debug", "Enable debugging", cxxopts::value<bool>()->default_value( "false" ) );
+	options.add_options()( "f,file", "Define variables using a file", cxxopts::value<std::string>()->default_value( "" ) );
+	options.add_options()( "h,help", "Print usage" );
+	options.add_options()( "t,tracepoints", "Number of body devices being used on the body", cxxopts::value<int>()->default_value( 0 ) );
 
 	auto result = options.parse( argc, argv );
+
+	if( result.count( "help" ) ) {
+		std::cout << options.help() << std::endl;
+		exit( 0 );
+	}
+
+	bool debug = result["debug"].as<bool>;
 
 	setup();
 	while( 1 ) {

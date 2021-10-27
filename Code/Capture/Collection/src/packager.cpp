@@ -1,4 +1,6 @@
-#include "debug_printer.h"
+#define debugPrint( ... )
+#define debugPrintln( ... )
+
 #include "packager.h"
 
 #include <ctime>
@@ -10,12 +12,14 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 	_port  = port;
 	_count = 0;
 
-	debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
+	if( _debug )
+		debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
 	struct sockaddr_in server;
 	// Create socket
 	_descriptor = socket( AF_INET, SOCK_DGRAM, 0 );
 	if( _descriptor == -1 )
-		debugPrint( "Could not create socket\n" );
+		if( _debug )
+			debugPrint( "Could not create socket\n" );
 
 	server.sin_addr.s_addr = inet_addr( _dest.c_str() ); // Destination address
 	server.sin_family	   = AF_INET;
@@ -23,9 +27,11 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 
 	// Connect to remote server
 	if( connect( _descriptor, ( struct sockaddr * ) &server, sizeof( server ) ) < 0 ) {
-		debugPrint( "connect error\n" );
+		if( _debug )
+			debugPrint( "connect error\n" );
 	} else {
-		debugPrint( "UDP client ready!\n" );
+		if( _debug )
+			debugPrint( "UDP client ready!\n" );
 	}
 }
 
@@ -42,6 +48,10 @@ std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 
 	return s;
 }
 
+void ActionTracer::Packager::set_debug( bool value ) {
+	_debug = value;
+}
+
 int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 	std::string arr = "";
 
@@ -53,11 +63,13 @@ int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 		}
 	}
 
-	debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, arr.c_str() );
+	if( _debug )
+		debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, arr.c_str() );
 
 	// Send some data
 	if( send( _descriptor, arr.c_str(), strlen( arr.c_str() ), 0 ) < 0 ) {
-		debugPrint( "Send failed\n" );
+		if( _debug )
+			debugPrint( "Send failed\n" );
 		return 1;
 	}
 	_count++;

@@ -1,7 +1,9 @@
 #include "tracer_point.h"
 
 // #include "MPU6050_6Axis_MotionApps20.h"
-#include "debug_printer.h"
+
+#define debugPrint( ... )
+#define debugPrintln( ... )
 
 #include <wiringPi.h>
 
@@ -18,7 +20,8 @@ using namespace ActionTracer;
 ActionTracer::TracePoint::TracePoint() {}
 
 ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number ) {
-	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
+	if( _debug )
+		debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
 
 	_device_name = name;
 	_pin_number	 = wiring_Pi_pin_number;
@@ -27,7 +30,9 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	pinMode( _pin_number, OUTPUT );
 	_device_interrupt_flag = false;
 
-	debugPrint( "Initilizing %s...\n", _device_name.c_str() );
+	if( _debug )
+		if( _debug )
+			debugPrint( "Initilizing %s...\n", _device_name.c_str() );
 	this->_select_me();
 	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
 
@@ -35,19 +40,14 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	//TODO: At this stage an interrupt pin is initialised
 
-	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
+	if( _debug )
+		debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
 
 	// DMP Initialization
-	debugPrint( "Initalising DMP\n" );
+	if( _debug )
+		if( _debug )
+			debugPrint( "Initalising DMP\n" );
 	_device_status = _device->dmpInitialize();
-
-	// Set up the offsets for the device
-	// _device->setXAccelOffset( 44 );
-	// _device->setYAccelOffset( 25 );
-	// _device->setZAccelOffset( 74 );
-	// _device->setXGyroOffset( -57 );
-	// _device->setYGyroOffset( 1449 );
-	// _device->setZGyroOffset( 4973 );
 
 	_device->setXAccelOffset( 43 );
 	_device->setYAccelOffset( 25 );
@@ -57,7 +57,9 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	_device->setZGyroOffset( 4971 );
 
 	if( _device_status == 0 ) {
-		debugPrint( "Enabling DMP..." );
+		if( _debug )
+			if( _debug )
+				debugPrint( "Enabling DMP..." );
 		_device->setDMPEnabled( true );
 
 		//TODO: Attach interrupt here
@@ -68,16 +70,24 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 		_packet_size = _device->dmpGetFIFOPacketSize();
 
-		debugPrint( "Enabled!\n" );
+		if( _debug )
+			if( _debug )
+				debugPrint( "Enabled!\n" );
 	} else {
-		debugPrint( "Can't initialise DMP\n" );
+		if( _debug )
+			if( _debug )
+				debugPrint( "Can't initialise DMP\n" );
 		_dmp_ready = false;
 	}
 
 	this->_deselect_me();
 
-	debugPrint( "Init variable dump\n" );
-	debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
+	if( _debug )
+		if( _debug )
+			debugPrint( "Init variable dump\n" );
+	if( _debug )
+		if( _debug )
+			debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
 }
 
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
@@ -101,23 +111,33 @@ std::string ActionTracer::TracePoint::identify() {
 
 void ActionTracer::TracePoint::print_last_data_packet() {
 #ifdef GET_DATA_QUATERNION
-	debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
+	if( _debug )
+		if( _debug )
+			debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
 #endif
 
 #ifdef GET_DATA_EULER
-	debugPrint( "Output data type: Euler\nLast packet was: %5f, %5f, %5f\n", _euler_packet[0], _euler_packet[1], _euler_packet[2] );
+	if( _debug )
+		if( _debug )
+			debugPrint( "Output data type: Euler\nLast packet was: %5f, %5f, %5f\n", _euler_packet[0], _euler_packet[1], _euler_packet[2] );
 #endif
 
 #ifdef GET_DATA_ACCELEROMETER
-	debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
+	if( _debug )
+		if( _debug )
+			debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
 #endif
 
 #ifdef GET_DATA_GYROSCOPE
-	debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _gyroscope_float_packet[0], _gyroscope_float_packet[1], _gyroscope_float_packet[2] );
+	if( _debug )
+		if( _debug )
+			debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _gyroscope_float_packet[0], _gyroscope_float_packet[1], _gyroscope_float_packet[2] );
 #endif
 
 #ifdef GET_DATA_YAWPITCHROLL
-	debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
+	if( _debug )
+		if( _debug )
+			debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
 #endif
 }
 
@@ -125,12 +145,15 @@ void ActionTracer::TracePoint::get_data() {
 	this->_select_me();
 
 	if( !_dmp_ready ) {
-		debugPrint( "DMP not initialised\n" );
+		if( _debug )
+			if( _debug )
+				debugPrint( "DMP not initialised\n" );
 		return;
 	}
 
 	if( _device_interrupt_flag && _fifo_count < _packet_size ) {
-		debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
+		if( _debug )
+			debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
 		return;
 	}
 
@@ -201,4 +224,8 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 
 std::string ActionTracer::TracePoint::get_name() {
 	return _device_name;
+}
+
+void ActionTracer::TracePoint::set_debug( bool value ) {
+	_debug = value;
 }

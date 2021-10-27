@@ -9,6 +9,7 @@
 namespace ActionTracer {
 	class TracePoint {
 	  private:
+		bool		_debug = false;
 		MPU6050 *	_device;
 		std::string _device_name;
 		int			_pin_number;
@@ -48,7 +49,7 @@ namespace ActionTracer {
 		~TracePoint();
 
 		// TracePoint operator=( const TracePoint other );
-
+		void		set_debug( bool );
 		std::string get_name();
 		MPU6050		get_device();
 		void		get_data();				   // Gets data from the device it is attached to

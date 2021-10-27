@@ -12,6 +12,7 @@
 namespace ActionTracer {
 	class Packager {
 	  private:
+		bool		_debug = false;
 		std::string _dest;
 		int			_port;
 		int			_descriptor;
@@ -24,6 +25,7 @@ namespace ActionTracer {
 		Packager( std::string destination, int port );
 		int send_packet( float *data, uint8_t length );
 		~Packager();
+		void set_debug( bool );
 	};
 
 } // namespace ActionTracer
