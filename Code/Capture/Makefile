@@ -1,19 +1,19 @@
 clean:
 	@ cd Offsets/ && $(MAKE) clean && cd ../
-	@ cd Colletion/ && $(MAKE) clean && cd ../
+	@ cd Collection/ && $(MAKE) clean && cd ../
 
 all: 
-	@ cd Colletion/ && $(Make)
+	@ cd Collection/ && $(Make)
 	@ cd Offsets/ && $(Make)
 
 compile_collection:
-	@  cd Colletion/ && $(Make)
+	@  cd Collection/ && $(Make)
 
 compile_offsets:
 	@  cd Offsets/ && $(Make)
 
 collect:
-	@ cd Colletion/ && ./collect_data
+	@ cd Collection/ && ./collect_data
 
 IMU_zero:
 	@ cd Offsets/ && ./IMU_zero
