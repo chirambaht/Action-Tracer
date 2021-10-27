@@ -1,9 +1,9 @@
 // This is the main file that will be used to run the program for data
 // collection from the 3 IMU's and send them to the server as is necesarry.
-#include "cxxopts.hpp"
 #include "debug_printer.h"
 #include "main.h"
 
+#include <cxxopts.hpp>
 #include <dirent.h>
 #include <filesystem>
 #include <iostream>

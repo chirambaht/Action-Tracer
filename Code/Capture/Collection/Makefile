@@ -1,20 +1,17 @@
 all: collect_data
 
-HDRS = src/helper_3dmath.h src/I2Cdev.h src/MPU6050_6Axis_MotionApps20.h src/MPU6050.h src/packager.h src/tracer_point.h
-CMN_OBJS = obj/I2Cdev.o obj/MPU6050.o
-CLD_OBJS = obj/packager.o obj/tracer_point.o
- 
-# Set DMP FIFO rate to 100Hz.  See comments in
-# MPU6050_6Axis_MotionApps20.h for details.
+HDRS = helper_3dmath.h I2Cdev.h MPU6050.h packager.h tracer_point.h main.h
+OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o main.o
 
 CXXFLAGS = -DDMP_FIFO_RATE=1 -Wall -g -O2 `pkg-config gtkmm-3.0 --cflags --libs`
 
- $(CMN_OBJS) $(CLD_OBJS): $(HDRS)
+@ $(OBJS): $(HDRS)
 
-collect_data: $(CMN_OBJS) $(CLD_OBJS)
+collect_data: $(OBJS)
 	@ echo "Compiled data collection program"
 	@ $(CXX) -o $@ $^ -l wiringPi -lm
+	@ echo "Program made!"
 
 clean:
 	@ echo "Ahh clean!"
-	@ rm -f $(CMN_OBJS) $(CLD_OBJS) collect_data
+	@ rm -f $(OBJS) collect_data
