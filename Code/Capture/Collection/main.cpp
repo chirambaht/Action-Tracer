@@ -29,7 +29,7 @@ void setup( int debug_value ) {
 	wiringPiSetup();
 
 	communicator = new Packager( SERVER_IP, PORT ); // Initialize the communicator that will send data packets to the server
-	communicator->set_debug( value );
+	communicator->set_debug( debug_value );
 	// The following are the sensors being used to obtain data from the body.
 
 	// TracePoint *a = new TracePoint( "Left Shoulder", 2 );
