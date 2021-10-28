@@ -22,6 +22,8 @@
 
 using namespace ActionTracer;
 
+cxxopts::Options options( "Action Tracer", "This program runs a given number of MPU6050 IMU's and sends the data packets via UDP." );
+
 /*
     Initialise all the devices in the network. Store them in objects in main.h
 */
@@ -68,8 +70,6 @@ void loop() {
 }
 
 int main( int argc, char const *argv[] ) {
-	cxxopts::Options options( "Action Tracer", "This program runs a given number of MPU6050 IMU's and sends the data packets via UDP." );
-
 	options.add_options()( "a,address", "Address to send UDP packets to", cxxopts::value<std::string>()->default_value( "127.0.0.1" ) );
 	options.add_options()( "d,debug", "Enable debugging", cxxopts::value<bool>()->default_value( "false" ) );
 	options.add_options()( "f,file", "Define variables using a file. If a file is given, all other given parameters will be overwritten.", cxxopts::value<std::string>()->default_value( "" ) );
@@ -99,9 +99,9 @@ int main( int argc, char const *argv[] ) {
 			const auto header = csv.header();
 			for( const auto row : csv ) {
 				for( const auto cell : row ) {
-					// Do something with cell value
-					// std::string value;
-					// cell.read_value(value);
+					std::string value;
+					cell.read_value( value );
+					debugPrint( "%s", value.c_str() )
 				}
 			}
 		}

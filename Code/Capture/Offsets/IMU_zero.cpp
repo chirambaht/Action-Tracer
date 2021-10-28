@@ -182,8 +182,8 @@ void PullBracketsIn() {
 				LowValue[i]	 = Smoothed[i];
 			} // use upper half
 		}	  // closing in
-			  // ShowProgress();
-	}		  // still working
+		// ShowProgress();
+	} // still working
 } // PullBracketsIn
 
 void PullBracketsOut() {
@@ -242,7 +242,7 @@ void write_tracepoint_csv() {
 }
 
 void print_tracepoint_line() {
-	printf( "Below is the tracepoint line: \n\n\tName,Pin,%5d, %5d, %5d, %5d, %5d, %5d", LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5] );
+	printf( "Below is the tracepoint line: \n\n\tName,Pin,%5d, %5d, %5d, %5d, %5d, %5d\n", LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5] );
 }
 
 int main( int argc, char **argv ) {
