@@ -107,7 +107,7 @@ int main( int argc, char const *argv[] ) {
 		}
 	}
 
-	if( debug ) {
+	if( debug_arg ) {
 		setup( debug_arg );
 	}
 

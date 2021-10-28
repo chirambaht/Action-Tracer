@@ -14,9 +14,10 @@
 
 using namespace ActionTracer;
 
-TracePoint *body_sensor[N]; // These are the N sensors on the body.
 Packager *	communicator;	// The speaker dude
 int			N = 2;			// Number of points track on the body.
+TracePoint *body_sensor[N]; // These are the N sensors on the body.
+
 // Packager mobile = new Packager( MOBILE_IP, PORT );
 
 void setup( int );
