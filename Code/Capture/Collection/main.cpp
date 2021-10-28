@@ -3,6 +3,8 @@
 #include "debug_printer.h"
 #include "main.h"
 
+#include <csv2/mio.hpp>
+#include <csv2/parameters.hpp>
 #include <csv2/reader.hpp>
 #include <cxxopts.hpp>
 #include <dirent.h>
