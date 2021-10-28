@@ -43,7 +43,7 @@ void setup( int debug_value ) {
 	// body_sensor[1] = b;
 	// body_sensor[2] = c;
 
-	for( size_t i = 0; i < N; i++ ) {
+	for( size_t i = 0; i < _sensors; i++ ) {
 		TracePoint *temp = new TracePoint( "Body p", 2 );
 		temp->set_debug( debug_value );
 		body_sensor[i] = temp;
@@ -54,9 +54,9 @@ void setup( int debug_value ) {
   Main work loop for all the code. This will always run every cycle.
 */
 void loop() {
-	float data_package[N * 4];
+	float data_package[_sensors * 4];
 
-	for( size_t i = 0; i < N; i++ ) {
+	for( size_t i = 0; i < _sensors; i++ ) {
 		float *body = body_sensor[i]->read_data( 1 );
 		for( size_t j = 0; j < 4; j++ ) {
 			data_package[j + ( i * 4 )] = *body;
@@ -83,8 +83,8 @@ int main( int argc, char const *argv[] ) {
 		exit( 0 );
 	}
 
-	bool debug_arg = result["debug"].as<bool>();
-	bool tracers   = result["tracepoints"].as<int>();
+	_debug	 = result["debug"].as<bool>();
+	_sensors = result["tracepoints"].as<int>();
 
 	if( result.count( "file" ) ) {
 		std::string config_file = result["file"].as<std::string>();
@@ -107,8 +107,8 @@ int main( int argc, char const *argv[] ) {
 		}
 	}
 
-	if( debug_arg ) {
-		setup( debug_arg );
+	if( _debug ) {
+		setup( _debug );
 	}
 
 	while( 1 ) {
