@@ -11,8 +11,6 @@
 #include <unistd.h>
 #include <vector>
 
-using namespace csv2;
-
 // class default I2C address is 0x68
 // specific I2C addresses may be passed as a parameter here
 // AD0 low = 0x68 (default for InvenSense evaluation board)
@@ -184,8 +182,8 @@ void PullBracketsIn() {
 				LowValue[i]	 = Smoothed[i];
 			} // use upper half
 		}	  // closing in
-		// ShowProgress();
-	} // still working
+			  // ShowProgress();
+	}		  // still working
 } // PullBracketsIn
 
 void PullBracketsOut() {
