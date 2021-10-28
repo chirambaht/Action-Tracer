@@ -3,9 +3,6 @@
 #include "debug_printer.h"
 #include "main.h"
 
-#include <csv2/mio.hpp>
-#include <csv2/parameters.hpp>
-#include <csv2/reader.hpp>
 #include <cxxopts.hpp>
 #include <dirent.h>
 #include <filesystem>
@@ -30,7 +27,7 @@ cxxopts::Options options( "Action Tracer", "This program runs a given number of 
     Initialise all the devices in the network. Store them in objects in main.h
 */
 
-void setup( int debug_value ) {
+void setup( int debug_value = 0, std::string address = "127.0.0.1", ) {
 	wiringPiSetup();
 
 	communicator = new Packager( SERVER_IP, PORT ); // Initialize the communicator that will send data packets to the server
@@ -85,33 +82,17 @@ int main( int argc, char const *argv[] ) {
 		exit( 0 );
 	}
 
+	_address = result["address"].as<std::string>();
+
 	_debug	 = result["debug"].as<bool>();
 	_sensors = result["tracepoints"].as<int>();
 
 	if( result.count( "file" ) ) {
 		std::string config_file = result["file"].as<std::string>();
-
-		csv2::Reader<delimiter<",">,
-			quote_character<"\"">,
-			first_row_is_header<true>,
-			trim_policy::trim_whitespace>
-			csv;
-
-		if( csv.mmap( config_file ) ) {
-			const auto header = csv.header();
-			for( const auto row : csv ) {
-				for( const auto cell : row ) {
-					std::string value;
-					cell.read_value( value );
-					debugPrint( "%s", value.c_str() );
-				}
-			}
-		}
+		// TODO: Read CSV file for parameters for each item
 	}
 
-	if( _debug ) {
-		setup( _debug );
-	}
+	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
 
 	while( 1 ) {
 		loop();
