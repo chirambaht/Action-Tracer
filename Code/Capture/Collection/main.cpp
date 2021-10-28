@@ -3,6 +3,7 @@
 #include "debug_printer.h"
 #include "main.h"
 
+#include <csv2/reader.hpp>
 #include <cxxopts.hpp>
 #include <dirent.h>
 #include <filesystem>
@@ -71,7 +72,7 @@ int main( int argc, char const *argv[] ) {
 
 	options.add_options()( "a,address", "Address to send UDP packets to", cxxopts::value<std::string>()->default_value( "127.0.0.1" ) );
 	options.add_options()( "d,debug", "Enable debugging", cxxopts::value<bool>()->default_value( "false" ) );
-	options.add_options()( "f,file", "Define variables using a file", cxxopts::value<std::string>()->default_value( "" ) );
+	options.add_options()( "f,file", "Define variables using a file. If a file is given, all other given parameters will be overwritten.", cxxopts::value<std::string>()->default_value( "" ) );
 	options.add_options()( "h,help", "Print usage" );
 	options.add_options()( "t,tracepoints", "Number of body devices being used on the body", cxxopts::value<int>()->default_value( "0" ) );
 
@@ -82,10 +83,32 @@ int main( int argc, char const *argv[] ) {
 		exit( 0 );
 	}
 
-	bool debug = result["debug"].as<bool>();
+	bool debug_arg = result["debug"].as<bool>();
+	bool tracers   = result["tracepoints"].as<int>();
+
+	if( result.count( "file" ) ) {
+		std::string config_file = result["file"].as<std::string>();
+
+		csv2::Reader<delimiter<','>,
+			quote_character<'"'>,
+			first_row_is_header<true>,
+			trim_policy::trim_whitespace>
+			csv;
+
+		if( csv.mmap( config_file ) ) {
+			const auto header = csv.header();
+			for( const auto row : csv ) {
+				for( const auto cell : row ) {
+					// Do something with cell value
+					// std::string value;
+					// cell.read_value(value);
+				}
+			}
+		}
+	}
 
 	if( debug ) {
-		setup( debug );
+		setup( debug_arg );
 	}
 
 	while( 1 ) {
