@@ -89,8 +89,8 @@ int main( int argc, char const *argv[] ) {
 	if( result.count( "file" ) ) {
 		std::string config_file = result["file"].as<std::string>();
 
-		csv2::Reader<delimiter<','>,
-			quote_character<'"'>,
+		csv2::Reader<delimiter<",">,
+			quote_character<"\"">,
 			first_row_is_header<true>,
 			trim_policy::trim_whitespace>
 			csv;

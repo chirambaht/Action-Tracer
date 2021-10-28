@@ -16,7 +16,7 @@ using namespace ActionTracer;
 
 Packager *	communicator;			  // The speaker dude
 TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
-int			_sensors = 0;			  // Sensors being used
+size_t		_sensors = 0;			  // Sensors being used
 bool		_debug	 = false;
 
 // Packager mobile = new Packager( MOBILE_IP, PORT );
