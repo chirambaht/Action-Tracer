@@ -31,7 +31,7 @@ cxxopts::Options options( "Action Tracer", "This program runs a given number of 
 void setup( int debug_value = 0 ) {
 	wiringPiSetup();
 
-	communicator = new Packager( "127.0.0.1", PORT ); // Initialize the communicator that will send data packets to the server
+	communicator = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->set_debug( debug_value );
 	// The following are the sensors being used to obtain data from the body.
 
