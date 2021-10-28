@@ -37,15 +37,25 @@ THE SOFTWARE.
 #ifndef _MPU6050_H_
 #define _MPU6050_H_
 
+#define MPU6050_INCLUDE_DMP_MOTIONAPPS20
+
 #include "I2Cdev.h"
 #include "helper_3dmath.h"
 
 #include <cstddef>
+
 // supporting link:  http://forum.arduino.cc/index.php?&topic=143444.msg1079517#msg1079517
 // also: http://forum.arduino.cc/index.php?&topic=141571.msg1062899#msg1062899s
 
-// #define MPU6050_INCLUDE_DMP_MOTIONAPPS20
-#define pgm_read_byte( p ) ( *( uint8_t * ) ( p ) )
+#ifdef __AVR__
+	#include <avr/pgmspace.h>
+#else
+	#define PROGMEM				/* empty */
+	#define pgm_read_byte( x )	( *( x ) )
+	#define pgm_read_word( x )	( *( x ) )
+	#define pgm_read_float( x ) ( *( x ) )
+	#define PSTR( STR )			STR
+#endif
 
 #define MPU6050_ADDRESS_AD0_LOW	 0x68 // address pin low (GND), default for InvenSense evaluation board
 #define MPU6050_ADDRESS_AD0_HIGH 0x69 // address pin high (VCC)
@@ -429,7 +439,8 @@ THE SOFTWARE.
 
 class MPU6050 {
   public:
-	MPU6050( uint8_t address = MPU6050_DEFAULT_ADDRESS );
+	MPU6050();
+	MPU6050( uint8_t address );
 
 	void initialize();
 	bool testConnection();
@@ -460,6 +471,8 @@ class MPU6050 {
 	uint8_t getGyroXSelfTestFactoryTrim();
 	uint8_t getGyroYSelfTestFactoryTrim();
 	uint8_t getGyroZSelfTestFactoryTrim();
+
+	uint8_t dmpReadInterrupts();
 
 	// ACCEL_CONFIG register
 	bool	getAccelXSelfTest();
@@ -708,7 +721,6 @@ class MPU6050 {
 
 	// FIFO_R_W register
 	uint8_t getFIFOByte();
-	int8_t	GetCurrentFIFOPacket( uint8_t *data, uint8_t length );
 	void	setFIFOByte( uint8_t data );
 	void	getFIFOBytes( uint8_t *data, uint8_t length );
 
@@ -815,14 +827,10 @@ class MPU6050 {
 	uint8_t getDMPConfig2();
 	void	setDMPConfig2( uint8_t config );
 
-	// Calibration Routines
-	void CalibrateGyro( uint8_t Loops = 15 );							// Fine tune after setting offsets with less Loops.
-	void CalibrateAccel( uint8_t Loops = 15 );							// Fine tune after setting offsets with less Loops.
-	void PID( uint8_t ReadAddress, float kP, float kI, uint8_t Loops ); // Does the math
-	void PrintActiveOffsets();											// See the results of the Calibration
-
 // special methods for MotionApps 2.0 implementation
 #ifdef MPU6050_INCLUDE_DMP_MOTIONAPPS20
+	uint8_t *dmpPacketBuffer;
+	uint16_t dmpPacketSize;
 
 	uint8_t dmpInitialize();
 	bool	dmpPacketAvailable();
@@ -918,11 +926,13 @@ class MPU6050 {
 	uint32_t dmpGetAccelSumOfSquare();
 	void	 dmpOverrideQuaternion( long *q );
 	uint16_t dmpGetFIFOPacketSize();
-	uint8_t	 dmpGetCurrentFIFOPacket( uint8_t *data ); // overflow proof
+	uint8_t	 dmpGetCurrentFIFOPacket( uint8_t *data ); // overflow
 #endif
 
 // special methods for MotionApps 4.1 implementation
 #ifdef MPU6050_INCLUDE_DMP_MOTIONAPPS41
+	uint8_t *dmpPacketBuffer;
+	uint16_t dmpPacketSize;
 
 	uint8_t dmpInitialize();
 	bool	dmpPacketAvailable();
@@ -1024,10 +1034,6 @@ class MPU6050 {
   private:
 	uint8_t devAddr;
 	uint8_t buffer[14];
-#if defined( MPU6050_INCLUDE_DMP_MOTIONAPPS20 ) or defined( MPU6050_INCLUDE_DMP_MOTIONAPPS41 )
-	uint8_t *dmpPacketBuffer;
-	uint16_t dmpPacketSize;
-#endif
 };
 
 #endif /* _MPU6050_H_ */
