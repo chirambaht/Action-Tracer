@@ -4,6 +4,7 @@
 
 #include "debug_printer.h"
 
+#include <cxxopts.hpp>
 #include <dirent.h>
 #include <filesystem>
 #include <iostream>
