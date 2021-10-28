@@ -2,7 +2,7 @@
 #include "MPU6050.h"
 
 #include <cstdio>
-#include <csv2/writer.hpp>
+// #include <csv2/writer.hpp>
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -232,15 +232,15 @@ void PullBracketsOut() {
 } // PullBracketsOut
 
 void write_tracepoint_csv() {
-	std::ofstream		   stream( "tracepoint.config.csv" );
-	Writer<delimiter<','>> writer( stream );
+	// std::ofstream		   stream( "tracepoint.config.csv" );
+	// Writer<delimiter<','>> writer( stream );
 
-	std::vector<std::vector<std::string>> rows;
+	// std::vector<std::vector<std::string>> rows;
 
-	// TODO: Expand this file to work with multiple devices connected
+	// // TODO: Expand this file to work with multiple devices connected
 
-	writer.write_rows( rows );
-	stream.close();
+	// writer.write_rows( rows );
+	// stream.close();
 }
 
 void print_tracepoint_line() {

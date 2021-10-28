@@ -34,13 +34,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===============================================
 */
+#include "MPU6050.h"
+
+#include <cstdlib>
+#include <cstring>
+#include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
-#include <stdint.h>
-#include <math.h>
-#include "MPU6050.h"
+#include <unistd.h>
 
 /** Specific address constructor.
  * @param address I2C address, uses default I2C address if none is specified
