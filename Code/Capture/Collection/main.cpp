@@ -64,7 +64,7 @@ void loop() {
 		}
 	}
 
-	communicator->send_packet( data_package, N * 4 );
+	communicator->send_packet( data_package, _sensors * 4 );
 
 	usleep( LOOP_DELAY * 1000 );
 }
