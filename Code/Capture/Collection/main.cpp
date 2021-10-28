@@ -101,7 +101,7 @@ int main( int argc, char const *argv[] ) {
 				for( const auto cell : row ) {
 					std::string value;
 					cell.read_value( value );
-					debugPrint( "%s", value.c_str() )
+					debugPrint( "%s", value.c_str() );
 				}
 			}
 		}
