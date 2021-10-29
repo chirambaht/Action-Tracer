@@ -76,8 +76,8 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		_dmp_ready = false;
 	}
 
-	this->_device->setFullScaleGyroRange( 3 );
-	this->_device->setFullScaleAccelRange( 3 );
+	// this->_device->setFullScaleGyroRange( 3 );
+	// this->_device->setFullScaleAccelRange( 3 );
 
 	this->_deselect_me();
 
@@ -145,7 +145,6 @@ void ActionTracer::TracePoint::get_data() {
 
 	if( !_dmp_ready ) {
 		if( _debug )
-
 			debugPrint( "DMP not initialised\n" );
 		return;
 	}

@@ -268,7 +268,7 @@ uint8_t MPU6050::dmpInitialize() {
 	// reset device
 	debugPrintln( F( "\n\nResetting MPU6050..." ) );
 	reset();
-	delay( 30 ); // wait after reset
+	delay( 2000 ); // wait after reset
 
 	// enable sleep mode and wake cycle
 	/*Serial.println(F("Enabling sleep mode..."));
@@ -303,7 +303,7 @@ uint8_t MPU6050::dmpInitialize() {
 	setSlaveAddress( 0, 0x68 );
 	debugPrintln( F( "Resetting I2C Master control..." ) );
 	resetI2CMaster();
-	delay( 20 );
+	delay( 200 );
 	debugPrintln( F( "Setting clock source to Z Gyro..." ) );
 	setClockSource( MPU6050_CLOCK_PLL_ZGYRO );
 
