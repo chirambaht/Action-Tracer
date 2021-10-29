@@ -63,15 +63,14 @@ int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
 		}
 	}
 
-	if( _debug )
-		debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, arr.c_str() );
-
 	// Send some data
 	if( send( _descriptor, arr.c_str(), strlen( arr.c_str() ), 0 ) < 0 ) {
 		if( _debug )
 			debugPrint( "Send failed\n" );
 		return 1;
 	}
+	if( _debug )
+		debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, arr.c_str() );
 	_count++;
 
 	return 0;
