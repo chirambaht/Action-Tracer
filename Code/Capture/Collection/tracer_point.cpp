@@ -29,8 +29,8 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	_device_interrupt_flag = false;
 
 	if( _debug )
-		if( _debug )
-			debugPrint( "Initilizing %s...\n", _device_name.c_str() );
+
+		debugPrint( "Initilizing %s...\n", _device_name.c_str() );
 	this->_select_me();
 	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
 
@@ -43,8 +43,8 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	// DMP Initialization
 	if( _debug )
-		if( _debug )
-			debugPrint( "Initalising DMP\n" );
+
+		debugPrint( "Initalising DMP\n" );
 	_device_status = _device->dmpInitialize();
 
 	_device->setXAccelOffset( 43 );
@@ -56,8 +56,8 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	if( _device_status == 0 ) {
 		if( _debug )
-			if( _debug )
-				debugPrint( "Enabling DMP..." );
+
+			debugPrint( "Enabling DMP..." );
 		_device->setDMPEnabled( true );
 
 		//TODO: Attach interrupt here
@@ -69,23 +69,24 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		_packet_size = _device->dmpGetFIFOPacketSize();
 
 		if( _debug )
-			if( _debug )
-				debugPrint( "Enabled!\n" );
+			debugPrint( "Enabled!\n" );
 	} else {
 		if( _debug )
-			if( _debug )
-				debugPrint( "Can't initialise DMP\n" );
+			debugPrint( "Can't initialise DMP\n" );
 		_dmp_ready = false;
 	}
+
+	this->_device->setFullScaleGyroRange( 3 );
+	this->_device->setFullScaleAccelRange( 3 );
 
 	this->_deselect_me();
 
 	if( _debug )
-		if( _debug )
-			debugPrint( "Init variable dump\n" );
+
+		debugPrint( "Init variable dump\n" );
 	if( _debug )
-		if( _debug )
-			debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
+
+		debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
 }
 
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
@@ -110,32 +111,32 @@ std::string ActionTracer::TracePoint::identify() {
 void ActionTracer::TracePoint::print_last_data_packet() {
 #ifdef GET_DATA_QUATERNION
 	if( _debug )
-		if( _debug )
-			debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
+
+		debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
 #endif
 
 #ifdef GET_DATA_EULER
 	if( _debug )
-		if( _debug )
-			debugPrint( "Output data type: Euler\nLast packet was: %5f, %5f, %5f\n", _euler_packet[0], _euler_packet[1], _euler_packet[2] );
+
+		debugPrint( "Output data type: Euler\nLast packet was: %5f, %5f, %5f\n", _euler_packet[0], _euler_packet[1], _euler_packet[2] );
 #endif
 
 #ifdef GET_DATA_ACCELEROMETER
 	if( _debug )
-		if( _debug )
-			debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
+
+		debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
 #endif
 
 #ifdef GET_DATA_GYROSCOPE
 	if( _debug )
-		if( _debug )
-			debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _gyroscope_float_packet[0], _gyroscope_float_packet[1], _gyroscope_float_packet[2] );
+
+		debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _gyroscope_float_packet[0], _gyroscope_float_packet[1], _gyroscope_float_packet[2] );
 #endif
 
 #ifdef GET_DATA_YAWPITCHROLL
 	if( _debug )
-		if( _debug )
-			debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
+
+		debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
 #endif
 }
 
@@ -144,8 +145,8 @@ void ActionTracer::TracePoint::get_data() {
 
 	if( !_dmp_ready ) {
 		if( _debug )
-			if( _debug )
-				debugPrint( "DMP not initialised\n" );
+
+			debugPrint( "DMP not initialised\n" );
 		return;
 	}
 
