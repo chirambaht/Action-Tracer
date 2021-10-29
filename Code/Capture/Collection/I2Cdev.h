@@ -51,6 +51,7 @@ THE SOFTWARE.
 	#define FALSE ( 0 == 1 )
 #endif
 
+#include <stdint.h>
 class I2Cdev {
   public:
 	I2Cdev();
