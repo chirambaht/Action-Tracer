@@ -60,7 +60,7 @@ void loop() {
 		float *body = dev.read_data( 1 );
 
 		for( size_t j = 0; j < 4; j++ ) {
-			data_package[j + ( *4 )] = *body;
+			data_package[j + ( i * 4 )] = *body;
 			body++;
 		}
 		++i;
