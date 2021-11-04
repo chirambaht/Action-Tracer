@@ -1,8 +1,7 @@
 // This is the main file that will be used to run the program for data
 // collection from the 3 IMU's and send them to the server as is necesarry.
-#include "main.h"
-
 #include "debug_printer.h"
+#include "main.h"
 
 #include <cxxopts.hpp>
 #include <dirent.h>
@@ -33,20 +32,13 @@ void setup( int debug_value = 0 ) {
 
 	communicator = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->set_debug( debug_value );
-	// The following are the sensors being used to obtain data from the body.
 
-	// TracePoint *a = new TracePoint( "Left Shoulder", 2 );
-	// TracePoint *b = new TracePoint( "Left Forearm", 3 );
-	// TracePoint *c = new TracePoint( "Left Hand", 4 );
+	// for( size_t i = 0; i < _sensors; i++ ) {
+	// 	body_sensor[i] = new TracePoint( "Body p", 2 );
+	// }
 
-	// body_sensor[0] = a;
-	// body_sensor[1] = b;
-	// body_sensor[2] = c;
-
-	for( size_t i = 0; i < _sensors; i++ ) {
-		TracePoint *temp = new TracePoint( "Body p", 2 );
-		temp->set_debug( debug_value );
-		body_sensor[i] = temp;
+	for( auto dev : bodysensors ) {
+		dev = new TracePoint( "Body p", 2 );
 	}
 }
 
@@ -62,6 +54,10 @@ void loop() {
 			data_package[j + ( i * 4 )] = *body;
 			body++;
 		}
+	}
+
+	for( auto dev : bodysensors ) {
+		float *body = dev.read_data( 1 );
 	}
 
 	communicator->send_packet( data_package, _sensors * 4 );

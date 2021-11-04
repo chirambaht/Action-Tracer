@@ -10,13 +10,20 @@
 #include "packager.h"
 #include "tracer_point.h"
 
+#include <memory.h>
+#include <vector>
+
 using namespace ActionTracer;
 
-Packager *	communicator;			  // The speaker dude
-TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
-size_t		_sensors = 0;			  // Sensors being used
-bool		_debug	 = false;
-std::string _address = "127.0.0.1";
+// Packager *				  communicator; // The speaker dude
+// TracePoint *			  body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
+// auto					body_sensor = std::make_unique<TracePoint[]>( MAX_SENSORS );
+
+std::unique_ptr<Packager> communicator;
+std::vector<TracePoint>	  bodysensors;
+size_t					  _sensors = 0; // Sensors being used
+bool					  _debug   = false;
+std::string				  _address = "127.0.0.1";
 
 // Packager mobile = new Packager( MOBILE_IP, PORT );
 
