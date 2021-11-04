@@ -55,14 +55,15 @@ void loop() {
 	// 		body++;
 	// 	}
 	// }
-
+	int i = 0;
 	for( auto dev : bodysensors ) {
 		float *body = dev.read_data( 1 );
 
 		for( size_t j = 0; j < 4; j++ ) {
-			data_package[j + ( i * 4 )] = *body;
+			data_package[j + ( *4 )] = *body;
 			body++;
 		}
+		++i;
 	}
 
 	communicator->send_packet( data_package, _sensors * 4 );
