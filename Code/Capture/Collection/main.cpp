@@ -37,7 +37,7 @@ void setup( int debug_value = 0 ) {
 	// 	body_sensor[i] = new TracePoint( "Body p", 2 );
 	// }
 
-	for( auto i = bodysensors.begin();; i < bodysensors.end(); std::advance( i ) ) {
+	for( auto i = bodysensors.begin(); i < bodysensors.end(); std::advance( i, 1 ) ) {
 		*i = new TracePoint( "Body p", 2 );
 	}
 }
