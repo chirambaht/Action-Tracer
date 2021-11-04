@@ -473,6 +473,7 @@ class MPU6050 {
 	uint8_t getGyroZSelfTestFactoryTrim();
 
 	uint8_t dmpReadInterrupts();
+	int8_t	GetCurrentFIFOPacket( uint8_t *data, uint8_t length );
 
 	// ACCEL_CONFIG register
 	bool	getAccelXSelfTest();

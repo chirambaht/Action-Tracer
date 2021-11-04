@@ -268,7 +268,7 @@ uint8_t MPU6050::dmpInitialize() {
 	// reset device
 	debugPrintln( F( "\n\nResetting MPU6050..." ) );
 	reset();
-	delay( 2000 ); // wait after reset
+	delay( 3000 ); // wait after reset
 
 	// enable sleep mode and wake cycle
 	/*Serial.println(F("Enabling sleep mode..."));
@@ -613,8 +613,8 @@ uint8_t MPU6050::dmpReadAndProcessFIFOPacket( uint8_t numPackets, uint8_t *proce
 // void MPU6050::dmpOverrideQuaternion(long *q);
 
 uint8_t MPU6050::dmpGetCurrentFIFOPacket( uint8_t *data ) { // overflow proof
-	// return ( GetCurrentFIFOPacket( data ) );
-	return ( 1 );
+	return ( GetCurrentFIFOPacket( data, dmpPacketSize ) );
+	// return ( 1 );
 }
 
 uint16_t MPU6050::dmpGetFIFOPacketSize() {

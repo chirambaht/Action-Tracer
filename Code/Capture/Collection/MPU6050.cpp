@@ -3255,6 +3255,10 @@ void MPU6050::setDMPConfig2( uint8_t config ) {
 	I2Cdev::writeByte( devAddr, MPU6050_RA_DMP_CFG_2, config );
 }
 
+int8_t MPU6050::GetCurrentFIFOPacket( uint8_t *data, uint8_t length ) { // overflow proof
+	return 1;
+}
+
 // //Added from MPU6050_6Axis_MotionApps20.h
 
 // uint8_t MPU6050::dmpInitialize() {
