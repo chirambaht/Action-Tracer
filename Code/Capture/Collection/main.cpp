@@ -37,8 +37,8 @@ void setup( int debug_value = 0 ) {
 	// 	body_sensor[i] = new TracePoint( "Body p", 2 );
 	// }
 
-	for( auto dev : bodysensors ) {
-		dev = new TracePoint( "Body p", 2 );
+	for( auto i = bodysensors.begin();; i < bodysensors.end(); std::advance( i ) ) {
+		*i = new TracePoint( "Body p", 2 );
 	}
 }
 
@@ -48,16 +48,21 @@ void setup( int debug_value = 0 ) {
 void loop() {
 	float data_package[_sensors * 4];
 
-	for( size_t i = 0; i < _sensors; i++ ) {
-		float *body = body_sensor[i]->read_data( 1 );
+	// for( size_t i = 0; i < _sensors; i++ ) {
+	// 	float *body = body_sensor[i]->read_data( 1 );
+	// 	for( size_t j = 0; j < 4; j++ ) {
+	// 		data_package[j + ( i * 4 )] = *body;
+	// 		body++;
+	// 	}
+	// }
+
+	for( auto dev : bodysensors ) {
+		float *body = dev.read_data( 1 );
+
 		for( size_t j = 0; j < 4; j++ ) {
 			data_package[j + ( i * 4 )] = *body;
 			body++;
 		}
-	}
-
-	for( auto dev : bodysensors ) {
-		float *body = dev.read_data( 1 );
 	}
 
 	communicator->send_packet( data_package, _sensors * 4 );
