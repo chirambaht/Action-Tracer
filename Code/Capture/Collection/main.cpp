@@ -44,9 +44,9 @@ void setup( int debug_value = 0 ) {
 	communicator->set_debug( debug_value );
 
 #ifdef ARRAY_SOLUTION
-// for( size_t i = 0; i < _sensors; i++ ) {
-// 	body_sensor[i] = new TracePoint( "Body p", 2 );
-// }
+	for( size_t i = 0; i < _sensors; i++ ) {
+		body_sensor[i] = new TracePoint( "Body p", 2 );
+	}
 #endif
 #ifdef VECTOR_SOLUTION
 	for( auto i = bodysensors.begin(); i < bodysensors.end(); std::advance( i, 1 ) ) {
@@ -112,6 +112,12 @@ int main( int argc, char const *argv[] ) {
 	if( result.count( "file" ) ) {
 		// TODO: Read CSV file for parameters for each item
 	}
+#endif
+
+#ifndef TAKE_ARGUMENTS
+	_address = "192.168.3.22";
+	_sensors = 2;
+	_debug	 = true;
 #endif
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
 	setup( _debug );
