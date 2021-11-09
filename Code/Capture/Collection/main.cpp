@@ -115,7 +115,7 @@ int main( int argc, char const *argv[] ) {
 #endif
 
 #ifndef TAKE_ARGUMENTS
-	_address = "192.168.3.22";
+	_address = "192.168.137.1";
 	_sensors = 2;
 	_debug	 = true;
 #endif
