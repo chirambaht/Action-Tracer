@@ -21,7 +21,7 @@ clean:
 	@ rm -f $(OBJS) $(EXE)
 
 gui_debug:
-	@ guigdb $(EXE) --host LOCAL_IP  --port 5000
+	@ gdbgui $(EXE) --host LOCAL_IP  --port 5000
 	# @ guigdb $(EXE) --host 
 
 debug:
