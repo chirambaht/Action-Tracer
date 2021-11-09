@@ -111,7 +111,6 @@ std::string ActionTracer::TracePoint::identify() {
 void ActionTracer::TracePoint::print_last_data_packet() {
 #ifdef GET_DATA_QUATERNION
 	if( _debug )
-
 		debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
 #endif
 
@@ -149,6 +148,17 @@ void ActionTracer::TracePoint::get_data() {
 		return;
 	}
 
+	//does the FIFO have data in it?
+	if( _device_interrupt_status & 0x02 < 1 ) {
+		if( _debug )
+			debugPrint( "Data not ready" );
+		return;
+	}
+
+	_fifo_count = _device->getFIFOCount();
+#ifdef INTERRUPT_ME
+	_device_interrupt_status = _device->getIntStatus();
+
 	if( _device_interrupt_flag && _fifo_count < _packet_size ) {
 		if( _debug )
 			debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
@@ -157,6 +167,19 @@ void ActionTracer::TracePoint::get_data() {
 
 	_device_interrupt_flag	 = false;
 	_device_interrupt_status = _device->getIntStatus();
+#else
+	if( _fifo_count < _packet_size ) {
+		if( _debug )
+			debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
+		return;
+	}
+#endif
+	if( _fifo_count == 1024 ) {
+		// reset so we can continue cleanly
+		_device->resetFIFO();
+		if( _debug )
+			debugPrint( "FIFO overflow!\n" );
+	}
 
 	_device->getFIFOBytes( _fifo_buffer, _packet_size );
 
