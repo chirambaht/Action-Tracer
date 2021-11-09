@@ -33,6 +33,7 @@ std::vector<TracePoint> bodysensors;
 size_t		_sensors = 0; // Sensors being used
 bool		_debug	 = true;
 std::string _address = "127.0.0.1";
+float		data_package[4];
 
 // Packager mobile = new Packager( MOBILE_IP, PORT );
 

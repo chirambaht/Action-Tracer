@@ -59,15 +59,14 @@ void setup( int debug_value = 0 ) {
   Main work loop for all the code. This will always run every cycle.
 */
 void loop() {
-	float data_package[_sensors * 4];
-
 #ifdef ARRAY_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
 		float *body = body_sensor[i]->read_data( 1 );
 		for( size_t j = 0; j < 4; j++ ) {
-			data_package[j + ( i * 4 )] = *body;
+			data_package[j] = *body;
 			body++;
 		}
+		communicator->load_packet( data_package, 4 );
 	}
 #endif
 
@@ -84,7 +83,8 @@ void loop() {
 	}
 #endif
 
-	communicator->send_packet( data_package, _sensors * 4 );
+	// Send packet
+	communicator->send_packet();
 
 	usleep( LOOP_DELAY * 1000 );
 }

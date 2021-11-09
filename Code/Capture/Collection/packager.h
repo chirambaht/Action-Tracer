@@ -14,6 +14,7 @@ namespace ActionTracer {
 	  private:
 		bool		_debug = false;
 		std::string _dest;
+		std::string _package;
 		int			_port;
 		int			_descriptor;
 		__uint32_t	_count;
@@ -23,7 +24,8 @@ namespace ActionTracer {
 	  public:
 		Packager();
 		Packager( std::string destination, int port );
-		int send_packet( float *data, uint8_t length );
+		int send_packet();
+		int load_packet( float *data, uint8_t length );
 		~Packager();
 		void set_debug( bool );
 	};

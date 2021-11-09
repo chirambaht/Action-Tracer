@@ -52,26 +52,37 @@ void ActionTracer::Packager::set_debug( bool value ) {
 	_debug = value;
 }
 
-int ActionTracer::Packager::send_packet( float *data, uint8_t length = 4 ) {
-	std::string arr = "";
-
-	// Convert floats to string
-	for( int i = 0; i < length; i++ ) {
-		arr += _float_to_string( data[i], 6 );
-		if( i != length - 1 ) {
-			arr += ", ";
-		}
-	}
-
+/**
+ * This is used to send the stored data packet in @code _packet @endcode
+ * @return 0 if succesful.
+*/
+int ActionTracer::Packager::send_packet() {
 	// Send some data
-	if( send( _descriptor, arr.c_str(), strlen( arr.c_str() ), 0 ) < 0 ) {
+	if( send( _descriptor, _package.c_str(), strlen( _package.c_str() ), 0 ) < 0 ) {
 		if( _debug )
 			debugPrint( "Send failed\n" );
 		return 1;
 	}
 	if( _debug )
-		debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, arr.c_str() );
+		debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, _package.c_str() );
 	_count++;
+	_package = "";
 
+	return 0;
+}
+
+/**
+ * This is used to add data to a package that is going to be sent. It takes an array of floats.
+ * @param *data A reference to an array of floats
+ * @param length number of floats in array to convert. Defaults to 4
+ * @return 0 if succesful.
+*/
+int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
+	for( int i = 0; i < length; i++ ) {
+		_package += _float_to_string( data[i], 6 );
+		if( i != length - 1 ) {
+			_package += ", ";
+		}
+	}
 	return 0;
 }
