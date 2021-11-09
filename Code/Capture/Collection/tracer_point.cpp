@@ -3,8 +3,9 @@
 #define debugPrint( ... )	printf( __VA_ARGS__ )
 #define debugPrintln( ... ) printf( __VA_ARGS__ )
 
-#include <wiringPi.h>
-
+#ifdef ON_PI
+	#include <wiringPi.h>
+#endif
 // Select the data you want out here
 #define GET_DATA_QUATERNION
 // #define GET_DATA_EULER
@@ -92,13 +93,17 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
 */
 void ActionTracer::TracePoint::_select_me() {
+#ifdef ON_PI
 	digitalWrite( _pin_number, LOW );
+#endif
 }
 
 /** Deselects a given MPU6050 node.
 */
 void ActionTracer::TracePoint::_deselect_me() {
+#ifdef ON_PI
 	digitalWrite( _pin_number, HIGH );
+#endif
 }
 
 /** Calls on the selected sensor to identify itself by its given name.
