@@ -81,8 +81,9 @@ int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 	for( int i = 0; i < length; i++ ) {
 		_package += _float_to_string( data[i], 6 );
 		if( i != length - 1 ) {
-			_package += ", ";
+			_package += ",";
 		}
 	}
+	_package += ":";
 	return 0;
 }
