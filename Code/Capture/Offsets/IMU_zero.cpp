@@ -39,8 +39,8 @@ const int iGy = 4;
 const int iGz = 5;
 
 const int usDelay			  = 3150;  // empirical, to hold sampling to 200 Hz
-const int NFast				  = 1000;  // the bigger, the better (but slower)
-const int NSlow				  = 10000; // ..
+const int NFast				  = 100;  // the bigger, the better (but slower)
+const int NSlow				  = 100; // ..
 const int LinesBetweenHeaders = 5;
 
 int LowValue[6];
@@ -247,8 +247,8 @@ void write_tracepoint_csv() {
 	// stream.close();
 }
 
-void print_tracepoint_line() {
-	printf( "Below is the tracepoint line: \n\n\tName,Pin,%5d, %5d, %5d, %5d, %5d, %5d\n", LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5] );
+void print_tracepoint_line(int pin) {
+	printf( "Below is the tracepoint line: \n\n\t%2d,%5d, %5d, %5d, %5d, %5d, %5d\n",pin, LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5] );
 }
 
 int main( int argc, char **argv ) {
@@ -291,7 +291,7 @@ int main( int argc, char **argv ) {
 
 		digitalWrite (WiPi_GPIO[dev], 1);
 		printf("Device %d: ", dev);
-		print_tracepoint_line();
+		print_tracepoint_line(WiPi_GPIO[dev]);
 	}
 	printf( "-------------- Done --------------\n\n" );
 
@@ -308,7 +308,7 @@ int main( int argc, char **argv ) {
 	SetAveraging( NFast );
 	PullBracketsOut();
 	PullBracketsIn();
-	print_tracepoint_line();
+	print_tracepoint_line(0);
 	printf( "-------------- Done --------------\n\n" );
 	#endif
 
