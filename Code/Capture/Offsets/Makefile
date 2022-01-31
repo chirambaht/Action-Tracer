@@ -19,7 +19,7 @@ IMU_zero: $(CMN_OBJS) $(IMU_OBJS)
 	@ $(CXX) -o $@ $^ -l wiringPi -lm
 
 debug:
-	@ gdbgui $(EXE) --host $(LOCAL_IP)  --port $(LOCAL_PORT)
+	@ gdbgui --host $(LOCAL_IP)  --port $(LOCAL_PORT) --args 3 $(EXE)
 
 clean:
 	@ echo "Ahh clean!"
