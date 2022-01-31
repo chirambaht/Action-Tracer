@@ -45,7 +45,7 @@ void setup( int debug_value = 0 ) {
 
 #ifdef ARRAY_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
-		body_sensor[i] = new TracePoint( "Body p", 2 );
+		body_sensor[i] = new TracePoint( "Body p", PI_ORDER[i] );
 	}
 #endif
 #ifdef VECTOR_SOLUTION

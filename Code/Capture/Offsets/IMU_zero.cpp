@@ -11,6 +11,8 @@
 #include <unistd.h>
 #include <vector>
 
+using namespace std;
+
 // class default I2C address is 0x68
 // specific I2C addresses may be passed as a parameter here
 // AD0 low = 0x68 (default for InvenSense evaluation board)
@@ -191,7 +193,6 @@ void PullBracketsOut() {
 	int	 NextLowOffset[6];
 	int	 NextHighOffset[6];
 
-	printf( "Finding extremes of the zero points for the IMU gyroscope and accelerometer:\n" );
 	ForceHeader();
 
 	while( !Done ) {
@@ -246,6 +247,40 @@ void print_tracepoint_line() {
 }
 
 int main( int argc, char **argv ) {
+	#ifdef ZERO_ALL
+	
+	std::array<uint8_t, 14> WiPi_GPIO = {7,14,16, 0, 1, 2,3,4,5,12,13,6,14,10};
+
+	// This means that many devices are connected and will be programmed by looking at all the devices, the number of which is specified as the 2nd argument. (If not present, this will not run)
+	if (argc < 2){
+		printf("Number of devices not passed as argument.")
+		return 0;
+	}
+	// Init wiringPi
+
+	// for each of the devices, set address of 0x68 and program
+	for (size_t dev = 0; dev < argv[2]; dev++){
+		// 
+		Initialize();
+
+		for( int i = iAx; i <= iGz; i++ ) { // set targets and initial guesses
+			Target[i]	  = 0;				// must fix for ZAccel
+			HighOffset[i] = 0;
+			LowOffset[i]  = 0;
+		} // set targets and initial guesses
+
+		Target[iAz] = 16384;
+
+		SetAveraging( NFast );
+		PullBracketsOut();
+		PullBracketsIn();
+		printf("Device %d: ", dev);
+		print_tracepoint_line();
+	}
+	printf( "-------------- Done --------------\n\n" );
+
+	#else
+
 	Initialize();
 
 	for( int i = iAx; i <= iGz; i++ ) { // set targets and initial guesses
@@ -257,8 +292,10 @@ int main( int argc, char **argv ) {
 	SetAveraging( NFast );
 	PullBracketsOut();
 	PullBracketsIn();
-	ShowProgress();
 	print_tracepoint_line();
 	printf( "-------------- Done --------------\n\n" );
+	#endif
+
 	return 0;
+
 }
