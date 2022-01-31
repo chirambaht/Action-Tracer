@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -238,8 +239,9 @@ int main( int argc, char **argv ) {
 	}
 
 	// for each of the devices, set address of 0x68 and program
-	std::string ss = argv[2];
-	int num_devs = stoi(ss);
+	std::istringstream ss(argv[2]);
+	int num_devs;
+	ss >> num_devs;
 
 	printf("Woriking with %d devices.\n", num_devs);
 	string liners = "";
