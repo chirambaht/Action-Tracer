@@ -238,7 +238,7 @@ int main( int argc, char **argv ) {
 	}
 
 	// for each of the devices, set address of 0x68 and program
-	int num_devs = (int) argv[2] - 48;
+	int num_devs = std::atoi(argv[2]);
 
 	printf("Woriking with %d devices.\n", num_devs);
 	string liners = "";
