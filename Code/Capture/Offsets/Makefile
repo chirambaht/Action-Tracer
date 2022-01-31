@@ -7,7 +7,7 @@ IMU_OBJS = IMU_zero.o
 # Set DMP FIFO rate to 100Hz.  See comments in
 # MPU6050_6Axis_MotionApps20.h for details.
 
-CXXFLAGS = -DDMP_FIFO_RATE=1 -Wall -g -O2 `pkg-config gtkmm-3.0 --cflags --libs`
+CXXFLAGS = -DDMP_FIFO_RATE=1 -Wall -g -O2
 
  $(CMN_OBJS) $(CLD_OBJS) $(IMU_OBJS): $(HDRS)
 

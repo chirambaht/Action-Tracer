@@ -11,6 +11,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <vector>
+#include <wiringPi.h>
 
 using namespace std;
 
@@ -252,22 +253,28 @@ void print_tracepoint_line() {
 int main( int argc, char **argv ) {
 	#ifdef ZERO_ALL
 	
-	std::array<uint8_t, 14> WiPi_GPIO = { 0, 2, 3, 12,13,6,14,10};
-
+	std::array<uint8_t, 8> WiPi_GPIO = { 0, 2, 3, 12,13,6,14,10};
+	
 	// This means that many devices are connected and will be programmed by looking at all the devices, the number of which is specified as the 2nd argument. (If not present, this will not run)
 	if (argc < 2){
 		printf("Number of devices not passed as argument.");
 		return 0;
 	}
 	// Init wiringPi
+	wiringPiSetup () ;
+	for(int i = 0; i < 8; i++){
+		digitalWrite (WiPi_GPIO[i], 1);
+	}
 
 	// for each of the devices, set address of 0x68 and program
 	int num_devs = (int) argv[2] - 48;
-	
-	for (size_t dev = 0; dev < num_devs; dev++){
-		// 
-		Initialize();
 
+	printf("Woriking with %d devices.\n", num_devs);
+	for (size_t dev = 0; dev < num_devs; dev++){
+		printf("Device %d, on pin: %d.\n", dev+1, WiPi_GPIO[dev]);
+		
+		digitalWrite (WiPi_GPIO[i], 0);
+		Initialize();
 		for( int i = iAx; i <= iGz; i++ ) { // set targets and initial guesses
 			Target[i]	  = 0;				// must fix for ZAccel
 			HighOffset[i] = 0;
@@ -279,6 +286,8 @@ int main( int argc, char **argv ) {
 		SetAveraging( NFast );
 		PullBracketsOut();
 		PullBracketsIn();
+
+		digitalWrite (WiPi_GPIO[i], 1);
 		printf("Device %d: ", dev);
 		print_tracepoint_line();
 	}
