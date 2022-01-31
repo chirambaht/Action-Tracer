@@ -1,6 +1,7 @@
 #include "I2Cdev.h"
 #include "MPU6050.h"
 
+#include <array>
 #include <cstdio>
 // #include <csv2/writer.hpp>
 #include <math.h>
@@ -12,6 +13,8 @@
 #include <vector>
 
 using namespace std;
+
+#define ZERO_ALL
 
 // class default I2C address is 0x68
 // specific I2C addresses may be passed as a parameter here
@@ -249,17 +252,19 @@ void print_tracepoint_line() {
 int main( int argc, char **argv ) {
 	#ifdef ZERO_ALL
 	
-	std::array<uint8_t, 14> WiPi_GPIO = {7,14,16, 0, 1, 2,3,4,5,12,13,6,14,10};
+	std::array<uint8_t, 14> WiPi_GPIO = { 0, 2, 3, 12,13,6,14,10};
 
 	// This means that many devices are connected and will be programmed by looking at all the devices, the number of which is specified as the 2nd argument. (If not present, this will not run)
 	if (argc < 2){
-		printf("Number of devices not passed as argument.")
+		printf("Number of devices not passed as argument.");
 		return 0;
 	}
 	// Init wiringPi
 
 	// for each of the devices, set address of 0x68 and program
-	for (size_t dev = 0; dev < argv[2]; dev++){
+	int num_devs = (int) argv[2] - 48;
+	
+	for (size_t dev = 0; dev < num_devs; dev++){
 		// 
 		Initialize();
 
