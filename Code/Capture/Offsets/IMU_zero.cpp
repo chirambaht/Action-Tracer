@@ -60,6 +60,15 @@ void ForceHeader() {
 	LinesOut = 99;
 }
 
+void SetOffsets( int TheOffsets[6] ) {
+	accelgyro.setXAccelOffset( TheOffsets[iAx] );
+	accelgyro.setYAccelOffset( TheOffsets[iAy] );
+	accelgyro.setZAccelOffset( TheOffsets[iAz] );
+	accelgyro.setXGyroOffset( TheOffsets[iGx] );
+	accelgyro.setYGyroOffset( TheOffsets[iGy] );
+	accelgyro.setZGyroOffset( TheOffsets[iGz] );
+} // SetOffsets
+
 void GetSmoothed() {
 	int16_t RawValue[6];
 	int		i;
