@@ -287,7 +287,7 @@ int main( int argc, char **argv ) {
 		PullBracketsOut();
 		PullBracketsIn();
 
-		digitalWrite (WiPi_GPIO[i], 1);
+		digitalWrite (WiPi_GPIO[dev], 1);
 		printf("Device %d: ", dev);
 		print_tracepoint_line();
 	}
