@@ -238,7 +238,7 @@ int main( int argc, char **argv ) {
 	}
 
 	// for each of the devices, set address of 0x68 and program
-	std::string ss = std::string(argv[2]);
+	std::string ss = argv[2];
 	int num_devs = stoi(ss);
 
 	printf("Woriking with %d devices.\n", num_devs);
