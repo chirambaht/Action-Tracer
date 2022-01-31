@@ -1,6 +1,7 @@
 #include "I2Cdev.h"
 #include "MPU6050.h"
 
+#include <wiringPi.h>
 #include <array>
 #include <cstdio>
 // #include <csv2/writer.hpp>
@@ -11,7 +12,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <vector>
-#include <wiringPi.h>
+
 
 using namespace std;
 
@@ -263,6 +264,7 @@ int main( int argc, char **argv ) {
 	// Init wiringPi
 	wiringPiSetup () ;
 	for(int i = 0; i < 8; i++){
+		pinMode(WiPi_GPIO[i], OUTPUT);
 		digitalWrite (WiPi_GPIO[i], 1);
 	}
 
