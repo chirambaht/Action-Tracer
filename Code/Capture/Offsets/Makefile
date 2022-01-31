@@ -12,8 +12,6 @@ LOCAL_PORT = 5000
 
 CXXFLAGS = -Wall -DON_PI -g -O0
 
-# Set DMP FIFO rate to 100Hz.  See comments in
-# MPU6050_6Axis_MotionApps20.h for details.
 CXX-FLAGS
  $(CMN_OBJS) $(CLD_OBJS) $(IMU_OBJS): $(HDRS)
 
@@ -23,7 +21,6 @@ IMU_zero: $(CMN_OBJS) $(IMU_OBJS)
 
 debug:
 	@ gdbgui $(EXE) --host $(LOCAL_IP)  --port $(LOCAL_PORT)
-
 
 clean:
 	@ echo "Ahh clean!"
