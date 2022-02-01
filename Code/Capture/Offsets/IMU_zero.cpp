@@ -247,6 +247,9 @@ int main( int argc, char **argv ) {
 		printf("Device %d, on pin: %d.\n", dev+1, WiPi_GPIO[dev]);
 		
 		digitalWrite (WiPi_GPIO[dev], 0);
+
+		// TODO: Add progress indicator
+
 		Initialize();
 		for( int i = iAx; i <= iGz; i++ ) { // set targets and initial guesses
 			Target[i]	  = 0;				// must fix for ZAccel
