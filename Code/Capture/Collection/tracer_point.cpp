@@ -275,10 +275,13 @@ void ActionTracer::TracePoint::_set_device_offsets() {
 				int tp_value = atoi( value.c_str() );
 				if( count == 0 ) {
 					if( tp_value != _pin_number ) {
+						debugPrint( "Pin %d not found in pointers.csv. Using default settings.\n", _pin_number );
 						_set_default_device_offsets();
 						continue;
 					}
+					debugPrint( "Pin %d found in pointers.csv. Its parameters are:\n%s\n", _pin_number, line.c_str() );
 				}
+
 				switch( count ) {
 					case 1:
 						_device->setXAccelOffset( tp_value );
