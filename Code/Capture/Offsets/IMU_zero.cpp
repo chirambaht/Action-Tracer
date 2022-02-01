@@ -238,12 +238,12 @@ int main( int argc, char **argv ) {
 		digitalWrite (WiPi_GPIO[i], 1);
 	}
 
-	// for each of the devices, set address of 0x68 and program
-	std::istringstream ss(argv[2]);
-	int num_devs;
-	ss >> num_devs;
-
 	printf("Woriking with %d devices.\n", num_devs);
+
+	// for each of the devices, set address of 0x68 and program
+
+int num_devs = 3;
+
 	string liners = "";
 	for (size_t dev = 0; dev < num_devs; dev++){
 		printf("Device %d, on pin: %d.\n", dev+1, WiPi_GPIO[dev]);
