@@ -267,7 +267,9 @@ int main( int argc, char **argv ) {
 		digitalWrite (WiPi_GPIO[dev], 1);
 		printf("Device %d: ", dev);
 		print_tracepoint_line(WiPi_GPIO[dev]);
-		liners += sprintf("%2d,%5d, %5d, %5d, %5d, %5d, %5d\n",WiPi_GPIO[dev], LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5]) ;
+		std::string l;
+		sprintf(l, "%2d,%5d, %5d, %5d, %5d, %5d, %5d\n",WiPi_GPIO[dev], LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5]) ;
+		liners += l;
 	}
 	printf( "-------------- Done --------------\n\n" );
 	write_tracepoint_csv(liners);
