@@ -269,7 +269,7 @@ int main( int argc, char **argv ) {
 		print_tracepoint_line(WiPi_GPIO[dev]);
 		char l[50];
 		sprintf(l, "%2d,%5d, %5d, %5d, %5d, %5d, %5d\n",WiPi_GPIO[dev], LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5]) ;
-		liners += l,to_string();
+		liners += l.to_string();
 	}
 	printf( "-------------- Done --------------\n\n" );
 	write_tracepoint_csv(liners);
