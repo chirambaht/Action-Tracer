@@ -242,7 +242,7 @@ int main( int argc, char **argv ) {
 
 	// for each of the devices, set address of 0x68 and program
 
-int num_devs = 3;
+int num_devs = atoi(argv[1]);
 
 	string liners = "";
 	for (size_t dev = 0; dev < num_devs; dev++){
