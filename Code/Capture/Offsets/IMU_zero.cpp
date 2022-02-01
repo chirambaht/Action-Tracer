@@ -100,24 +100,21 @@ void GetSmoothed() {
 
 void Initialize() {
 	// initialize device
-	printf( "Initializing I2C devices...\n" );
+	printf( "Initializing I2C device..." );
 	accelgyro.initialize();
 
 	// verify connection
-	printf( "Testing device connections...\n" );
 	if( !accelgyro.testConnection() ) {
-		printf( "MPU6050 connection failed\n" );
+		printf( "connection failed\n" );
 		return;
 	}
 
-	printf( "MPU6050 connection successful\n" );
+	printf( "connected!\n" );
 	accelgyro.initialize();
-	printf( "Initialization done!\n" );
 } // Initialize
 
 void SetAveraging( int NewN ) {
 	N = NewN;
-	printf( "\nAveraging %d readings each time\n", N );
 } // SetAveraging
 
 void PullBracketsIn() {
@@ -125,7 +122,6 @@ void PullBracketsIn() {
 	bool StillWorking;
 	int	 NewOffset[6];
 
-	printf( "\nClosing in on the true zero values\n" );
 	AllBracketsNarrow = false;
 	ForceHeader();
 	StillWorking = true;
@@ -216,11 +212,11 @@ void write_tracepoint_csv(string csv_line) {
 	// Write in data
 	myfile << csv_line;
 	myfile.close();
-	printf("CSV written. Please copy across %s", pointers_file_name.c_str());
+	printf("CSV written. Please copy across %s\n", pointers_file_name.c_str());
 }
 
 void print_tracepoint_line(int pin) {
-	printf( "Below is the tracepoint line: \n\n\t%2d,%5d, %5d, %5d, %5d, %5d, %5d\n",pin, LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5] );
+	printf( "Below is the tracepoint line: \n\t%2d,%5d, %5d, %5d, %5d, %5d, %5d\n",pin, LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5] );
 }
 
 int main( int argc, char **argv ) {
@@ -240,13 +236,13 @@ int main( int argc, char **argv ) {
 		digitalWrite (WiPi_GPIO[i], 1);
 	}
 
-	printf("Woriking with %s devices.\n", argv[1]);
-
-	// for each of the devices, set address of 0x68 and program
+	printf("Woriking with %s devices.\n\n", argv[1]);
 
 	int num_devs = atoi(argv[1]);
 
 	string liners = "";
+
+	// for each of the devices, set address of 0x68 and program
 	for (size_t dev = 0; dev < num_devs; dev++){
 		printf("Device %d, on pin: %d.\n", dev+1, WiPi_GPIO[dev]);
 		
@@ -265,14 +261,16 @@ int main( int argc, char **argv ) {
 		PullBracketsIn();
 
 		digitalWrite (WiPi_GPIO[dev], 1);
-		printf("Device %d: ", dev);
-		print_tracepoint_line(WiPi_GPIO[dev]);
+		// printf("Device %d: ", dev);
+		// print_tracepoint_line(WiPi_GPIO[dev]);
+		
 		char l[40];
 		sprintf(l, "%2d,%5d,%5d,%5d,%5d,%5d,%5d\n",WiPi_GPIO[dev], LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5]) ;
 		liners += l;
 	}
-	printf( "-------------- Done --------------\n\n" );
 	write_tracepoint_csv(liners);
+
+	printf( "-------------- Done --------------\n\n" );
 
 	#else
 
