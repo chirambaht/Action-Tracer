@@ -211,10 +211,12 @@ void PullBracketsOut() {
 
 void write_tracepoint_csv(string csv_line) {
 	std::ofstream myfile;
-	myfile.open ("pointers.csv");
+	string pointers_file_name = "pointers.csv";
+	myfile.open (pointers_file_name);
 	// Write in data
 	myfile << csv_line;
 	myfile.close();
+	printf("CSV written. Please copy across %s", pointers_file_name);
 }
 
 void print_tracepoint_line(int pin) {
@@ -242,7 +244,7 @@ int main( int argc, char **argv ) {
 
 	// for each of the devices, set address of 0x68 and program
 
-int num_devs = atoi(argv[1]);
+	int num_devs = atoi(argv[1]);
 
 	string liners = "";
 	for (size_t dev = 0; dev < num_devs; dev++){
@@ -265,7 +267,7 @@ int num_devs = atoi(argv[1]);
 		digitalWrite (WiPi_GPIO[dev], 1);
 		printf("Device %d: ", dev);
 		print_tracepoint_line(WiPi_GPIO[dev]);
-		liners += "%2d,%5d, %5d, %5d, %5d, %5d, %5d\n",WiPi_GPIO[dev], LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5] ;
+		liners += sprintf("%2d,%5d, %5d, %5d, %5d, %5d, %5d\n",WiPi_GPIO[dev], LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5]) ;
 	}
 	printf( "-------------- Done --------------\n\n" );
 	write_tracepoint_csv(liners);
