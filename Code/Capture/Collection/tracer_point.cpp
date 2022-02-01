@@ -34,7 +34,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	_device_interrupt_flag = false;
 
 	if( _debug )
-		debugPrint( "Initilizing %s...\n", _device_name.c_str() );
+		debugPrint( "Initializing %s...\n", _device_name.c_str() );
 
 	this->_select_me();
 	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
@@ -257,6 +257,8 @@ void ActionTracer::TracePoint::set_debug( bool value ) {
 
 void ActionTracer::TracePoint::_set_device_offsets() {
 	// Check if the mapping file exists. If not, set random defaults.
+	bool set = false;
+
 	std::ifstream infile( "pointers.csv" );
 	if( !infile.good() ) {
 		_set_default_device_offsets();
@@ -275,11 +277,11 @@ void ActionTracer::TracePoint::_set_device_offsets() {
 				int tp_value = atoi( value.c_str() );
 				if( count == 0 ) {
 					if( tp_value != _pin_number ) {
-						debugPrint( "Pin %d not found in pointers.csv. Using default settings.\n", _pin_number );
-						_set_default_device_offsets();
-						continue;
+						break;
+					} else {
+						debugPrint( "Pin %d found in pointers.csv. Its parameters are:\n%s\n", _pin_number, line.c_str() );
+						set = true;
 					}
-					debugPrint( "Pin %d found in pointers.csv. Its parameters are:\n%s\n", _pin_number, line.c_str() );
 				}
 
 				switch( count ) {
@@ -308,6 +310,10 @@ void ActionTracer::TracePoint::_set_device_offsets() {
 				++count;
 			}
 		}
+	}
+
+	if( set != true ) {
+		_set_default_device_offsets();
 	}
 }
 
