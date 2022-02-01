@@ -216,7 +216,7 @@ void write_tracepoint_csv(string csv_line) {
 	// Write in data
 	myfile << csv_line;
 	myfile.close();
-	printf("CSV written. Please copy across %s", pointers_file_name);
+	printf("CSV written. Please copy across %s", pointers_file_name.c_str());
 }
 
 void print_tracepoint_line(int pin) {
