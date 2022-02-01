@@ -39,6 +39,7 @@ namespace ActionTracer {
 
 		void _select_me();
 		void _deselect_me();
+		void _set_device_offsets();
 
 	  public:
 		// Creates and inits a device

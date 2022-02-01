@@ -1,5 +1,7 @@
 #include "tracer_point.h"
 
+#include <fstream>
+
 #define debugPrint( ... )	printf( __VA_ARGS__ )
 #define debugPrintln( ... ) printf( __VA_ARGS__ )
 
@@ -23,15 +25,16 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
 
 	_device_name = name;
-	_pin_number	 = wiring_Pi_pin_number;
+
+	_pin_number = wiring_Pi_pin_number;
 
 	// Set pin information
 	pinMode( _pin_number, OUTPUT );
 	_device_interrupt_flag = false;
 
 	if( _debug )
-
 		debugPrint( "Initilizing %s...\n", _device_name.c_str() );
+
 	this->_select_me();
 	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
 
@@ -48,12 +51,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		debugPrint( "Initalising DMP\n" );
 	_device_status = _device->dmpInitialize();
 
-	_device->setXAccelOffset( 43 );
-	_device->setYAccelOffset( 25 );
-	_device->setZAccelOffset( 73 );
-	_device->setXGyroOffset( -17 );
-	_device->setYGyroOffset( 1477 );
-	_device->setZGyroOffset( 4971 );
+	_set_device_offsets();
 
 	if( _device_status == 0 ) {
 		if( _debug )
@@ -76,9 +74,6 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 			debugPrint( "Can't initialise DMP\n" );
 		_dmp_ready = false;
 	}
-
-	// this->_device->setFullScaleGyroRange( 3 );
-	// this->_device->setFullScaleAccelRange( 3 );
 
 	this->_deselect_me();
 
@@ -143,7 +138,10 @@ void ActionTracer::TracePoint::print_last_data_packet() {
 		debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
 #endif
 }
-
+/**
+ * @brief Obtain the data from the sensor. Collects the FIFO packet and extracts the needed data.
+ * 
+ */
 void ActionTracer::TracePoint::get_data() {
 	this->_select_me();
 
@@ -254,4 +252,21 @@ std::string ActionTracer::TracePoint::get_name() {
 
 void ActionTracer::TracePoint::set_debug( bool value ) {
 	_debug = value;
+}
+
+void ActionTracer::TracePoint::_set_device_offsets() {
+	// Check if the mapping file exists. If not, set random defaults.
+	std::ifstream infile( "pointers.csv" );
+	if( !infile.good() ) {
+		_device->setXAccelOffset( 43 );
+		_device->setYAccelOffset( 25 );
+		_device->setZAccelOffset( 73 );
+		_device->setXGyroOffset( -17 );
+		_device->setYGyroOffset( 1477 );
+		_device->setZGyroOffset( 4971 );
+	} else {
+		// If file exists, use it to set offsets.
+
+		// First check if the needed pin exists.
+	}
 }

@@ -1,8 +1,9 @@
 // This is the main file that will be used to run the program for data
 // collection from the 3 IMU's and send them to the server as is necesarry.
 
-#include "debug_printer.h"
 #include "main.h"
+
+#include "debug_printer.h"
 
 #ifdef TAKE_ARGUMENTS
 	#include <cxxopts.hpp>
@@ -10,6 +11,7 @@
 
 #include <dirent.h>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <math.h>
 #include <stdint.h>
@@ -115,9 +117,17 @@ int main( int argc, char const *argv[] ) {
 #endif
 
 #ifndef TAKE_ARGUMENTS
+	int			  number_of_lines = 0;
+	std::string	  line;
+	std::ifstream myfile( "pointers.csv" );
+
+	while( std::getline( myfile, line ) )
+		++number_of_lines;
+
 	_address = "192.168.137.1";
-	_sensors = 2;
+	_sensors = number_of_lines;
 	_debug	 = true;
+	printf( "Devices connected: %d\n", _sensors );
 #endif
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
 	setup( _debug );
