@@ -1,6 +1,7 @@
 #include "tracer_point.h"
 
 #include <fstream>
+#include <sstream>
 
 #define debugPrint( ... )	printf( __VA_ARGS__ )
 #define debugPrintln( ... ) printf( __VA_ARGS__ )
@@ -258,15 +259,60 @@ void ActionTracer::TracePoint::_set_device_offsets() {
 	// Check if the mapping file exists. If not, set random defaults.
 	std::ifstream infile( "pointers.csv" );
 	if( !infile.good() ) {
-		_device->setXAccelOffset( 43 );
-		_device->setYAccelOffset( 25 );
-		_device->setZAccelOffset( 73 );
-		_device->setXGyroOffset( -17 );
-		_device->setYGyroOffset( 1477 );
-		_device->setZGyroOffset( 4971 );
+		_set_default_device_offsets();
 	} else {
 		// If file exists, use it to set offsets.
+		std::string	  line;
+		std::ifstream myfile( "pointers.csv" );
 
-		// First check if the needed pin exists.
+		while( std::getline( myfile, line ) ) {
+			std::stringstream point_line( line );
+			std::string		  value;
+			size_t			  count = 0;
+
+			while( getline( point_line, value, ',' ) ) {
+				// First check if the needed pin exists. If not, set defaults
+				int tp_value = atoi( value.c_str() );
+				if( count == 0 ) {
+					if( tp_value != _pin_number ) {
+						_set_default_device_offsets();
+						continue;
+					}
+				}
+				switch( count ) {
+					case 1:
+						_device->setXAccelOffset( tp_value );
+						break;
+					case 2:
+						_device->setYAccelOffset( tp_value );
+						break;
+					case 3:
+						_device->setZAccelOffset( tp_value );
+						break;
+					case 4:
+						_device->setXGyroOffset( tp_value );
+						break;
+					case 5:
+						_device->setYGyroOffset( tp_value );
+						break;
+					case 6:
+						_device->setZGyroOffset( tp_value );
+						break;
+
+					default:
+						break;
+				}
+				++count;
+			}
+		}
 	}
+}
+
+void ActionTracer::TracePoint::_set_default_device_offsets() {
+	_device->setXAccelOffset( 43 );
+	_device->setYAccelOffset( 25 );
+	_device->setZAccelOffset( 73 );
+	_device->setXGyroOffset( -17 );
+	_device->setYGyroOffset( 1477 );
+	_device->setZGyroOffset( 4971 );
 }
