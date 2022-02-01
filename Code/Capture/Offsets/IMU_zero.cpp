@@ -238,7 +238,7 @@ int main( int argc, char **argv ) {
 		digitalWrite (WiPi_GPIO[i], 1);
 	}
 
-	printf("Woriking with %d devices.\n", num_devs);
+	printf("Woriking with %s devices.\n", argv[2]);
 
 	// for each of the devices, set address of 0x68 and program
 
