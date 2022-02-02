@@ -221,7 +221,7 @@ void ActionTracer::TracePoint::get_data() {
 	_device->dmpGetGravity( &_gravity_packet, &_quaternion_packet );
 	_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet[0], &_quaternion_packet, &_gravity_packet );
 #endif
-
+	_device->resetFIFO();
 	this->_deselect_me();
 }
 
