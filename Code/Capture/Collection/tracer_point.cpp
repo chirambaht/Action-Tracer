@@ -1,10 +1,14 @@
 #include "tracer_point.h"
 
+#include <fstream>
+#include <sstream>
+
 #define debugPrint( ... )	printf( __VA_ARGS__ )
 #define debugPrintln( ... ) printf( __VA_ARGS__ )
 
-#include <wiringPi.h>
-
+#ifdef ON_PI
+	#include <wiringPi.h>
+#endif
 // Select the data you want out here
 #define GET_DATA_QUATERNION
 // #define GET_DATA_EULER
@@ -22,15 +26,16 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
 
 	_device_name = name;
-	_pin_number	 = wiring_Pi_pin_number;
+
+	_pin_number = wiring_Pi_pin_number;
 
 	// Set pin information
 	pinMode( _pin_number, OUTPUT );
 	_device_interrupt_flag = false;
 
 	if( _debug )
+		debugPrint( "Initializing %s...\n", _device_name.c_str() );
 
-		debugPrint( "Initilizing %s...\n", _device_name.c_str() );
 	this->_select_me();
 	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
 
@@ -47,12 +52,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		debugPrint( "Initalising DMP\n" );
 	_device_status = _device->dmpInitialize();
 
-	_device->setXAccelOffset( 43 );
-	_device->setYAccelOffset( 25 );
-	_device->setZAccelOffset( 73 );
-	_device->setXGyroOffset( -17 );
-	_device->setYGyroOffset( 1477 );
-	_device->setZGyroOffset( 4971 );
+	_set_device_offsets();
 
 	if( _device_status == 0 ) {
 		if( _debug )
@@ -76,9 +76,6 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		_dmp_ready = false;
 	}
 
-	// this->_device->setFullScaleGyroRange( 3 );
-	// this->_device->setFullScaleAccelRange( 3 );
-
 	this->_deselect_me();
 
 	if( _debug )
@@ -92,13 +89,17 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 /** Selects a given MPU6050 node. Must be deselected to avoid issues.
 */
 void ActionTracer::TracePoint::_select_me() {
+#ifdef ON_PI
 	digitalWrite( _pin_number, LOW );
+#endif
 }
 
 /** Deselects a given MPU6050 node.
 */
 void ActionTracer::TracePoint::_deselect_me() {
+#ifdef ON_PI
 	digitalWrite( _pin_number, HIGH );
+#endif
 }
 
 /** Calls on the selected sensor to identify itself by its given name.
@@ -111,7 +112,6 @@ std::string ActionTracer::TracePoint::identify() {
 void ActionTracer::TracePoint::print_last_data_packet() {
 #ifdef GET_DATA_QUATERNION
 	if( _debug )
-
 		debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
 #endif
 
@@ -139,7 +139,10 @@ void ActionTracer::TracePoint::print_last_data_packet() {
 		debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
 #endif
 }
-
+/**
+ * @brief Obtain the data from the sensor. Collects the FIFO packet and extracts the needed data.
+ * 
+ */
 void ActionTracer::TracePoint::get_data() {
 	this->_select_me();
 
@@ -149,6 +152,17 @@ void ActionTracer::TracePoint::get_data() {
 		return;
 	}
 
+	//does the FIFO have data in it?
+	if( _device_interrupt_status & 0x02 < 1 ) {
+		if( _debug )
+			debugPrint( "Data not ready" );
+		return;
+	}
+
+	_fifo_count = _device->getFIFOCount();
+#ifdef INTERRUPT_ME
+	_device_interrupt_status = _device->getIntStatus();
+
 	if( _device_interrupt_flag && _fifo_count < _packet_size ) {
 		if( _debug )
 			debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
@@ -157,6 +171,19 @@ void ActionTracer::TracePoint::get_data() {
 
 	_device_interrupt_flag	 = false;
 	_device_interrupt_status = _device->getIntStatus();
+#else
+	if( _fifo_count < _packet_size ) {
+		if( _debug )
+			debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
+		return;
+	}
+#endif
+	if( _fifo_count == 1024 ) {
+		// reset so we can continue cleanly
+		_device->resetFIFO();
+		if( _debug )
+			debugPrint( "FIFO overflow!\n" );
+	}
 
 	_device->getFIFOBytes( _fifo_buffer, _packet_size );
 
@@ -226,4 +253,75 @@ std::string ActionTracer::TracePoint::get_name() {
 
 void ActionTracer::TracePoint::set_debug( bool value ) {
 	_debug = value;
+}
+
+void ActionTracer::TracePoint::_set_device_offsets() {
+	// Check if the mapping file exists. If not, set random defaults.
+	bool set = false;
+
+	std::ifstream infile( "pointers.csv" );
+	if( !infile.good() ) {
+		_set_default_device_offsets();
+	} else {
+		// If file exists, use it to set offsets.
+		std::string	  line;
+		std::ifstream myfile( "pointers.csv" );
+
+		while( std::getline( myfile, line ) ) {
+			std::stringstream point_line( line );
+			std::string		  value;
+			size_t			  count = 0;
+
+			while( getline( point_line, value, ',' ) ) {
+				// First check if the needed pin exists. If not, set defaults
+				int tp_value = atoi( value.c_str() );
+				if( count == 0 ) {
+					if( tp_value != _pin_number ) {
+						break;
+					} else {
+						debugPrint( "Pin %d found in pointers.csv. Its parameters are:\n%s\n", _pin_number, line.c_str() );
+						set = true;
+					}
+				}
+
+				switch( count ) {
+					case 1:
+						_device->setXAccelOffset( tp_value );
+						break;
+					case 2:
+						_device->setYAccelOffset( tp_value );
+						break;
+					case 3:
+						_device->setZAccelOffset( tp_value );
+						break;
+					case 4:
+						_device->setXGyroOffset( tp_value );
+						break;
+					case 5:
+						_device->setYGyroOffset( tp_value );
+						break;
+					case 6:
+						_device->setZGyroOffset( tp_value );
+						break;
+
+					default:
+						break;
+				}
+				++count;
+			}
+		}
+	}
+
+	if( set != true ) {
+		_set_default_device_offsets();
+	}
+}
+
+void ActionTracer::TracePoint::_set_default_device_offsets() {
+	_device->setXAccelOffset( 43 );
+	_device->setYAccelOffset( 25 );
+	_device->setZAccelOffset( 73 );
+	_device->setXGyroOffset( -17 );
+	_device->setYGyroOffset( 1477 );
+	_device->setZGyroOffset( 4971 );
 }
