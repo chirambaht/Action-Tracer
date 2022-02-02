@@ -45,9 +45,9 @@ public class player : MonoBehaviour
         w_adj = 0.0f;
 
         mainPlayer = GetComponent<Rigidbody>();
-        bone_upper_right = GameObject.Find("UpperArm.R");
-        bone_lower_right = GameObject.Find("LowerArm.R");
-        bone_hand_right = GameObject.Find("Hand.R");
+        //bone_upper_right = GameObject.Find("UpperArm.R");
+     //   bone_lower_right = GameObject.Find("LowerArm.R");
+      //  bone_hand_right = GameObject.Find("Hand.R");
 
         client = new UdpClient();
         Array.Clear(vals, 0, 2);
