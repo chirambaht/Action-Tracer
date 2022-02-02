@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0a875586d2e3cb906b4b17bab20dbac5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - groundCheckTransform: {instanceID: 0}
+  - bone_upper_right: {instanceID: 0}
+  - bone_lower_right: {instanceID: 0}
+  - bone_hand_right: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
