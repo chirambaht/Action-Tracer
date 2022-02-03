@@ -95,10 +95,10 @@ void loop() {
 
 		printf( "|| %4d | %5d | %5d | %5d | %5d ||", _seconds_since_start, _packets_collected_per_second, _average_packets_collected, _packets_sent_per_second, _average_packets_sent );
 
-		_start_time = micros();
 		_seconds_since_start++;
 		_packets_collected_per_second = 0;
 		_packets_sent_per_second	  = 0;
+		_start_time					  = micros();
 	} else {
 		if( gone ) {
 			_packets_sent++;
@@ -151,7 +151,10 @@ int main( int argc, char const *argv[] ) {
 #endif
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
 	setup( _debug );
-
+#ifdef COUNT_FRAMES
+	printf( "|| %4s | %5s | %5s | %5s | %5s ||", "t(s)", "pc/s", "apc", "ps/s", "aps" );
+	_start_time = micros();
+#endif
 	while( 1 ) {
 		loop();
 	}
