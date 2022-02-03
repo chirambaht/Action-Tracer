@@ -3,7 +3,9 @@
 
 #define SEND_TO_MOBILE
 
-#define ARRAY_SOLUTION
+// #define ARRAY_SOLUTION
+// #define VECTOR_SOLUTION
+#define INTERRUPT_SOLUTION
 
 #define COUNT_FRAMES
 

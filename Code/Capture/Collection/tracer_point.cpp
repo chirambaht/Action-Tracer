@@ -21,6 +21,73 @@ using namespace ActionTracer;
 
 ActionTracer::TracePoint::TracePoint() {}
 
+ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number, int interrupt_pin ) {
+	if( _debug )
+		debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
+
+	_device_name = name;
+
+	_pin_number = wiring_Pi_pin_number;
+
+	// Set pin information
+	pinMode( _pin_number, OUTPUT );
+	_device_interrupt_flag = false;
+
+	if( _debug )
+		debugPrint( "Initializing %s...\n", _device_name.c_str() );
+
+	this->_select_me();
+	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
+
+	_device->initialize();
+
+	//TODO: At this stage an interrupt pin is initialised
+
+	if( _debug )
+		debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
+
+	// DMP Initialization
+	if( _debug )
+
+		debugPrint( "Initalising DMP\n" );
+	_device_status = _device->dmpInitialize();
+
+	_set_device_offsets();
+
+	if( _device_status == 0 ) {
+		if( _debug )
+
+			debugPrint( "Enabling DMP..." );
+		_device->setDMPEnabled( true );
+
+		//TODO: Attach interrupt here
+
+		_device_interrupt_status = _device->getIntStatus();
+
+		_dmp_ready = true;
+
+		_packet_size = _device->dmpGetFIFOPacketSize();
+
+		if( _debug )
+			debugPrint( "Enabled!\n" );
+	} else {
+		if( _debug )
+			debugPrint( "Can't initialise DMP\n" );
+		_dmp_ready = false;
+	}
+	wiringPiISR( interrupt_pin, INT_EDGE_RISING, &tracepoint_isr );
+	piHiPri( 10 );
+
+	this->_deselect_me();
+
+	if( _debug )
+
+		debugPrint( "Init variable dump\n" );
+	if( _debug )
+
+		debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
+}
+
 ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number ) {
 	if( _debug )
 		debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
@@ -160,7 +227,7 @@ void ActionTracer::TracePoint::get_data() {
 	}
 
 	_fifo_count = _device->getFIFOCount();
-#ifdef INTERRUPT_ME
+	// #ifdef INTERRUPT_ME
 	_device_interrupt_status = _device->getIntStatus();
 
 	if( _device_interrupt_flag && _fifo_count < _packet_size ) {
@@ -171,13 +238,13 @@ void ActionTracer::TracePoint::get_data() {
 
 	_device_interrupt_flag	 = false;
 	_device_interrupt_status = _device->getIntStatus();
-#else
+	// #else
 	if( _fifo_count < _packet_size ) {
 		if( _debug )
 			debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
 		return;
 	}
-#endif
+	// #endif
 	if( _fifo_count == 1024 ) {
 		// reset so we can continue cleanly
 		_device->resetFIFO();
@@ -324,4 +391,8 @@ void ActionTracer::TracePoint::_set_default_device_offsets() {
 	_device->setXGyroOffset( -17 );
 	_device->setYGyroOffset( 1477 );
 	_device->setZGyroOffset( 4971 );
+}
+
+void ActionTracer::TracePoint::tracepoint_isr() {
+	this->get_data();
 }

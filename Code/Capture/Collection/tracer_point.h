@@ -46,6 +46,7 @@ namespace ActionTracer {
 		// Creates and inits a device
 		//I dont know what this is but I love you
 		TracePoint( std::string name, int wiring_Pi_pin_number );
+		TracePoint( std::string name, int wiring_Pi_pin_number, int interrupt_pin );
 		TracePoint();
 
 		~TracePoint();
@@ -58,6 +59,7 @@ namespace ActionTracer {
 		float *		read_data( int get_data ); // Reads the internally stored data and optionally fetches data first
 		std::string identify();				   // Blinks the sensor for 5 seconds. Realistically, it is raising the interupt line for the device in quesion
 		void		print_last_data_packet();  // Prints the last data packet obtained by this node
+		void		tracepoint_isr();
 	};
 } // namespace ActionTracer
 
