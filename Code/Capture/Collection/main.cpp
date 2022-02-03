@@ -90,19 +90,19 @@ void loop() {
 #ifdef COUNT_FRAMES
 	_packets_sent++;
 	uint32_t t = millis();
-	printf( "%d\n", t );
+	// printf( "%d\n", t );
 	if( ( t - _start_time ) > 1000 ) {
 		_average_packets_collected = _packets_collected / _seconds_since_start + 1;
 		_average_packets_sent	   = _packets_sent / _seconds_since_start + 1;
 
-		printf( "|| %4d | %5d | %5d | %5d | %5d ||", _seconds_since_start, _packets_collected_per_second, _average_packets_collected, _packets_sent_per_second, _average_packets_sent );
+		printf( "|| %4d | %5d | %5d | %5d | %5d ||\n", _seconds_since_start, _packets_collected_per_second, _average_packets_collected, _packets_sent_per_second, _average_packets_sent );
 
 		_seconds_since_start++;
 		_packets_collected_per_second = 0;
 		_packets_sent_per_second	  = 0;
 		_start_time					  = millis();
 	} else {
-		if( gone ) {
+		if( !gone ) {
 			_packets_sent++;
 			_packets_sent_per_second++;
 		}
@@ -156,7 +156,7 @@ int main( int argc, char const *argv[] ) {
 #ifdef COUNT_FRAMES
 	_start_time = millis();
 	printf( "Start time: %d\n\n", _start_time );
-	printf( "|| %4s | %5s | %5s | %5s | %5s ||", "t(s)", "pc/s", "apc", "ps/s", "aps" );
+	printf( "|| %4s | %5s | %5s | %5s | %5s ||\n", "t(s)", "pc/s", "apc", "ps/s", "aps" );
 
 #endif
 	while( 1 ) {
