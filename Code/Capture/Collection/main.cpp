@@ -86,8 +86,28 @@ void loop() {
 #endif
 
 	// Send packet
-	communicator->send_packet();
+	int gone = communicator->send_packet();
+#ifdef COUNT_FRAMES
+	_packets_sent++;
+	if( ( micros() - _start_time ) > 1000000 ) {
+		_average_packets_collected = _packets_collected / _seconds_since_start;
+		_average_packets_sent	   = _packets_sent / _seconds_since_start;
 
+		printf( "|| %4d | %5d | %5d | %5d | %5d ||", _seconds_since_start, _packets_collected_per_second, _average_packets_collected, _packets_sent_per_second, _average_packets_sent );
+
+		_start_time = micros();
+		_seconds_since_start++;
+		_packets_collected_per_second = 0;
+		_packets_sent_per_second	  = 0;
+	} else {
+		if( gone ) {
+			_packets_sent++;
+			_packets_sent_per_second++;
+		}
+		_packets_collected++;
+		_packets_collected_per_second++
+	}
+#endif
 	usleep( LOOP_DELAY * 1000 );
 }
 
@@ -126,7 +146,7 @@ int main( int argc, char const *argv[] ) {
 
 	_address = "192.168.137.1";
 	_sensors = number_of_lines;
-	_debug	 = true;
+	_debug	 = false;
 	printf( "Devices connected: %d\n", _sensors );
 #endif
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses

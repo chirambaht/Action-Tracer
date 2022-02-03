@@ -5,6 +5,8 @@
 
 #define ARRAY_SOLUTION
 
+#define COUNT_FRAMES
+
 #define PORT		9022 // Main UDP data port for the data to be sent through
 #define MAX_SENSORS 20	 // Number of points track on the body.
 #define LOOP_DELAY	0	 // ms to wait per loop cycle
@@ -38,6 +40,16 @@ bool		_debug	 = true;
 std::string _address = "127.0.0.1";
 float		data_package[4];
 
+#ifdef COUNT_FRAMES
+uint64_t _start_time				   = 0;
+uint64_t _packets_sent				   = 0;
+uint64_t _packets_collected			   = 0;
+uint32_t _packets_sent_per_second	   = 0;
+uint32_t _packets_collected_per_second = 0;
+uint8_t	 _average_packets_sent		   = 0;
+uint8_t	 _average_packets_collected	   = 0;
+uint32_t _seconds_since_start		   = 0;
+#endif
 // Packager mobile = new Packager( MOBILE_IP, PORT );
 
 void setup( int );
