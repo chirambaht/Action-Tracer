@@ -90,6 +90,7 @@ void loop() {
 #ifdef COUNT_FRAMES
 	_packets_sent++;
 	uint32_t t = millis();
+	printf( "%d\n", t );
 	if( ( t - _start_time ) > 1000 ) {
 		_average_packets_collected = _packets_collected / _seconds_since_start + 1;
 		_average_packets_sent	   = _packets_sent / _seconds_since_start + 1;
@@ -113,7 +114,6 @@ void loop() {
 }
 
 int main( int argc, char const *argv[] ) {
-	printf( "Start time: %lld\n\n", millis() );
 #ifdef TAKE_ARGUMENTS
 	options.add_options()( "a,address", "Address to send UDP packets to", cxxopts::value<std::string>()->default_value( "127.0.0.1" ) );
 	options.add_options()( "d,debug", "Enable debugging", cxxopts::value<bool>()->default_value( "false" ) );
@@ -155,7 +155,7 @@ int main( int argc, char const *argv[] ) {
 	setup( _debug );
 #ifdef COUNT_FRAMES
 	_start_time = millis();
-	printf( "Start time: %lld\n\n", _start_time );
+	printf( "Start time: %d\n\n", _start_time );
 	printf( "|| %4s | %5s | %5s | %5s | %5s ||", "t(s)", "pc/s", "apc", "ps/s", "aps" );
 
 #endif
