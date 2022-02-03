@@ -107,7 +107,7 @@ void loop() {
 		_average_packets_collected = _packets_collected / _seconds_since_start;
 		_average_packets_sent	   = _packets_sent / _seconds_since_start;
 
-		printf( "|| %4d | %5d | %5.1f | %5d | %5.1f ||\n", _seconds_since_start, _packets_collected_per_second, _average_packets_collected, _packets_sent_per_second, _average_packets_sent );
+		printf( "|| %4d | %5d | %5.1f | %5d | %5.1f ||\t%10d\n", _seconds_since_start, _packets_collected_per_second, _average_packets_collected, _packets_sent_per_second, _average_packets_sent, t );
 
 		_packets_collected_per_second = 0;
 		_packets_sent_per_second	  = 0;
