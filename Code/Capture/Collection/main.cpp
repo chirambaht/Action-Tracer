@@ -99,7 +99,7 @@ void loop() {
 		_packets_sent_per_second++;
 	}
 
-	if( ( t - _start_time ) > 1000 ) {
+	if( ( t - _start_time ) >= 1000 ) {
 		_seconds_since_start++;
 		_packets_collected += _packets_collected_per_second;
 		_packets_sent += _packets_sent_per_second;
