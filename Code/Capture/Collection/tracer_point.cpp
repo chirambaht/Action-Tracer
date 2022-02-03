@@ -75,8 +75,6 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 			debugPrint( "Can't initialise DMP\n" );
 		_dmp_ready = false;
 	}
-	wiringPiISR( interrupt_pin, INT_EDGE_RISING, this->tracepoint_isr );
-	piHiPri( 10 );
 
 	this->_deselect_me();
 
@@ -391,8 +389,4 @@ void ActionTracer::TracePoint::_set_default_device_offsets() {
 	_device->setXGyroOffset( -17 );
 	_device->setYGyroOffset( 1477 );
 	_device->setZGyroOffset( 4971 );
-}
-
-void ActionTracer::TracePoint::tracepoint_isr() {
-	this->get_data();
 }

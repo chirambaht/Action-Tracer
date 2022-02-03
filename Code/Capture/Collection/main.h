@@ -29,12 +29,19 @@ TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
 uint8_t PI_ORDER[6] = { 0, 2, 3, 12, 13, 14 };
 #endif
 
+#ifdef INTERRUPT_SOLUTION
+Packager *	communicator;			  // The speaker dude
+TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
+uint8_t		PI_ORDER[6] = { 0, 2, 3, 12, 13, 14 };
+#endif
+
 #ifdef POINTER_SOLUTION
 auto					  body_sensor = std::make_unique<TracePoint[]>( MAX_SENSORS );
 std::unique_ptr<Packager> communicator;
 #endif
 
 #ifdef VECTOR_SOLUTION
+
 std::vector<TracePoint> bodysensors;
 #endif
 size_t		_sensors = 0; // Sensors being used
@@ -57,6 +64,7 @@ bool	 first_second				   = false;
 
 void setup( int );
 void loop();
+void basic_isr();
 // namespace ActionTracer
 
 #endif

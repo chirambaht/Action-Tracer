@@ -53,8 +53,11 @@ void setup( int debug_value = 0 ) {
 
 #ifdef INTERRUPT_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
-		body_sensor[i] = new TracePoint( "Body p", PI_ORDER[i], 27 + i );
+		body_sensor[i] = new TracePoint( "Body p", PI_ORDER[i] );
+		wiringPiISR( 27 + i, INT_EDGE_RISING, &basic_isr );
+		piHiPri( 10 );
 	}
+
 #endif
 
 #ifdef VECTOR_SOLUTION
@@ -69,6 +72,17 @@ void setup( int debug_value = 0 ) {
 */
 void loop() {
 #ifdef ARRAY_SOLUTION
+	for( size_t i = 0; i < _sensors; i++ ) {
+		float *body = body_sensor[i]->read_data( 1 );
+		for( size_t j = 0; j < 4; j++ ) {
+			data_package[j] = *body;
+			body++;
+		}
+		communicator->load_packet( data_package, 4 );
+	}
+#endif
+
+#ifdef INTERRUPT_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
 		float *body = body_sensor[i]->read_data( 1 );
 		for( size_t j = 0; j < 4; j++ ) {
@@ -177,3 +191,9 @@ int main( int argc, char const *argv[] ) {
 	}
 	return 0;
 }
+
+#ifdef INTERRUPT_SOLUTION
+void basic_isr() {
+	loop();
+}
+#endif
