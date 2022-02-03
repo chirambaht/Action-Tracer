@@ -107,7 +107,7 @@ void loop() {
 		_average_packets_collected = _packets_collected / _seconds_since_start;
 		_average_packets_sent	   = _packets_sent / _seconds_since_start;
 
-		printf( "|| %4d | %5d | %7.4f | %5d | %7.4f ||\n", _seconds_since_start, _packets_collected_per_second, _average_packets_collected, _packets_sent_per_second, _average_packets_sent );
+		printf( "|| %4d | %5d | %5.2f | %5d | %5.2f ||\n", _seconds_since_start, _packets_collected_per_second, _average_packets_collected, _packets_sent_per_second, _average_packets_sent );
 
 		_packets_collected_per_second = 0;
 		_packets_sent_per_second	  = 0;
@@ -161,7 +161,7 @@ int main( int argc, char const *argv[] ) {
 	setup( _debug );
 #ifdef COUNT_FRAMES
 	printf( "Start time: %d\n\n", _start_time );
-	printf( "|| %4s | %5s | %7.4s | %5s | %7.4s ||\n", "t(s)", "pc/s", "apc", "ps/s", "aps" );
+	printf( "|| %4s | %5s | %5.2s | %5s | %5.2s ||\n", "t(s)", "pc/s", "apc", "ps/s", "aps" );
 	_start_time = millis();
 #endif
 

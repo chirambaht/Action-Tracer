@@ -48,7 +48,7 @@ uint32_t _packets_sent_per_second	   = 0;
 uint32_t _packets_collected_per_second = 0;
 float	 _average_packets_sent		   = 0;
 float	 _average_packets_collected	   = 0;
-uint32_t _seconds_since_start		   = 1;
+uint32_t _seconds_since_start		   = 0;
 bool	 first_second				   = false;
 #endif
 // Packager mobile = new Packager( MOBILE_IP, PORT );
