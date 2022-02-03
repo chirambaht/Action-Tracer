@@ -33,10 +33,12 @@ using namespace ActionTracer;
 #ifdef TAKE_ARGUMENTS
 cxxopts::Options options( "Action Tracer", "This program runs a given number of MPU6050 IMU's and sends the data packets via UDP." );
 #endif
-/*
-    Initialise all the devices in the network. Store them in objects in main.h
-*/
 
+/**
+ * @brief Initialise all the devices in the network. Store them in objects in main.h
+ * @param debug_value sets the debug status for the setup routine.
+ * @return 0 if success
+ */
 void setup( int debug_value = 0 ) {
 #ifdef ON_PI
 	wiringPiSetup();
@@ -67,9 +69,10 @@ void setup( int debug_value = 0 ) {
 #endif
 }
 
-/*
-  Main work loop for all the code. This will always run every cycle.
-*/
+/**
+ * @brief Main work loop for all the code. This will always run every cycle.
+ * @return Nothing
+ */
 void loop() {
 #ifdef ARRAY_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
@@ -108,7 +111,6 @@ void loop() {
 
 /**
  * @brief This allows tracking of frames sent to the network against the ones collected from the device.
- * 
  */
 #ifdef COUNT_FRAMES
 	int failed_send_ = communicator->send_packet();
@@ -140,6 +142,13 @@ void loop() {
 #endif
 }
 
+/**
+ * @brief Main method that schedules the main tasks before and after data collection.
+ * 
+ * @param argc 
+ * @param argv 
+ * @return int 
+ */
 int main( int argc, char const *argv[] ) {
 #ifdef TAKE_ARGUMENTS
 	options.add_options()( "a,address", "Address to send UDP packets to", cxxopts::value<std::string>()->default_value( "127.0.0.1" ) );
@@ -178,8 +187,10 @@ int main( int argc, char const *argv[] ) {
 	_debug	 = false;
 	printf( "Devices connected: %d\n", _sensors );
 #endif
+
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
 	setup( _debug );
+
 #ifdef COUNT_FRAMES
 	printf( "Start time: %d\n\n", _start_time );
 	printf( "|| %4s | %5s | %5.1s | %5s | %5.1s ||\n", "t(s)", "pc/s", "apc", "ps/s", "aps" );
@@ -193,6 +204,10 @@ int main( int argc, char const *argv[] ) {
 }
 
 #ifdef INTERRUPT_SOLUTION
+/**
+ * @brief This is the method called when a hardware interrupt is received from the program. It simply runs the loop sequence to collect data from all the devices.
+ * @return Nothing
+ */
 void basic_isr() {
 	loop();
 }

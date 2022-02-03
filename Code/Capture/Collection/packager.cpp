@@ -7,6 +7,12 @@
 
 using namespace ActionTracer;
 
+/**
+ * @brief Construct a new Action Tracer:: Packager:: Packager object
+ * 
+ * @param destination IP Address to send data to
+ * @param port Destination UDP Port to send data to
+ */
 ActionTracer::Packager::Packager( std::string destination, int port ) {
 	_dest  = destination;
 	_port  = port;
@@ -35,8 +41,13 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 	}
 }
 
-// ActionTracer::Packager::~Packager() {}
-
+/**
+ * @brief Converts a given float value to a string to a specified number of decimal places.
+ * 
+ * @param value float to be converted to string
+ * @param prec number of decimal places. Defaults to 6
+ * @return std::string representation of given float
+ */
 std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 ) {
 	std::stringstream stream;
 	if( value < 0 ) {
@@ -48,6 +59,11 @@ std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 
 	return s;
 }
 
+/**
+ * @brief Set debug printing on or off.
+ * 
+ * @param value true or false
+ */
 void ActionTracer::Packager::set_debug( bool value ) {
 	_debug = value;
 }

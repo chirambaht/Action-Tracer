@@ -9,7 +9,8 @@
 #ifdef ON_PI
 	#include <wiringPi.h>
 #endif
-// Select the data you want out here
+
+// Select the data you want out of the senser here. Only select one.
 #define GET_DATA_QUATERNION
 // #define GET_DATA_EULER
 // #define GET_DATA_ALL
@@ -18,9 +19,19 @@
 // #define GET_DATA_YAWPITCHROLL
 
 using namespace ActionTracer;
-
+/**
+ * @brief Construct a new defult Action Tracer::Trace Point::Trace Point object
+ * 
+ */
 ActionTracer::TracePoint::TracePoint() {}
 
+/**
+ * @brief Construct a new Action Tracer:: TracePoint::Trace Point object. 
+ * 
+ * @param name Name given to the device
+ * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
+ * @param interrupt_pin WiringPi interrupt pin
+ */
 ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number, int interrupt_pin ) {
 	if( _debug )
 		debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
@@ -29,8 +40,10 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	_pin_number = wiring_Pi_pin_number;
 
-	// Set pin information
+// Set pin information
+#ifdef ON_PI
 	pinMode( _pin_number, OUTPUT );
+#endif
 	_device_interrupt_flag = false;
 
 	if( _debug )
@@ -85,7 +98,12 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 		debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
 }
-
+/**
+ * @brief Construct a new Action Tracer:: TracePoint::Trace Point object. 
+ * 
+ * @param name Name given to the device
+ * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
+ */
 ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number ) {
 	if( _debug )
 		debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
@@ -94,8 +112,10 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	_pin_number = wiring_Pi_pin_number;
 
-	// Set pin information
+// Set pin information
+#ifdef ON_PI
 	pinMode( _pin_number, OUTPUT );
+#endif
 	_device_interrupt_flag = false;
 
 	if( _debug )
@@ -151,7 +171,8 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
 }
 
-/** Selects a given MPU6050 node. Must be deselected to avoid issues.
+/** 
+ * @brief Selects a given MPU6050 node. Must be deselected to avoid issues.
 */
 void ActionTracer::TracePoint::_select_me() {
 #ifdef ON_PI
@@ -159,7 +180,8 @@ void ActionTracer::TracePoint::_select_me() {
 #endif
 }
 
-/** Deselects a given MPU6050 node.
+/** 
+ * @brief Deselects a given MPU6050 node.
 */
 void ActionTracer::TracePoint::_deselect_me() {
 #ifdef ON_PI
@@ -167,13 +189,28 @@ void ActionTracer::TracePoint::_deselect_me() {
 #endif
 }
 
-/** Calls on the selected sensor to identify itself by its given name.
+/** @brief Calls on the selected sensor to identify itself by returning its name. It will physically indicate this by blinking an onboard LED.
  * @return Device name/id
 */
 std::string ActionTracer::TracePoint::identify() {
+// Blink device led
+#ifdef ON_PI
+	for( size_t i = 0; i < 5; i++ ) {
+		_select_me();
+		delay( 250 );
+		_deselect_me();
+		delay( 250 );
+	}
+#endif
+
 	return _device_name;
 }
 
+/**
+ * @brief Prints the last data packet received if debug mode is on.
+ * @return Nothing
+ * 
+ */
 void ActionTracer::TracePoint::print_last_data_packet() {
 #ifdef GET_DATA_QUATERNION
 	if( _debug )
@@ -290,6 +327,11 @@ void ActionTracer::TracePoint::get_data() {
 	this->_deselect_me();
 }
 
+/**
+ * @brief Obtain the data from the sensor. This will return a float array based on the requested data defined in the file.
+ * @param read_first Will collect data first if set to 1 or true. After this, it will return the data
+ * @return Pointer to a float array with the data packet
+ */
 float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 	if( read_first ) {
 		this->get_data();
@@ -312,14 +354,28 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 #endif
 }
 
+/**
+ * @brief Returns the given device name
+ * 
+ * @return std::string containing the device name
+ */
 std::string ActionTracer::TracePoint::get_name() {
 	return _device_name;
 }
 
+/**
+ * @brief Set debug printing on or off.
+ * 
+ * @param value true or false
+ */
 void ActionTracer::TracePoint::set_debug( bool value ) {
 	_debug = value;
 }
 
+/**
+ * @brief Sets device offsets based on a pointers.csv file. This file should contain the callibration details of each device. Such a csv can be obtained by running the IMU_Zero program in the Offsts directory
+ * @return Nothing
+ */
 void ActionTracer::TracePoint::_set_device_offsets() {
 	// Check if the mapping file exists. If not, set random defaults.
 	bool set = false;
@@ -382,6 +438,10 @@ void ActionTracer::TracePoint::_set_device_offsets() {
 	}
 }
 
+/**
+ * @brief Sets default values for the offsets on a sensor.
+ * @return Nothing
+ */
 void ActionTracer::TracePoint::_set_default_device_offsets() {
 	_device->setXAccelOffset( 43 );
 	_device->setYAccelOffset( 25 );
