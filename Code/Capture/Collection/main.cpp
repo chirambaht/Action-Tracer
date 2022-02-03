@@ -89,16 +89,17 @@ void loop() {
 	int gone = communicator->send_packet();
 #ifdef COUNT_FRAMES
 	_packets_sent++;
-	if( ( micros() - _start_time ) > 1000000 ) {
-		_average_packets_collected = _packets_collected / _seconds_since_start;
-		_average_packets_sent	   = _packets_sent / _seconds_since_start;
+	uint32_t t = millis();
+	if( ( t - _start_time ) > 1000 ) {
+		_average_packets_collected = _packets_collected / _seconds_since_start + 1;
+		_average_packets_sent	   = _packets_sent / _seconds_since_start + 1;
 
 		printf( "|| %4d | %5d | %5d | %5d | %5d ||", _seconds_since_start, _packets_collected_per_second, _average_packets_collected, _packets_sent_per_second, _average_packets_sent );
 
 		_seconds_since_start++;
 		_packets_collected_per_second = 0;
 		_packets_sent_per_second	  = 0;
-		_start_time					  = micros();
+		_start_time					  = millis();
 	} else {
 		if( gone ) {
 			_packets_sent++;
@@ -112,7 +113,7 @@ void loop() {
 }
 
 int main( int argc, char const *argv[] ) {
-	printf( "Start time: %lld\n\n", micros() );
+	printf( "Start time: %lld\n\n", millis() );
 #ifdef TAKE_ARGUMENTS
 	options.add_options()( "a,address", "Address to send UDP packets to", cxxopts::value<std::string>()->default_value( "127.0.0.1" ) );
 	options.add_options()( "d,debug", "Enable debugging", cxxopts::value<bool>()->default_value( "false" ) );
@@ -153,7 +154,7 @@ int main( int argc, char const *argv[] ) {
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
 	setup( _debug );
 #ifdef COUNT_FRAMES
-	_start_time = micros();
+	_start_time = millis();
 	printf( "Start time: %lld\n\n", _start_time );
 	printf( "|| %4s | %5s | %5s | %5s | %5s ||", "t(s)", "pc/s", "apc", "ps/s", "aps" );
 
