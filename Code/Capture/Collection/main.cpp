@@ -85,32 +85,36 @@ void loop() {
 	}
 #endif
 
-	// Send packet
-	int gone = communicator->send_packet();
+/**
+ * @brief This allows tracking of frames sent to the network against the ones collected from the device.
+ * 
+ */
 #ifdef COUNT_FRAMES
-	_packets_sent++;
-	uint32_t t = millis();
-	// printf( "%d\n", t );
-	if( !gone ) {
-		_packets_sent++;
-		_packets_sent_per_second++;
-	}
-	_packets_collected++;
+	int failed_send_ = communicator->send_packet();
 	_packets_collected_per_second++;
 
+	uint32_t t = millis();
+
+	if( !failed_send_ ) {
+		_packets_sent_per_second++;
+	}
+
 	if( ( t - _start_time ) > 1000 ) {
-		_average_packets_collected = ++_packets_collected / _seconds_since_start + 1;
-		_average_packets_sent	   = ++_packets_sent / _seconds_since_start + 1;
+		_seconds_since_start++;
+
+		_average_packets_collected = ++_packets_collected / _seconds_since_start;
+		_average_packets_sent	   = ++_packets_sent / _seconds_since_start;
 
 		printf( "|| %4d | %5d | %5d | %5f | %5f ||\n", _seconds_since_start, _packets_collected_per_second, _average_packets_collected, _packets_sent_per_second, _average_packets_sent );
 
-		_seconds_since_start++;
 		_packets_collected_per_second = 0;
 		_packets_sent_per_second	  = 0;
 		_start_time					  = millis();
 	}
+#else
+	// Send packet
+	int gone = communicator->send_packet();
 #endif
-	usleep( LOOP_DELAY * 1000 );
 }
 
 int main( int argc, char const *argv[] ) {
@@ -154,11 +158,11 @@ int main( int argc, char const *argv[] ) {
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
 	setup( _debug );
 #ifdef COUNT_FRAMES
-	_start_time = millis();
 	printf( "Start time: %d\n\n", _start_time );
 	printf( "|| %4s | %5s | %5s | %5s | %5s ||\n", "t(s)", "pc/s", "apc", "ps/s", "aps" );
-
+	_start_time = millis();
 #endif
+
 	while( 1 ) {
 		loop();
 	}
