@@ -112,6 +112,7 @@ void loop() {
 }
 
 int main( int argc, char const *argv[] ) {
+	printf( "Start time: %d\n\n", micros() );
 #ifdef TAKE_ARGUMENTS
 	options.add_options()( "a,address", "Address to send UDP packets to", cxxopts::value<std::string>()->default_value( "127.0.0.1" ) );
 	options.add_options()( "d,debug", "Enable debugging", cxxopts::value<bool>()->default_value( "false" ) );
