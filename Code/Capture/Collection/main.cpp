@@ -91,9 +91,16 @@ void loop() {
 	_packets_sent++;
 	uint32_t t = millis();
 	// printf( "%d\n", t );
+	if( !gone ) {
+		_packets_sent++;
+		_packets_sent_per_second++;
+	}
+	_packets_collected++;
+	_packets_collected_per_second++;
+
 	if( ( t - _start_time ) > 1000 ) {
-		_average_packets_collected = _packets_collected / _seconds_since_start + 1;
-		_average_packets_sent	   = _packets_sent / _seconds_since_start + 1;
+		_average_packets_collected = ++_packets_collected / _seconds_since_start + 1;
+		_average_packets_sent	   = ++_packets_sent / _seconds_since_start + 1;
 
 		printf( "|| %4d | %5d | %5d | %5f | %5f ||\n", _seconds_since_start, _packets_collected_per_second, _average_packets_collected, _packets_sent_per_second, _average_packets_sent );
 
@@ -101,13 +108,6 @@ void loop() {
 		_packets_collected_per_second = 0;
 		_packets_sent_per_second	  = 0;
 		_start_time					  = millis();
-	} else {
-		if( !gone ) {
-			_packets_sent++;
-			_packets_sent_per_second++;
-		}
-		_packets_collected++;
-		_packets_collected_per_second++;
 	}
 #endif
 	usleep( LOOP_DELAY * 1000 );
