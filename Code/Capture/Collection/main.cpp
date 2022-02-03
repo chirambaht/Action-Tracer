@@ -105,7 +105,7 @@ void loop() {
 			_packets_sent_per_second++;
 		}
 		_packets_collected++;
-		_packets_collected_per_second++
+		_packets_collected_per_second++;
 	}
 #endif
 	usleep( LOOP_DELAY * 1000 );
