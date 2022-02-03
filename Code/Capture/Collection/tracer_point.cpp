@@ -75,7 +75,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 			debugPrint( "Can't initialise DMP\n" );
 		_dmp_ready = false;
 	}
-	wiringPiISR( interrupt_pin, INT_EDGE_RISING, &tracepoint_isr );
+	wiringPiISR( interrupt_pin, INT_EDGE_RISING, this->tracepoint_isr );
 	piHiPri( 10 );
 
 	this->_deselect_me();
