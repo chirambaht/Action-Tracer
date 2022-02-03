@@ -152,8 +152,10 @@ int main( int argc, char const *argv[] ) {
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
 	setup( _debug );
 #ifdef COUNT_FRAMES
-	printf( "|| %4s | %5s | %5s | %5s | %5s ||", "t(s)", "pc/s", "apc", "ps/s", "aps" );
 	_start_time = micros();
+	printf( "Start time: %d\n\n", _start_time );
+	printf( "|| %4s | %5s | %5s | %5s | %5s ||", "t(s)", "pc/s", "apc", "ps/s", "aps" );
+
 #endif
 	while( 1 ) {
 		loop();
