@@ -9,7 +9,7 @@
 namespace ActionTracer {
 	class TracePoint {
 	  private:
-		bool		_debug = true;
+		bool		_debug = false;
 		MPU6050 *	_device;
 		std::string _device_name;
 		int			_pin_number;

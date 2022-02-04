@@ -7,7 +7,7 @@
 // #define VECTOR_SOLUTION
 // #define INTERRUPT_SOLUTION
 
-// #define COUNT_FRAMES
+#define COUNT_FRAMES
 
 #define PORT		9022 // Main UDP data port for the data to be sent through
 #define MAX_SENSORS 20	 // Number of points track on the body.
