@@ -251,6 +251,7 @@ void ActionTracer::TracePoint::get_data() {
 	if( !_dmp_ready ) {
 		if( _debug )
 			debugPrint( "DMP not initialised\n" );
+		this->_deselect_me();
 		return;
 	}
 
@@ -258,6 +259,7 @@ void ActionTracer::TracePoint::get_data() {
 	if( ( _device_interrupt_status & 0x02 ) < 1 ) {
 		if( _debug )
 			debugPrint( "Data not ready" );
+		this->_deselect_me();
 		return;
 	}
 
@@ -268,6 +270,7 @@ void ActionTracer::TracePoint::get_data() {
 	if( _device_interrupt_flag && _fifo_count < _packet_size ) {
 		if( _debug )
 			debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
+		this->_deselect_me();
 		return;
 	}
 
@@ -277,6 +280,7 @@ void ActionTracer::TracePoint::get_data() {
 	if( _fifo_count < _packet_size ) {
 		if( _debug )
 			debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
+		this->_deselect_me();
 		return;
 	}
 	// #endif
