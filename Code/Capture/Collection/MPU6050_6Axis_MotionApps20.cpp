@@ -260,7 +260,7 @@ const unsigned char dmpMemory[MPU6050_DMP_CODE_SIZE] PROGMEM = {
 };
 
 #ifndef MPU6050_DMP_FIFO_RATE_DIVISOR
-	#define MPU6050_DMP_FIFO_RATE_DIVISOR 0x03 // The New instance of the Firmware has this as the default {Frequency = 200/(1 + MPU6050_DMP_FIFO_RATE_DIVISOR )} 3 -> 50, 1 -> 100. The higher the number, the slower and the less noise
+	#define MPU6050_DMP_FIFO_RATE_DIVISOR 0x02 // The New instance of the Firmware has this as the default {Frequency = 200/(1 + MPU6050_DMP_FIFO_RATE_DIVISOR )} 3 -> 50, 1 -> 100. The higher the number, the slower and the less noise
 #endif
 
 // I Simplified this:
