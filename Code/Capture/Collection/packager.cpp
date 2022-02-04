@@ -83,6 +83,7 @@ int ActionTracer::Packager::send_packet() {
 		debugPrint( "\x1B[2J" );
 		debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, _package.c_str() );
 	}
+
 	_count++;
 	_package = "";
 

@@ -184,7 +184,7 @@ int main( int argc, char const *argv[] ) {
 
 	_address = "192.168.0.149";
 	_sensors = number_of_lines;
-	_debug	 = false;
+	_debug	 = true;
 	printf( "Devices connected: %d\n", _sensors );
 #endif
 
