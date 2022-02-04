@@ -147,8 +147,6 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 		//TODO: Attach interrupt here
 
-		_device_interrupt_status = _device->getIntStatus();
-
 		_dmp_ready = true;
 
 		_packet_size = _device->dmpGetFIFOPacketSize();
@@ -255,6 +253,8 @@ void ActionTracer::TracePoint::get_data() {
 		return;
 	}
 
+	_device_interrupt_status = _device->getIntStatus();
+
 	//does the FIFO have data in it?
 	if( ( _device_interrupt_status & 0x02 ) < 1 ) {
 		if( _debug )
@@ -265,7 +265,7 @@ void ActionTracer::TracePoint::get_data() {
 
 	_fifo_count = _device->getFIFOCount();
 	// #ifdef INTERRUPT_ME
-	_device_interrupt_status = _device->getIntStatus();
+	// _device_interrupt_status = _device->getIntStatus();
 
 	if( _device_interrupt_flag && _fifo_count < _packet_size ) {
 		if( _debug )
