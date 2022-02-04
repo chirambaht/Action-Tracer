@@ -138,7 +138,7 @@ void loop() {
 	}
 #else
 	// Send packet
-	int gone = communicator->send_packet();
+	communicator->send_packet();
 #endif
 }
 
