@@ -182,7 +182,7 @@ int main( int argc, char const *argv[] ) {
 	while( std::getline( myfile, line ) )
 		++number_of_lines;
 
-	_address = "192.168.137.1";
+	_address = "192.168.0.149";
 	_sensors = number_of_lines;
 	_debug	 = false;
 	printf( "Devices connected: %d\n", _sensors );
