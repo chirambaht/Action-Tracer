@@ -262,7 +262,7 @@ void ActionTracer::TracePoint::get_data() {
 	}
 
 	_fifo_count = _device->getFIFOCount();
-	// #ifdef INTERRUPT_ME
+#ifdef INTERRUPT_ME
 	_device_interrupt_status = _device->getIntStatus();
 
 	if( _device_interrupt_flag && _fifo_count < _packet_size ) {
@@ -273,13 +273,13 @@ void ActionTracer::TracePoint::get_data() {
 
 	_device_interrupt_flag	 = false;
 	_device_interrupt_status = _device->getIntStatus();
-	// #else
+#else
 	if( _fifo_count < _packet_size ) {
 		if( _debug )
 			debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
 		return;
 	}
-	// #endif
+#endif
 	if( _fifo_count == 1024 ) {
 		// reset so we can continue cleanly
 		_device->resetFIFO();
