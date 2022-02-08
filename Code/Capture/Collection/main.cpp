@@ -166,7 +166,7 @@ int main( int argc, char const *argv[] ) {
 	#ifndef SEND_ADDRESS
 	_address = "192.168.0.149";
 	#else
-	_address = SEND_ADDRESS
+	_address = SEND_ADDRESS;
 	#endif
 	_sensors = number_of_lines;
 	_debug	 = false;

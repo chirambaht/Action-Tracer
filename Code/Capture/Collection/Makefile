@@ -5,7 +5,7 @@ OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o
 
 EXE = collect_data
 
-CXXFLAGS = -Wall -DON_PI -g -DMPU6050_DMP_FIFO_RATE_DIVISOR=0x03 -DSEND_ADDRESS="169.254.121.174" -DARRAY_SOLUTION 
+CXXFLAGS = -Wall -DON_PI -g -DMPU6050_DMP_FIFO_RATE_DIVISOR=0x03 -D'SEND_ADDRESS="169.254.121.174"' -DARRAY_SOLUTION 
 
 LOCAL_IP = $(shell ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | awk '{print $1}')
 LOCAL_PORT = 5000
