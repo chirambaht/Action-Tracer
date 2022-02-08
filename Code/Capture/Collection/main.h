@@ -1,8 +1,6 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#define SEND_TO_MOBILE
-
 // #define ARRAY_SOLUTION
 // #define VECTOR_SOLUTION
 
@@ -32,10 +30,10 @@ TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
 std::vector<TracePoint> bodysensors;
 #endif
 
-size_t		_sensors = 0; // Sensors being used
-bool		_debug	 = true;
-std::string _address = "127.0.0.1";
-float		data_package[4];
+size_t		_sensors		= 0; // Sensors being used
+bool		_debug			= true;
+std::string _address		= "127.0.0.1";
+float		data_package[4] = { 0 };
 
 #ifdef COUNT_FRAMES
 uint32_t _start_time				   = 0;

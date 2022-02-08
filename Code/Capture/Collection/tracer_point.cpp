@@ -21,13 +21,13 @@
 using namespace ActionTracer;
 /**
  * @brief Construct a new defult Action Tracer::Trace Point::Trace Point object
- * 
+ *
  */
 ActionTracer::TracePoint::TracePoint() {}
 
 /**
- * @brief Construct a new Action Tracer:: TracePoint::Trace Point object. 
- * 
+ * @brief Construct a new Action Tracer:: TracePoint::Trace Point object.
+ *
  * @param name Name given to the device
  * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
  * @param interrupt_pin WiringPi interrupt pin
@@ -54,7 +54,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	_device->initialize();
 
-	//TODO: At this stage an interrupt pin is initialised
+	// TODO: At this stage an interrupt pin is initialised
 
 	if( _debug )
 		debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
@@ -73,7 +73,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 			debugPrint( "Enabling DMP..." );
 		_device->setDMPEnabled( true );
 
-		//TODO: Attach interrupt here
+		// TODO: Attach interrupt here
 
 		_device_interrupt_status = _device->getIntStatus();
 
@@ -99,8 +99,8 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
 }
 /**
- * @brief Construct a new Action Tracer:: TracePoint::Trace Point object. 
- * 
+ * @brief Construct a new Action Tracer:: TracePoint::Trace Point object.
+ *
  * @param name Name given to the device
  * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
  */
@@ -126,7 +126,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	_device->initialize();
 
-	//TODO: At this stage an interrupt pin is initialised
+	// TODO: At this stage an interrupt pin is initialised
 
 	if( _debug )
 		debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
@@ -145,7 +145,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 			debugPrint( "Enabling DMP..." );
 		_device->setDMPEnabled( true );
 
-		//TODO: Attach interrupt here
+		// TODO: Attach interrupt here
 
 		_dmp_ready = true;
 
@@ -169,18 +169,18 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 		debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
 }
 
-/** 
+/**
  * @brief Selects a given MPU6050 node. Must be deselected to avoid issues.
-*/
+ */
 void ActionTracer::TracePoint::_select_me() {
 #ifdef ON_PI
 	digitalWrite( _pin_number, LOW );
 #endif
 }
 
-/** 
+/**
  * @brief Deselects a given MPU6050 node.
-*/
+ */
 void ActionTracer::TracePoint::_deselect_me() {
 #ifdef ON_PI
 	digitalWrite( _pin_number, HIGH );
@@ -189,7 +189,7 @@ void ActionTracer::TracePoint::_deselect_me() {
 
 /** @brief Calls on the selected sensor to identify itself by returning its name. It will physically indicate this by blinking an onboard LED.
  * @return Device name/id
-*/
+ */
 std::string ActionTracer::TracePoint::identify() {
 // Blink device led
 #ifdef ON_PI
@@ -207,7 +207,7 @@ std::string ActionTracer::TracePoint::identify() {
 /**
  * @brief Prints the last data packet received if debug mode is on.
  * @return Nothing
- * 
+ *
  */
 void ActionTracer::TracePoint::print_last_data_packet() {
 #ifdef GET_DATA_QUATERNION
@@ -241,7 +241,7 @@ void ActionTracer::TracePoint::print_last_data_packet() {
 }
 /**
  * @brief Obtain the data from the sensor. Collects the FIFO packet and extracts the needed data.
- * 
+ *
  */
 void ActionTracer::TracePoint::get_data() {
 	this->_select_me();
@@ -255,7 +255,7 @@ void ActionTracer::TracePoint::get_data() {
 
 	_device_interrupt_status = _device->getIntStatus();
 
-	//does the FIFO have data in it?
+	// does the FIFO have data in it?
 	if( ( _device_interrupt_status & 0x02 ) < 1 ) {
 		if( _debug )
 			debugPrint( "Data not ready" );
@@ -264,31 +264,20 @@ void ActionTracer::TracePoint::get_data() {
 	}
 
 	_fifo_count = _device->getFIFOCount();
-	// #ifdef INTERRUPT_ME
-	// _device_interrupt_status = _device->getIntStatus();
 
-	if( _device_interrupt_flag && _fifo_count < _packet_size ) {
-		if( _debug )
-			debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
-		this->_deselect_me();
-		return;
-	}
-
-	_device_interrupt_flag	 = false;
-	_device_interrupt_status = _device->getIntStatus();
-	// #else
 	if( _fifo_count < _packet_size ) {
 		if( _debug )
 			debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
 		this->_deselect_me();
 		return;
 	}
-	// #endif
+
 	if( _fifo_count == 1024 ) {
 		// reset so we can continue cleanly
 		_device->resetFIFO();
 		if( _debug )
 			debugPrint( "FIFO overflow!\n" );
+		return;
 	}
 
 	_device->getFIFOBytes( _fifo_buffer, _packet_size );
@@ -360,7 +349,7 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 
 /**
  * @brief Returns the given device name
- * 
+ *
  * @return std::string containing the device name
  */
 std::string ActionTracer::TracePoint::get_name() {
@@ -369,7 +358,7 @@ std::string ActionTracer::TracePoint::get_name() {
 
 /**
  * @brief Set debug printing on or off.
- * 
+ *
  * @param value true or false
  */
 void ActionTracer::TracePoint::set_debug( bool value ) {

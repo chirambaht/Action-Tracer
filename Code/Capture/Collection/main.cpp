@@ -26,7 +26,6 @@
 #ifdef ON_PI
 	#include <wiringPi.h>
 #endif
-#define TIMING
 /// Outline
 
 using namespace ActionTracer;
