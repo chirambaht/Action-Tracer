@@ -7,11 +7,11 @@
 // #define VECTOR_SOLUTION
 // #define INTERRUPT_SOLUTION
 
-#define COUNT_FRAMES
+// #define COUNT_FRAMES
 
 #define PORT		9022 // Main UDP data port for the data to be sent through
 #define MAX_SENSORS 20	 // Number of points track on the body.
-#define LOOP_DELAY	0	 // ms to wait per loop cycle
+// #define LOOP_DELAY	0	 // ms to wait per loop cycle
 
 #include "packager.h"
 #include "tracer_point.h"
