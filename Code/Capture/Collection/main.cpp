@@ -53,15 +53,6 @@ void setup( int debug_value = 0 ) {
 	}
 #endif
 
-#ifdef INTERRUPT_SOLUTION
-	for( size_t i = 0; i < _sensors; i++ ) {
-		body_sensor[i] = new TracePoint( "Body p", PI_ORDER[i] );
-		wiringPiISR( 27 + i, INT_EDGE_RISING, &basic_isr );
-		piHiPri( 10 );
-	}
-
-#endif
-
 #ifdef VECTOR_SOLUTION
 	for( auto i = bodysensors.begin(); i < bodysensors.end(); std::advance( i, 1 ) ) {
 		i = new TracePoint( "Body p", 2 );
@@ -75,17 +66,6 @@ void setup( int debug_value = 0 ) {
  */
 void loop() {
 #ifdef ARRAY_SOLUTION
-	for( size_t i = 0; i < _sensors; i++ ) {
-		float *body = body_sensor[i]->read_data( 1 );
-		for( size_t j = 0; j < 4; j++ ) {
-			data_package[j] = *body;
-			body++;
-		}
-		communicator->load_packet( data_package, 4 );
-	}
-#endif
-
-#ifdef INTERRUPT_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
 		float *body = body_sensor[i]->read_data( 1 );
 		for( size_t j = 0; j < 4; j++ ) {
@@ -144,10 +124,10 @@ void loop() {
 
 /**
  * @brief Main method that schedules the main tasks before and after data collection.
- * 
- * @param argc 
- * @param argv 
- * @return int 
+ *
+ * @param argc
+ * @param argv
+ * @return int
  */
 int main( int argc, char const *argv[] ) {
 #ifdef TAKE_ARGUMENTS
@@ -202,13 +182,3 @@ int main( int argc, char const *argv[] ) {
 	}
 	return 0;
 }
-
-#ifdef INTERRUPT_SOLUTION
-/**
- * @brief This is the method called when a hardware interrupt is received from the program. It simply runs the loop sequence to collect data from all the devices.
- * @return Nothing
- */
-void basic_isr() {
-	loop();
-}
-#endif
