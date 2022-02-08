@@ -26,6 +26,7 @@
 #ifdef ON_PI
 	#include <wiringPi.h>
 #endif
+#define TIMING
 /// Outline
 
 using namespace ActionTracer;
@@ -162,7 +163,11 @@ int main( int argc, char const *argv[] ) {
 	while( std::getline( myfile, line ) )
 		++number_of_lines;
 
+	#ifndef SEND_ADDRESS
 	_address = "192.168.0.149";
+	#else
+	_address = SEND_ADDRESS
+	#endif
 	_sensors = number_of_lines;
 	_debug	 = false;
 	printf( "Devices connected: %d\n", _sensors );
@@ -178,7 +183,15 @@ int main( int argc, char const *argv[] ) {
 #endif
 
 	while( 1 ) {
+#ifdef TIMING
+		uint32_t tstart, tend;
+		tstart = millis();
+#endif
 		loop();
+#ifdef TIMING
+		tend = millis();
+		printf( "It took %dms to run the loop.", tend - tstart );
+#endif
 	}
 	return 0;
 }
