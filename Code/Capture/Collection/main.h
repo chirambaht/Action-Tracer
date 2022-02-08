@@ -3,7 +3,7 @@
 
 #define SEND_TO_MOBILE
 
-#define ARRAY_SOLUTION
+// #define ARRAY_SOLUTION
 // #define VECTOR_SOLUTION
 // #define INTERRUPT_SOLUTION
 
@@ -23,14 +23,14 @@
 using namespace ActionTracer;
 
 #ifdef ARRAY_SOLUTION
-Packager *	communicator;			  // The speaker dude
+Packager	 *communicator;			  // The speaker dude
 TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
 // std::array<TracePoint, MAX_SENSORS> *body_sensor; // These are the N sensors on the body.
 uint8_t PI_ORDER[6] = { 0, 2, 3, 12, 13, 14 };
 #endif
 
 #ifdef INTERRUPT_SOLUTION
-Packager *	communicator;			  // The speaker dude
+Packager	 *communicator;			  // The speaker dude
 TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
 uint8_t		PI_ORDER[6] = { 0, 2, 3, 12, 13, 14 };
 #endif
