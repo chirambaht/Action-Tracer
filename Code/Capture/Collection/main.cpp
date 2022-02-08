@@ -67,8 +67,9 @@ void setup( int debug_value = 0 ) {
  */
 void loop() {
 #ifdef ARRAY_SOLUTION
+	float *body;
 	for( size_t i = 0; i < _sensors; i++ ) {
-		float *body = body_sensor[i]->read_data( 1 );
+		body = body_sensor[i]->read_data( 1 );
 		for( size_t j = 0; j < 4; j++ ) {
 			data_package[j] = *body;
 			body++;
@@ -190,7 +191,7 @@ int main( int argc, char const *argv[] ) {
 		loop();
 #ifdef TIMING
 		tend = millis();
-		printf( "It took %dms to run the loop.", tend - tstart );
+		printf( "It took %dms to run the loop.\n", tend - tstart );
 #endif
 	}
 	return 0;
