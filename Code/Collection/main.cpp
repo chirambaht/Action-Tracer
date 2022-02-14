@@ -54,6 +54,7 @@ void setup( int debug_value = 0 ) {
 
 	communicator = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->set_debug( debug_value );
+	communicator->save_enable( true );
 
 #ifdef ARRAY_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
@@ -69,7 +70,8 @@ void setup( int debug_value = 0 ) {
 }
 
 void exit_handler( int s ) {
-	communicator->close_file();
+	if( communicator->save_status() )
+		communicator->close_file();
 	exit( 1 );
 }
 

@@ -135,6 +135,15 @@ void ActionTracer::Packager::save_enable( bool value ) {
 }
 
 /**
+ * @brief Get the status of the saving
+ *
+ * @param value true or false
+ */
+bool ActionTracer::Packager::save_status() {
+	return _save;
+}
+
+/**
  * @brief Opens the recoring file
  */
 void ActionTracer::Packager::close_file() {
@@ -150,7 +159,8 @@ void ActionTracer::Packager::open_file() {
 
 	std::ostringstream oss;
 	oss << std::put_time( &tm, "%Y%m%d-%H%M%S" );
-	auto str   = oss.str();
+	auto str = oss.str();
+	str += ".act";
 	_recording = fopen( str.c_str(), "w" );
 #ifdef ON_PI
 	_recording_start_time = millis();

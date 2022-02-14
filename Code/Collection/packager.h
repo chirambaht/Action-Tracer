@@ -32,6 +32,7 @@ namespace ActionTracer {
 		~Packager();
 		void set_debug( bool );
 		void save_enable( bool );
+		bool save_status();
 		void close_file( void );
 		void open_file( void );
 	};
