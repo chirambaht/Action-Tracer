@@ -4,6 +4,9 @@
 #include "packager.h"
 
 #include <ctime>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 #ifdef ON_PI
 	#include <wiringPi.h>
@@ -86,6 +89,12 @@ int ActionTracer::Packager::send_packet() {
 			debugPrint( "Send failed\n" );
 		return 1;
 	}
+
+#ifdef ON_PI
+	if( _save )
+		fprintf( _recording, "%8d,%7d,%s\n", millis() - _recording_start_time, _count, _dest.c_str(), _port, _package.c_str() );
+#endif
+
 	if( _debug ) {
 		// debugPrint( "\x1B[2J" );
 		debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, _package.c_str() );
@@ -112,4 +121,37 @@ int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 	}
 	_package += ":";
 	return 0;
+}
+
+/**
+ * @brief Set file saving on or off.
+ *
+ * @param value true or false
+ */
+void ActionTracer::Packager::save_enable( bool value ) {
+	_save = value;
+}
+
+/**
+ * @brief Opens the recoring file
+ */
+void ActionTracer::Packager::close_file() {
+	fclose( _recording );
+}
+
+/**
+ * @brief Closes the recording file.
+ */
+void ActionTracer::Packager::open_file() {
+#ifdef ON_PI
+	_recording_start_time = millis();
+#endif
+
+	auto t	= std::time( nullptr );
+	auto tm = *std::localtime( &t );
+
+	std::ostringstream oss;
+	oss << std::put_time( &tm, "%Y%m%d-%H%M%S" );
+	auto str   = oss.str();
+	_recording = fopen( str.c_str(), "w" );
 }

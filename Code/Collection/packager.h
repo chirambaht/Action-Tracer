@@ -21,6 +21,8 @@ namespace ActionTracer {
 		std::string _float_to_string( float value, int prec );
 		void		_log( std::string data );
 		bool		_save = false;
+		FILE		 *_recording;
+		int32_t		_recording_start_time = 0;
 
 	  public:
 		Packager();
@@ -30,6 +32,8 @@ namespace ActionTracer {
 		~Packager();
 		void set_debug( bool );
 		void save_enable( bool );
+		void close_file( void );
+		void open_file( void );
 	};
 
 } // namespace ActionTracer
