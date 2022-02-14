@@ -80,6 +80,7 @@ void exit_handler( int s ) {
  * @return Nothing
  */
 void loop() {
+	debugPrint( "In the loop\n" );
 #ifdef ARRAY_SOLUTION
 	float *body;
 	for( size_t i = 0; i < _sensors; i++ ) {
@@ -88,6 +89,7 @@ void loop() {
 			data_package[j] = *body;
 			body++;
 		}
+		debugPrint( "Read all the data\n" );
 		communicator->load_packet( data_package, 4 );
 	}
 #endif
