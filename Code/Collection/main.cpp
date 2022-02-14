@@ -60,6 +60,11 @@ void setup( int debug_value = 0 ) {
 #endif
 }
 
+void exit_handler( int s ) {
+	communicator->close_file();
+	exit( 1 );
+}
+
 /**
  * @brief Main work loop for all the code. This will always run every cycle.
  * @return Nothing

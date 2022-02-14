@@ -49,6 +49,7 @@ bool	 first_second				   = false;
 
 void setup( int );
 void loop();
+void exit_handler( int s )
 
 // namespace ActionTracer
 
