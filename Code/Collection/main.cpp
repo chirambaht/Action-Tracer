@@ -44,6 +44,13 @@ void setup( int debug_value = 0 ) {
 #ifdef ON_PI
 	wiringPiSetup();
 #endif
+	struct sigaction sigIntHandler;
+
+	sigIntHandler.sa_handler = exit_handler;
+	sigemptyset( &sigIntHandler.sa_mask );
+	sigIntHandler.sa_flags = 0;
+
+	sigaction( SIGINT, &sigIntHandler, NULL );
 
 	communicator = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->set_debug( debug_value );
