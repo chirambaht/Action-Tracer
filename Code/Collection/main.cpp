@@ -51,10 +51,9 @@ void setup( int debug_value = 0 ) {
 	sigIntHandler.sa_flags = 0;
 
 	sigaction( SIGINT, &sigIntHandler, NULL );
-
+	communicator->save_enable( true );
 	communicator = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->set_debug( debug_value );
-	communicator->save_enable( true );
 
 #ifdef ARRAY_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
@@ -80,7 +79,6 @@ void exit_handler( int s ) {
  * @return Nothing
  */
 void loop() {
-	debugPrint( "In the loop\n" );
 #ifdef ARRAY_SOLUTION
 	float *body;
 	for( size_t i = 0; i < _sensors; i++ ) {
@@ -89,7 +87,6 @@ void loop() {
 			data_package[j] = *body;
 			body++;
 		}
-		debugPrint( "Read all the data\n" );
 		communicator->load_packet( data_package, 4 );
 	}
 #endif
