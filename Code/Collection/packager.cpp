@@ -5,11 +5,15 @@
 
 #include <ctime>
 
+#ifdef ON_PI
+	#include <wiringPi.h>
+#endif
+
 using namespace ActionTracer;
 
 /**
  * @brief Construct a new Action Tracer:: Packager:: Packager object
- * 
+ *
  * @param destination IP Address to send data to
  * @param port Destination UDP Port to send data to
  */
@@ -17,6 +21,9 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 	_dest  = destination;
 	_port  = port;
 	_count = 0;
+
+	// if the save method is enabled, we need to store the data we are sending to a file.
+	// if save, we must create a new save file based on current time. This file will be opened and closed as is needed.
 
 	if( _debug )
 		debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
@@ -43,7 +50,7 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 
 /**
  * @brief Converts a given float value to a string to a specified number of decimal places.
- * 
+ *
  * @param value float to be converted to string
  * @param prec number of decimal places. Defaults to 6
  * @return std::string representation of given float
@@ -61,7 +68,7 @@ std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 
 
 /**
  * @brief Set debug printing on or off.
- * 
+ *
  * @param value true or false
  */
 void ActionTracer::Packager::set_debug( bool value ) {
@@ -71,7 +78,7 @@ void ActionTracer::Packager::set_debug( bool value ) {
 /**
  * This is used to send the stored data packet in @code _packet @endcode
  * @return 0 if succesful.
-*/
+ */
 int ActionTracer::Packager::send_packet() {
 	// Send some data
 	if( send( _descriptor, _package.c_str(), strlen( _package.c_str() ), 0 ) < 0 ) {
@@ -95,7 +102,7 @@ int ActionTracer::Packager::send_packet() {
  * @param *data A reference to an array of floats
  * @param length number of floats in array to convert. Defaults to 4
  * @return 0 if succesful.
-*/
+ */
 int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 	for( int i = 0; i < length; i++ ) {
 		_package += _float_to_string( data[i], 6 );

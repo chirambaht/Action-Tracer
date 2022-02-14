@@ -20,6 +20,7 @@ namespace ActionTracer {
 		__uint32_t	_count;
 		std::string _float_to_string( float value, int prec );
 		void		_log( std::string data );
+		bool		_save = false;
 
 	  public:
 		Packager();
@@ -28,6 +29,7 @@ namespace ActionTracer {
 		int load_packet( float *data, uint8_t length );
 		~Packager();
 		void set_debug( bool );
+		void save_enable( bool );
 	};
 
 } // namespace ActionTracer
