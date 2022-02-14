@@ -26,7 +26,9 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 	_count = 0;
 
 	// if the save method is enabled, we need to store the data we are sending to a file.
-	// if save, we must create a new save file based on current time. This file will be opened and closed as is needed.
+	if( _save ) {
+		this->open_file();
+	}
 
 	if( _debug )
 		debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
@@ -143,10 +145,6 @@ void ActionTracer::Packager::close_file() {
  * @brief Closes the recording file.
  */
 void ActionTracer::Packager::open_file() {
-#ifdef ON_PI
-	_recording_start_time = millis();
-#endif
-
 	auto t	= std::time( nullptr );
 	auto tm = *std::localtime( &t );
 
@@ -154,4 +152,7 @@ void ActionTracer::Packager::open_file() {
 	oss << std::put_time( &tm, "%Y%m%d-%H%M%S" );
 	auto str   = oss.str();
 	_recording = fopen( str.c_str(), "w" );
+#ifdef ON_PI
+	_recording_start_time = millis();
+#endif
 }
