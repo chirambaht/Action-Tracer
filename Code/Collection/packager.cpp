@@ -94,7 +94,7 @@ int ActionTracer::Packager::send_packet() {
 
 #ifdef ON_PI
 	if( _save )
-		fprintf( _recording, "%8d,%7d,%s\n", millis() - _recording_start_time, _count, _dest.c_str(), _port, _package.c_str() );
+		fprintf( _recording, "%8d,%7d,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
 #endif
 
 	if( _debug ) {
