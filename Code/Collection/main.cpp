@@ -9,7 +9,7 @@
 	#include <cxxopts.hpp>
 #endif
 
-// #include <dirent.h>
+#include <dirent.h>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -21,7 +21,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-// #include <sys/timeb.h>
+#include <sys/timeb.h>
 #include <unistd.h>
 
 #ifdef ON_PI
