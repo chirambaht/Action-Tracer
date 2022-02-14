@@ -132,6 +132,7 @@ int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
  */
 void ActionTracer::Packager::save_enable( bool value ) {
 	_save = value;
+	this->open_file();
 }
 
 /**

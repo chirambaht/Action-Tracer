@@ -51,9 +51,10 @@ void setup( int debug_value = 0 ) {
 	sigIntHandler.sa_flags = 0;
 
 	sigaction( SIGINT, &sigIntHandler, NULL );
-	communicator->save_enable( true );
+
 	communicator = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->set_debug( debug_value );
+	communicator->save_enable( true );
 
 #ifdef ARRAY_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
