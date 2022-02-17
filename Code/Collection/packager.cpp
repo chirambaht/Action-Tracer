@@ -85,7 +85,7 @@ void ActionTracer::Packager::set_debug( bool value ) {
  * @return 0 if successful.
  */
 int ActionTracer::Packager::send_packet() {
-	sender = std::thread( _send_packet );
+	std::thread offloaded_send( _send_packet );
 	return 0;
 }
 
