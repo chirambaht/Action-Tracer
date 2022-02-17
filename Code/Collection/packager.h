@@ -26,9 +26,7 @@ namespace ActionTracer {
 		int32_t		_recording_start_time = 0;
 		std::thread sender;
 
-		int _send_packet();
-
-	  public:
+		  public:
 		Packager();
 		Packager( std::string destination, int port );
 		int send_packet();
@@ -38,6 +36,7 @@ namespace ActionTracer {
 		void save_enable( bool );
 		bool save_status();
 		void close_file( void );
+		void _send_packet();
 		void open_file( void );
 	};
 

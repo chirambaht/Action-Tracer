@@ -93,12 +93,12 @@ int ActionTracer::Packager::send_packet() {
  * This is used to send the stored data packet in @code _packet @endcode
  * @return 0 if successful.
  */
-int ActionTracer::Packager::_send_packet() {
+void ActionTracer::Packager::_send_packet() {
 	// Send some data
 	if( send( _descriptor, _package.c_str(), strlen( _package.c_str() ), 0 ) < 0 ) {
 		if( _debug )
 			debugPrint( "Send failed\n" );
-		return 1;
+		// return 1;
 	}
 
 #ifdef ON_PI
@@ -114,7 +114,7 @@ int ActionTracer::Packager::_send_packet() {
 	_count++;
 	_package = "";
 
-	return 0;
+	// return 0;
 }
 
 /**
