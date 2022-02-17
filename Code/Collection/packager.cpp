@@ -82,9 +82,17 @@ void ActionTracer::Packager::set_debug( bool value ) {
 
 /**
  * This is used to send the stored data packet in @code _packet @endcode
- * @return 0 if succesful.
+ * @return 0 if successful.
  */
 int ActionTracer::Packager::send_packet() {
+	sender = std::thread( _send_packet );
+}
+
+/**
+ * This is used to send the stored data packet in @code _packet @endcode
+ * @return 0 if successful.
+ */
+int ActionTracer::Packager::_send_packet() {
 	// Send some data
 	if( send( _descriptor, _package.c_str(), strlen( _package.c_str() ), 0 ) < 0 ) {
 		if( _debug )

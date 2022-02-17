@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/timeb.h>
+#include <thread>
 #include <unistd.h>
 
 #ifdef ON_PI
@@ -88,7 +89,7 @@ void loop() {
 			data_package[j] = *body;
 			body++;
 		}
-		communicator->load_packet( data_package, 4 );
+		( communicator->load_packet( data_package, 4 ) );
 	}
 #endif
 

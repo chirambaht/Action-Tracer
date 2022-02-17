@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h> //strlen
 #include <sys/socket.h>
+#include <thread>
 
 namespace ActionTracer {
 	class Packager {
@@ -23,6 +24,9 @@ namespace ActionTracer {
 		bool		_save = false;
 		FILE		 *_recording;
 		int32_t		_recording_start_time = 0;
+		std::thread sender;
+
+		int _send_packet();
 
 	  public:
 		Packager();
