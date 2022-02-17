@@ -86,6 +86,7 @@ void ActionTracer::Packager::set_debug( bool value ) {
  */
 int ActionTracer::Packager::send_packet() {
 	sender = std::thread( _send_packet );
+	return 0;
 }
 
 /**
