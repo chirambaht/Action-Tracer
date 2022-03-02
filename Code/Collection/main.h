@@ -2,13 +2,13 @@
 #define _MAIN_H_
 
 // #define ARRAY_SOLUTION
-// #define VECTOR_SOLUTION
 
 // #define COUNT_FRAMES
 
 #define PORT		9022 // Main UDP data port for the data to be sent through
 #define MAX_SENSORS 20	 // Number of points track on the body.
 
+#include "action_pi.hpp"
 #include "packager.h"
 #include "tracer_point.h"
 
@@ -18,22 +18,17 @@
 
 using namespace ActionTracer;
 
-Packager *communicator;							 // The speaker dude
-uint8_t	  PI_ORDER[6] = { 0, 2, 3, 12, 13, 14 }; // All the Pi pins that can be used.
+Packager *communicator; // The speaker dude
 
 #ifdef ARRAY_SOLUTION
 TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
-									  // std::array<TracePoint, MAX_SENSORS> *body_sensor; // These are the N sensors on the body.
+// std::array<TracePoint, MAX_SENSORS> *body_sensor; // These are the N sensors on the body.
 #endif
 
-#ifdef VECTOR_SOLUTION
-std::vector<TracePoint> bodysensors;
-#endif
-
-size_t		_sensors		= 0; // Sensors being used
-bool		_debug			= true;
-std::string _address		= "127.0.0.1";
-float		data_package[4] = { 0 };
+size_t		_sensors		= 0;		   // Number of sensors being used
+bool		_debug			= true;		   // Sets the debug level of the application
+std::string _address		= "127.0.0.1"; // Address to send the data to for the communicator
+float		data_package[4] = { 0 };	   //
 
 #ifdef COUNT_FRAMES
 uint32_t _start_time				   = 0;

@@ -1,5 +1,5 @@
 // This is the main file that will be used to run the program for data
-// collection from the 3 IMU's and send them to the server as is necesarry.
+// collection from the 3 IMU's and send them to the server as is necessary.
 
 #include "main.h"
 
@@ -59,13 +59,7 @@ void setup( int debug_value = 0 ) {
 
 #ifdef ARRAY_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
-		body_sensor[i] = new TracePoint( "Body p", PI_ORDER[i] );
-	}
-#endif
-
-#ifdef VECTOR_SOLUTION
-	for( auto i = bodysensors.begin(); i < bodysensors.end(); std::advance( i, 1 ) ) {
-		i = new TracePoint( "Body p", 2 );
+		body_sensor[i] = new TracePoint( "Body p", get_pi_location( i ) );
 	}
 #endif
 }
@@ -174,9 +168,9 @@ int main( int argc, char const *argv[] ) {
 #ifndef TAKE_ARGUMENTS
 	int			  number_of_lines = 0;
 	std::string	  line;
-	std::ifstream myfile( "pointers.csv" );
+	std::ifstream my_file( "pointers.csv" );
 
-	while( std::getline( myfile, line ) )
+	while( std::getline( my_file, line ) )
 		++number_of_lines;
 
 	#ifndef SEND_ADDRESS
