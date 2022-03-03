@@ -34,6 +34,7 @@
 */
 
 namespace ActionTracer {
+	int ActionTracer::get_pi_location( int locator );
 
 #define ACT_I2C_DATA  8
 #define ACT_I2C_CLOCK 9
