@@ -29,19 +29,10 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 	if( _save ) {
 		this->open_file();
 	}
-
-	if( _debug )
-		debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
-
-	// Create socket
-	_descriptor = socket( AF_INET, SOCK_DGRAM, 0 );
-	if( _descriptor == -1 )
-		if( _debug )
-			debugPrint( "Could not create socket\n" );
 }
 
 /**
- * @brief Initialize a TCP Server on the device
+ * @brief Initialize a TCP client on the device
  *
  */
 void ActionTracer::Packager::init_tcp() {
@@ -61,14 +52,22 @@ void ActionTracer::Packager::init_tcp() {
 	_server.sin_family		= AF_INET;
 	_server.sin_port		= htons( _port ); // Destination port
 
-	if( bind( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
-		perror( "bind failed" );
+	// if( bind( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
+	// 	perror( "bind failed" );
+	// 	exit( EXIT_FAILURE );
+	// }
+
+	if( connect( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
+		perror( "connection failed" );
 		exit( EXIT_FAILURE );
 	}
+
+	if( _debug )
+		debugPrint( "Creating network socket via TCP on port %d, to IP:%s...\n", _port, _dest.c_str() );
 }
 
 /**
- * @brief Initialize a UDP Server on the device
+ * @brief Initialize a UDP client on the device
  *
  */
 void ActionTracer::Packager::init_udp() {
@@ -89,6 +88,9 @@ void ActionTracer::Packager::init_udp() {
 		if( _debug )
 			debugPrint( "UDP client ready!\n" );
 	}
+
+	if( _debug )
+		debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
 }
 
 /**
@@ -161,7 +163,7 @@ void ActionTracer::Packager::_send_packet() {
  * This is used to add data to a package that is going to be sent. It takes an array of floats.
  * @param *data A reference to an array of floats
  * @param length number of floats in array to convert. Defaults to 4
- * @return 0 if succesful.
+ * @return 0 if successful.
  */
 int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 	for( int i = 0; i < length; i++ ) {
@@ -194,7 +196,7 @@ bool ActionTracer::Packager::save_status() {
 }
 
 /**
- * @brief Opens the recoring file
+ * @brief Opens the recording file
  */
 void ActionTracer::Packager::close_file() {
 	fclose( _recording );

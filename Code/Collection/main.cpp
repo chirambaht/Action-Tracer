@@ -56,6 +56,8 @@ void setup( int debug_value = 0 ) {
 	communicator = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->set_debug( debug_value );
 	communicator->save_enable( true );
+	communicator->init_tcp();
+	// communicator->init_udp();
 
 #ifdef ARRAY_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
