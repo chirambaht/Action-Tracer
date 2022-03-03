@@ -41,6 +41,7 @@ namespace ActionTracer {
 		void close_file( void );
 		void _send_packet();
 		void open_file( void );
+		void close_socket( void );
 	};
 
 } // namespace ActionTracer

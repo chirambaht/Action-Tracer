@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
 
 #ifdef ON_PI
 	#include <wiringPi.h>
@@ -196,14 +197,14 @@ bool ActionTracer::Packager::save_status() {
 }
 
 /**
- * @brief Opens the recording file
+ * @brief Closes the recording file
  */
 void ActionTracer::Packager::close_file() {
 	fclose( _recording );
 }
 
 /**
- * @brief Closes the recording file.
+ * @brief Opens the recording file.
  */
 void ActionTracer::Packager::open_file() {
 	auto t	= std::time( nullptr );
@@ -217,4 +218,11 @@ void ActionTracer::Packager::open_file() {
 #ifdef ON_PI
 	_recording_start_time = millis();
 #endif
+}
+
+/**
+ * @brief Closes the socket connection.
+ */
+void ActionTracer::Packager::close_socket() {
+	close( _descriptor );
 }

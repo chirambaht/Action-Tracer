@@ -69,6 +69,7 @@ void setup( int debug_value = 0 ) {
 void exit_handler( int s ) {
 	if( communicator->save_status() )
 		communicator->close_file();
+	communicator->close_socket();
 	exit( 1 );
 }
 
