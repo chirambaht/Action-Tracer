@@ -61,7 +61,7 @@ namespace ActionTracer {
 	 * @param locator The index in the array
 	 * @return int AcT device location
 	 */
-	int ActionTracer::get_pi_location( int locator ) {
+	int get_pi_location( int locator ) {
 		return PI_ORDER[locator];
 	}
 
