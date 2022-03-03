@@ -168,7 +168,7 @@ int main( int argc, char const *argv[] ) {
 	#else
 	_address = SEND_ADDRESS;
 	#endif
-	_sensors = 3;
+	_sensors = 1;
 	_debug	 = false;
 	printf( "Devices connected: %d\n", _sensors );
 #endif
