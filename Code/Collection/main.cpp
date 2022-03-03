@@ -87,19 +87,6 @@ void loop() {
 	}
 #endif
 
-#ifdef VECTOR_SOLUTION
-	int i = 0;
-	for( auto dev : bodysensors ) {
-		float *body = dev.read_data( 1 );
-
-		for( size_t j = 0; j < 4; j++ ) {
-			data_package[j + ( i * 4 )] = *body;
-			body++;
-		}
-		++i;
-	}
-#endif
-
 /**
  * @brief This allows tracking of frames sent to the network against the ones collected from the device.
  */
@@ -166,19 +153,19 @@ int main( int argc, char const *argv[] ) {
 #endif
 
 #ifndef TAKE_ARGUMENTS
-	int			  number_of_lines = 0;
-	std::string	  line;
-	std::ifstream my_file( "pointers.csv" );
+	// int			  number_of_lines = 0;
+	// std::string	  line;
+	// std::ifstream my_file( "pointers.csv" );
 
-	while( std::getline( my_file, line ) )
-		++number_of_lines;
+	// while( std::getline( my_file, line ) )
+	// 	++number_of_lines;
 
 	#ifndef SEND_ADDRESS
 	_address = "192.168.0.149";
 	#else
 	_address = SEND_ADDRESS;
 	#endif
-	_sensors = number_of_lines;
+	_sensors = 3;
 	_debug	 = false;
 	printf( "Devices connected: %d\n", _sensors );
 #endif
