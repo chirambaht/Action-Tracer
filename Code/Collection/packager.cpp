@@ -32,19 +32,57 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 
 	if( _debug )
 		debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
-	struct sockaddr_in server;
+
 	// Create socket
 	_descriptor = socket( AF_INET, SOCK_DGRAM, 0 );
 	if( _descriptor == -1 )
 		if( _debug )
 			debugPrint( "Could not create socket\n" );
+}
 
-	server.sin_addr.s_addr = inet_addr( _dest.c_str() ); // Destination address
-	server.sin_family	   = AF_INET;
-	server.sin_port		   = htons( _port ); // Destination port
+/**
+ * @brief Initialize a TCP Server on the device
+ *
+ */
+void ActionTracer::Packager::init_tcp() {
+	_descriptor = socket( AF_INET, SOCK_STREAM, 0 );
+	int _opt	= 1;
+	if( _descriptor == 0 ) {
+		debugPrint( "Error" );
+	}
+
+	// This helps in manipulating options for the socket referred by the file descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as: “address already in use”.
+	if( setsockopt( _descriptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
+		perror( "setsockopt" );
+		exit( EXIT_FAILURE );
+	}
+
+	_server.sin_addr.s_addr = inet_addr( _dest.c_str() ); // Destination address
+	_server.sin_family		= AF_INET;
+	_server.sin_port		= htons( _port ); // Destination port
+
+	if( bind( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
+		perror( "bind failed" );
+		exit( EXIT_FAILURE );
+	}
+}
+
+/**
+ * @brief Initialize a UDP Server on the device
+ *
+ */
+void ActionTracer::Packager::init_udp() {
+	_descriptor = socket( AF_INET, SOCK_DGRAM, 0 );
+	if( _descriptor == 0 ) {
+		debugPrint( "Error" );
+	}
+
+	_server.sin_addr.s_addr = inet_addr( _dest.c_str() ); // Destination address
+	_server.sin_family		= AF_INET;
+	_server.sin_port		= htons( _port ); // Destination port
 
 	// Connect to remote server
-	if( connect( _descriptor, ( struct sockaddr * ) &server, sizeof( server ) ) < 0 ) {
+	if( connect( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
 		if( _debug )
 			debugPrint( "connect error\n" );
 	} else {
@@ -60,7 +98,8 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
  * @param prec number of decimal places. Defaults to 6
  * @return std::string representation of given float
  */
-std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 ) {
+std::string
+ActionTracer::Packager::_float_to_string( float value, int prec = 6 ) {
 	std::stringstream stream;
 	if( value < 0 ) {
 		prec -= 1;

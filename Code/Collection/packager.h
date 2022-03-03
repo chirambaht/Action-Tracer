@@ -13,24 +13,27 @@
 namespace ActionTracer {
 	class Packager {
 	  private:
-		bool		_debug = false;
-		std::string _dest;
-		std::string _package;
-		int			_port;
-		int			_descriptor;
-		__uint32_t	_count;
-		std::string _float_to_string( float value, int prec );
-		void		_log( std::string data );
-		bool		_save = false;
-		FILE		 *_recording;
-		int32_t		_recording_start_time = 0;
-		std::thread sender;
+		bool			   _debug = false;
+		std::string		   _dest;
+		std::string		   _package;
+		int				   _port;
+		int				   _descriptor;
+		__uint32_t		   _count;
+		std::string		   _float_to_string( float value, int prec );
+		void			   _log( std::string data );
+		bool			   _save = false;
+		FILE				 *_recording;
+		int32_t			   _recording_start_time = 0;
+		struct sockaddr_in _server;
+		std::thread		   sender;
 
-		  public:
+	  public:
 		Packager();
 		Packager( std::string destination, int port );
-		int send_packet();
-		int load_packet( float *data, uint8_t length );
+		void init_udp();
+		void init_tcp();
+		int	 send_packet();
+		int	 load_packet( float *data, uint8_t length );
 		~Packager();
 		void set_debug( bool );
 		void save_enable( bool );
