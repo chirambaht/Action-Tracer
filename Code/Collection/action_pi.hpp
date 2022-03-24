@@ -1,8 +1,9 @@
 /**
  * This is used to define PI pins for the Action Tracer Suite of Applications.
  */
+#include <stddef.h>
 #ifndef ACTION_PI_H
-#define ACTION_PI_H
+	#define ACTION_PI_H
 
 /*
  +-----+-----+---------+------+--Pi Zero-+------+---------+-----+-----+
@@ -36,24 +37,26 @@
 namespace ActionTracer {
 	int get_pi_location( int locator );
 
-#define ACT_I2C_DATA  8
-#define ACT_I2C_CLOCK 9
+	#define ACT_I2C_DATA  8
+	#define ACT_I2C_CLOCK 9
 
-#define ACT_DEVICE_1  0
-#define ACT_DEVICE_2  2
-#define ACT_DEVICE_3  3
-#define ACT_DEVICE_4  12
-#define ACT_DEVICE_5  13
-#define ACT_DEVICE_6  14
-#define ACT_DEVICE_7  30
-#define ACT_DEVICE_8  21
-#define ACT_DEVICE_9  22
-#define ACT_DEVICE_10 23
-#define ACT_DEVICE_11 24
-#define ACT_DEVICE_12 25
+	#define ACT_DEVICE_1  0
+	#define ACT_DEVICE_2  2
+	#define ACT_DEVICE_3  3
+	#define ACT_DEVICE_4  12
+	#define ACT_DEVICE_5  13
+	#define ACT_DEVICE_6  14
+	#define ACT_DEVICE_7  30
+	#define ACT_DEVICE_8  21
+	#define ACT_DEVICE_9  22
+	#define ACT_DEVICE_10 23
+	#define ACT_DEVICE_11 24
+	#define ACT_DEVICE_12 25
 
 	// An array with all the Pi pins available.
 	const int PI_ORDER[12] = { ACT_DEVICE_1, ACT_DEVICE_2, ACT_DEVICE_3, ACT_DEVICE_4, ACT_DEVICE_5, ACT_DEVICE_6, ACT_DEVICE_7, ACT_DEVICE_8, ACT_DEVICE_9, ACT_DEVICE_10, ACT_DEVICE_11, ACT_DEVICE_12 };
+
+	const size_t num_action_devices = 12;
 
 	/**
 	 * @brief Obtain the pin at a specific location in the reccomended AcT pin assignment based on Wiring Pi
