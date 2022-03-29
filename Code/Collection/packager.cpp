@@ -1,5 +1,10 @@
-#define debugPrint( ... )	printf( __VA_ARGS__ )
-#define debugPrintln( ... ) printf( __VA_ARGS__ )
+#ifdef DEBUG
+	#define debugPrint( ... )	printf( __VA_ARGS__ )
+	#define debugPrintln( ... ) printf( __VA_ARGS__ )
+#else
+	#define debugPrint( ... )
+	#define debugPrintln( ... )
+#endif
 
 #include "packager.h"
 
@@ -63,8 +68,7 @@ void ActionTracer::Packager::init_tcp() {
 		exit( EXIT_FAILURE );
 	}
 
-	if( _debug )
-		debugPrint( "Creating network socket via TCP on port %d, to IP:%s...\n", _port, _dest.c_str() );
+	debugPrint( "Creating network socket via TCP on port %d, to IP:%s...\n", _port, _dest.c_str() );
 }
 
 /**
@@ -83,15 +87,12 @@ void ActionTracer::Packager::init_udp() {
 
 	// Connect to remote server
 	if( connect( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
-		if( _debug )
-			debugPrint( "connect error\n" );
+		debugPrint( "connect error\n" );
 	} else {
-		if( _debug )
-			debugPrint( "UDP client ready!\n" );
+		debugPrint( "UDP client ready!\n" );
 	}
 
-	if( _debug )
-		debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
+	debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
 }
 
 /**
@@ -114,15 +115,6 @@ ActionTracer::Packager::_float_to_string( float value, int prec = 6 ) {
 }
 
 /**
- * @brief Set debug printing on or off.
- *
- * @param value true or false
- */
-void ActionTracer::Packager::set_debug( bool value ) {
-	_debug = value;
-}
-
-/**
  * This is used to send the stored data packet in @code _packet @endcode
  * @return 0 if successful.
  */
@@ -139,9 +131,7 @@ int ActionTracer::Packager::send_packet() {
 void ActionTracer::Packager::_send_packet() {
 	// Send some data
 	if( send( _descriptor, _package.c_str(), strlen( _package.c_str() ), 0 ) < 0 ) {
-		if( _debug )
-			debugPrint( "Send failed\n" );
-		// return 1;
+		debugPrint( "Send failed\n" );
 	}
 
 #ifdef ON_PI
@@ -149,10 +139,8 @@ void ActionTracer::Packager::_send_packet() {
 		fprintf( _recording, "%8d,%7d,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
 #endif
 
-	if( _debug ) {
-		// debugPrint( "\x1B[2J" );
-		debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, _package.c_str() );
-	}
+	// debugPrint( "\x1B[2J" );
+	debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, _package.c_str() );
 
 	_count++;
 	_package = "";
