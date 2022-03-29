@@ -26,7 +26,6 @@ TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
 #endif
 
 size_t		_sensors		= 0;		   // Number of sensors being used
-bool		_debug			= true;		   // Sets the debug level of the application
 std::string _address		= "127.0.0.1"; // Address to send the data to for the communicator
 float		data_package[4] = { 0 };	   //
 
@@ -42,7 +41,7 @@ uint32_t _seconds_since_start		   = 0;
 bool	 first_second				   = false;
 #endif
 
-void setup( int );
+void setup();
 void loop();
 void exit_handler( int s );
 

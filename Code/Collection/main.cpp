@@ -38,10 +38,9 @@ cxxopts::Options options( "Action Tracer", "This program runs a given number of 
 
 /**
  * @brief Initialise all the devices in the network. Store them in objects in main.h
- * @param debug_value sets the debug status for the setup routine.
  * @return 0 if success
  */
-void setup( int debug_value = 0 ) {
+void setup() {
 #ifdef ON_PI
 	wiringPiSetup();
 #endif
@@ -54,7 +53,6 @@ void setup( int debug_value = 0 ) {
 	sigaction( SIGINT, &sigIntHandler, NULL );
 
 	communicator = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
-	communicator->set_debug( debug_value );
 	communicator->save_enable( true );
 	communicator->init_tcp();
 	// communicator->init_udp();
@@ -133,7 +131,6 @@ void loop() {
 int main( int argc, char const *argv[] ) {
 #ifdef TAKE_ARGUMENTS
 	options.add_options()( "a,address", "Address to send UDP packets to", cxxopts::value<std::string>()->default_value( "127.0.0.1" ) );
-	options.add_options()( "d,debug", "Enable debugging", cxxopts::value<bool>()->default_value( "false" ) );
 	options.add_options()( "f,file", "Define variables using a file. If a file is given, all other given parameters will be overwritten.", cxxopts::value<std::string>()->default_value( "" ) );
 	options.add_options()( "h,help", "Print usage" );
 	options.add_options()( "t,tracepoints", "Number of body devices being used on the body", cxxopts::value<int>()->default_value( "0" ) );
@@ -147,7 +144,6 @@ int main( int argc, char const *argv[] ) {
 
 	_address = result["address"].as<std::string>();
 
-	_debug	 = result["debug"].as<bool>();
 	_sensors = result["tracepoints"].as<int>();
 
 	if( result.count( "file" ) ) {
@@ -156,12 +152,6 @@ int main( int argc, char const *argv[] ) {
 #endif
 
 #ifndef TAKE_ARGUMENTS
-	// int			  number_of_lines = 0;
-	// std::string	  line;
-	// std::ifstream my_file( "pointers.csv" );
-
-	// while( std::getline( my_file, line ) )
-	// 	++number_of_lines;
 
 	#ifndef SEND_ADDRESS
 	_address = "192.168.0.149";
@@ -169,12 +159,11 @@ int main( int argc, char const *argv[] ) {
 	_address = SEND_ADDRESS;
 	#endif
 	_sensors = 1;
-	_debug	 = true;
 	printf( "Devices connected: %d\n", _sensors );
 #endif
 
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
-	setup( _debug );
+	setup();
 
 #ifdef COUNT_FRAMES
 	printf( "Start time: %d\n\n", _start_time );
