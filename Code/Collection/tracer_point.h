@@ -1,7 +1,6 @@
 #ifndef _TRACER_POINT_H_
 #define _TRACER_POINT_H_
 
-// #include "MPU6050_6Axis_MotionApps20.h"
 #include "MPU6050.h"
 
 #include <string>
@@ -9,8 +8,7 @@
 namespace ActionTracer {
 	class TracePoint {
 	  private:
-		bool		_debug = false;
-		MPU6050 *	_device;
+		MPU6050	*_device;
 		std::string _device_name;
 		int			_pin_number;
 
@@ -44,19 +42,17 @@ namespace ActionTracer {
 
 	  public:
 		// Creates and inits a device
-		//I dont know what this is but I love you
+		// I dont know what this is but I love you
 		TracePoint( std::string name, int wiring_Pi_pin_number );
 		TracePoint( std::string name, int wiring_Pi_pin_number, int interrupt_pin );
 		TracePoint();
 
 		~TracePoint();
 
-		// TracePoint operator=( const TracePoint other );
-		void		set_debug( bool );
 		std::string get_name();
 		MPU6050		get_device();
 		void		get_data();				   // Gets data from the device it is attached to
-		float *		read_data( int get_data ); // Reads the internally stored data and optionally fetches data first
+		float	  *read_data( int get_data ); // Reads the internally stored data and optionally fetches data first
 		std::string identify();				   // Blinks the sensor for 5 seconds. Realistically, it is raising the interupt line for the device in quesion
 		void		print_last_data_packet();  // Prints the last data packet obtained by this node
 		void		tracepoint_isr();

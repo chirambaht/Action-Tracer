@@ -3,8 +3,13 @@
 #include <fstream>
 #include <sstream>
 
-#define debugPrint( ... )	printf( __VA_ARGS__ )
-#define debugPrintln( ... ) printf( __VA_ARGS__ )
+#ifdef DEBUG
+	#define debugPrint( ... )	printf( __VA_ARGS__ )
+	#define debugPrintln( ... ) printf( __VA_ARGS__ )
+#else
+	#define debugPrint( ... )
+	#define debugPrintln( ... )
+#endif
 
 #ifdef ON_PI
 	#include <wiringPi.h>
@@ -33,8 +38,7 @@ ActionTracer::TracePoint::TracePoint() {}
  * @param interrupt_pin WiringPi interrupt pin
  */
 ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number, int interrupt_pin ) {
-	if( _debug )
-		debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
+	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
 
 	_device_name = name;
 
@@ -46,8 +50,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 #endif
 	_device_interrupt_flag = false;
 
-	if( _debug )
-		debugPrint( "Initializing %s...\n", _device_name.c_str() );
+	debugPrint( "Initializing %s...\n", _device_name.c_str() );
 
 	this->_select_me();
 	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
@@ -56,21 +59,17 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	// TODO: At this stage an interrupt pin is initialised
 
-	if( _debug )
-		debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
+	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
 
 	// DMP Initialization
-	if( _debug )
 
-		debugPrint( "Initalising DMP\n" );
+	debugPrint( "Initalising DMP\n" );
 	_device_status = _device->dmpInitialize();
 
 	_set_device_offsets();
 
 	if( _device_status == 0 ) {
-		if( _debug )
-
-			debugPrint( "Enabling DMP..." );
+		debugPrint( "Enabling DMP..." );
 		_device->setDMPEnabled( true );
 
 		// TODO: Attach interrupt here
@@ -81,22 +80,17 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 		_packet_size = _device->dmpGetFIFOPacketSize();
 
-		if( _debug )
-			debugPrint( "Enabled!\n" );
+		debugPrint( "Enabled!\n" );
 	} else {
-		if( _debug )
-			debugPrint( "Can't initialise DMP\n" );
+		debugPrint( "Can't initialise DMP\n" );
 		_dmp_ready = false;
 	}
 
 	this->_deselect_me();
 
-	if( _debug )
+	debugPrint( "Init variable dump\n" );
 
-		debugPrint( "Init variable dump\n" );
-	if( _debug )
-
-		debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
+	debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
 }
 /**
  * @brief Construct a new Action Tracer:: TracePoint::Trace Point object.
@@ -105,8 +99,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
  * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
  */
 ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number ) {
-	if( _debug )
-		debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
+	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
 
 	_device_name = name;
 
@@ -118,8 +111,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 #endif
 	_device_interrupt_flag = false;
 
-	if( _debug )
-		debugPrint( "Initializing %s...\n", _device_name.c_str() );
+	debugPrint( "Initializing %s...\n", _device_name.c_str() );
 
 	this->_select_me();
 	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
@@ -128,21 +120,17 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	// TODO: At this stage an interrupt pin is initialised
 
-	if( _debug )
-		debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
+	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
 
 	// DMP Initialization
-	if( _debug )
 
-		debugPrint( "Initalising DMP\n" );
+	debugPrint( "Initalising DMP\n" );
 	_device_status = _device->dmpInitialize();
 
 	_set_device_offsets();
 
 	if( _device_status == 0 ) {
-		if( _debug )
-
-			debugPrint( "Enabling DMP..." );
+		debugPrint( "Enabling DMP..." );
 		_device->setDMPEnabled( true );
 
 		// TODO: Attach interrupt here
@@ -151,22 +139,17 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 		_packet_size = _device->dmpGetFIFOPacketSize();
 
-		if( _debug )
-			debugPrint( "Enabled!\n" );
+		debugPrint( "Enabled!\n" );
 	} else {
-		if( _debug )
-			debugPrint( "Can't initialise DMP\n" );
+		debugPrint( "Can't initialise DMP\n" );
 		_dmp_ready = false;
 	}
 
 	this->_deselect_me();
 
-	if( _debug )
+	debugPrint( "Init variable dump\n" );
 
-		debugPrint( "Init variable dump\n" );
-	if( _debug )
-
-		debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
+	debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
 }
 
 /**
@@ -211,32 +194,28 @@ std::string ActionTracer::TracePoint::identify() {
  */
 void ActionTracer::TracePoint::print_last_data_packet() {
 #ifdef GET_DATA_QUATERNION
-	if( _debug )
-		debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
+
+	debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
 #endif
 
 #ifdef GET_DATA_EULER
-	if( _debug )
 
-		debugPrint( "Output data type: Euler\nLast packet was: %5f, %5f, %5f\n", _euler_packet[0], _euler_packet[1], _euler_packet[2] );
+	debugPrint( "Output data type: Euler\nLast packet was: %5f, %5f, %5f\n", _euler_packet[0], _euler_packet[1], _euler_packet[2] );
 #endif
 
 #ifdef GET_DATA_ACCELEROMETER
-	if( _debug )
 
-		debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
+	debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
 #endif
 
 #ifdef GET_DATA_GYROSCOPE
-	if( _debug )
 
-		debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _gyroscope_float_packet[0], _gyroscope_float_packet[1], _gyroscope_float_packet[2] );
+	debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _gyroscope_float_packet[0], _gyroscope_float_packet[1], _gyroscope_float_packet[2] );
 #endif
 
 #ifdef GET_DATA_YAWPITCHROLL
-	if( _debug )
 
-		debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
+	debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
 #endif
 }
 /**
@@ -247,8 +226,7 @@ void ActionTracer::TracePoint::get_data() {
 	this->_select_me();
 
 	if( !_dmp_ready ) {
-		if( _debug )
-			debugPrint( "DMP not initialised\n" );
+		debugPrint( "DMP not initialised\n" );
 		this->_deselect_me();
 		return;
 	}
@@ -257,8 +235,7 @@ void ActionTracer::TracePoint::get_data() {
 
 	// does the FIFO have data in it?
 	if( ( _device_interrupt_status & 0x02 ) < 1 ) {
-		if( _debug )
-			debugPrint( "Data not ready" );
+		debugPrint( "Data not ready" );
 		this->_deselect_me();
 		return;
 	}
@@ -266,8 +243,7 @@ void ActionTracer::TracePoint::get_data() {
 	_fifo_count = _device->getFIFOCount();
 
 	if( _fifo_count < _packet_size ) {
-		if( _debug )
-			debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
+		debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
 		this->_deselect_me();
 		return;
 	}
@@ -275,8 +251,8 @@ void ActionTracer::TracePoint::get_data() {
 	if( _fifo_count == 1024 ) {
 		// reset so we can continue cleanly
 		_device->resetFIFO();
-		if( _debug )
-			debugPrint( "FIFO overflow!\n" );
+
+		debugPrint( "FIFO overflow!\n" );
 		return;
 	}
 
@@ -354,15 +330,6 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
  */
 std::string ActionTracer::TracePoint::get_name() {
 	return _device_name;
-}
-
-/**
- * @brief Set debug printing on or off.
- *
- * @param value true or false
- */
-void ActionTracer::TracePoint::set_debug( bool value ) {
-	_debug = value;
 }
 
 /**
