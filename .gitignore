@@ -38,3 +38,5 @@ Code/Capture/Collection/src/tex.txt
 Code/Capture/Offsets/.vscode/settings.json
 Code/Capture/Collection/.vscode/settings.json
 Code/Collection/.vscode/settings.json
+Code/Collection/pc_runner.cpp
+*.act
