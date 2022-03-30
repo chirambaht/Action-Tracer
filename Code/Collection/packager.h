@@ -14,7 +14,7 @@ namespace ActionTracer {
 	class Packager {
 	  private:
 		std::string _dest;
-		size_t		_number_of_devices = 0;
+
 #ifdef SEND_INT
 		__int16_t _package[4] = { 0 };
 		size_t	  _package_pointer;
@@ -34,6 +34,7 @@ namespace ActionTracer {
 		std::thread		   sender;
 
 	  public:
+		size_t _number_of_devices = 0;
 		Packager();
 		Packager( std::string destination, int port );
 		void init_udp();

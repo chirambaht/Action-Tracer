@@ -52,9 +52,11 @@ void setup() {
 
 	sigaction( SIGINT, &sigIntHandler, NULL );
 
-	communicator = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
+	communicator					 = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
+	communicator->_number_of_devices = _sensors;
 	communicator->save_enable( true );
 	communicator->init_tcp();
+
 	// communicator->init_udp();
 
 #ifdef ARRAY_SOLUTION
