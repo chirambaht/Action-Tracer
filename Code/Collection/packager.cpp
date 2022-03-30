@@ -58,11 +58,6 @@ void ActionTracer::Packager::init_tcp() {
 	_server.sin_family		= AF_INET;
 	_server.sin_port		= htons( _port ); // Destination port
 
-	// if( bind( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
-	// 	perror( "bind failed" );
-	// 	exit( EXIT_FAILURE );
-	// }
-
 	if( connect( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
 		perror( "connection failed" );
 		exit( EXIT_FAILURE );
@@ -102,8 +97,7 @@ void ActionTracer::Packager::init_udp() {
  * @param prec number of decimal places. Defaults to 6
  * @return std::string representation of given float
  */
-std::string
-ActionTracer::Packager::_float_to_string( float value, int prec = 6 ) {
+std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 ) {
 	std::stringstream stream;
 	if( value < 0 ) {
 		prec -= 1;
@@ -112,6 +106,16 @@ ActionTracer::Packager::_float_to_string( float value, int prec = 6 ) {
 	std::string s = stream.str();
 
 	return s;
+}
+
+/**
+ * @brief Converts a given float value to a integer to 3 decimal places.
+ *
+ * @param value float to be converted to integer
+ * @return 16 bit integer of the inital value
+ */
+__int16_t ActionTracer::Packager::_float_to_int( float value ) {
+	return ( __int16_t ) value * 1000;
 }
 
 /**
@@ -129,10 +133,16 @@ int ActionTracer::Packager::send_packet() {
  * @return 0 if successful.
  */
 void ActionTracer::Packager::_send_packet() {
-	// Send some data
+// Send some data
+#ifdef SEND_INT
+	if( send( _descriptor, _package, sizeof( _package ) / sizeof( _package[0] ), 0 ) < 0 ) {
+		debugPrint( "Send failed\n" );
+	}
+#else
 	if( send( _descriptor, _package.c_str(), strlen( _package.c_str() ), 0 ) < 0 ) {
 		debugPrint( "Send failed\n" );
 	}
+#endif
 
 #ifdef ON_PI
 	if( _save )
@@ -143,7 +153,11 @@ void ActionTracer::Packager::_send_packet() {
 	debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, _package.c_str() );
 
 	_count++;
+#ifdef SEND_INT
+	_package = { 0 };
+#else
 	_package = "";
+#endif
 
 	// return 0;
 }
@@ -156,12 +170,23 @@ void ActionTracer::Packager::_send_packet() {
  */
 int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 	for( int i = 0; i < length; i++ ) {
+#ifdef SEND_INT
+		_package[_package_pointer++] = _float_to_int( data[i] );
+		if( _package_pointer >= length * _number_of_devices ) {
+			_package_pointer = 0;
+		}
+#else
 		_package += _float_to_string( data[i], 6 );
 		if( i != length - 1 ) {
 			_package += ",";
 		}
+#endif
 	}
+
+#ifndef SEND_INT
 	_package += ":";
+#endif
+
 	return 0;
 }
 

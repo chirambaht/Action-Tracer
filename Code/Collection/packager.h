@@ -13,12 +13,19 @@
 namespace ActionTracer {
 	class Packager {
 	  private:
-		std::string		   _dest;
-		std::string		   _package;
+		std::string _dest;
+		size_t		_number_of_devices = 0;
+#ifdef SEND_INT
+		__int16_t _package[4] = { 0 };
+		size_t	  _package_pointer;
+#else
+		std::string _package;
+#endif
 		int				   _port;
 		int				   _descriptor;
 		__uint32_t		   _count;
 		std::string		   _float_to_string( float value, int prec );
+		__int16_t		   _float_to_int( float value );
 		void			   _log( std::string data );
 		bool			   _save = false;
 		FILE				 *_recording;
