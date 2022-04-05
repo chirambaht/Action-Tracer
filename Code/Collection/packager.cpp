@@ -145,8 +145,13 @@ void ActionTracer::Packager::_send_packet() {
 #endif
 
 #ifdef ON_PI
+	#ifdef SEND_INT
+	if( _save )
+		fprintf( _recording, "%8d,%7d,%s\n", millis() - _recording_start_time, _count, "i") );
+	#else
 	if( _save )
 		fprintf( _recording, "%8d,%7d,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
+	#endif
 #endif
 
 	// debugPrint( "\x1B[2J" );
