@@ -16,8 +16,8 @@ namespace ActionTracer {
 		std::string _dest;
 
 #ifdef SEND_INT
-		__int16_t _package[4] = { 0 };
-		size_t	  _package_pointer;
+		__int16_t _package[4]	   = { 0 };
+		size_t	  _package_pointer = 0;
 #else
 		std::string _package;
 #endif
