@@ -4,7 +4,7 @@
 The goals of this section is to write code that can:
 1. Take note of all the devices that are linked through I2C scan
 2. Callibrate all the devices and load their configurations instantly
-3. Take readings, consistantly from all devices
+3. Take readings, consistently from all devices
 4. Save config or reading data as requested.
 
 
@@ -37,6 +37,9 @@ void ActionTracer::silence_tracer( int pin ) {
 #ifdef ON_PI
 	digitalWrite( pin, 1 );
 #endif
+}
+
+void get_offsets( int device_number, bool printed = false ) {
 }
 
 int ActionTracer::scan_i2c_for_tracers() {
