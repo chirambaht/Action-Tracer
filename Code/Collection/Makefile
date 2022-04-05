@@ -24,7 +24,6 @@ clean:
 gui_debug:
 	@ echo "http://$(LOCAL_IP):$(LOCAL_PORT)"
 	@ gdbgui $(EXE) --host $(LOCAL_IP)  --port $(LOCAL_PORT)
-	# @ guigdb $(EXE) --host 
 
 debug:
 	@ gdb $(EXE)
