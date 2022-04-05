@@ -147,7 +147,7 @@ void ActionTracer::Packager::_send_packet() {
 #ifdef ON_PI
 	#ifdef SEND_INT
 	if( _save )
-		fprintf( _recording, "%8d,%7d,%s\n", millis() - _recording_start_time, _count, "i") );
+		fprintf( _recording, "%8d,%7d,%s\n", millis() - _recording_start_time, _count, "i" );
 	#else
 	if( _save )
 		fprintf( _recording, "%8d,%7d,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
