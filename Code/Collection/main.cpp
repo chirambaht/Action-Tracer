@@ -61,7 +61,7 @@ void setup() {
 
 #ifdef ARRAY_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
-		body_sensor[i] = new TracePoint( "Body p", get_pi_location( i ) );
+		body_sensor[i] = new TracePoint( "", get_pi_location( i ) );
 	}
 #endif
 }
@@ -86,7 +86,7 @@ void loop() {
 			data_package[j] = *body;
 			body++;
 		}
-		( communicator->load_packet( data_package, 4 ) );
+		communicator->load_packet( data_package, 4 );
 	}
 #endif
 
@@ -164,7 +164,6 @@ int main( int argc, char const *argv[] ) {
 	printf( "Devices connected: %d\n", _sensors );
 #endif
 
-	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
 	setup();
 
 #ifdef COUNT_FRAMES

@@ -154,7 +154,7 @@ void ActionTracer::Packager::_send_packet() {
 
 	_count++;
 #ifdef SEND_INT
-	_package = { 0 };
+	std::fill( std::begin( _package ), std::end( _package ), 0 );
 #else
 	_package = "";
 #endif

@@ -23,7 +23,9 @@ Remember, on is when we're talking to device 0x69
 #endif
 
 int main( int argc, char const *argv[] ) {
-	/* code */
+	for( ;; ) {
+		// This is the action loop that waits for commands and works
+	}
 	return 0;
 }
 
