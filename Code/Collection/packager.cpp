@@ -145,18 +145,30 @@ void ActionTracer::Packager::_send_packet() {
 #endif
 
 #ifdef ON_PI
-	if( _save )
-		fprintf( _recording, "%8d,%7d,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
+	if( _save ) {
+	#ifdef SEND_INT
+		fprintf( _recording, "%8d,%7d,%i,%i,%i,%i,:%i,%i,%i,%i,:%i,%i,%i,%i\n", millis() - _recording_start_time, _count, _package[0], _package[1], _package[2], _package[3], _package[3], _package[4], _package[5], _package[6], _package[6], _package[7], _package[8], _package[9] );
+	#else
+		fprintf( _recording, "%8i,%7i,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
+	#endif
+	}
 #endif
 
 	// debugPrint( "\x1B[2J" );
-	debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, _package.c_str() );
+#ifdef SEND_INT
+	debugPrint( _recording, "%8d,%7d,%i,%i,%i,%i,:%i,%i,%i,%i,:%i,%i,%i,%i\n", millis() - _recording_start_time, _count, _package[0], _package[1], _package[2], _package[3], _package[3], _package[4], _package[5], _package[6], _package[6], _package[7], _package[8], _package[9] );
+#else
+	debugPrint( _recording, "%8i,%7i,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
+#endif
 
 	_count++;
 #ifdef SEND_INT
-	_package = { 0 };
+	for( size_t r = 0; r < _package_packets; r++ ) {
+		_package[r] = 0;
+	}
 #else
 	_package = "";
+
 #endif
 
 	// return 0;
