@@ -182,6 +182,7 @@ void ActionTracer::Packager::_send_packet() {
  */
 int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 	for( int i = 0; i < length; i++ ) {
+		debugPrint( "Received %5f,", data[i] );
 #ifdef SEND_INT
 		_package[_package_pointer++] = _float_to_int( data[i] );
 		if( _package_pointer >= length * _number_of_devices ) {
@@ -194,6 +195,7 @@ int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 		}
 #endif
 	}
+	debugPrint( "\n" );
 
 #ifndef SEND_INT
 	_package += ":";
