@@ -115,6 +115,7 @@ std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 
  * @return 16 bit integer of the inital value
  */
 __int16_t ActionTracer::Packager::_float_to_int( float value ) {
+	debugPrint( "Received %6.3f and sent out %i", value, ( __int16_t ) value * 1000 );
 	return ( __int16_t ) value * 1000;
 }
 
@@ -182,7 +183,6 @@ void ActionTracer::Packager::_send_packet() {
  */
 int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 	for( int i = 0; i < length; i++ ) {
-		debugPrint( "Received %5f,", data[i] );
 #ifdef SEND_INT
 		_package[_package_pointer++] = _float_to_int( data[i] );
 		if( _package_pointer >= length * _number_of_devices ) {
@@ -195,7 +195,6 @@ int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 		}
 #endif
 	}
-	debugPrint( "\n" );
 
 #ifndef SEND_INT
 	_package += ":";
