@@ -79,7 +79,7 @@ void exit_handler( int s ) {
  */
 void loop() {
 #ifdef ARRAY_SOLUTION
-	float *body[4 * _sensors];
+	float *body;
 	for( size_t i = 0; i < _sensors; i++ ) {
 		body = body_sensor[i]->read_data( 1 );
 		body_sensor[i]->print_last_data_packet();
