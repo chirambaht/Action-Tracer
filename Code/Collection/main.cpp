@@ -1,6 +1,6 @@
 // This is the main file that will be used to run the program for data
 // collection from the 3 IMU's and send them to the server as is necessary.
-
+#define ARRAY_SOLUTION
 #include "main.h"
 
 #include "debug_printer.h"
@@ -80,8 +80,10 @@ void exit_handler( int s ) {
 void loop() {
 #ifdef ARRAY_SOLUTION
 	float *body;
+
 	for( size_t i = 0; i < _sensors; i++ ) {
 		body = body_sensor[i]->read_data( 1 );
+
 		for( size_t j = 0; j < 4; j++ ) {
 			data_package[j] = *body;
 			body++;
@@ -156,32 +158,52 @@ int main( int argc, char const *argv[] ) {
 #ifndef TAKE_ARGUMENTS
 
 	#ifndef SEND_ADDRESS
-	_address = "192.168.0.149";
+	// Read from setup.csv
+	std::ifstream infile( "setup.csv" );
+	if( !infile.good() ) {
+		_address = "";
+	} else {
+		// If file exists, use it to set offsets.
+		std::string	  line;
+		std::ifstream myfile( "setup.csv" );
+		std::getline( myfile, line );
+
+		std::stringstream point_line( line );
+		std::string		  value;
+		size_t			  count = 0;
+
+		while( getline( point_line, value, ',' ) ) {
+			// First check if the needed pin exists. If not, set defaults
+			if( count == 0 ) {
+				_address = value;
+			}
+		}
 	#else
 	_address = SEND_ADDRESS;
 	#endif
-	_sensors = 1;
-	printf( "Devices connected: %d\n", _sensors );
+		_sensors = 3;
+		printf( "Devices connected: %d\n", _sensors );
 #endif
 
-	setup();
+		// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
+		setup();
 
 #ifdef COUNT_FRAMES
-	printf( "Start time: %d\n\n", _start_time );
-	printf( "|| %4s | %5s | %5.1s | %5s | %5.1s ||\n", "t(s)", "pc/s", "apc", "ps/s", "aps" );
-	_start_time = millis();
+		printf( "Start time: %d\n\n", _start_time );
+		printf( "|| %4s | %5s | %5.1s | %5s | %5.1s ||\n", "t(s)", "pc/s", "apc", "ps/s", "aps" );
+		_start_time = millis();
 #endif
 
-	while( 1 ) {
+		while( 1 ) {
 #ifdef TIMING
-		uint32_t tstart, tend;
-		tstart = millis();
+			uint32_t tstart, tend;
+			tstart = millis();
 #endif
-		loop();
+			loop();
 #ifdef TIMING
-		tend = millis();
-		printf( "It took %dms to run the loop.\n", tend - tstart );
+			tend = millis();
+			printf( "It took %dms to run the loop.\n", tend - tstart );
 #endif
+		}
+		return 0;
 	}
-	return 0;
-}

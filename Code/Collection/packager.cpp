@@ -115,7 +115,7 @@ std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 
  * @return 16 bit integer of the inital value
  */
 __int16_t ActionTracer::Packager::_float_to_int( float value ) {
-	return ( __int16_t ) value * 1000;
+	return static_cast<__int16_t>( value * 100000 );
 }
 
 /**
@@ -145,23 +145,30 @@ void ActionTracer::Packager::_send_packet() {
 #endif
 
 #ifdef ON_PI
+	if( _save ) {
 	#ifdef SEND_INT
-	if( _save )
-		fprintf( _recording, "%8d,%7d,%s\n", millis() - _recording_start_time, _count, "i" );
+		fprintf( _recording, "%8d,%7d,%3i,%3i,%3i,%3i:%3i,%3i,%3i,%3i:%3i,%3i,%3i,%3i\n", millis() - _recording_start_time, _count, _package[0], _package[1], _package[2], _package[3], _package[4], _package[5], _package[6], _package[7], _package[8], _package[9], _package[10], _package[11] );
 	#else
-	if( _save )
-		fprintf( _recording, "%8d,%7d,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
+		fprintf( _recording, "%8i,%7i,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
 	#endif
+	}
 #endif
 
 	// debugPrint( "\x1B[2J" );
-	debugPrint( "%7d - %s:%d ==> %s\n", _count, _dest.c_str(), _port, _package.c_str() );
+#ifdef SEND_INT
+	debugPrint( "%8d,%7d,%3i,%3i,%3i,%3i:%3i,%3i,%3i,%3i:%3i,%3i,%3i,%3i\n", millis() - _recording_start_time, _count, _package[0], _package[1], _package[2], _package[3], _package[4], _package[5], _package[6], _package[7], _package[8], _package[9], _package[10], _package[11] );
+#else
+	debugPrint( "%8i,%7i,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
+#endif
 
 	_count++;
 #ifdef SEND_INT
-	std::fill( std::begin( _package ), std::end( _package ), 0 );
+	for( size_t r = 0; r < _package_packets; r++ ) {
+		_package[r] = 0;
+	}
 #else
 	_package = "";
+
 #endif
 
 	// return 0;
