@@ -235,7 +235,7 @@ void ActionTracer::TracePoint::get_data() {
 
 	// does the FIFO have data in it?
 	if( ( _device_interrupt_status & 0x02 ) < 1 ) {
-		debugPrint( "Data not ready" );
+		// debugPrint( "Data not ready\n" );
 		this->_deselect_me();
 		return;
 	}
