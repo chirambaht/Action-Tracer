@@ -135,7 +135,7 @@ int ActionTracer::Packager::send_packet() {
 void ActionTracer::Packager::_send_packet() {
 // Send some data
 #ifdef SEND_INT
-	if( send( _descriptor, _package, sizeof( _package ) / sizeof( _package[0] ), 0 ) < 0 ) {
+	if( send( _descriptor, _package, sizeof( _package ), 0 ) < 0 ) {
 		debugPrint( "Send failed\n" );
 	}
 #else
