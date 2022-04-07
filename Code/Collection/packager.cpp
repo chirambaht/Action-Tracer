@@ -115,8 +115,9 @@ std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 
  * @return 16 bit integer of the inital value
  */
 __int16_t ActionTracer::Packager::_float_to_int( float value ) {
-	debugPrint( "Received %6.3f and sent out %i", value, ( __int16_t ) value * 1000 );
-	return ( __int16_t ) value * 1000;
+	// value = value * 1000;
+	debugPrint( "Received %6.3f and sent out %i", value, static_cast<__int16_t>( value * 1000 ) );
+	return static_cast<__int16_t>( value * 1000 );
 }
 
 /**
