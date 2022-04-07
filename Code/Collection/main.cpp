@@ -61,7 +61,8 @@ void setup() {
 
 #ifdef ARRAY_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
-		body_sensor[i] = new TracePoint( "", get_pi_location( i ) );
+		body_sensor[i] = new TracePoint( "", get_pi_location( 0 ) );
+		// body_sensor[i] = new TracePoint( "", get_pi_location( i ) );
 	}
 #endif
 }
