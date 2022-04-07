@@ -10,6 +10,8 @@
 #include <sys/socket.h>
 #include <thread>
 
+#define SEND_INT
+
 namespace ActionTracer {
 	class Packager {
 	  private:
@@ -17,7 +19,7 @@ namespace ActionTracer {
 
 #ifdef SEND_INT
 		const size_t _package_packets = 12;
-		__int16_t	 _package[12]	  = { 0 }; // For a start this will be a 4 * 4 integer
+		__int16_t	 _package[12]	  = { 0 }; // For a start this will be a 4 (data points) * 3 (devices) integer
 		size_t		 _package_pointer = 0;
 #else
 		std::string _package;
@@ -35,7 +37,7 @@ namespace ActionTracer {
 		std::thread		   sender;
 
 	  public:
-		size_t _number_of_devices = 0;
+		size_t _number_of_devices = 3;
 		Packager();
 		Packager( std::string destination, int port );
 		void init_udp();
