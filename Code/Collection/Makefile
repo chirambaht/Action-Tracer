@@ -1,6 +1,6 @@
 all: collect_data
 
-HOST_ADDRESS = "169.254.189.127"
+HOST_ADDRESS = "169.254.45.210"
 
 HDRS = helper_3dmath.h I2Cdev.h MPU6050.h packager.h tracer_point.h main.h
 OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o main.o
