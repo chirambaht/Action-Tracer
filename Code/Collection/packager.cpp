@@ -135,6 +135,7 @@ int ActionTracer::Packager::send_packet() {
 void ActionTracer::Packager::_send_packet() {
 // Send some data
 #ifdef SEND_INT
+	// When this data is sent, it will be sent a single array element at a time. each element is 2 bytes (16 bits) but they are sent in reverse order i.e. TP captures 0x23ef but packager will send it as  0xef23.
 	if( send( _descriptor, _package, sizeof( _package ), 0 ) < 0 ) {
 		debugPrint( "Send failed\n" );
 	}
