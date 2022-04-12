@@ -20,15 +20,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/timeb.h>
-#include <thread>
+// #include <sys/time.h>
+// #include <sys/timeb.h>
+// #include <thread>
 #include <unistd.h>
 
 #ifdef ON_PI
 	#include <wiringPi.h>
 #endif
-/// Outline
 
 using namespace ActionTracer;
 
@@ -55,16 +54,12 @@ void setup() {
 	communicator					 = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->_number_of_devices = _sensors;
 	communicator->save_enable( true );
-	communicator->init_tcp();
+	communicator->init_tcp(); // Will break here if it doesn't find a TCP socket available
 
-	// communicator->init_udp();
-
-#ifdef ARRAY_SOLUTION
 	for( size_t i = 0; i < _sensors; i++ ) {
 		body_sensor[i] = new TracePoint( "", get_pi_location( 0 ) );
 		// body_sensor[i] = new TracePoint( "", get_pi_location( i ) );
 	}
-#endif
 }
 
 void exit_handler( int s ) {
@@ -79,7 +74,6 @@ void exit_handler( int s ) {
  * @return Nothing
  */
 void loop() {
-#ifdef ARRAY_SOLUTION
 	float *body;
 
 	for( size_t i = 0; i < _sensors; i++ ) {
@@ -91,39 +85,9 @@ void loop() {
 		}
 		communicator->load_packet( data_package, 4 );
 	}
-#endif
 
-/**
- * @brief This allows tracking of frames sent to the network against the ones collected from the device.
- */
-#ifdef COUNT_FRAMES
-	int failed_send_ = communicator->send_packet();
-	_packets_collected_per_second++;
-
-	uint32_t t = millis();
-
-	if( !failed_send_ ) {
-		_packets_sent_per_second++;
-	}
-
-	if( ( t - _start_time ) >= 1000 ) {
-		_seconds_since_start++;
-		_packets_collected += _packets_collected_per_second;
-		_packets_sent += _packets_sent_per_second;
-
-		_average_packets_collected = _packets_collected / _seconds_since_start;
-		_average_packets_sent	   = _packets_sent / _seconds_since_start;
-
-		printf( "|| %4d | %5d | %5.1f | %5d | %5.1f ||\t%10d\n", _seconds_since_start, _packets_collected_per_second, _average_packets_collected, _packets_sent_per_second, _average_packets_sent, t );
-
-		_packets_collected_per_second = 0;
-		_packets_sent_per_second	  = 0;
-		_start_time					  = millis();
-	}
-#else
 	// Send packet
 	communicator->send_packet();
-#endif
 }
 
 /**
@@ -154,10 +118,7 @@ int main( int argc, char const *argv[] ) {
 	if( result.count( "file" ) ) {
 		// TODO: Read CSV file for parameters for each item
 	}
-#endif
-
-#ifndef TAKE_ARGUMENTS
-
+#else
 	#ifndef SEND_ADDRESS
 	// Read from setup.csv
 	std::ifstream infile( "setup.csv" );
@@ -186,25 +147,11 @@ int main( int argc, char const *argv[] ) {
 		printf( "Devices connected: %d\n", _sensors );
 #endif
 
-		// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
-		setup();
+	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
+	setup();
 
-#ifdef COUNT_FRAMES
-		printf( "Start time: %d\n\n", _start_time );
-		printf( "|| %4s | %5s | %5.1s | %5s | %5.1s ||\n", "t(s)", "pc/s", "apc", "ps/s", "aps" );
-		_start_time = millis();
-#endif
-
-		while( 1 ) {
-#ifdef TIMING
-			uint32_t tstart, tend;
-			tstart = millis();
-#endif
-			loop();
-#ifdef TIMING
-			tend = millis();
-			printf( "It took %dms to run the loop.\n", tend - tstart );
-#endif
-		}
-		return 0;
+	while( 1 ) {
+		loop();
 	}
+	return 0;
+}
