@@ -16,13 +16,30 @@ Remember, on is when we're talking to device 0x69
 #include "action_pi.hpp"
 #include "tracer_point.h"
 
+#include <iostream>
 #include <stddef.h>
 
 #ifdef ON_PI
 	#include <wiringPi.h>
 #endif
 
+void ActionTracer::print_title() {
+	printf( "%s\n", headline_s );
+	printf( "%s\n", headline_0 );
+	printf( "%s\n", headline_1 );
+	printf( "%s\n", headline_2 );
+	printf( "%s\n", headline_3 );
+	printf( "%s\n", headline_4 );
+	printf( "%s\n", headline_5 );
+	printf( "%s\n", headline_6 );
+	printf( "%s\n", headline_7 );
+	printf( "%s\n", headline_8 );
+	printf( "%s\n", headline_s );
+}
+
 int main( int argc, char const *argv[] ) {
+	ActionTracer::print_title();
+
 	for( ;; ) {
 		// This is the action loop that waits for commands and works
 	}
@@ -33,6 +50,22 @@ void ActionTracer::silence_tracers() {
 	for( size_t i = 0; i < ActionTracer::num_action_devices; i++ ) {
 		silence_tracer( ActionTracer::get_pi_location( i ) );
 	}
+}
+
+void ActionTracer::clear_screen() {
+	printf( "%s\n", "\033[2J" );
+}
+
+void ActionTracer::show_main_menu() {
+	printf( "%s\n\n", "Please select an option from below:" );
+	size_t p = 0;
+	printf( "\t %2i. %s\n", ++p, "Discover connected devices" );
+	printf( "\t %2i. %s\n", ++p, "Calibrate connected device(s)" );
+	printf( "\t %2i. %s\n", ++p, "Create/Export setup file" );
+	printf( "\t %2i. %s\n", ++p, "Export calibration file" );
+	printf( "\t %2i. %s\n", ++p, "" );
+	printf( "\t %2i. %s\n", ++p, "" );
+	printf( "\t %2i. %s\n", ++p, "" );
 }
 
 void ActionTracer::silence_tracer( int pin ) {
