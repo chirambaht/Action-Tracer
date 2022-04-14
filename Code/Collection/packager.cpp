@@ -136,6 +136,7 @@ void ActionTracer::Packager::_send_packet() {
 // Send some data
 #ifdef SEND_INT
 	// When this data is sent, it will be sent a single array element at a time. each element is 2 bytes (16 bits) but they are sent in reverse order i.e. TP captures 0x23ef but packager will send it as  0xef23.
+	_package[0] = _count;
 	if( send( _descriptor, _package, sizeof( _package ), 0 ) < 0 ) {
 		debugPrint( "Send failed\n" );
 	}
@@ -185,7 +186,7 @@ int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 #ifdef SEND_INT
 		_package[_package_pointer++] = _float_to_int( data[i] );
 		if( _package_pointer >= length * _number_of_devices ) {
-			_package_pointer = 0;
+			_package_pointer = 1;
 		}
 #else
 		_package += _float_to_string( data[i], 6 );

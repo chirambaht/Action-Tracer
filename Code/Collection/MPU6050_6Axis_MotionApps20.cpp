@@ -334,9 +334,9 @@ uint8_t MPU6050::dmpInitialize() {
 	unsigned char dmpUpdate[] = { 0x00, MPU6050_DMP_FIFO_RATE_DIVISOR };
 	writeMemoryBlock( dmpUpdate, 0x02, 0x02, 0x16 ); // Lets write the dmpUpdate data to the Firmware image, we have 2 bytes to write in bank 0x02 with the Offset 0x16
 
-	//write start address MSB into register
+	// write start address MSB into register
 	setDMPConfig1( 0x03 );
-	//write start address LSB into register
+	// write start address LSB into register
 	setDMPConfig2( 0x00 );
 
 	debugPrintln( F( "Clearing OTP Bank flag..." ) );
@@ -385,9 +385,9 @@ bool MPU6050::dmpPacketAvailable() {
 // uint8_t MPU6050::dmpGetSampleFrequency();
 // int32_t MPU6050::dmpDecodeTemperature(int8_t tempReg);
 
-//uint8_t MPU6050::dmpRegisterFIFORateProcess(inv_obj_func func, int16_t priority);
-//uint8_t MPU6050::dmpUnregisterFIFORateProcess(inv_obj_func func);
-//uint8_t MPU6050::dmpRunFIFORateProcesses();
+// uint8_t MPU6050::dmpRegisterFIFORateProcess(inv_obj_func func, int16_t priority);
+// uint8_t MPU6050::dmpUnregisterFIFORateProcess(inv_obj_func func);
+// uint8_t MPU6050::dmpRunFIFORateProcesses();
 
 // uint8_t MPU6050::dmpSendQuaternion(uint_fast16_t accuracy);
 // uint8_t MPU6050::dmpSendGyro(uint_fast16_t elements, uint_fast16_t accuracy);
@@ -576,12 +576,12 @@ uint8_t MPU6050::dmpGetYawPitchRoll( float *data, Quaternion *q, VectorFloat *gr
 uint8_t MPU6050::dmpProcessFIFOPacket( const unsigned char *dmpData ) {
 	( void ) dmpData; // unused parameter
 	/*for (uint8_t k = 0; k < dmpPacketSize; k++) {
-        if (dmpData[k] < 0x10) Serial.print("0");
-        Serial.print(dmpData[k], HEX);
-        Serial.print(" ");
-    }
-    Serial.print("\n");*/
-	//Serial.println((uint16_t)dmpPacketBuffer);
+		if (dmpData[k] < 0x10) Serial.print("0");
+		Serial.print(dmpData[k], HEX);
+		Serial.print(" ");
+	}
+	Serial.print("\n");*/
+	// Serial.println((uint16_t)dmpPacketBuffer);
 	return 0;
 }
 uint8_t MPU6050::dmpReadAndProcessFIFOPacket( uint8_t numPackets, uint8_t *processed ) {

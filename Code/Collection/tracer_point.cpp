@@ -258,6 +258,29 @@ void ActionTracer::TracePoint::get_data() {
 
 	_device->getFIFOBytes( _fifo_buffer, _packet_size );
 
+	/* ================================================================================================ *
+	 | Default MotionApps v2.0 42-byte FIFO packet structure:                                           |
+	 |                                                                                                  |
+	 | [QUAT W][      ][QUAT X][      ][QUAT Y][      ][QUAT Z][      ][GYRO X][      ][GYRO Y][      ] |
+	 |   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  |
+	 |                                                                                                  |
+	 | [GYRO Z][      ][ACC X ][      ][ACC Y ][      ][ACC Z ][      ][      ]                         |
+	 |  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41                          |
+	 * ================================================================================================ */
+
+#ifdef GET_DATA_TEAPOT
+	_teapot_raw_packet[0] = ( ( _fifo_buffer[0] << 8 ) | _fifo_buffer[1] );	  // Quat W
+	_teapot_raw_packet[1] = ( ( _fifo_buffer[4] << 8 ) | _fifo_buffer[5] );	  // Quat X
+	_teapot_raw_packet[2] = ( ( _fifo_buffer[8] << 8 ) | _fifo_buffer[9] );	  // Quat Y
+	_teapot_raw_packet[3] = ( ( _fifo_buffer[12] << 8 ) | _fifo_buffer[13] ); // Quat Z
+	_teapot_raw_packet[4] = ( _fifo_buffer[16] << 8 ) | _fifo_buffer[17];	  // GYR X
+	_teapot_raw_packet[5] = ( _fifo_buffer[20] << 8 ) | _fifo_buffer[21];	  // GYR Y
+	_teapot_raw_packet[6] = ( _fifo_buffer[24] << 8 ) | _fifo_buffer[25];	  // GYR Z
+	_teapot_raw_packet[7] = ( _fifo_buffer[28] << 8 ) | _fifo_buffer[29];	  // Acc X
+	_teapot_raw_packet[8] = ( _fifo_buffer[32] << 8 ) | _fifo_buffer[33];	  // Acc Y
+	_teapot_raw_packet[9] = ( _fifo_buffer[36] << 8 ) | _fifo_buffer[37];	  // Acc Z
+#endif
+
 #ifdef GET_DATA_QUATERNION
 	_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
 	_quaternion_float_packet[0] = _quaternion_packet.w;
@@ -305,6 +328,9 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 		this->get_data();
 	}
 
+#ifdef GET_DATA_TEAPOT
+	return _teapot_raw_packet;
+#endif
 #ifdef GET_DATA_QUATERNION
 	return _quaternion_float_packet;
 #endif

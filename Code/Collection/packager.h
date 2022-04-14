@@ -13,6 +13,7 @@
 #define SEND_INT
 #ifndef DEVICES_IN_USE
 	#define DEVICES_IN_USE 3
+	#define DATA_ELEMENTS  ( DEVICES_IN_USE * 4 )
 #endif
 
 namespace ActionTracer {
@@ -21,8 +22,9 @@ namespace ActionTracer {
 		std::string _dest;
 
 #ifdef SEND_INT
-		__int16_t _package[DEVICES_IN_USE * 4] = { 0 }; // For a start this will be a 4 (data points) * 3 (devices) integer
-		size_t	  _package_pointer			   = 0;
+		__int16_t _package[DATA_ELEMENTS + 1] = { 0 }; // For a start this will be a 4 (data points) * 3 (devices) integer
+
+		size_t _package_pointer = 1;
 #else
 		std::string _package;
 #endif
