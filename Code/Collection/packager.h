@@ -11,6 +11,9 @@
 #include <thread>
 
 #define SEND_INT
+#ifndef DEVICES_IN_USE
+	#define DEVICES_IN_USE 3
+#endif
 
 namespace ActionTracer {
 	class Packager {
@@ -18,9 +21,8 @@ namespace ActionTracer {
 		std::string _dest;
 
 #ifdef SEND_INT
-		const size_t _package_packets = 12;
-		__int16_t	 _package[12]	  = { 0 }; // For a start this will be a 4 (data points) * 3 (devices) integer
-		size_t		 _package_pointer = 0;
+		__int16_t _package[DEVICES_IN_USE * 4] = { 0 }; // For a start this will be a 4 (data points) * 3 (devices) integer
+		size_t	  _package_pointer			   = 0;
 #else
 		std::string _package;
 #endif

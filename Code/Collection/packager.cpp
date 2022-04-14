@@ -155,7 +155,6 @@ void ActionTracer::Packager::_send_packet() {
 	}
 #endif
 
-	// debugPrint( "\x1B[2J" );
 #ifdef SEND_INT
 	debugPrint( "%8d,%7d,%3i,%3i,%3i,%3i:%3i,%3i,%3i,%3i:%3i,%3i,%3i,%3i\n", millis() - _recording_start_time, _count, _package[0], _package[1], _package[2], _package[3], _package[4], _package[5], _package[6], _package[7], _package[8], _package[9], _package[10], _package[11] );
 #else
@@ -164,7 +163,7 @@ void ActionTracer::Packager::_send_packet() {
 
 	_count++;
 #ifdef SEND_INT
-	for( size_t r = 0; r < _package_packets; r++ ) {
+	for( size_t r = 0; r < _number_of_devices * 4; r++ ) {
 		_package[r] = 0;
 	}
 #else
@@ -204,7 +203,7 @@ int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 }
 
 /**
- * @brief Set file saving on or off.
+ * @brief Set file saving on or off. Automatically opens the file when called.
  *
  * @param value true or false
  */
@@ -214,7 +213,7 @@ void ActionTracer::Packager::save_enable( bool value ) {
 }
 
 /**
- * @brief Get the status of the saving
+ * @brief Checks if the data is being recorded on the Pi
  *
  * @param value true or false
  */
