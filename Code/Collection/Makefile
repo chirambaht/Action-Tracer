@@ -33,7 +33,7 @@ debug:
 
 action:
 	@ $(CXX) -c action_pi.hpp IMU_zero.hpp MPU6050.cpp I2Cdev.cpp action.cpp packager.cpp tracer_point.cpp
-	@ $(CXX) -o action action_pi.o I2Cdev.cpp MPU6050.cpp IMU_zero.o  action.o packager.o tracer_point.o -l wiringPi -lm -lpthread
+	@ $(CXX) -o action I2Cdev.cpp MPU6050.cpp action.o packager.o tracer_point.o -l wiringPi -lm -lpthread
 	@ echo "ACTISH made!"
 
 
