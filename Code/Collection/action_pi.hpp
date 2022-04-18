@@ -36,6 +36,7 @@
 
 namespace ActionTracer {
 	int get_pi_location( int locator );
+	int get_action_tracer_device( int device_numeber );
 
 	#define ACT_I2C_DATA  8
 	#define ACT_I2C_CLOCK 9
@@ -69,6 +70,43 @@ namespace ActionTracer {
 	 */
 	int get_pi_location( int locator ) {
 		return PI_ORDER[locator];
+	}
+
+	int get_action_tracer_device( int ACT_DEVICE_number ) {
+		if( ACT_DEVICE_number > 13 && ACT_DEVICE_number < 0 ) {
+			return;
+		}
+
+		switch( ACT_DEVICE_number ) {
+			case 0:
+				return ACT_DEVICE_0;
+			case 1:
+				return ACT_DEVICE_1;
+			case 2:
+				return ACT_DEVICE_2;
+			case 3:
+				return ACT_DEVICE_3;
+			case 4:
+				return ACT_DEVICE_4;
+			case 5:
+				return ACT_DEVICE_5;
+			case 6:
+				return ACT_DEVICE_6;
+			case 7:
+				return ACT_DEVICE_7;
+			case 8:
+				return ACT_DEVICE_8;
+			case 9:
+				return ACT_DEVICE_9;
+			case 10:
+				return ACT_DEVICE_10;
+			case 11:
+				return ACT_DEVICE_11;
+			case 12:
+				return ACT_DEVICE_12;
+			default:
+				return;
+		}
 	}
 
 } // namespace ActionTracer

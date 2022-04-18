@@ -21,8 +21,9 @@ namespace ActionTracer {
 
 	size_t current_detected_devices = 0;
 
-	int scan_i2c_for_tracers();
-	int calibrate_devices();
+	int	 scan_i2c_for_tracers();
+	int	 calibrate_devices();
+	void calibrate_device();
 
 	void print_title();
 	void print_status();

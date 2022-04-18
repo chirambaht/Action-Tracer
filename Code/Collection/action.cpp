@@ -77,7 +77,15 @@ void ActionTracer::show_main_menu() {
 	printf( "\t %2i. %s\n", ++p, "" );
 }
 
-void get_offsets( int device_number, bool printed = false ) {
+int ActionTracer::calibrate_devices() {
+	for( int i = 0; i < ActionTracer::num_action_devices; i++ ) {
+		if( live_map[i] ) {
+			calibrate_device( get_action_tracer_device( i ) );
+		}
+	}
+}
+
+void ActionTracer::calibrate_device( int device_number ) {
 	obtain_offsets( ActionTracer::get_pi_location( device_number ) );
 }
 
