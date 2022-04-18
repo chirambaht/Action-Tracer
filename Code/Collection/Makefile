@@ -31,9 +31,6 @@ gui_debug:
 debug:
 	@ gdb $(EXE)
 
-HDRS = helper_3dmath.h .h  packager.h tracer_point.h main.h action_pi.hpp IMU_zero.hpp action.h 
-OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o main.o action.o 
-
 action:
 	@ $(CXX) -c action_pi.hpp IMU_zero.hpp MPU6050.cpp I2Cdev.cpp action.cpp packager.cpp tracer_point.cpp
 	@ $(CXX) -o action action_pi.o I2Cdev.cpp MPU6050.cpp IMU_zero.o  action.o packager.o tracer_point.o -l wiringPi -lm -lpthread

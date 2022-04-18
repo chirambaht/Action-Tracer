@@ -74,7 +74,7 @@ namespace ActionTracer {
 
 	int get_action_tracer_device( int ACT_DEVICE_number ) {
 		if( ACT_DEVICE_number > 13 && ACT_DEVICE_number < 0 ) {
-			return;
+			return -1;
 		}
 
 		switch( ACT_DEVICE_number ) {
@@ -105,7 +105,7 @@ namespace ActionTracer {
 			case 12:
 				return ACT_DEVICE_12;
 			default:
-				return;
+				return -1;
 		}
 	}
 
