@@ -32,8 +32,8 @@ debug:
 	@ gdb $(EXE)
 
 action:
-	@ $(CXX) -c action_pi.hpp IMU_zero.hpp MPU6050.cpp I2Cdev.cpp action.cpp packager.cpp tracer_point.cpp
-	@ $(CXX) -o action I2Cdev.cpp MPU6050.cpp action.o packager.o tracer_point.o -l wiringPi -lm -lpthread
+	@ $(CXX) -c action_pi.hpp I2Cdev.cpp IMU_zero.hpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp action.cpp packager.cpp tracer_point.cpp
+	@ $(CXX) -o action I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.o action.o packager.o tracer_point.o -l wiringPi -lm -lpthread
 	@ echo "ACTISH made!"
 
 
