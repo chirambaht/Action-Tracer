@@ -14,16 +14,19 @@ namespace ActionTracer {
 
 	std::string description = "Welcome to the (ACTISH) ACtion Tracer Interactive SHell. This can be used to configure the devices before use and generate functional setup files.";
 
-	std::array<bool, 13>		 live_map	  = { false };
-	const char					 live_map_l[] = "    + -------------------------------------------------------------- +    ";
-	std::string					 live_map_d	  = "    |    |    |    |    |    |    |    |    |    |    |    |    |    |    ";
-	std::array<TracePoint *, 13> trace_map	  = {};
+	std::array<bool, 13> live_map	  = { false };
+	const char			 live_map_l[] = "    + -------------------------------------------------------------- +    ";
+	std::string			 live_map_d	  = "    |    |    |    |    |    |    |    |    |    |    |    |    |    |    ";
+
+	std::array<TracePoint *, 13> trace_map = {};
 
 	size_t current_detected_devices = 0;
 
 	int	 scan_i2c_for_tracers();
 	int	 calibrate_devices();
-	void calibrate_device();
+	void calibrate_device( int );
+	int	 initialize_devices();
+	void initialize_device( int );
 
 	void print_title();
 	void print_status();

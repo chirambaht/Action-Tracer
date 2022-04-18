@@ -72,20 +72,40 @@ void ActionTracer::show_main_menu() {
 	printf( "\t %2i. %s\n", ++p, "Calibrate connected device(s)" );
 	printf( "\t %2i. %s\n", ++p, "Create/Export setup file" );
 	printf( "\t %2i. %s\n", ++p, "Export calibration file" );
-	printf( "\t %2i. %s\n", ++p, "" );
+	printf( "\t %2i. %s\n", ++p, "Initialize active devices" );
 	printf( "\t %2i. %s\n", ++p, "" );
 	printf( "\t %2i. %s\n", ++p, "" );
 }
 
 int ActionTracer::calibrate_devices() {
+	// Add question sction seeing if all devices should be done or specific device.
+	int c = 0;
 	for( int i = 0; i < ActionTracer::num_action_devices; i++ ) {
 		if( live_map[i] ) {
 			calibrate_device( get_action_tracer_device( i ) );
+			c++;
 		}
 	}
+	return c;
 }
 
 void ActionTracer::calibrate_device( int device_number ) {
+	obtain_offsets( ActionTracer::get_pi_location( device_number ) );
+}
+
+int ActionTracer::initialize_devices() {
+	// Add question sction seeing if all devices should be done or specific device.
+	int c = 0;
+	for( int i = 0; i < ActionTracer::num_action_devices; i++ ) {
+		if( live_map[i] ) {
+			initialize_device( get_action_tracer_device( i ) );
+			c++;
+		}
+	}
+	return c;
+}
+
+void ActionTracer::initialize_device( int device_number ) {
 	obtain_offsets( ActionTracer::get_pi_location( device_number ) );
 }
 
@@ -134,6 +154,13 @@ int main( int argc, char const *argv[] ) {
 				break;
 			case 2:
 				ActionTracer::calibrate_devices();
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				ActionTracer::initialize_devices();
 				break;
 			default:
 				continue;
