@@ -59,7 +59,7 @@ namespace ActionTracer {
 	// An array with all the Pi pins available.
 	const int PI_ORDER[13] = { ACT_DEVICE_0, ACT_DEVICE_1, ACT_DEVICE_2, ACT_DEVICE_3, ACT_DEVICE_4, ACT_DEVICE_5, ACT_DEVICE_6, ACT_DEVICE_7, ACT_DEVICE_8, ACT_DEVICE_9, ACT_DEVICE_10, ACT_DEVICE_11, ACT_DEVICE_12 };
 
-	const size_t num_action_devices = 12;
+	const size_t num_action_devices = 13;
 
 	/**
 	 * @brief Obtain the pin at a specific location in the reccomended AcT pin assignment based on Wiring Pi

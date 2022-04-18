@@ -25,15 +25,12 @@ Remember, on is when we're talking to device 0x69
 
 void ActionTracer::print_title() {
 	printf( "%s\n", headline_s );
-	printf( "%s\n", headline_0 );
+
 	printf( "%s\n", headline_1 );
 	printf( "%s\n", headline_2 );
 	printf( "%s\n", headline_3 );
 	printf( "%s\n", headline_4 );
-	printf( "%s\n", headline_5 );
-	printf( "%s\n", headline_6 );
-	printf( "%s\n", headline_7 );
-	printf( "%s\n", headline_8 );
+
 	printf( "%s\n", headline_s );
 }
 
@@ -52,6 +49,12 @@ void ActionTracer::silence_tracers() {
 	}
 }
 
+void ActionTracer::silence_tracer( int pin ) {
+#ifdef ON_PI
+	digitalWrite( pin, 1 );
+#endif
+}
+
 void ActionTracer::clear_screen() {
 	printf( "%s\n", "\033[2J" );
 }
@@ -68,12 +71,6 @@ void ActionTracer::show_main_menu() {
 	printf( "\t %2i. %s\n", ++p, "" );
 }
 
-void ActionTracer::silence_tracer( int pin ) {
-#ifdef ON_PI
-	digitalWrite( pin, 1 );
-#endif
-}
-
 void get_offsets( int device_number, bool printed = false ) {
 }
 
@@ -86,13 +83,24 @@ int ActionTracer::scan_i2c_for_tracers() {
 	int alive = 0;
 
 	int life_map[ActionTracer::num_action_devices] = { false };
+	live_map_d									   = "    |";
 
 	for( size_t i = 0; i < ActionTracer::num_action_devices; i++ ) {
 #ifdef ON_PI
-		life_map[i] = wiringPiI2CSetup( int devId );
+		// We
+		digitalWrite( ActionTracer::get_pi_location( i ), HIGH );
+		life_map[i] = wiringPiI2CSetup( 0x69 );
+		digitalWrite( ActionTracer::get_pi_location( i ), LOW );
 #endif
+
 		if( life_map[i] != -1 ) {
 			alive++;
+			if( i < 10 ) {
+				live_map_d += "  " + std::to_string( i ) + " ";
+			} else {
+				live_map_d += " " + std::to_string( i ) + " ";
+			}
+			live_map_d += "|";
 		}
 	}
 	return alive;
