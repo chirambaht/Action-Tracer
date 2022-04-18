@@ -4,10 +4,17 @@
 
 #include <array>
 #include <cstdio>
+
 #ifdef ON_PI
 	#include <wiringPi.h>
+	#ifndef HIGH
+		#define HIGH 1
+	#endif
+	#ifndef LOW
+		#define LOW 0
+	#endif
 #endif
-// #include <csv2/writer.hpp>
+
 #include <fstream>
 #include <iostream>
 #include <math.h>
@@ -19,8 +26,8 @@
 #include <unistd.h>
 #include <vector>
 
-#define NFAST_VALUE 100
-#define NSLOW_VALUE 100
+int NFAST_VALUE = 1000;
+int NSLOW_VALUE = 1000;
 
 using namespace std;
 
@@ -30,8 +37,8 @@ using namespace std;
 // specific I2C addresses may be passed as a parameter here
 // AD0 low = 0x68 (default for InvenSense evaluation board)
 // AD0 high = 0x69
-MPU6050 accelgyro;
-// MPU6050 accelgyro(0x69); // <-- use for AD0 high
+// MPU6050 accelgyro;
+MPU6050 accelgyro( 0x69 ); // <-- use for AD0 high
 
 const char LBRACKET = '[';
 const char RBRACKET = ']';
@@ -161,8 +168,8 @@ void PullBracketsIn() {
 				LowValue[i]	 = Smoothed[i];
 			} // use upper half
 		}	  // closing in
-		  // ShowProgress();
-	} // still working
+			  // ShowProgress();
+	}		  // still working
 } // PullBracketsIn
 
 void PullBracketsOut() {
@@ -207,30 +214,11 @@ void PullBracketsOut() {
 	} // keep going
 } // PullBracketsOut
 
-void write_tracepoint_csv( string csv_line ) {
-	std::ofstream myfile;
-	string		  pointers_file_name = "pointers.csv";
-	myfile.open( pointers_file_name );
-	// Write in data
-	myfile << csv_line;
-	myfile.close();
-	printf( "CSV written. Please copy across %s\n", pointers_file_name.c_str() );
-}
-
-void print_tracepoint_line( int pin ) {
-	printf( "Below is the tracepoint line: \n\t%2d,%5d, %5d, %5d, %5d, %5d, %5d\n", pin, LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5] );
-}
-
-// void get_tracepoint_line( int pin ) {
-// 	std::string tp_line;
-// 	sprintf( tp_line, "Below is the tracepoint line: \n\t%2d,%5d, %5d, %5d, %5d, %5d, %5d\n", pin, LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5] );
-// }
-
-int obtain_offsets( int pin_number ) {
+__int16_t *obtain_offsets( int pin_number ) {
 	// for each of the devices, set address of 0x69 and program
 
 #ifdef ON_PI
-	digitalWrite( pin_number, 1 );
+	digitalWrite( pin_number, HIGH );
 #endif
 
 	// TODO: Add progress indicator
@@ -250,11 +238,11 @@ int obtain_offsets( int pin_number ) {
 	PullBracketsIn();
 
 #ifdef ON_PI
-	digitalWrite( pin_number, 0 );
+	digitalWrite( pin_number, LOW );
 #endif
 
-	char l[40];
-	sprintf( l, "%2d,%5d,%5d,%5d,%5d,%5d,%5d\n", pin_number, LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5] );
+	__int16_t *offsets = new __int16_t[6]{ LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5] };
+	// Created and saved in memory to keep available
 
-	return 0;
+	return offsets;
 }
