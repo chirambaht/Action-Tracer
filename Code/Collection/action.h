@@ -1,6 +1,8 @@
 #ifndef ACTION_H
 #define ACTION_H
 
+#include "tracer_point.h"
+
 #include <array>
 #include <string>
 

@@ -15,7 +15,6 @@ Remember, on is when we're talking to device 0x69
 
 #include "IMU_zero.hpp"
 #include "action_pi.hpp"
-#include "tracer_point.h"
 
 #include <iostream>
 #include <stddef.h>
