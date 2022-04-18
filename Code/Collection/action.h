@@ -1,24 +1,28 @@
 #ifndef ACTION_H
 #define ACTION_H
 
+#include <array>
 #include <string>
 
 namespace ActionTracer {
 
-	std::string headline_1 = "         db          w   w                88888                                ";
-	std::string headline_2 = "        dPYb   .d8b w8ww w .d8b. 8d8b.      8   8d8b .d88 .d8b .d88b 8d8b      ";
-	std::string headline_3 = "       dPwwYb  8     8   8 8' .8 8P Y8      8   8P   8  8 8    8.dP' 8P        ";
-	std::string headline_4 = "      dP    Yb `Y8P  Y8P 8 `Y8P' 8   8      8   8    `Y88 `Y8P `Y88P 8         ";
-	std::string headline_s = "                                                                               ";
+	const char headline_1[] = "         db          w   w                88888                                ";
+	const char headline_2[] = "        dPYb   .d8b w8ww w .d8b. 8d8b.      8   8d8b .d88 .d8b .d88b 8d8b      ";
+	const char headline_3[] = "       dPwwYb  8     8   8 8' .8 8P Y8      8   8P   8  8 8    8.dP' 8P        ";
+	const char headline_4[] = "      dP    Yb `Y8P  Y8P 8 `Y8P' 8   8      8   8    `Y88 `Y8P `Y88P 8         ";
+	const char headline_s[] = "                                                                               ";
 
 	std::string description = "Welcome to the (ACTISH) ACtion Tracer Interactive SHell. This can be used to configure the devices before use and generate functional setup files.";
 
-	std::string live_map_l = "    + -------------------------------------------------------------- +    ";
-	std::string live_map_d = "    |  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 | 9  | 10 | 11 | 12 |    ";
+	std::array<bool, 13>		 live_map	  = { false };
+	const char					 live_map_l[] = "    + -------------------------------------------------------------- +    ";
+	std::string					 live_map_d	  = "    |    |    |    |    |    |    |    |    |    |    |    |    |    |    ";
+	std::array<TracePoint *, 13> trace_map	  = {};
 
 	size_t current_detected_devices = 0;
 
 	int scan_i2c_for_tracers();
+	int calibrate_devices();
 
 	void print_title();
 	void print_status();

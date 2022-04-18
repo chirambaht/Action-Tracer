@@ -13,6 +13,7 @@ Remember, on is when we're talking to device 0x69
 
 #include "action.h"
 
+#include "IMU_zero.hpp"
 #include "action_pi.hpp"
 #include "tracer_point.h"
 
@@ -21,6 +22,12 @@ Remember, on is when we're talking to device 0x69
 
 #ifdef ON_PI
 	#include <wiringPi.h>
+	#ifndef HIGH
+		#define HIGH 1
+	#endif
+	#ifndef LOW
+		#define LOW 0
+	#endif
 #endif
 
 void ActionTracer::print_title() {
@@ -34,15 +41,6 @@ void ActionTracer::print_title() {
 	printf( "%s\n", headline_s );
 }
 
-int main( int argc, char const *argv[] ) {
-	ActionTracer::print_title();
-
-	for( ;; ) {
-		// This is the action loop that waits for commands and works
-	}
-	return 0;
-}
-
 void ActionTracer::silence_tracers() {
 	for( size_t i = 0; i < ActionTracer::num_action_devices; i++ ) {
 		silence_tracer( ActionTracer::get_pi_location( i ) );
@@ -51,7 +49,7 @@ void ActionTracer::silence_tracers() {
 
 void ActionTracer::silence_tracer( int pin ) {
 #ifdef ON_PI
-	digitalWrite( pin, 1 );
+	digitalWrite( pin, HIGH );
 #endif
 }
 
@@ -59,8 +57,16 @@ void ActionTracer::clear_screen() {
 	printf( "%s\n", "\033[2J" );
 }
 
+void ActionTracer::print_status() {
+	// Printing the live map showing what devices have been discovered
+	printf( "%s\n%s\n%s", live_map_l, live_map_d.c_str(), live_map_l );
+}
+
 void ActionTracer::show_main_menu() {
+	print_status();
+
 	printf( "%s\n\n", "Please select an option from below:" );
+
 	size_t p = 0;
 	printf( "\t %2i. %s\n", ++p, "Discover connected devices" );
 	printf( "\t %2i. %s\n", ++p, "Calibrate connected device(s)" );
@@ -72,6 +78,7 @@ void ActionTracer::show_main_menu() {
 }
 
 void get_offsets( int device_number, bool printed = false ) {
+	obtain_offsets( ActionTracer::get_pi_location( device_number ) );
 }
 
 int ActionTracer::scan_i2c_for_tracers() {
@@ -87,7 +94,6 @@ int ActionTracer::scan_i2c_for_tracers() {
 
 	for( size_t i = 0; i < ActionTracer::num_action_devices; i++ ) {
 #ifdef ON_PI
-		// We
 		digitalWrite( ActionTracer::get_pi_location( i ), HIGH );
 		life_map[i] = wiringPiI2CSetup( 0x69 );
 		digitalWrite( ActionTracer::get_pi_location( i ), LOW );
@@ -104,4 +110,27 @@ int ActionTracer::scan_i2c_for_tracers() {
 		}
 	}
 	return alive;
+}
+
+int main( int argc, char const *argv[] ) {
+	ActionTracer::print_title();
+
+	for( ;; ) {
+		ActionTracer::show_main_menu();
+		int r;
+		std::cin >> r;
+
+		switch( r ) {
+			case 1:
+				ActionTracer::scan_i2c_for_tracers();
+				break;
+			case 2:
+				ActionTracer::calibrate_devices();
+				break;
+			default:
+				continue;
+				break;
+		}
+	}
+	return 0;
 }
