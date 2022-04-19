@@ -147,7 +147,7 @@ int ActionTracer::scan_i2c_for_tracers() {
 #ifdef ON_PI
 		pinMode( WiPi_pin_number, OUTPUT );
 		select_action_device( WiPi_pin_number );
-		life_map[i] = wiringPiI2CSetup( 0x58 );
+		life_map[i] = wiringPiI2CSetup( MPU6050_ADDRESS_AD0_HIGH );
 		deselect_action_device( WiPi_pin_number );
 #endif
 
