@@ -142,7 +142,7 @@ int ActionTracer::scan_i2c_for_tracers() {
 #ifdef ON_PI
 	wiringPiSetup();
 #endif
-	__uint8_t buffer[2];
+	uint8_t short_buffer[2];
 	for( size_t i = 0; i < ActionTracer::num_action_devices; i++ ) {
 		int WiPi_pin_number = ActionTracer::get_pi_location( i );
 
@@ -151,9 +151,11 @@ int ActionTracer::scan_i2c_for_tracers() {
 		select_action_device( WiPi_pin_number );
 		// life_map[i] = wiringPiI2CSetup( MPU6050_ADDRESS_AD0_HIGH );
 
-		I2Cdev::readBits( MPU6050_ADDRESS_AD0_HIGH, MPU6050_RA_WHO_AM_I, MPU6050_WHO_AM_I_BIT, MPU6050_WHO_AM_I_LENGTH, buffer );
+		I2Cdev::readBits( 0x69, 0x75, 6, 6, short_buffer );
 
-		life_map[i] = buffer[0] == 0x34;
+		life_map[i] = short_buffer[0];
+
+		std::cin.get();
 
 		deselect_action_device( WiPi_pin_number );
 #endif
