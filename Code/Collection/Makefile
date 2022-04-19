@@ -22,7 +22,7 @@ collect_data: $(OBJS)
 
 clean:
 	@ echo "Ahh clean!"
-	@ rm -f $(OBJS) $(EXE)
+	@ rm -f $(OBJS) $(EXE) *.o action
 
 gui_debug:
 	@ echo "http://$(LOCAL_IP):$(LOCAL_PORT)"
