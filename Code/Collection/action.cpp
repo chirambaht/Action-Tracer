@@ -48,7 +48,7 @@ void ActionTracer::silence_tracers() {
 
 void ActionTracer::silence_tracer( int pin ) {
 #ifdef ON_PI
-	digitalWrite( pin, HIGH );
+	digitalWrite( pin, LOW );
 #endif
 }
 
@@ -58,7 +58,7 @@ void ActionTracer::clear_screen() {
 
 void ActionTracer::print_status() {
 	// Printing the live map showing what devices have been discovered
-	printf( "%s\n%s\n%s", live_map_l, live_map_d.c_str(), live_map_l );
+	printf( "%s\n%s\n%s\n", live_map_l, live_map_d.c_str(), live_map_l );
 }
 
 void ActionTracer::show_main_menu() {
@@ -109,14 +109,14 @@ void ActionTracer::initialize_device( int device_number ) {
 }
 
 int ActionTracer::scan_i2c_for_tracers() {
+	printf( "Scanning for all connected Action Tracer devices [%i - %i]\n", 0, 12 );
 	// Get all the devices down to no noise
 	silence_tracers();
-	int res;
 
 	// Store results of each check.
 	int alive = 0;
 
-	int life_map[ActionTracer::num_action_devices] = { false };
+	int life_map[ActionTracer::num_action_devices] = { 0 };
 	live_map_d									   = "    |";
 
 	for( size_t i = 0; i < ActionTracer::num_action_devices; i++ ) {
@@ -149,9 +149,12 @@ int main( int argc, char const *argv[] ) {
 
 		switch( r ) {
 			case 1:
+				printf( "You have chosen %i - Discover connected devices.\n", r );
 				ActionTracer::scan_i2c_for_tracers();
+
 				break;
 			case 2:
+				printf( "You have chosen %i - Discover connected devices.\n", r );
 				ActionTracer::calibrate_devices();
 				break;
 			case 3:
