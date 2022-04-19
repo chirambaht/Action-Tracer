@@ -74,7 +74,7 @@ void ActionTracer::show_main_menu() {
 	printf( "\t %2i. %s\n", ++p, "Export calibration file" );
 	printf( "\t %2i. %s\n", ++p, "Initialize active devices" );
 	printf( "\t %2i. %s\n", ++p, "" );
-	printf( "\t %2i. %s\n", ++p, "" );
+	printf( "\t %2i. %s\n", ++p, "Test all Action Device GPIO" );
 }
 
 int ActionTracer::calibrate_devices() {
@@ -87,6 +87,27 @@ int ActionTracer::calibrate_devices() {
 		}
 	}
 	return c;
+}
+
+void ActionTracer::test_all_gpio() {
+	for( int i = 0; i < ActionTracer::num_action_devices; i++ ) {
+		select_action_device( i );
+		std::string a;
+		std::cin >> a;
+		deselect_action_device( i );
+	}
+}
+
+void ActionTracer::select_action_device( int action_device_number ) {
+#ifdef ON_PI
+	digitalWrite( ActionTracer::get_action_tracer_device( action_device_number ), HIGH );
+#endif
+}
+
+void ActionTracer::deselect_action_device( int action_device_number ) {
+#ifdef ON_PI
+	digitalWrite( ActionTracer::get_action_tracer_device( action_device_number ), LOW );
+#endif
 }
 
 void ActionTracer::calibrate_device( int device_number ) {
@@ -173,6 +194,10 @@ int main( int argc, char const *argv[] ) {
 			case 5:
 				printf( "You have chosen %i - Initialize active devices.\n", r );
 				ActionTracer::initialize_devices();
+				break;
+			case 7:
+				printf( "You have chosen %i - Test all Action Device GPIO.\n", r );
+				ActionTracer::test_all_gpio();
 				break;
 			default:
 				continue;

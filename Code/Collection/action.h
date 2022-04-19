@@ -30,7 +30,12 @@ namespace ActionTracer {
 	int	 initialize_devices();
 	void initialize_device( int );
 
-	void print_title();
+	void test_all_gpio();
+	void select_action_device( int );
+	void deselect_action_device( int );
+
+	void
+		 print_title();
 	void print_status();
 
 	void save_to_file();
