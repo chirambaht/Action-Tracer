@@ -92,9 +92,8 @@ int ActionTracer::calibrate_devices() {
 void ActionTracer::test_all_gpio() {
 	for( int i = 0; i < ActionTracer::num_action_devices; i++ ) {
 		select_action_device( i );
-		printf( "Currentley ACT %i is selected.\n" );
-		std::string a;
-		std::cin >> a;
+		printf( "Currentley ACT %i is selected. This is WiringPi Pin %i\n", i, ActionTracer::get_action_tracer_device( i ) );
+		std::cin.get();
 		deselect_action_device( i );
 	}
 }
