@@ -125,7 +125,7 @@ int ActionTracer::scan_i2c_for_tracers() {
 	for( size_t i = 0; i < ActionTracer::num_action_devices; i++ ) {
 #ifdef ON_PI
 		digitalWrite( ActionTracer::get_pi_location( i ), HIGH );
-		life_map[i] = wiringPiI2CSetup( 0x69 );
+		life_map[i] = wiringPiI2CSetup( 0x58 );
 		digitalWrite( ActionTracer::get_pi_location( i ), LOW );
 #endif
 
