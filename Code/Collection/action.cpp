@@ -21,6 +21,7 @@ Remember, on is when we're talking to device 0x69
 
 #ifdef ON_PI
 	#include <wiringPi.h>
+	#include <wiringPiI2C.h>
 	#ifndef HIGH
 		#define HIGH 1
 	#endif

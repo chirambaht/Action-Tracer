@@ -241,7 +241,7 @@ __int16_t *obtain_offsets( int pin_number ) {
 	digitalWrite( pin_number, LOW );
 #endif
 
-	__int16_t *offsets = new __int16_t[6]{ LowOffset[0], LowOffset[1], LowOffset[2], LowOffset[3], LowOffset[4], LowOffset[5] };
+	__int16_t *offsets = new __int16_t[6]{ ( LowOffset[0] ), ( LowOffset[1] ), ( LowOffset[2] ), ( LowOffset[3] ), ( LowOffset[4] ), ( LowOffset[5] ) };
 	// Created and saved in memory to keep available
 
 	return offsets;
