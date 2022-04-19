@@ -48,9 +48,7 @@ void ActionTracer::silence_tracers() {
 }
 
 void ActionTracer::silence_tracer( int pin ) {
-#ifdef ON_PI
-	digitalWrite( pin, LOW );
-#endif
+	deselect_action_device( pin );
 }
 
 void ActionTracer::clear_screen() {
@@ -90,6 +88,7 @@ int ActionTracer::calibrate_devices() {
 }
 
 void ActionTracer::test_all_gpio() {
+	silence_tracers();
 	for( int i = 0; i < ActionTracer::num_action_devices; i++ ) {
 		select_action_device( i );
 		printf( "Currentley ACT %i is selected. This is WiringPi Pin %i\n", i, ActionTracer::get_action_tracer_device( i ) );
