@@ -130,6 +130,7 @@ int ActionTracer::scan_i2c_for_tracers() {
 #endif
 
 		if( life_map[i] != -1 ) {
+			printf( "Action Device %i is detected. Returned code: %i\n", i, life_map[i] );
 			alive++;
 			if( i < 10 ) {
 				live_map_d += "  " + std::to_string( i ) + " ";
@@ -157,7 +158,7 @@ int main( int argc, char const *argv[] ) {
 
 				break;
 			case 2:
-				printf( "You have chosen %i - Discover connected devices.\n", r );
+				printf( "You have chosen %i - Calibrate connected devices.\n", r );
 				ActionTracer::calibrate_devices();
 				break;
 			case 3:
