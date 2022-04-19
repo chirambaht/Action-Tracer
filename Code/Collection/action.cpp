@@ -150,9 +150,12 @@ int main( int argc, char const *argv[] ) {
 		ActionTracer::show_main_menu();
 		int r = -1;
 
-		while( r > 10 && r <= 0 ) {
-			std::cin >> r;
+		std::cin >> r;
+
+		if( r > 10 && r <= 0 ) {
+			continue;
 		}
+
 		switch( r ) {
 			case 1:
 				printf( "You have chosen %i - Discover connected devices.\n", r );
