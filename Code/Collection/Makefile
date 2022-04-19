@@ -1,6 +1,6 @@
 all: collector
 
-HOST_ADDRESS = "10.42.0.1"
+HOST_ADDRESS = "169.254.162.137"
 
 HDRS = helper_3dmath.h I2Cdev.h MPU6050.h packager.h tracer_point.h main.h
 OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o main.o
@@ -23,7 +23,7 @@ collector: $(OBJS)
 
 clean:
 	@ echo "Ahh clean!"
-	@ rm -f $(OBJS) $(EXE) *.o action
+	@ rm -f $(OBJS) $(EXE) *.o $(ACTISH)
 
 gui_collector_debug:
 	@ echo "http://$(LOCAL_IP):$(LOCAL_PORT)"
