@@ -142,12 +142,19 @@ int ActionTracer::scan_i2c_for_tracers() {
 #ifdef ON_PI
 	wiringPiSetup();
 #endif
+	__uint8_t buffer;
 	for( size_t i = 0; i < ActionTracer::num_action_devices; i++ ) {
 		int WiPi_pin_number = ActionTracer::get_pi_location( i );
+
 #ifdef ON_PI
 		pinMode( WiPi_pin_number, OUTPUT );
 		select_action_device( WiPi_pin_number );
-		life_map[i] = wiringPiI2CSetup( MPU6050_ADDRESS_AD0_HIGH );
+		// life_map[i] = wiringPiI2CSetup( MPU6050_ADDRESS_AD0_HIGH );
+
+		I2Cdev::readBits( MPU6050_ADDRESS_AD0_HIGH, MPU6050_RA_WHO_AM_I, MPU6050_WHO_AM_I_BIT, MPU6050_WHO_AM_I_LENGTH, buffer );
+
+		life_map[i] = buffer == 0x34;
+
 		deselect_action_device( WiPi_pin_number );
 #endif
 
