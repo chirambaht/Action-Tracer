@@ -94,7 +94,7 @@ void ActionTracer::calibrate_device( int device_number ) {
 }
 
 int ActionTracer::initialize_devices() {
-	// Add question sction seeing if all devices should be done or specific device.
+	// Add question section seeing if all devices should be done or specific device.
 	int c = 0;
 	for( int i = 0; i < ActionTracer::num_action_devices; i++ ) {
 		if( live_map[i] ) {
@@ -148,9 +148,11 @@ int main( int argc, char const *argv[] ) {
 
 	for( ;; ) {
 		ActionTracer::show_main_menu();
-		int r;
-		std::cin >> r;
+		int r = -1;
 
+		while( r > 10 && r <= 0 ) {
+			std::cin >> r;
+		}
 		switch( r ) {
 			case 1:
 				printf( "You have chosen %i - Discover connected devices.\n", r );
@@ -166,6 +168,7 @@ int main( int argc, char const *argv[] ) {
 			case 4:
 				break;
 			case 5:
+				printf( "You have chosen %i - Initialize active devices.\n", r );
 				ActionTracer::initialize_devices();
 				break;
 			default:

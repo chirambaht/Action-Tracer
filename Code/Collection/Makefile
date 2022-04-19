@@ -1,11 +1,12 @@
-all: collect_data
+all: collector
 
 HOST_ADDRESS = "169.254.35.61"
 
 HDRS = helper_3dmath.h I2Cdev.h MPU6050.h packager.h tracer_point.h main.h
 OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o main.o
 
-EXE = collect_data
+EXE = collector
+ACTISH = actish
 
 CXXFLAGS = -Wall -DON_PI -g -DMPU6050_DMP_FIFO_RATE_DIVISOR=0x04 -D'SEND_ADDRESS=$(HOST_ADDRESS)' -DARRAY_SOLUTION -DDEBUG  -std=c++11
 
@@ -14,7 +15,7 @@ LOCAL_PORT = 5000
 
 @ $(OBJS): $(HDRS)
 
-collect_data: $(OBJS)
+collector: $(OBJS)
 	@ echo "Compiled data collection program"
 	@ $(CXX) -o $(EXE) $^ -l wiringPi -lm -lpthread
 	@ echo "Program made!"
@@ -24,17 +25,21 @@ clean:
 	@ echo "Ahh clean!"
 	@ rm -f $(OBJS) $(EXE) *.o action
 
-gui_debug:
+gui_collector_debug:
 	@ echo "http://$(LOCAL_IP):$(LOCAL_PORT)"
 	@ gdbgui $(EXE) --host $(LOCAL_IP)  --port $(LOCAL_PORT)
 
 debug:
 	@ gdb $(EXE)
 
-action:
+Actish:
 	@ $(CXX) -c action_pi.hpp I2Cdev.cpp IMU_zero.hpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp action.cpp packager.cpp tracer_point.cpp -DON_PI -l wiringPi -lm -lpthread
-	@ $(CXX) -o action I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.o action.o packager.o tracer_point.o -l wiringPi -lm -lpthread
+	@ $(CXX) -o $(ACTISH) I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.o action.o packager.o tracer_point.o -l wiringPi -lm -lpthread
 	@ echo "ACTISH made!"
+
+gui_actish_debug:
+	@ echo "http://$(LOCAL_IP):$(LOCAL_PORT)"
+	@ gdbgui $(ACTISH) --host $(LOCAL_IP)  --port $(LOCAL_PORT)
 
 
 
