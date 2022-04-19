@@ -145,7 +145,7 @@ int ActionTracer::scan_i2c_for_tracers() {
 	for( size_t i = 0; i < ActionTracer::num_action_devices; i++ ) {
 		int WiPi_pin_number = ActionTracer::get_pi_location( i );
 #ifdef ON_PI
-		pinMode( WiPi_pin_number, INPUT );
+		pinMode( WiPi_pin_number, OUTPUT );
 		select_action_device( WiPi_pin_number );
 		life_map[i] = wiringPiI2CSetup( 0x58 );
 		deselect_action_device( WiPi_pin_number );
