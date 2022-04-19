@@ -118,7 +118,9 @@ int ActionTracer::scan_i2c_for_tracers() {
 
 	int life_map[ActionTracer::num_action_devices] = { 0 };
 	live_map_d									   = "    |";
-
+#ifdef ON_PI
+	wiringPiSetup();
+#endif
 	for( size_t i = 0; i < ActionTracer::num_action_devices; i++ ) {
 #ifdef ON_PI
 		digitalWrite( ActionTracer::get_pi_location( i ), HIGH );
