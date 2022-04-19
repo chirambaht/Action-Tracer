@@ -33,8 +33,8 @@ debug:
 	@ gdb $(EXE)
 
 Actish:
-	@ $(CXX) -c action_pi.hpp I2Cdev.cpp IMU_zero.hpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp action.cpp packager.cpp tracer_point.cpp -DON_PI -l wiringPi -lm -lpthread
-	@ $(CXX) -o $(ACTISH) I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.o action.o packager.o tracer_point.o -l wiringPi -lm -lpthread
+	@ $(CXX) -c action_pi.hpp I2Cdev.cpp IMU_zero.hpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp action.cpp packager.cpp tracer_point.cpp -DON_PI -l wiringPi -lm -lpthread -g
+	@ $(CXX) -o $(ACTISH) I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.o action.o packager.o tracer_point.o -l wiringPi -lm -lpthread -g
 	@ echo "ACTISH made!"
 
 gui_actish_debug:
