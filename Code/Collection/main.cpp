@@ -57,7 +57,7 @@ void setup() {
 	communicator->init_tcp(); // Will break here if it doesn't find a TCP socket available
 
 	for( size_t i = 0; i < _sensors; i++ ) {
-		body_sensor[i] = new TracePoint( "", get_pi_location( 0 ) );
+		body_sensor[i] = new TracePoint( "", get_pi_location( 1 ) );
 		// body_sensor[i] = new TracePoint( "", get_pi_location( i ) );
 	}
 }
