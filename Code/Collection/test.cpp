@@ -89,6 +89,8 @@ int	  main( int argc, char const *argv[] ) {
 
 		  if( irValue < 50000 )
 			  printf( " No finger?\n" );
+
+		  delay( 100 );
 	  }
 
 	  return 0;
