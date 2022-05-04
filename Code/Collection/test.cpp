@@ -55,13 +55,10 @@ int main( int argc, char const *argv[] ) {
 		// float temp = dev->readTemperature();
 		// float tt   = ( mp->getTemperature() / 340 ) + 36.53;
 		// printf( "Temp: %5.3f vs %5.3f\n", temp, tt );
-		delay( 50 );
+		uint32_t r = dev->getRed(), i = dev->getIR();
+		printf( "R[%i]\tIR[%i]\n", r, i );
 
-		debugPrint( " R[" );
-		debugPrint( "%d", dev->getRed() );
-		debugPrint( "] IR[" );
-		debugPrint( "%d", dev->getIR() );
-		debugPrint( "]\n" );
+		delay( 10 );
 	}
 
 	return 0;
