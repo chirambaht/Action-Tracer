@@ -6,6 +6,23 @@
 #include <chrono>
 #include <cstdio>
 
+#ifndef _DEBUG_PRINTER_H_
+	#define _DEBUG_PRINTER_H_
+
+	#if DEBUG == 1
+		#define debugPrint( ... )	 printf( __VA_ARGS__ )
+		#define debugPrintln( ... )	 printf( __VA_ARGS__ )
+		#define fdebugPrint( ... )	 fprintf( __VA_ARGS__ )
+		#define fdebugPrintln( ... ) fprintf( __VA_ARGS__ )
+	#else
+		#define debugPrint( ... )
+		#define debugPrintln( ... )
+		#define fdebugPrint( ... )
+		#define fdebugPrintln( ... )
+	#endif
+
+#endif
+
 auto start = std::chrono::steady_clock::now();
 
 int main( int argc, char const *argv[] ) {
@@ -37,6 +54,12 @@ int main( int argc, char const *argv[] ) {
 		float tt   = ( mp->getTemperature() / 340 ) + 36.53;
 		printf( "Temp: %5.3f vs %5.3f\n", temp, tt );
 		delay( 1000 );
+
+		debugPrint( " R[" );
+		debugPrint( dev->getRed() );
+		debugPrint( "] IR[" );
+		debugPrint( dev->getIR() );
+		debugPrint( "]" );
 	}
 
 	return 0;
