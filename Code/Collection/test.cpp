@@ -24,10 +24,10 @@ int main( int argc, char const *argv[] ) {
 
 	dev->setup();
 
-	float temp = dev->readTemperature();
-	printf( "Temp: %f\n", temp );
-
 	for( ;; ) {
+		float temp = dev->readTemperature();
+		printf( "Temp: %f\n", temp );
+		delay( 1000 );
 	}
 
 	return 0;
