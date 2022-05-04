@@ -34,7 +34,7 @@ debug:
 
 Actish:
 	@ $(CXX) -c action_pi.hpp I2Cdev.cpp IMU_zero.hpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp action.cpp packager.cpp tracer_point.cpp -DON_PI -l wiringPi -lm -lpthread -g
-	@ $(CXX) -o $(ACTISH) I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.o action.o packager.o tracer_point.o -l wiringPi -lm -lpthread -g
+	@ $(CXX) -o $(ACTISH) I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o action.o packager.o tracer_point.o -l wiringPi -lm -lpthread -g
 	@ echo "ACTISH made!"
 
 gui_actish_debug:
@@ -43,9 +43,8 @@ gui_actish_debug:
 
 
 test:
-	@ $(CXX) -c MAX30102.o MAX30102.cpp
-	@ $(CXX) -c test.o test.cpp
-	@ tester -o test MAX30102.o test.o
+	@ $(CXX) -c I2Cdev.cpp MAX30102.cpp test.cpp
+	@ $(CXX) -o test I2Cdev.o MAX30102.o test.o -l wiringPi -lm -lpthread -g
 
 # MPU6050_DMP_FIFO_RATE_DIVISOR values and their linked rate
 # 	n  --> Rate (Hz)
