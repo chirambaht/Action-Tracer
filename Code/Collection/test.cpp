@@ -1,6 +1,7 @@
 
 
 #include "MAX30102.h"
+#include "MPU6050.h"
 
 #include <chrono>
 #include <cstdio>
@@ -13,6 +14,13 @@ int main( int argc, char const *argv[] ) {
 	printf( "This is the MAX30102%sTest\n", " " );
 
 	MAX30102 *dev = new MAX30102();
+	MPU6050	*mp  = new MPU6050();
+
+	mp->initialize();
+
+	if( !mp->getTempSensorEnabled() ) {
+		mp->setTempSensorEnabled( true );
+	}
 
 	if( !dev->begin( MAX30102_ADDRESS ) ) {
 		printf( "Error! Something went wrong" );
@@ -26,7 +34,8 @@ int main( int argc, char const *argv[] ) {
 
 	for( ;; ) {
 		float temp = dev->readTemperature();
-		printf( "Temp: %f\n", temp );
+		float tt   = mp->getTemperature();
+		printf( "Temp: %5.3f vs %5.3f\n", temp, tt );
 		delay( 1000 );
 	}
 
