@@ -14,11 +14,23 @@ int main( int argc, char const *argv[] ) {
 
 	MAX30102 *dev = new MAX30102();
 
-	dev->begin( MAX30102_ADDRESS );
+	if( !dev->begin( MAX30102_ADDRESS ) ) {
+		printf( "Error! Something went wrong" );
+		while( 1 ) {
+		}
+	}
 
-	int id = dev->readPartID();
+	printf( "Got this part ID: %x\n Now we shall get the heart rate\n\n", id );
 
-	printf( "Got this part ID: %x\n", id );
+	printf( "Temp enable first: \n" );
+
+	dev->setup();
+
+	float temp = dev->readTemperature();
+	printf( "Temp: %f\n", temp );
+
+	for( ;; ) {
+	}
 
 	return 0;
 }

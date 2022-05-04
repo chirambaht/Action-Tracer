@@ -707,6 +707,7 @@ uint16_t MAX30102::check( void ) {
 	// } // End readPtr != writePtr
 
 	// return ( numberOfSamples ); // Let the world know how much new data we found
+	return 2;
 }
 
 // Check for new data but give up after a certain amount of time
