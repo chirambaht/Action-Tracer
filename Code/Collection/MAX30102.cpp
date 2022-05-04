@@ -556,6 +556,7 @@ uint8_t MAX30102::available( void ) {
 uint32_t MAX30102::getRed( void ) {
 	// Check the sensor for new data for 250ms
 	if( safeCheck( 250 ) )
+
 		return ( sense.red[sense.head] );
 	else
 		return ( 0 ); // Sensor failed to find new data
@@ -646,8 +647,8 @@ uint16_t MAX30102::check( void ) {
 
 			// Request toGet number of bytes from sensor
 			// _i2cPort->requestFrom( MAX30102_ADDRESS, toGet );
-			// I2Cdev::readBytes( MAX30102_ADDRESS, MAX30102_FIFODATA, toGet, 0 );
-
+			I2Cdev::readBytes( MAX30102_ADDRESS, MAX30102_FIFODATA, toGet, bigBuff );
+			int pp = 0;
 			while( toGet > 0 ) {
 				sense.head++;				// Advance the head of the storage struct
 				sense.head %= STORAGE_SIZE; // Wrap condition
@@ -661,7 +662,12 @@ uint16_t MAX30102::check( void ) {
 				// temp[1] = _i2cPort->read();
 				// temp[0] = _i2cPort->read();
 
-				I2Cdev::readBytes( MAX30102_ADDRESS, MAX30102_FIFODATA, 4, temp );
+				temp[3] = 0;
+				temp[2] = bigBuff[pp + 0];
+				temp[1] = bigBuff[pp + 1];
+				temp[0] = bigBuff[pp + 2];
+
+				// I2Cdev::readBytes( MAX30102_ADDRESS, MAX30102_FIFODATA, 4, temp );
 
 				// Convert array to long
 				memcpy( &tempLong, temp, sizeof( tempLong ) );
@@ -677,7 +683,12 @@ uint16_t MAX30102::check( void ) {
 					// temp[1] = _i2cPort->read();
 					// temp[0] = _i2cPort->read();
 
-					I2Cdev::readBytes( MAX30102_ADDRESS, MAX30102_FIFODATA, 4, temp );
+					temp[3] = 0;
+					temp[2] = bigBuff[pp + 3];
+					temp[1] = bigBuff[pp + 4];
+					temp[0] = bigBuff[pp + 5];
+
+					// I2Cdev::readBytes( MAX30102_ADDRESS, MAX30102_FIFODATA, 4, temp );
 
 					// Convert array to long
 					memcpy( &tempLong, temp, sizeof( tempLong ) );
@@ -694,7 +705,12 @@ uint16_t MAX30102::check( void ) {
 					// temp[1] = _i2cPort->read();
 					// temp[0] = _i2cPort->read();
 
-					I2Cdev::readBytes( MAX30102_ADDRESS, MAX30102_FIFODATA, 4, temp );
+					temp[3] = 0;
+					temp[2] = bigBuff[pp + 6];
+					temp[1] = bigBuff[pp + 7];
+					temp[0] = bigBuff[pp + 8];
+
+					// I2Cdev::readBytes( MAX30102_ADDRESS, MAX30102_FIFODATA, 4, temp );
 
 					// Convert array to long
 					memcpy( &tempLong, temp, sizeof( tempLong ) );
@@ -705,6 +721,7 @@ uint16_t MAX30102::check( void ) {
 				}
 
 				toGet -= activeLEDs * 3;
+				pp += activeLEDs * 3;
 			}
 
 		} // End while (bytesLeftToRead > 0)
