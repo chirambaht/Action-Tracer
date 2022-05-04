@@ -34,7 +34,7 @@ int main( int argc, char const *argv[] ) {
 
 	for( ;; ) {
 		float temp = dev->readTemperature();
-		float tt   = mp->getTemperature();
+		float tt   = ( mp->getTemperature() / 340 ) + 36.53;
 		printf( "Temp: %5.3f vs %5.3f\n", temp, tt );
 		delay( 1000 );
 	}
