@@ -20,8 +20,6 @@ int main( int argc, char const *argv[] ) {
 		}
 	}
 
-	printf( "Got this part ID: %x\n Now we shall get the heart rate\n\n", id );
-
 	printf( "Temp enable first: \n" );
 
 	dev->setup();
