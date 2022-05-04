@@ -6,10 +6,12 @@
 #include <chrono>
 #include <cstdio>
 
+#define DEBUG
+
 #ifndef _DEBUG_PRINTER_H_
 	#define _DEBUG_PRINTER_H_
 
-	#if DEBUG == 1
+	#ifdef DEBUG
 		#define debugPrint( ... )	 printf( __VA_ARGS__ )
 		#define debugPrintln( ... )	 printf( __VA_ARGS__ )
 		#define fdebugPrint( ... )	 fprintf( __VA_ARGS__ )
@@ -56,10 +58,10 @@ int main( int argc, char const *argv[] ) {
 		delay( 1000 );
 
 		debugPrint( " R[" );
-		debugPrint( dev->getRed() );
+		debugPrint( "%d", dev->getRed() );
 		debugPrint( "] IR[" );
-		debugPrint( dev->getIR() );
-		debugPrint( "]" );
+		debugPrint( "%d", dev->getIR() );
+		debugPrint( "]\n" );
 	}
 
 	return 0;
