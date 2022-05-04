@@ -1,6 +1,6 @@
 all: collector
 
-HOST_ADDRESS = "169.254.162.137"
+HOST_ADDRESS = "169.254.50.153"
 
 HDRS = helper_3dmath.h I2Cdev.h MPU6050.h packager.h tracer_point.h main.h
 OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o main.o
@@ -42,6 +42,10 @@ gui_actish_debug:
 	@ gdbgui $(ACTISH) --host $(LOCAL_IP)  --port $(LOCAL_PORT)
 
 
+test:
+	@ $(CXX) -c MAX30102.o MAX30102.cpp
+	@ $(CXX) -c test.o test.cpp
+	@ tester -o test MAX30102.o test.o
 
 # MPU6050_DMP_FIFO_RATE_DIVISOR values and their linked rate
 # 	n  --> Rate (Hz)
