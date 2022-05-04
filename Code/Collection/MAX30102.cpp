@@ -721,7 +721,7 @@ uint16_t MAX30102::check( void ) {
 				}
 
 				toGet -= activeLEDs * 3;
-				pp += activeLEDs * 3;
+				pp += 9;
 			}
 
 		} // End while (bytesLeftToRead > 0)
