@@ -58,7 +58,7 @@ int main( int argc, char const *argv[] ) {
 		uint32_t r = dev->getRed(), i = dev->getIR();
 		printf( "R[%i]\tIR[%i]\n", r, i );
 
-		delay( 10 );
+		delay( 250 );
 	}
 
 	return 0;
