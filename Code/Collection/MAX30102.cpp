@@ -614,11 +614,6 @@ uint16_t MAX30102::check( void ) {
 		// For this example we are just doing Red and IR (3 bytes each)
 		int bytesLeftToRead = numberOfSamples * activeLEDs * 3;
 
-		// Get ready to read a burst of data from the FIFO register
-		// _i2cPort->beginTransmission( MAX30102_ADDRESS );
-		// _i2cPort->write( MAX30102_FIFODATA );
-		// _i2cPort->endTransmission();
-
 		while( bytesLeftToRead > 0 ) {
 			int toGet = bytesLeftToRead;
 			if( toGet > I2C_BUFFER_LENGTH ) {
