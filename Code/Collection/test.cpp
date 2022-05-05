@@ -60,7 +60,7 @@ int main( int argc, char const *argv[] ) {
 		if( c == 0x0B || c == 0x0E || c == 0x0F || c == 0x10 || ( c <= 0x1E && c >= 0x13 ) || ( c < 0xFE && c >= 0x22 ) ) {
 			continue;
 		}
-		printf( "Register %x - %i", c, ll[p++] );
+		printf( "Register %x - %i\n", c, ll[p++] );
 	}
 
 	for( ;; ) {
