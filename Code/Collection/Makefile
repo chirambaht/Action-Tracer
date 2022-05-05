@@ -1,6 +1,6 @@
 all: collector
 
-HOST_ADDRESS = "169.254.50.153"
+HOST_ADDRESS = "169.254.215.54"
 
 HDRS = helper_3dmath.h I2Cdev.h MPU6050.h packager.h tracer_point.h main.h
 OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o main.o

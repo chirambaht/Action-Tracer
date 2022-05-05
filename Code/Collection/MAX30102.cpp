@@ -28,13 +28,13 @@ static const uint8_t MAX30102_FIFOREADPTR  = 0x06;
 static const uint8_t MAX30102_FIFODATA	   = 0x07;
 
 // Configuration Registers
-static const uint8_t MAX30102_FIFOCONFIG	  = 0x08;
-static const uint8_t MAX30102_MODECONFIG	  = 0x09;
-static const uint8_t MAX30102_PARTICLECONFIG  = 0x0A; // Note, sometimes listed as "SPO2" config in datasheet (pg. 11)
-static const uint8_t MAX30102_LED1_PULSEAMP	  = 0x0C;
-static const uint8_t MAX30102_LED2_PULSEAMP	  = 0x0D;
-static const uint8_t MAX30102_LED3_PULSEAMP	  = 0x0E;
-static const uint8_t MAX30102_LED_PROX_AMP	  = 0x10;
+static const uint8_t MAX30102_FIFOCONFIG	 = 0x08;
+static const uint8_t MAX30102_MODECONFIG	 = 0x09;
+static const uint8_t MAX30102_PARTICLECONFIG = 0x0A; // Note, sometimes listed as "SPO2" config in datasheet (pg. 11)
+static const uint8_t MAX30102_LED1_PULSEAMP	 = 0x0C;
+static const uint8_t MAX30102_LED2_PULSEAMP	 = 0x0D;
+// static const uint8_t MAX30102_LED3_PULSEAMP	  = 0x0E;
+// static const uint8_t MAX30102_LED_PROX_AMP	  = 0x10;
 static const uint8_t MAX30102_MULTILEDCONFIG1 = 0x11;
 static const uint8_t MAX30102_MULTILEDCONFIG2 = 0x12;
 
@@ -44,7 +44,7 @@ static const uint8_t MAX30102_DIETEMPFRAC	= 0x20;
 static const uint8_t MAX30102_DIETEMPCONFIG = 0x21;
 
 // Proximity Function Registers
-static const uint8_t MAX30102_PROXINTTHRESH = 0x30;
+// static const uint8_t MAX30102_PROXINTTHRESH = 0x30;
 
 // Part ID Registers
 static const uint8_t MAX30102_REVISIONID = 0xFE;
@@ -266,20 +266,20 @@ void MAX30102::setPulseAmplitudeIR( uint8_t amplitude ) {
 	writeRegister8( _i2caddr, MAX30102_LED2_PULSEAMP, amplitude );
 }
 
-void MAX30102::setPulseAmplitudeGreen( uint8_t amplitude ) {
-	writeRegister8( _i2caddr, MAX30102_LED3_PULSEAMP, amplitude );
-}
+// void MAX30102::setPulseAmplitudeGreen( uint8_t amplitude ) {
+// 	writeRegister8( _i2caddr, MAX30102_LED3_PULSEAMP, amplitude );
+// }
 
-void MAX30102::setPulseAmplitudeProximity( uint8_t amplitude ) {
-	writeRegister8( _i2caddr, MAX30102_LED_PROX_AMP, amplitude );
-}
+// void MAX30102::setPulseAmplitudeProximity( uint8_t amplitude ) {
+// 	writeRegister8( _i2caddr, MAX30102_LED_PROX_AMP, amplitude );
+// }
 
-void MAX30102::setProximityThreshold( uint8_t threshMSB ) {
-	// Set the IR ADC count that will trigger the beginning of particle-sensing mode.
-	// The threshMSB signifies only the 8 most significant-bits of the ADC count.
-	// See datasheet, page 24.
-	writeRegister8( _i2caddr, MAX30102_PROXINTTHRESH, threshMSB );
-}
+// void MAX30102::setProximityThreshold( uint8_t threshMSB ) {
+// 	// Set the IR ADC count that will trigger the beginning of particle-sensing mode.
+// 	// The threshMSB signifies only the 8 most significant-bits of the ADC count.
+// 	// See datasheet, page 24.
+// 	writeRegister8( _i2caddr, MAX30102_PROXINTTHRESH, threshMSB );
+// }
 
 // Given a slot number assign a thing to it
 // Devices are SLOT_RED_LED or SLOT_RED_PILOT (proximity)
@@ -400,10 +400,10 @@ float MAX30102::readTemperatureF() {
 	return ( temp );
 }
 
-// Set the PROX_INT_THRESHold
-void MAX30102::setPROXINTTHRESH( uint8_t val ) {
-	writeRegister8( _i2caddr, MAX30102_PROXINTTHRESH, val );
-}
+// // Set the PROX_INT_THRESHold
+// void MAX30102::setPROXINTTHRESH( uint8_t val ) {
+// 	writeRegister8( _i2caddr, MAX30102_PROXINTTHRESH, val );
+// }
 
 //
 // Device ID and Revision
