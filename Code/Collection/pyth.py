@@ -1,4 +1,4 @@
-from smbus2 import SMBus
+from smbus import SMBus
 
 channel = 1
 
