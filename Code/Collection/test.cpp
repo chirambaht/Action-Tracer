@@ -35,6 +35,9 @@ uint8_t		  rates[RATE_SIZE] = { 0 }; // Array of heart rates
 uint8_t		  rateSpot		   = 0;
 long		  lastBeat		   = 0; // Time at which the last beat occurred
 
+const int divisor = 10;
+int		  count	  = 0;
+
 float beatsPerMinute;
 int	  beatAvg;
 
@@ -68,12 +71,11 @@ int main( int argc, char const *argv[] ) {
 	// Wait for finger to be placed on the sensor
 	wait_for_beat( dev );
 	// Finger dertected
-	dev->setPulseAmplitudeRed( 0x0A ); // Turn Red LED to low to indicate sensor is running
+	dev->setPulseAmplitudeRed( 0 ); // Turn Red LED to low to indicate sensor is running
 
 	for( ;; ) {
 		float temp = dev->readTemperature();
 		float tt   = ( mp->getTemperature() / 340 ) + 36.53;
-		printf( "Body: %5.3f \t Outside: %5.3f\n", temp, tt );
 
 		int32_t ir_val = dev->getIR();
 
@@ -98,9 +100,8 @@ int main( int argc, char const *argv[] ) {
 			wait_for_beat( dev );
 		}
 
-		printf( "Heart rate: %d." );
-
-		delay( 50 );
+		printf( "Heart rate: %d =>" );
+		printf( "Body: %5.3fC \t Outside: %5.3fC\n", temp, tt );
 	}
 
 	return 0;
@@ -108,6 +109,7 @@ int main( int argc, char const *argv[] ) {
 
 void wait_for_beat( MAX30102 *device ) {
 	uint32_t ir_val = device->getIR();
+	printf( "Waiting for a finger to be detected\n" );
 	while( ir_val < 20000 ) {
 		device->setPulseAmplitudeRed( 0xFF ); // Turn Red LED to high to indicate sensor is running
 		delay( 500 );
@@ -115,6 +117,7 @@ void wait_for_beat( MAX30102 *device ) {
 		delay( 500 );
 		ir_val = device->getIR();
 	}
+	device->setPulseAmplitudeRed( 0 ); // Turn Red LED to low to indicate sensor is running
 }
 
 unsigned int millis( void ) {

@@ -31,8 +31,9 @@ static const uint8_t MAX30102_FIFODATA	   = 0x07;
 static const uint8_t MAX30102_FIFOCONFIG	 = 0x08;
 static const uint8_t MAX30102_MODECONFIG	 = 0x09;
 static const uint8_t MAX30102_PARTICLECONFIG = 0x0A; // Note, sometimes listed as "SPO2" config in datasheet (pg. 11)
-static const uint8_t MAX30102_LED1_PULSEAMP	 = 0x0C;
-static const uint8_t MAX30102_LED2_PULSEAMP	 = 0x0D;
+
+static const uint8_t MAX30102_LED1_PULSEAMP = 0x0D; // These two are swapped in some cases
+static const uint8_t MAX30102_LED2_PULSEAMP = 0x0C;
 // static const uint8_t MAX30102_LED3_PULSEAMP	  = 0x0E;
 // static const uint8_t MAX30102_LED_PROX_AMP	  = 0x10;
 static const uint8_t MAX30102_MULTILEDCONFIG1 = 0x11;
@@ -278,21 +279,6 @@ void MAX30102::setPulseAmplitudeRed( uint8_t amplitude ) {
 void MAX30102::setPulseAmplitudeIR( uint8_t amplitude ) {
 	writeRegister8( _i2caddr, MAX30102_LED2_PULSEAMP, amplitude );
 }
-
-// void MAX30102::setPulseAmplitudeGreen( uint8_t amplitude ) {
-// 	writeRegister8( _i2caddr, MAX30102_LED3_PULSEAMP, amplitude );
-// }
-
-// void MAX30102::setPulseAmplitudeProximity( uint8_t amplitude ) {
-// 	writeRegister8( _i2caddr, MAX30102_LED_PROX_AMP, amplitude );
-// }
-
-// void MAX30102::setProximityThreshold( uint8_t threshMSB ) {
-// 	// Set the IR ADC count that will trigger the beginning of particle-sensing mode.
-// 	// The threshMSB signifies only the 8 most significant-bits of the ADC count.
-// 	// See datasheet, page 24.
-// 	writeRegister8( _i2caddr, MAX30102_PROXINTTHRESH, threshMSB );
-// }
 
 // Given a slot number assign a thing to it
 // Devices are SLOT_RED_LED or SLOT_RED_PILOT (proximity)
