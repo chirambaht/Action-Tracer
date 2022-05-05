@@ -109,9 +109,9 @@ int main( int argc, char const *argv[] ) {
 void wait_for_beat( MAX30102 *device ) {
 	uint32_t ir_val = device->getIR();
 	while( ir_val < 20000 ) {
-		device->setPulseAmplitudeRed( 0x0A ); // Turn Red LED to low to indicate sensor is running
+		device->setPulseAmplitudeRed( 0xFF ); // Turn Red LED to high to indicate sensor is running
 		delay( 500 );
-		device->setPulseAmplitudeRed( 0x0A ); // Turn Red LED to low to indicate sensor is running
+		device->setPulseAmplitudeRed( 0 ); // Turn Red LED to low to indicate sensor is running
 		delay( 500 );
 		ir_val = device->getIR();
 	}
