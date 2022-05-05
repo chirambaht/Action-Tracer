@@ -2,7 +2,7 @@ from smbus import SMBus
 
 channel = 1
 
-address = eval(input("Enter the device address (0x??): " ))
+address = eval("0x" + input("Enter the device address (0x??): 0x" ))
 
 # Initialize I2C (SMBus)
 bus = SMBus(channel)
@@ -11,13 +11,13 @@ def quit():
     exit(1)
 
 def read_reg():
-    r = eval(input("Which register: "))
+    r = eval("0x" + input("Which register: 0x"))
     b = bus.read_byte_data(address, r)
     print(f"{hex(r)} - {b}")
 
 def write_reg():
-    r = eval(input("Which register: "))
-    d = eval(input("Data: "))
+    r = eval("0x" + input("Which register: 0x"))
+    d = eval("0x" + input("Data: 0x"))
     b = bus.write_byte_data(address, r, d)
     print(f"{hex(r)} - {hex(d)}")
 
