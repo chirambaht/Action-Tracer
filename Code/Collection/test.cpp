@@ -55,8 +55,6 @@ int main( int argc, char const *argv[] ) {
 	dev->setPulseAmplitudeRed( 0x0A ); // Turn Red LED to low to indicate sensor is running
 	dev->setPulseAmplitudeGreen( 0 );  // Turn off Green LED
 
-	dev->setFIFOAverage();
-
 	for( ;; ) {
 		// float temp = dev->readTemperature();
 		// float tt   = ( mp->getTemperature() / 340 ) + 36.53;
