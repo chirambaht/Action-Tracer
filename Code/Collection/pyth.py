@@ -16,6 +16,7 @@ def get_bin(tt):
     while len(temp) < 8:
         temp = "0" + temp
     out = temp[:4] + " " + temp[4:]
+    return out
     
 
 def read_reg():
