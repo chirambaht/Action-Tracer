@@ -108,10 +108,10 @@ class MAX30102 {
 	// Low-level I2C communication
 	uint8_t readRegister8( uint8_t address, uint8_t reg );
 	void	writeRegister8( uint8_t address, uint8_t reg, uint8_t value );
+	uint8_t _all_reg[20];
 
   private:
-	uint8_t	 _all_reg[20];
-	uint8_t *_i2cPort; // The generic connection to user's chosen I2C hardware
+		uint8_t *_i2cPort; // The generic connection to user's chosen I2C hardware
 	uint8_t	 _i2caddr;
 
 	uint8_t buffer[8];
