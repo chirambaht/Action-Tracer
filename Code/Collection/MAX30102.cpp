@@ -149,7 +149,8 @@ uint8_t *MAX30102::readAllRegisters() {
 		if( c == 0x0B || c == 0x0E || c == 0x0F || c == 0x10 || ( c <= 0x1E && c >= 0x13 ) || ( c < 0xFE && c >= 0x22 ) ) {
 			continue;
 		}
-		I2Cdev::readByte( MAX30102_ADDRESS, c, &_all_reg[p++] );
+
+		_all_reg[p++] = readRegister8( MAX30102_ADDRESS, c );
 	}
 
 	return _all_reg;
