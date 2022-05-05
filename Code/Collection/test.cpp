@@ -95,13 +95,18 @@ int main( int argc, char const *argv[] ) {
 				for( uint8_t x = 0; x < RATE_SIZE; x++ )
 					beatAvg += rates[x];
 				beatAvg /= RATE_SIZE;
+
 			} else {
 				continue; // If we are not going to store the value, why bother showing it? The last value is still valid
 			}
 		}
 
 		printf( "Heart rate: %d =>" );
-		printf( "Body: %5.3fC \t Outside: %5.3fC\n", temp, tt );
+		printf( "Body: %5.3fC \t Outside: %5.3fC\t[", temp, tt );
+		for( int x = 0; x < RATE_SIZE; x++ ) {
+			printf( " %d ", rates[x] );
+		}
+		printf( "]\n" );
 	}
 
 	return 0;
