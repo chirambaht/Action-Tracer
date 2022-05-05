@@ -1,5 +1,7 @@
 
 
+void wait_for_beat( MAX30102 *device );
+
 #include "MAX30102.h"
 #include "MPU6050.h"
 #include "heartRate.h"
