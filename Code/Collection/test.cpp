@@ -59,8 +59,8 @@ int main( int argc, char const *argv[] ) {
 		printf( "Register 0x%2x - %2x\n", c, ll[p++] );
 		if( p == 20 ) {
 			uint8_t a = dev->readPartID(), b = dev->getRevisionID();
-			printf( "Register 0xFE - 0x%2x\n", a );
-			printf( "Register 0xFF - 0x%2x\n", b );
+			printf( "Register 0xFE - 0x%2x\n", b );
+			printf( "Register 0xFF - 0x%2x\n", a );
 			break;
 		}
 	}
