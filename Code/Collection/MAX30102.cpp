@@ -143,6 +143,18 @@ MAX30102::MAX30102() {
 	// Constructor
 }
 
+uint8_t *MAX30102::readAllRegisters() {
+	int p = 0;
+	for( uint8_t c = 0; c < 0xFF; c += 1 ) {
+		if( c == 0x0B || c == 0x0E || c == 0x0F || c == 0x10 || ( c <= 0x1E && c >= 0x13 ) || ( c < 0xFE && c >= 0x22 ) ) {
+			continue;
+		}
+		I2Cdev::readByte( MAX30102_ADDRESS, c, &_all_reg[p++] );
+	}
+
+	return _all_reg;
+}
+
 bool MAX30102::begin( uint8_t i2caddr ) {
 	_i2caddr = i2caddr;
 
@@ -520,8 +532,8 @@ void MAX30102::setup( uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode
 
 	setPulseAmplitudeRed( powerLevel );
 	setPulseAmplitudeIR( powerLevel );
-	setPulseAmplitudeGreen( powerLevel );
-	setPulseAmplitudeProximity( powerLevel );
+	// setPulseAmplitudeGreen( powerLevel );
+	// setPulseAmplitudeProximity( powerLevel );
 	//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 	// Multi-LED Mode Configuration, Enable the reading of the three LEDs
@@ -571,15 +583,6 @@ uint32_t MAX30102::getIR( void ) {
 		return ( 0 ); // Sensor failed to find new data
 }
 
-// Report the most recent Green value
-uint32_t MAX30102::getGreen( void ) {
-	// Check the sensor for new data for 250ms
-	if( safeCheck( 250 ) )
-		return ( sense.green[sense.head] );
-	else
-		return ( 0 ); // Sensor failed to find new data
-}
-
 // Report the next Red value in the FIFO
 uint32_t MAX30102::getFIFORed( void ) {
 	return ( sense.red[sense.tail] );
@@ -588,11 +591,6 @@ uint32_t MAX30102::getFIFORed( void ) {
 // Report the next IR value in the FIFO
 uint32_t MAX30102::getFIFOIR( void ) {
 	return ( sense.IR[sense.tail] );
-}
-
-// Report the next Green value in the FIFO
-uint32_t MAX30102::getFIFOGreen( void ) {
-	return ( sense.green[sense.tail] );
 }
 
 // Advance the tail
@@ -657,11 +655,6 @@ uint16_t MAX30102::check( void ) {
 				uint32_t tempLong;
 
 				// Burst read three bytes - RED
-				// temp[3] = 0;
-				// temp[2] = _i2cPort->read();
-				// temp[1] = _i2cPort->read();
-				// temp[0] = _i2cPort->read();
-
 				temp[3] = 0;
 				temp[2] = bigBuff[pp + 0];
 				temp[1] = bigBuff[pp + 1];
@@ -678,11 +671,6 @@ uint16_t MAX30102::check( void ) {
 
 				if( activeLEDs > 1 ) {
 					// Burst read three more bytes - IR
-					// temp[3] = 0;
-					// temp[2] = _i2cPort->read();
-					// temp[1] = _i2cPort->read();
-					// temp[0] = _i2cPort->read();
-
 					temp[3] = 0;
 					temp[2] = bigBuff[pp + 3];
 					temp[1] = bigBuff[pp + 4];
@@ -698,30 +686,8 @@ uint16_t MAX30102::check( void ) {
 					sense.IR[sense.head] = tempLong;
 				}
 
-				if( activeLEDs > 2 ) {
-					// Burst read three more bytes - Green
-					// temp[3] = 0;
-					// temp[2] = _i2cPort->read();
-					// temp[1] = _i2cPort->read();
-					// temp[0] = _i2cPort->read();
-
-					temp[3] = 0;
-					temp[2] = bigBuff[pp + 6];
-					temp[1] = bigBuff[pp + 7];
-					temp[0] = bigBuff[pp + 8];
-
-					// I2Cdev::readBytes( MAX30102_ADDRESS, MAX30102_FIFODATA, 4, temp );
-
-					// Convert array to long
-					memcpy( &tempLong, temp, sizeof( tempLong ) );
-
-					tempLong &= 0x3FFFF; // Zero out all but 18 bits
-
-					sense.green[sense.head] = tempLong;
-				}
-
 				toGet -= activeLEDs * 3;
-				pp += 9;
+				pp += 6;
 			}
 
 		} // End while (bytesLeftToRead > 0)

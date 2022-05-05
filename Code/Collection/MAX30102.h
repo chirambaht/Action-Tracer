@@ -36,7 +36,6 @@ class MAX30102 {
 
 	uint32_t getRed( void );					  // Returns immediate red value
 	uint32_t getIR( void );						  // Returns immediate IR value
-	uint32_t getGreen( void );					  // Returns immediate green value
 	bool	 safeCheck( uint8_t maxTimeToCheck ); // Given a max amount of time, check for new data
 
 	// Configuration
@@ -52,14 +51,12 @@ class MAX30102 {
 
 	void setPulseAmplitudeRed( uint8_t value );
 	void setPulseAmplitudeIR( uint8_t value );
-	void setPulseAmplitudeGreen( uint8_t value );
-	void setPulseAmplitudeProximity( uint8_t value );
-
-	void setProximityThreshold( uint8_t threshMSB );
 
 	// Multi-led configuration mode (page 22)
 	void enableSlot( uint8_t slotNumber, uint8_t device ); // Given slot number, assign a device to slot
 	void disableSlots( void );
+
+	uint8_t *readAllRegisters();
 
 	// Data Collection
 
@@ -84,12 +81,11 @@ class MAX30102 {
 	void setFIFOAlmostFull( uint8_t samples );
 
 	// FIFO Reading
-	uint16_t check( void );		   // Checks for new data and fills FIFO
-	uint8_t	 available( void );	   // Tells caller how many new samples are available (head - tail)
-	void	 nextSample( void );   // Advances the tail of the sense array
-	uint32_t getFIFORed( void );   // Returns the FIFO sample pointed to by tail
-	uint32_t getFIFOIR( void );	   // Returns the FIFO sample pointed to by tail
-	uint32_t getFIFOGreen( void ); // Returns the FIFO sample pointed to by tail
+	uint16_t check( void );		 // Checks for new data and fills FIFO
+	uint8_t	 available( void );	 // Tells caller how many new samples are available (head - tail)
+	void	 nextSample( void ); // Advances the tail of the sense array
+	uint32_t getFIFORed( void ); // Returns the FIFO sample pointed to by tail
+	uint32_t getFIFOIR( void );	 // Returns the FIFO sample pointed to by tail
 
 	uint8_t getWritePointer( void );
 	uint8_t getReadPointer( void );
@@ -114,6 +110,7 @@ class MAX30102 {
 	void	writeRegister8( uint8_t address, uint8_t reg, uint8_t value );
 
   private:
+	uint8_t	 _all_reg[20];
 	uint8_t *_i2cPort; // The generic connection to user's chosen I2C hardware
 	uint8_t	 _i2caddr;
 
@@ -133,7 +130,6 @@ class MAX30102 {
 	typedef struct Record {
 		uint32_t red[STORAGE_SIZE];
 		uint32_t IR[STORAGE_SIZE];
-		uint32_t green[STORAGE_SIZE];
 		uint8_t	 head;
 		uint8_t	 tail;
 	} sense_struct; // This is our circular buffer of readings from the sensor

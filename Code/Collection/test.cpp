@@ -53,7 +53,15 @@ int main( int argc, char const *argv[] ) {
 
 	dev->enableDIETEMPRDY();
 	dev->setPulseAmplitudeRed( 0x0A ); // Turn Red LED to low to indicate sensor is running
-	dev->setPulseAmplitudeGreen( 0 );  // Turn off Green LED
+
+	uint8_t *ll = dev->readAllRegisters();
+	int		 p	= 0;
+	for( uint8_t c = 0; c < 0xFF; c += 1 ) {
+		if( c == 0x0B || c == 0x0E || c == 0x0F || c == 0x10 || ( c <= 0x1E && c >= 0x13 ) || ( c < 0xFE && c >= 0x22 ) ) {
+			continue;
+		}
+		printf( "Register %x - %i", c, ll[p++] );
+	}
 
 	for( ;; ) {
 		// float temp = dev->readTemperature();
