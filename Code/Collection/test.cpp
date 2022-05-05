@@ -62,6 +62,9 @@ int main( int argc, char const *argv[] ) {
 			continue;
 		}
 		printf( "Register %x - %i\n", c, ll[p++] );
+		if( p == 20 ) {
+			break;
+		}
 	}
 
 	for( ;; ) {
