@@ -31,7 +31,7 @@ void wait_for_beat( MAX30102 *device );
 auto start = std::chrono::steady_clock::now();
 
 const uint8_t RATE_SIZE		   = 10;	// Increase this for more averaging. 4 is good.
-uint8_t		  rates[RATE_SIZE] = { 0 }; // Array of heart rates
+uint8_t		  rates[RATE_SIZE] = { 1 }; // Array of heart rates
 uint8_t		  rateSpot		   = 0;
 long		  lastBeat		   = 0; // Time at which the last beat occurred
 
@@ -96,8 +96,6 @@ int main( int argc, char const *argv[] ) {
 					beatAvg += rates[x];
 				beatAvg /= RATE_SIZE;
 			}
-		} else {
-			wait_for_beat( dev );
 		}
 
 		printf( "Heart rate: %d =>" );
