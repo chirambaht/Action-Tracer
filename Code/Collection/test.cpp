@@ -48,7 +48,7 @@ int main( int argc, char const *argv[] ) {
 	}
 
 	printf( "Temp enable first: \n" );
-
+	dev->softReset();
 	uint8_t *ll = dev->readAllRegisters();
 	int		 p	= 0;
 
