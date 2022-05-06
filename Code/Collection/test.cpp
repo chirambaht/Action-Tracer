@@ -71,15 +71,16 @@ int main( int argc, char const *argv[] ) {
 	// Wait for finger to be placed on the sensor
 	wait_for_beat( dev );
 	// Finger dertected
-	dev->setPulseAmplitudeRed( 0 ); // Turn Red LED to low to indicate sensor is running
+	dev->setPulseAmplitudeRed( 0xF0 ); // Turn Red LED to low to indicate sensor is running
 
 	for( ;; ) {
 		float temp = dev->readTemperature();
 		float tt   = ( mp->getTemperature() / 340 ) + 36.53;
 
-		int32_t ir_val = dev->getIR();
-
-		if( checkForBeat( ir_val ) ) {
+		// int32_t ir_val = dev->getIR();
+		// if( checkForBeat( ir_val ) ) {
+		int32_t red_val = dev->getRed();
+		if( checkForBeat( red_val ) ) {
 			// There is a beat
 			long delta = millis() - lastBeat;
 			lastBeat   = millis();
