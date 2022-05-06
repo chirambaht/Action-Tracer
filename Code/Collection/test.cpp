@@ -77,10 +77,10 @@ int main( int argc, char const *argv[] ) {
 		float temp = dev->readTemperature();
 		float tt   = ( mp->getTemperature() / 340 ) + 36.53;
 
-		// int32_t ir_val = dev->getIR();
-		// if( checkForBeat( ir_val ) ) {
-		int32_t red_val = dev->getRed();
-		if( checkForBeat( red_val ) ) {
+		int32_t ir_val = dev->getIR();
+		if( checkForBeat( ir_val ) ) {
+			// int32_t red_val = dev->getRed();
+			// if( checkForBeat( red_val ) ) {
 			// There is a beat
 			long delta = millis() - lastBeat;
 			lastBeat   = millis();
