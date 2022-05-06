@@ -454,13 +454,17 @@ void MAX30102::setup( uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode
 
 	// Mode Configuration
 	//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-	if( ledMode == 3 )
+	activeLEDs = 2;
+	if( ledMode == 3 ) {
 		setLEDMode( MAX30102_MODE_MULTILED ); // Watch all three LED channels
-	else if( ledMode == 2 )
+	} else if( ledMode == 2 ) {
 		setLEDMode( MAX30102_MODE_REDIRONLY ); // Red and IR
-	else
+	} else {
 		setLEDMode( MAX30102_MODE_REDONLY ); // Red only
-	activeLEDs = ledMode;					 // Used to control how many bytes to read from FIFO buffer
+		activeLEDs = 1;
+	}
+
+	// Used to control how many bytes to read from FIFO buffer
 	//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 	// Particle Sensing Configuration
