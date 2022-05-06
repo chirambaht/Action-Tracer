@@ -6,6 +6,8 @@
 
 #include <chrono>
 #include <cstdio>
+#include <fstream>
+#include <iostream>
 
 void wait_for_beat( MAX30102 *device );
 
@@ -101,7 +103,10 @@ int main( int argc, char const *argv[] ) {
 				continue; // If we are not going to store the value, why bother showing it? The last value is still valid
 			}
 		}
-
+		std::ofstream myfile;
+		myfile.open( "dat.txt" );
+		myfile << ir_val << "\n";
+		myfile.close();
 		printf( "Heart rate: %3d => ", beatAvg );
 		printf( "Body: %5.3fC \t Outside: %5.3fC\t[", temp, tt );
 		for( int x = 0; x < RATE_SIZE; x++ ) {

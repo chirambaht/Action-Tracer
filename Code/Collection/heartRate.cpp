@@ -57,6 +57,8 @@
 
 #include "heartRate.h"
 
+#include <stdio.h>
+
 int16_t IR_AC_Max = 20;
 int16_t IR_AC_Min = -20;
 
@@ -85,8 +87,7 @@ bool checkForBeat( int32_t sample ) {
 	IR_AC_Signal_Previous = IR_AC_Signal_Current;
 
 	// This is good to view for debugging
-	// Serial.print("Signal_Current: ");
-	// Serial.println(IR_AC_Signal_Current);
+	printf( "Signal Current: %d\n", IR_AC_Signal_Current );
 
 	//  Process next data sample
 	IR_Average_Estimated = averageDCEstimator( &ir_avg_reg, sample );
