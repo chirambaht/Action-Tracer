@@ -104,7 +104,7 @@ int main( int argc, char const *argv[] ) {
 			}
 		}
 		std::ofstream myfile;
-		myfile.open( "dat.txt" );
+		myfile.open( "dat.txt", std::ios_base::app );
 		myfile << ir_val << "\n";
 		myfile.close();
 		printf( "Heart rate: %3d => ", beatAvg );
