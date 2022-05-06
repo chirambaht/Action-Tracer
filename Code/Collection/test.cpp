@@ -30,7 +30,7 @@ void wait_for_beat( MAX30102 *device );
 
 auto start = std::chrono::steady_clock::now();
 
-const uint8_t RATE_SIZE		   = 10;	// Increase this for more averaging. 4 is good.
+const uint8_t RATE_SIZE		   = 5;		// Increase this for more averaging. 4 is good.
 uint8_t		  rates[RATE_SIZE] = { 1 }; // Array of heart rates
 uint8_t		  rateSpot		   = 0;
 long		  lastBeat		   = 0; // Time at which the last beat occurred
@@ -104,7 +104,7 @@ int main( int argc, char const *argv[] ) {
 		printf( "Heart rate: %3d => ", beatAvg );
 		printf( "Body: %5.3fC \t Outside: %5.3fC\t[", temp, tt );
 		for( int x = 0; x < RATE_SIZE; x++ ) {
-			printf( " %d ", rates[x] );
+			printf( " %3d ", rates[x] );
 		}
 		printf( "]\n" );
 	}
@@ -121,6 +121,7 @@ void wait_for_beat( MAX30102 *device ) {
 		device->setPulseAmplitudeRed( 0 ); // Turn Red LED to low to indicate sensor is running
 		delay( 500 );
 		ir_val = device->getIR();
+		printf( " Current IR value is: %6d", ir_val );
 	}
 	device->setPulseAmplitudeRed( 0 ); // Turn Red LED to low to indicate sensor is running
 }
