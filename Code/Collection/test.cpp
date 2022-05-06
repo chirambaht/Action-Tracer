@@ -101,7 +101,7 @@ int main( int argc, char const *argv[] ) {
 			}
 		}
 
-		printf( "Heart rate: %d =>" );
+		printf( "Heart rate: %3d => ", beatAvg );
 		printf( "Body: %5.3fC \t Outside: %5.3fC\t[", temp, tt );
 		for( int x = 0; x < RATE_SIZE; x++ ) {
 			printf( " %d ", rates[x] );
