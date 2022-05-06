@@ -64,7 +64,7 @@ int main( int argc, char const *argv[] ) {
 		while( 1 ) {
 		}
 	}
-	dev->setup( 0xF0, 16, 2, 100, 411, 4096 );
+	dev->setup( 0x60, 16, 2, 100, 411, 4096 );
 	dev->setPulseAmplitudeRed( 0x0A ); // Turn Red LED to low to indicate sensor is running
 
 	printf( "Temp enable first: \n" );
@@ -73,7 +73,7 @@ int main( int argc, char const *argv[] ) {
 	// Wait for finger to be placed on the sensor
 	wait_for_beat( dev );
 	// Finger dertected
-	dev->setPulseAmplitudeRed( 0xF0 ); // Turn Red LED to low to indicate sensor is running
+	dev->setPulseAmplitudeRed( 0x60 ); // Turn Red LED to low to indicate sensor is running
 
 	for( ;; ) {
 		float temp = dev->readTemperature();
