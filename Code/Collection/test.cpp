@@ -1,15 +1,14 @@
 
 
-#include "MAX30102.h"
-#include "MPU6050.h"
-#include "heartRate.h"
+#include "algorithm.h"
+#include "max30102.h"
 
 #include <chrono>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
 
-void wait_for_beat( MAX30102 *device );
+void wait_for_beat();
 
 #define DEBUG
 
@@ -30,111 +29,130 @@ void wait_for_beat( MAX30102 *device );
 
 #endif
 
+#define MAX_BRIGHTNESS 255
 auto start = std::chrono::steady_clock::now();
 
-const uint8_t RATE_SIZE		   = 5;		// Increase this for more averaging. 4 is good.
-uint8_t		  rates[RATE_SIZE] = { 1 }; // Array of heart rates
-uint8_t		  rateSpot		   = 0;
-long		  lastBeat		   = 0; // Time at which the last beat occurred
-
-const int divisor = 10;
-int		  count	  = 0;
-
-float beatsPerMinute;
-int	  beatAvg;
+uint32_t aun_ir_buffer[100];  // infrared LED sensor data
+uint32_t aun_red_buffer[100]; // red LED sensor data
+int32_t	 n_ir_buffer_length;  // data length
+int32_t	 n_spo2;			  // SPO2 value
+int8_t	 ch_spo2_valid;		  // indicator to show if the SPO2 calculation is valid
+int32_t	 n_heart_rate;		  // heart rate value
+int8_t	 ch_hr_valid;		  // indicator to show if the heart rate calculation is valid
+uint8_t	 uch_dummy;
 
 int main( int argc, char const *argv[] ) {
 	start = std::chrono::steady_clock::now();
 
-	printf( "This is the MAX30102%sTest\n", " " );
+	maxim_max30102_reset();
 
-	MAX30102 *dev = new MAX30102(); // Body temperature
-	MPU6050	*mp  = new MPU6050();	// Outside temperature
+	maxim_max30102_read_reg( REG_INTR_STATUS_1, &uch_dummy ); // Reads/clears the interrupt status register
 
-	mp->initialize();
-
-	if( !mp->getTempSensorEnabled() ) {
-		mp->setTempSensorEnabled( true );
-	}
-
-	printf( "MPU6050 Temperature Ready!\n" );
-
-	if( !dev->begin( MAX30102_ADDRESS ) ) {
-		printf( "Error! Something went wrong" );
-		while( 1 ) {
-		}
-	}
-	dev->setup( 0x60, 16, 2, 100, 411, 4096 );
-	dev->setPulseAmplitudeRed( 0x0A ); // Turn Red LED to low to indicate sensor is running
-
-	printf( "Temp enable first: \n" );
-	dev->enableDIETEMPRDY();
-
-	// Wait for finger to be placed on the sensor
-	wait_for_beat( dev );
-	// Finger dertected
-	dev->setPulseAmplitudeRed( 0x0 ); // Turn Red LED to low to indicate sensor is running
+	maxim_max30102_init(); // initialize the MAX30102
 
 	for( ;; ) {
-		float temp = dev->readTemperature();
-		float tt   = ( mp->getTemperature() / 340 ) + 36.53;
+		uint32_t un_min, un_max, un_prev_data, un_brightness; // variables to calculate the on-board LED brightness that reflects the heartbeats
+		int32_t	 i;
+		float	 f_temp;
 
-		int32_t ir_val = dev->getIR();
-		printf( "IR Value: %ld\t", ir_val );
-		if( checkForBeat( ir_val ) ) {
-			// int32_t red_val = dev->getRed();
-			// if( checkForBeat( red_val ) ) {
-			// There is a beat
-			long delta = millis() - lastBeat;
-			lastBeat   = millis();
+		un_brightness = 0;
+		un_min		  = 0x3FFFF;
+		un_max		  = 0;
 
-			beatsPerMinute = 60.0 / ( delta / 1000.0 );
+		n_ir_buffer_length = 100; // buffer length of 100 stores 4 seconds of samples running at 25sps
 
-			if( beatsPerMinute < 255 && beatsPerMinute > 20 ) {
-				rates[rateSpot++] = ( uint8_t ) beatsPerMinute; // Store this reading in the array
-				rateSpot %= RATE_SIZE;							// Wrap variable
+		// read the first 100 samples, and determine the signal range
+		for( i = 0; i < n_ir_buffer_length; i++ ) {
+			// wait until the interrupt pin asserts
+			delay( 1 );
 
-				// Take average of readings
-				beatAvg = 0;
-				for( uint8_t x = 0; x < RATE_SIZE; x++ )
-					beatAvg += rates[x];
-				beatAvg /= RATE_SIZE;
+			maxim_max30102_read_fifo( ( aun_red_buffer + i ), ( aun_ir_buffer + i ) ); // read from MAX30102 FIFO
 
-			} else {
-				continue; // If we are not going to store the value, why bother showing it? The last value is still valid
+			if( un_min > aun_red_buffer[i] )
+				un_min = aun_red_buffer[i]; // update signal min
+			if( un_max < aun_red_buffer[i] )
+				un_max = aun_red_buffer[i]; // update signal max
+
+			printf( "red = %d, ir = %d\n", aun_red_buffer[i], aun_ir_buffer[i] );
+		}
+
+		un_prev_data = aun_red_buffer[i];
+		// calculate heart rate and SpO2 after first 100 samples (first 4 seconds of samples)
+		maxim_heart_rate_and_oxygen_saturation( aun_ir_buffer, n_ir_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid );
+
+		// Continuously taking samples from MAX30102.  Heart rate and SpO2 are calculated every 1 second
+		while( 1 ) {
+			i	   = 0;
+			un_min = 0x3FFFF;
+			un_max = 0;
+
+			// dumping the first 25 sets of samples in the memory and shift the last 75 sets of samples to the top
+			for( i = 25; i < 100; i++ ) {
+				aun_red_buffer[i - 25] = aun_red_buffer[i];
+				aun_ir_buffer[i - 25]  = aun_ir_buffer[i];
+
+				// update the signal min and max
+				if( un_min > aun_red_buffer[i] )
+					un_min = aun_red_buffer[i];
+				if( un_max < aun_red_buffer[i] )
+					un_max = aun_red_buffer[i];
 			}
+
+			// take 25 sets of samples before calculating the heart rate.
+			for( i = 75; i < 100; i++ ) {
+				un_prev_data = aun_red_buffer[i - 1];
+				delay( 1 );
+				maxim_max30102_read_fifo( ( aun_red_buffer + i ), ( aun_ir_buffer + i ) );
+
+				// calculate the brightness of the LED
+				if( aun_red_buffer[i] > un_prev_data ) {
+					f_temp = aun_red_buffer[i] - un_prev_data;
+					f_temp /= ( un_max - un_min );
+					f_temp *= MAX_BRIGHTNESS;
+					f_temp = un_brightness - f_temp;
+					if( f_temp < 0 )
+						un_brightness = 0;
+					else
+						un_brightness = ( int ) f_temp;
+				} else {
+					f_temp = un_prev_data - aun_red_buffer[i];
+					f_temp /= ( un_max - un_min );
+					f_temp *= MAX_BRIGHTNESS;
+					un_brightness += ( int ) f_temp;
+					if( un_brightness > MAX_BRIGHTNESS )
+						un_brightness = MAX_BRIGHTNESS;
+				}
+
+				// send samples and calculation result to terminal program through UART
+
+				printf( "red = %d, ir = %d, ", aun_red_buffer[i], aun_ir_buffer[i] );
+
+				printf( "HR = %d (%d), SP02 = %d (%d)\n", n_heart_rate, ch_hr_valid, n_spo2, ch_spo2_valid );
+			}
+
+			maxim_heart_rate_and_oxygen_saturation( aun_ir_buffer, n_ir_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid );
 		}
-		std::ofstream myfile;
-		myfile.open( "dat.txt", std::ios_base::app );
-		myfile << ir_val << "\n";
-		myfile.close();
-		printf( "Heart rate: %3d => ", beatAvg );
-		printf( "Body: %5.3fC \t Outside: %5.3fC\t[", temp, tt );
-		for( int x = 0; x < RATE_SIZE; x++ ) {
-			printf( " %3d ", rates[x] );
-		}
-		printf( "]\n" );
 	}
 
 	return 0;
 }
 
-void wait_for_beat( MAX30102 *device ) {
-	uint32_t ir_val = device->getIR(), red_val = device->getRed();
-	printf( "Waiting for a finger to be detected\n" );
-	printf( " IR value %6d \t Red Value: %6d\n", ir_val, red_val );
-	while( ir_val < 20000 ) {
-		device->setPulseAmplitudeRed( 0xFF ); // Turn Red LED to high to indicate sensor is running
-		delay( 250 );
-		red_val = device->getRed();
-		delay( 250 );
-		device->setPulseAmplitudeRed( 0 ); // Turn Red LED to low to indicate sensor is running
-		delay( 500 );
-		ir_val = device->getIR();
-		printf( " IR value %d \t Red Value: %d\n", ir_val, red_val );
-	}
-	device->setPulseAmplitudeRed( 0 ); // Turn Red LED to low to indicate sensor is running
-}
+// void wait_for_beat( MAX30102 *device ) {
+// 	uint32_t ir_val = device->getIR(), red_val = device->getRed();
+// 	printf( "Waiting for a finger to be detected\n" );
+// 	printf( " IR value %6d \t Red Value: %6d\n", ir_val, red_val );
+// 	while( ir_val < 20000 ) {
+// 		device->setPulseAmplitudeRed( 0xFF ); // Turn Red LED to high to indicate sensor is running
+// 		delay( 250 );
+// 		red_val = device->getRed();
+// 		delay( 250 );
+// 		device->setPulseAmplitudeRed( 0 ); // Turn Red LED to low to indicate sensor is running
+// 		delay( 500 );
+// 		ir_val = device->getIR();
+// 		printf( " IR value %d \t Red Value: %d\n", ir_val, red_val );
+// 	}
+// 	device->setPulseAmplitudeRed( 0 ); // Turn Red LED to low to indicate sensor is running
+// }
 
 unsigned int millis( void ) {
 	auto end = std::chrono::steady_clock::now();
