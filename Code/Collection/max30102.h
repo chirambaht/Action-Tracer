@@ -92,11 +92,12 @@
 
 #include <cstdint>
 
-uint8_t data_buffer[1024];
+uint8_t data_buffer[512];
 
 bool maxim_max30102_init();
 bool maxim_max30102_read_fifo( uint32_t *pun_red_led, uint32_t *pun_ir_led );
 bool maxim_max30102_write_reg( uint8_t uch_addr, uint8_t uch_data );
 bool maxim_max30102_read_reg( uint8_t uch_addr, uint8_t *puch_data );
 bool maxim_max30102_reset( void );
+
 #endif /*  MAX30102_H_ */
