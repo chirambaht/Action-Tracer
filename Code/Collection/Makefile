@@ -43,8 +43,8 @@ gui_actish_debug:
 
 
 test:
-	@ $(CXX) -c I2Cdev.cpp algorithm.cpp  max30102.cpp test.cpp
-	@ $(CXX) -o test I2Cdev.o algorithm.o max30102.o test.o -l wiringPi -lm -lpthread -g -DON_PI
+	@ $(CXX) -c I2Cdev.cpp hr_algorithm.cpp  max30102.cpp test.cpp
+	@ $(CXX) -o test I2Cdev.o hr_algorithm.o max30102.o test.o -l wiringPi -lm -lpthread -g -DON_PI
 
 # MPU6050_DMP_FIFO_RATE_DIVISOR values and their linked rate
 # 	n  --> Rate (Hz)

@@ -1,6 +1,6 @@
 
 
-#include "algorithm.h"
+#include "hr_algorithm.h"
 #include "max30102.h"
 
 #include <chrono>
@@ -8,8 +8,9 @@
 #include <fstream>
 #include <iostream>
 
-void wait_for_beat();
-
+void		 wait_for_beat();
+unsigned int millis( void );
+void		 delay( unsigned int duration );
 #define DEBUG
 
 #ifndef _DEBUG_PRINTER_H_
