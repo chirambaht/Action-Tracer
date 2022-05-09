@@ -94,7 +94,7 @@
 	#define REG_REV_ID			0xFE
 	#define REG_PART_ID			0xFF
 
-uint8_t data_buffer[512];
+extern uint8_t data_buffer[512];
 
 bool maxim_max30102_init();
 bool maxim_max30102_read_fifo( uint32_t *pun_red_led, uint32_t *pun_ir_led );

@@ -8,7 +8,7 @@
 
 unsigned int millis( void );
 void		 delay( unsigned int duration );
-
+uint8_t		 data_buffer[512];
 #define DEBUG
 
 #ifndef _DEBUG_PRINTER_H_
