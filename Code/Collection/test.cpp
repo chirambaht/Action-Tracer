@@ -123,7 +123,9 @@ int main( int argc, char const *argv[] ) {
 				}
 
 				// send samples and calculation result to terminal program through UART
-
+				if( !( ch_hr_valid && ch_spo2_valid ) ) {
+					continue;
+				}
 				printf( "red = %d, ir = %d, ", aun_red_buffer[i], aun_ir_buffer[i] );
 
 				printf( "HR = %d (%d), SP02 = %d (%d)\n", n_heart_rate, ch_hr_valid, n_spo2, ch_spo2_valid );
