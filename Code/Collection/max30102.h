@@ -92,7 +92,7 @@
 
 #include <cstdint>
 
-uint8_t data_bruffer[8192];
+uint8_t data_buffer[8192];
 
 bool maxim_max30102_init();
 #if defined( ARDUINO_AVR_UNO )

@@ -62,7 +62,6 @@
 #include "max30102.h"
 
 #include "I2Cdev.h"
-#include "hr_algorithm.h"
 
 bool maxim_max30102_write_reg( uint8_t uch_addr, uint8_t uch_data )
 /**
@@ -152,10 +151,10 @@ bool maxim_max30102_read_fifo( uint32_t *pun_red_led, uint32_t *pun_ir_led )
 	maxim_max30102_read_reg( REG_INTR_STATUS_1, &uch_temp );
 	maxim_max30102_read_reg( REG_INTR_STATUS_2, &uch_temp );
 
-	I2Cdev::readBytes( MAX30102_I2C_ADDRESS, REG_FIFO_DATA, 6, data_bruffer );
+	I2Cdev::readBytes( MAX30102_I2C_ADDRESS, REG_FIFO_DATA, 6, data_buffer );
 
-	*pun_red_led = ( data_bruffer[0] << 16 ) + ( data_bruffer[1] << 8 ) + data_bruffer[2];
-	*pun_ir_led	 = ( data_bruffer[3] << 16 ) + ( data_bruffer[4] << 8 ) + data_bruffer[5];
+	*pun_red_led = ( data_buffer[0] << 16 ) + ( data_buffer[1] << 8 ) + data_buffer[2];
+	*pun_ir_led	 = ( data_buffer[3] << 16 ) + ( data_buffer[4] << 8 ) + data_buffer[5];
 
 	*pun_red_led &= 0x03FFFF; // Mask MSB [23:18]
 	*pun_ir_led &= 0x03FFFF;  // Mask MSB [23:18]
