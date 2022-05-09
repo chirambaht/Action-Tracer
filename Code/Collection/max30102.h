@@ -90,6 +90,8 @@
 #define REG_REV_ID			0xFE
 #define REG_PART_ID			0xFF
 
+#include <cstdint>
+
 uint8_t data_buffer[8192];
 
 bool maxim_max30102_init();
