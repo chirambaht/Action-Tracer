@@ -59,6 +59,8 @@
  * ownership rights.
  *******************************************************************************
  */
+
+#pragma once
 #include <cstdint>
 
 #ifndef MAX30102_H_
