@@ -66,10 +66,10 @@
 
 #define true 1
 #define false 0
-#define FS			25 // sampling frequency
-#define BUFFER_SIZE ( FS * 4 )
-#define MA4_SIZE	4 // DONOT CHANGE
-#define min( x, y ) ( ( x ) < ( y ) ? ( x ) : ( y ) )
+#define FS				   25 // sampling frequency
+#define BUFFER_SIZE		   ( FS * 4 )
+#define MA4_SIZE		   4 // DONOT CHANGE
+#define min_peaker( x, y ) ( ( x ) < ( y ) ? ( x ) : ( y ) )
 
 // uch_spo2_table is approximated as  -45.060*ratioAverage* ratioAverage + 30.354 *ratioAverage + 94.845 ;
 const uint8_t  uch_spo2_table[184] = { 95, 95, 95, 96, 96, 96, 97, 97, 97, 97, 97, 98, 98, 98, 98, 98, 99, 99, 99, 99,
