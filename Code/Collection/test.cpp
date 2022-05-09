@@ -129,6 +129,7 @@ int main( int argc, char const *argv[] ) {
 				printf( "red = %d, ir = %d, ", aun_red_buffer[i], aun_ir_buffer[i] );
 
 				printf( "HR = %d (%d), SP02 = %d (%d)\n", n_heart_rate, ch_hr_valid, n_spo2, ch_spo2_valid );
+				delay( 30 );
 			}
 
 			maxim_heart_rate_and_oxygen_saturation( aun_ir_buffer, n_ir_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid );
