@@ -103,29 +103,10 @@ int main( int argc, char const *argv[] ) {
 				delay( 1 );
 				maxim_max30102_read_fifo( ( aun_red_buffer + i ), ( aun_ir_buffer + i ) );
 
-				// calculate the brightness of the LED
-				if( aun_red_buffer[i] > un_prev_data ) {
-					f_temp = aun_red_buffer[i] - un_prev_data;
-					f_temp /= ( un_max - un_min );
-					f_temp *= MAX_BRIGHTNESS;
-					f_temp = un_brightness - f_temp;
-					if( f_temp < 0 )
-						un_brightness = 0;
-					else
-						un_brightness = ( int ) f_temp;
-				} else {
-					f_temp = un_prev_data - aun_red_buffer[i];
-					f_temp /= ( un_max - un_min );
-					f_temp *= MAX_BRIGHTNESS;
-					un_brightness += ( int ) f_temp;
-					if( un_brightness > MAX_BRIGHTNESS )
-						un_brightness = MAX_BRIGHTNESS;
-				}
-
-				// send samples and calculation result to terminal program through UART
-				if( !( ch_hr_valid && ch_spo2_valid ) ) {
+				if( !( ch_hr_valid && ch_spo2_valid ) || ( n_heart_rate > 180 || n_heart_rate < 30 ) ) {
 					continue;
 				}
+
 				printf( "red = %d, ir = %d, ", aun_red_buffer[i], aun_ir_buffer[i] );
 
 				printf( "HR = %d (%d), SP02 = %d (%d)\n", n_heart_rate, ch_hr_valid, n_spo2, ch_spo2_valid );
