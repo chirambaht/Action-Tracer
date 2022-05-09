@@ -1,5 +1,3 @@
-
-
 #include "hr_algorithm.h"
 #include "max30102.h"
 
@@ -8,9 +6,9 @@
 #include <fstream>
 #include <iostream>
 
-void		 wait_for_beat();
 unsigned int millis( void );
 void		 delay( unsigned int duration );
+
 #define DEBUG
 
 #ifndef _DEBUG_PRINTER_H_
@@ -137,23 +135,6 @@ int main( int argc, char const *argv[] ) {
 
 	return 0;
 }
-
-// void wait_for_beat( MAX30102 *device ) {
-// 	uint32_t ir_val = device->getIR(), red_val = device->getRed();
-// 	printf( "Waiting for a finger to be detected\n" );
-// 	printf( " IR value %6d \t Red Value: %6d\n", ir_val, red_val );
-// 	while( ir_val < 20000 ) {
-// 		device->setPulseAmplitudeRed( 0xFF ); // Turn Red LED to high to indicate sensor is running
-// 		delay( 250 );
-// 		red_val = device->getRed();
-// 		delay( 250 );
-// 		device->setPulseAmplitudeRed( 0 ); // Turn Red LED to low to indicate sensor is running
-// 		delay( 500 );
-// 		ir_val = device->getIR();
-// 		printf( " IR value %d \t Red Value: %d\n", ir_val, red_val );
-// 	}
-// 	device->setPulseAmplitudeRed( 0 ); // Turn Red LED to low to indicate sensor is running
-// }
 
 unsigned int millis( void ) {
 	auto end = std::chrono::steady_clock::now();
