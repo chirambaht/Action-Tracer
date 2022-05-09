@@ -62,7 +62,7 @@
 #include "max30102.h"
 
 #include "I2Cdev.h"
-#include "algorithm.h"
+#include "hr_algorithm.h"
 
 bool maxim_max30102_write_reg( uint8_t uch_addr, uint8_t uch_data )
 /**
