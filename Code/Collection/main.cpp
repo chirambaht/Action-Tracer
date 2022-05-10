@@ -1,5 +1,6 @@
 // This is the main file that will be used to run the program for data
 // collection from the 3 IMU's and send them to the server as is necessary.
+#define DEBUG
 #define ARRAY_SOLUTION
 #include "main.h"
 
@@ -44,6 +45,7 @@ void setup() {
 #ifdef ON_PI
 	wiringPiSetup();
 #endif
+
 	struct sigaction sigIntHandler;
 
 	sigIntHandler.sa_handler = exit_handler;
@@ -68,7 +70,11 @@ void setup() {
 
 #ifdef ON_PI
 	// Adds an interrupt to across ACT 4 for the heart rate sensor to read the FIFO
-	wiringPiISR( 12, INT_EDGE_FALLING, read_heart_rate_fifo );
+
+	int resp = wiringPiISR( 12, INT_EDGE_FALLING, read_heart_rate_fifo );
+	if( r < 0 ) {
+		debugPrint( "Error. Got code %d\n", resp ); // ISR failed to init.
+	}
 #endif
 
 	debugPrint( "Waiting for HR pre-samples" );
