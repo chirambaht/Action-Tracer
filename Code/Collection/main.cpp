@@ -5,7 +5,6 @@
 
 #include "debug_printer.h"
 #include "hr_algorithm.h"
-#include "max30102.h"
 
 #ifdef TAKE_ARGUMENTS
 	#include <cxxopts.hpp>
