@@ -60,7 +60,7 @@ void setup() {
 	communicator->init_tcp(); // Will break here if it doesn't find a TCP socket available
 
 	for( size_t i = 0; i < _sensors; i++ ) {
-		body_sensor[i] = new TracePoint( "", get_pi_location( 1 ) );
+		body_sensor[i] = new TracePoint( "", get_pi_location( i + 1 ) );
 		// body_sensor[i] = new TracePoint( "", get_pi_location( i ) );
 	}
 
@@ -120,6 +120,7 @@ void loop() {
 }
 
 void read_heart_rate_fifo() {
+	debugPrint( "Reading HR FIFO\n" );
 	while( i2c_busy ) {
 		continue;
 	}
@@ -150,7 +151,7 @@ void read_heart_rate_fifo() {
 	}
 
 	// take 25 sets of samples before calculating the heart rate.
-	int current_ir_red_count = 0;
+	int current_ir_red_count = collected_hr_samples;
 	for( int i = 75; i < 100; i++ ) {
 		un_prev_data = aun_red_buffer[i - 1];
 
