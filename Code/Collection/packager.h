@@ -12,7 +12,7 @@
 
 #define SEND_INT
 #ifndef DEVICES_IN_USE
-	#define DEVICES_IN_USE 3
+	#define DEVICES_IN_USE 4 // 3 IMUs and 1 HR Sensor
 	#define DATA_ELEMENTS  ( DEVICES_IN_USE * 4 )
 #endif
 
@@ -22,7 +22,7 @@ namespace ActionTracer {
 		std::string _dest;
 
 #ifdef SEND_INT
-		__int16_t _package[DATA_ELEMENTS + 1] = { 0 }; // For a start this will be a 4 (data points) * 3 (devices) integer
+		__int16_t _package[DATA_ELEMENTS + 1] = { 0 }; // For a start this will be a 4 (data points) * 4 (devices) integer
 
 		size_t _package_pointer = 1;
 #else
@@ -35,7 +35,7 @@ namespace ActionTracer {
 		__int16_t		   _float_to_int( float value );
 		void			   _log( std::string data );
 		bool			   _save = false;
-		FILE				 *_recording;
+		FILE			  *_recording;
 		int32_t			   _recording_start_time = 0;
 		struct sockaddr_in _server;
 		std::thread		   sender;

@@ -50,13 +50,12 @@ int main( int argc, char const *argv[] ) {
 	maxim_max30102_init(); // initialize the MAX30102
 
 	for( ;; ) {
-		uint32_t un_min, un_max, un_prev_data, un_brightness; // variables to calculate the on-board LED brightness that reflects the heartbeats
+		uint32_t un_min, un_max, un_prev_data; // variables to calculate the on-board LED brightness that reflects the heartbeats
 		int32_t	 i;
 		float	 f_temp;
 
-		un_brightness = 0;
-		un_min		  = 0x3FFFF;
-		un_max		  = 0;
+		un_min = 0x3FFFF;
+		un_max = 0;
 
 		n_ir_buffer_length = 100; // buffer length of 100 stores 4 seconds of samples running at 25sps
 

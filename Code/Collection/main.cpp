@@ -4,6 +4,8 @@
 #include "main.h"
 
 #include "debug_printer.h"
+#include "hr_algorithm.h"
+#include "max30102.h"
 
 #ifdef TAKE_ARGUMENTS
 	#include <cxxopts.hpp>
@@ -60,6 +62,20 @@ void setup() {
 		body_sensor[i] = new TracePoint( "", get_pi_location( 1 ) );
 		// body_sensor[i] = new TracePoint( "", get_pi_location( i ) );
 	}
+
+	maxim_max30102_reset();
+	maxim_max30102_read_reg( REG_INTR_STATUS_1, &uch_dummy ); // Reads/clears the interrupt status register
+	maxim_max30102_init();									  // initialize the MAX30102
+
+#ifdef ON_PI
+	// Adds an interrupt to across ACT 4 for the heart rate sensor to read the FIFO
+	wiringPiISR( 12, INT_EDGE_FALLING, read_heart_rate_fifo );
+#endif
+
+	debugPrint( "Waiting for HR pre-samples" );
+	while( collected_hr_samples < 100 ) {
+		continue;
+	}
 }
 
 void exit_handler( int s ) {
@@ -77,7 +93,9 @@ void loop() {
 	float *body;
 
 	for( size_t i = 0; i < _sensors; i++ ) {
-		body = body_sensor[i]->read_data( 1 );
+		i2c_busy = true;
+		body	 = body_sensor[i]->read_data( 1 );
+		i2c_busy = false;
 
 		for( size_t j = 0; j < 4; j++ ) {
 			data_package[j] = *body;
@@ -86,8 +104,78 @@ void loop() {
 		communicator->load_packet( data_package, 4 );
 	}
 
+	data_package[0] = n_heart_rate;
+	data_package[1] = n_spo2;
+	data_package[2] = ch_hr_valid;
+	data_package[3] = ch_spo2_valid;
+	communicator->load_packet( data_package, 4 );
+
 	// Send packet
 	communicator->send_packet();
+}
+
+void read_heart_rate_fifo() {
+	while( i2c_busy ) {
+		continue;
+	}
+
+	maxim_max30102_read_fifo( ( aun_red_buffer + collected_hr_samples ), ( aun_ir_buffer + collected_hr_samples ) ); // read from MAX30102 FIFO
+
+	if( un_min > aun_red_buffer[collected_hr_samples] )
+		un_min = aun_red_buffer[collected_hr_samples]; // update signal min
+	if( un_max < aun_red_buffer[collected_hr_samples] )
+		un_max = aun_red_buffer[collected_hr_samples]; // update signal max
+
+	if( collected_hr_samples < 100 ) {
+		collected_hr_samples++;
+		un_prev_data = aun_red_buffer[collected_hr_samples];
+		return;
+	}
+
+	// shift 75 samples back in the buffer to get rid of 25
+	for( int i = 25; i < 100; i++ ) {
+		aun_red_buffer[i - 25] = aun_red_buffer[i];
+		aun_ir_buffer[i - 25]  = aun_ir_buffer[i];
+
+		// update the signal min and max
+		if( un_min > aun_red_buffer[i] )
+			un_min = aun_red_buffer[i];
+		if( un_max < aun_red_buffer[i] )
+			un_max = aun_red_buffer[i];
+	}
+
+	// take 25 sets of samples before calculating the heart rate.
+	int current_ir_red_count = 0;
+	for( int i = 75; i < 100; i++ ) {
+		un_prev_data = aun_red_buffer[i - 1];
+
+		while( collected_hr_samples - current_ir_red_count < 25 ) {
+			continue; // Wait for 25 values to be collected
+		}
+
+		if( !( ch_hr_valid && ch_spo2_valid ) || ( n_heart_rate > 180 || n_heart_rate < 30 ) ) {
+			continue;
+		}
+	}
+
+	maxim_heart_rate_and_oxygen_saturation( aun_ir_buffer, n_ir_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid );
+}
+
+void prepare_heart_rate_sensor() {
+	uint32_t un_min, un_max, un_prev_data; // variables to calculate the on-board LED brightness that reflects the heartbeats
+	int32_t	 i;
+	float	 f_temp;
+
+	un_min = 0x3FFFF;
+	un_max = 0;
+
+	while( collected_hr_samples < 100 ) {
+		continue; // Wait for 100 samples to be collected
+	}
+
+	maxim_heart_rate_and_oxygen_saturation( aun_ir_buffer, hr_ir_red_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid );
+
+	ready_for_hr = true;
 }
 
 /**
