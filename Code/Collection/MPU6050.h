@@ -50,11 +50,11 @@ THE SOFTWARE.
 #ifdef __AVR__
 	#include <avr/pgmspace.h>
 #else
-	#define PROGMEM /* empty */
-	// #define pgm_read_byte( x )	( *( x ) )
-	// #define pgm_read_word( x )	( *( x ) )
-	// #define pgm_read_float( x ) ( *( x ) )
-	// #define PSTR( STR )			STR
+	#define PROGMEM				   /* empty */
+	#define pgm_read_byte( addr )  ( *( const unsigned char * ) ( addr ) )
+	#define pgm_read_word( addr )  ( *( const unsigned short * ) ( addr ) )
+	#define pgm_read_float( addr ) ( *( const float * ) ( addr ) )
+	#define PSTR( STR )			   STR
 #endif
 
 #define MPU6050_ADDRESS_AD0_LOW	 0x68 // address pin low (GND), default for InvenSense evaluation board
