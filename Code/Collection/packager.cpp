@@ -149,7 +149,11 @@ void ActionTracer::Packager::_send_packet() {
 #ifdef ON_PI
 	if( _save ) {
 	#ifdef SEND_INT
-		fprintf( _recording, "%8d,%7d,%3i,%3i,%3i,%3i:%3i,%3i,%3i,%3i:%3i,%3i,%3i,%3i\n", millis() - _recording_start_time, _count, _package[0], _package[1], _package[2], _package[3], _package[4], _package[5], _package[6], _package[7], _package[8], _package[9], _package[10], _package[11] );
+		fprintf( _recording, "%8d,%7d" millis() - _recording_start_time );
+		for( int8_t cc = 0; cc < _number_of_devices * 4; cc++ ) {
+			fprintf( _recording, ",%4i", _package[cc] );
+		}
+		fprintf( _recording, "\n" );
 	#else
 		fprintf( _recording, "%8i,%7i,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
 	#endif
@@ -157,7 +161,11 @@ void ActionTracer::Packager::_send_packet() {
 #endif
 
 #ifdef SEND_INT
-	debugPrint( "%8d,%7d,%3i,%3i,%3i,%3i:%3i,%3i,%3i,%3i:%3i,%3i,%3i,%3i\n", millis() - _recording_start_time, _count, _package[0], _package[1], _package[2], _package[3], _package[4], _package[5], _package[6], _package[7], _package[8], _package[9], _package[10], _package[11] );
+	debugPrint( "%8d,%7d" millis() - _recording_start_time );
+	for( int8_t cc = 0; cc < _number_of_devices * 4; cc++ ) {
+		debugPrint( ",%4i", _package[cc] );
+	}
+	debugPrint( "\n" );
 #else
 	debugPrint( "%8i,%7i,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
 #endif
