@@ -149,7 +149,7 @@ void ActionTracer::Packager::_send_packet() {
 #ifdef ON_PI
 	if( _save ) {
 	#ifdef SEND_INT
-		fprintf( _recording, "%8d,%7d" millis() - _recording_start_time );
+		fprintf( _recording, "%8d,%7d", millis() - _recording_start_time, _count );
 		for( int8_t cc = 0; cc < _number_of_devices * 4; cc++ ) {
 			fprintf( _recording, ",%4i", _package[cc] );
 		}
@@ -161,7 +161,7 @@ void ActionTracer::Packager::_send_packet() {
 #endif
 
 #ifdef SEND_INT
-	debugPrint( "%8d,%7d" millis() - _recording_start_time );
+	debugPrint( "%8d,%7d", millis() - _recording_start_time, _count );
 	for( int8_t cc = 0; cc < _number_of_devices * 4; cc++ ) {
 		debugPrint( ",%4i", _package[cc] );
 	}
