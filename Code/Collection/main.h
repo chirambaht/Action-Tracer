@@ -41,6 +41,8 @@ uint32_t	  un_max				  = 0;
 uint32_t	  un_prev_data			  = 0;
 const uint8_t hr_ir_red_buffer_length = 100;
 
+uint8_t data_buffer[512];
+
 bool ready_for_hr = false;
 bool i2c_busy	  = false;
 
