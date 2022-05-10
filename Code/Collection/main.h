@@ -44,8 +44,9 @@ const uint8_t hr_ir_red_buffer_length = 100;
 
 uint8_t data_buffer[512];
 
-bool ready_for_hr = false;
-bool i2c_busy	  = false;
+bool ready_for_hr	= false;
+bool i2c_busy		= false;
+bool i2c_hr_waiting = false;
 
 uint32_t collected_hr_samples = 0;
 

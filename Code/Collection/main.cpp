@@ -109,6 +109,11 @@ void loop() {
 		communicator->load_packet( data_package, 4 );
 	}
 
+	if( i2c_hr_waiting ) {
+		read_heart_rate_fifo();
+		i2c_hr_waiting = false;
+	}
+
 	data_package[0] = n_heart_rate;
 	data_package[1] = n_spo2;
 	data_package[2] = ch_hr_valid;
@@ -125,7 +130,12 @@ void read_heart_rate_fifo() {
 		continue;
 	}
 
+	if( i2c_hr_waiting ) {
+		i2c_hr_waiting = false;
+	}
+
 	maxim_max30102_read_fifo( ( aun_red_buffer + collected_hr_samples ), ( aun_ir_buffer + collected_hr_samples ) ); // read from MAX30102 FIFO
+	maxim_max30102_read_reg( REG_INTR_STATUS_1, &uch_dummy );														 // Reads/clears the interrupt status register
 
 	if( un_min > aun_red_buffer[collected_hr_samples] )
 		un_min = aun_red_buffer[collected_hr_samples]; // update signal min
