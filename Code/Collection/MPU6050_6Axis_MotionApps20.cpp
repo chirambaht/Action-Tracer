@@ -57,7 +57,7 @@ THE SOFTWARE.
 		#define __PGMSPACE_H_ 1
 		#include <inttypes.h>
 
-		#define PROGMEM
+		// #define PROGMEM
 		#define PGM_P		const char *
 		#define PSTR( str ) ( str )
 		#define F( x )		x

@@ -50,11 +50,11 @@ THE SOFTWARE.
 #ifdef __AVR__
 	#include <avr/pgmspace.h>
 #else
-	#define PROGMEM				/* empty */
-	#define pgm_read_byte( x )	( *( x ) )
-	#define pgm_read_word( x )	( *( x ) )
-	#define pgm_read_float( x ) ( *( x ) )
-	#define PSTR( STR )			STR
+	#define PROGMEM /* empty */
+	// #define pgm_read_byte( x )	( *( x ) )
+	// #define pgm_read_word( x )	( *( x ) )
+	// #define pgm_read_float( x ) ( *( x ) )
+	// #define PSTR( STR )			STR
 #endif
 
 #define MPU6050_ADDRESS_AD0_LOW	 0x68 // address pin low (GND), default for InvenSense evaluation board
@@ -843,8 +843,8 @@ class MPU6050 {
 	int32_t dmpDecodeTemperature( int8_t tempReg );
 
 	// Register callbacks after a packet of FIFO data is processed
-	//uint8_t dmpRegisterFIFORateProcess(inv_obj_func func, int16_t priority);
-	//uint8_t dmpUnregisterFIFORateProcess(inv_obj_func func);
+	// uint8_t dmpRegisterFIFORateProcess(inv_obj_func func, int16_t priority);
+	// uint8_t dmpUnregisterFIFORateProcess(inv_obj_func func);
 	uint8_t dmpRunFIFORateProcesses();
 
 	// Setup FIFO for various output
@@ -945,8 +945,8 @@ class MPU6050 {
 	int32_t dmpDecodeTemperature( int8_t tempReg );
 
 	// Register callbacks after a packet of FIFO data is processed
-	//uint8_t dmpRegisterFIFORateProcess(inv_obj_func func, int16_t priority);
-	//uint8_t dmpUnregisterFIFORateProcess(inv_obj_func func);
+	// uint8_t dmpRegisterFIFORateProcess(inv_obj_func func, int16_t priority);
+	// uint8_t dmpUnregisterFIFORateProcess(inv_obj_func func);
 	uint8_t dmpRunFIFORateProcesses();
 
 	// Setup FIFO for various output
