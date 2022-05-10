@@ -2,8 +2,8 @@ all: collector
 
 HOST_ADDRESS = "192.168.1.101"
 
-HDRS = helper_3dmath.h I2Cdev.h MPU6050.h packager.h tracer_point.h main.h
-OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o main.o
+HDRS = helper_3dmath.h I2Cdev.h MPU6050.h packager.h tracer_point.h main.h hr_algorithm.h  max30102.h
+OBJS = I2Cdev.o MPU6050.o hr_algorithm.o max30102.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o main.o 
 
 EXE = collector
 ACTISH = actish
