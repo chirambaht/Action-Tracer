@@ -71,7 +71,7 @@ void setup() {
 #ifdef ON_PI
 	// Adds an interrupt to across ACT 4 for the heart rate sensor to read the FIFO
 
-	int resp = wiringPiISR( 12, INT_EDGE_FALLING, read_heart_rate_fifo );
+	int resp = wiringPiISR( ACT_DEVICE_4, INT_EDGE_FALLING, read_heart_rate_fifo );
 	if( resp < 0 ) {
 		debugPrint( "Error. Got code %d\n", resp ); // ISR failed to init.
 	}
@@ -79,11 +79,20 @@ void setup() {
 
 	debugPrint( "Waiting for HR pre-samples" );
 	while( collected_hr_samples < 100 ) {
+		if( collected_hr_samples == 50 ) {
+			debugPrint( ".... " );
+		} else if( collected_hr_samples == 75 ) {
+			debugPrint( ".... " );
+		} else if( collected_hr_samples == 99 ) {
+			debugPrint( "...." );
+		}
 		continue;
 	}
+	debugPrint( "\nDone collecting first samples.\n" );
 }
 
 void exit_handler( int s ) {
+	debugPrint( "\n" );
 	if( communicator->save_status() )
 		communicator->close_file();
 	communicator->close_socket();
@@ -125,9 +134,9 @@ void loop() {
 }
 
 void read_heart_rate_fifo() {
-	debugPrint( "Reading HR FIFO\n" );
 	while( i2c_busy ) {
-		continue;
+		i2c_hr_waiting = true;
+		return;
 	}
 
 	if( i2c_hr_waiting ) {
