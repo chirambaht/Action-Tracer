@@ -53,7 +53,6 @@ uint32_t collected_hr_samples = 0;
 void setup();
 void loop();
 void exit_handler( int s );
-void prepare_heart_rate_sensor();
 void read_heart_rate_fifo();
 // namespace ActionTracer
 

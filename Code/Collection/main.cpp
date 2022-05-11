@@ -71,7 +71,7 @@ void setup() {
 #ifdef ON_PI
 	// Adds an interrupt to across ACT 4 for the heart rate sensor to read the FIFO
 
-	int resp = wiringPiISR( ACT_DEVICE_4, INT_EDGE_FALLING, read_heart_rate_fifo );
+	int resp = wiringPiISR( ACT_DEVICE_4, INT_EDGE_RISING, read_heart_rate_fifo );
 	if( resp < 0 ) {
 		debugPrint( "Error. Got code %d\n", resp ); // ISR failed to init.
 	}
@@ -184,23 +184,6 @@ void read_heart_rate_fifo() {
 	}
 
 	maxim_heart_rate_and_oxygen_saturation( aun_ir_buffer, n_ir_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid );
-}
-
-void prepare_heart_rate_sensor() {
-	uint32_t un_min, un_max, un_prev_data; // variables to calculate the on-board LED brightness that reflects the heartbeats
-	int32_t	 i;
-	float	 f_temp;
-
-	un_min = 0x3FFFF;
-	un_max = 0;
-
-	while( collected_hr_samples < 100 ) {
-		continue; // Wait for 100 samples to be collected
-	}
-
-	maxim_heart_rate_and_oxygen_saturation( aun_ir_buffer, hr_ir_red_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid );
-
-	ready_for_hr = true;
 }
 
 /**
