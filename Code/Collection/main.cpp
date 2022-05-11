@@ -71,7 +71,7 @@ void setup() {
 #ifdef ON_PI
 	// Adds an interrupt to across ACT 4 for the heart rate sensor to read the FIFO
 
-	int resp = wiringPiISR( ACT_DEVICE_4, INT_EDGE_RISING, read_heart_rate_fifo );
+	int resp = wiringPiISR( ACT_DEVICE_4, INT_EDGE_BOTH, read_heart_rate_fifo );
 	if( resp < 0 ) {
 		debugPrint( "Error. Got code %d\n", resp ); // ISR failed to init.
 	}
