@@ -150,7 +150,7 @@ void ActionTracer::Packager::_send_packet() {
 	if( _save ) {
 	#ifdef SEND_INT
 		fprintf( _recording, "%8d,%7d", millis() - _recording_start_time, _count );
-		for( int8_t cc = 0; cc < _number_of_devices * 4; cc++ ) {
+		for( size_t cc = 0; cc < _number_of_devices * 4; cc++ ) {
 			fprintf( _recording, ",%4i", _package[cc] );
 		}
 		fprintf( _recording, "\n" );
@@ -162,7 +162,7 @@ void ActionTracer::Packager::_send_packet() {
 
 #ifdef SEND_INT
 	debugPrint( "%8d,%7d", millis() - _recording_start_time, _count );
-	for( int8_t cc = 0; cc < _number_of_devices * 4; cc++ ) {
+	for( size_t cc = 0; cc < _number_of_devices * 4; cc++ ) {
 		debugPrint( ",%4i", _package[cc] );
 	}
 	debugPrint( "\n" );
@@ -190,14 +190,43 @@ void ActionTracer::Packager::_send_packet() {
  * @return 0 if successful.
  */
 int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
+#ifdef SEND_INT
+	_package_pointer = ( _package[1] * 4 ) + PACKAGE_DATA_START;
+#endif
 	for( int i = 0; i < length; i++ ) {
 #ifdef SEND_INT
 		_package[_package_pointer++] = _float_to_int( data[i] );
-		if( _package_pointer >= length * _number_of_devices ) {
-			_package_pointer = 1;
-		}
 #else
 		_package += _float_to_string( data[i], 6 );
+		if( i != length - 1 ) {
+			_package += ",";
+		}
+#endif
+	}
+
+#ifndef SEND_INT
+	_package += ":";
+#else
+	_package[1] += 1; // Increase the number of device added
+#endif
+
+	return 0;
+}
+/**
+ * This is used to add data to a package that is going to be sent. It takes an array of floats.
+ * @param *data A reference to an array of integers
+ * @param length number of floats in array to convert. Defaults to 4
+ * @return 0 if successful.
+ */
+int ActionTracer::Packager::load_hr_packet( uint16_t *data, uint8_t length = 4 ) {
+#ifdef SEND_INT
+	_package_pointer = PACKAGE_LENGTH - 4;
+#endif
+	for( int i = 0; i < length; i++ ) {
+#ifdef SEND_INT
+		_package[_package_pointer++] = data[i];
+#else
+		_package += std::to_string( data[i] );
 		if( i != length - 1 ) {
 			_package += ",";
 		}

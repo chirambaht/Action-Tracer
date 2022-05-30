@@ -80,10 +80,10 @@ void maxim_heart_rate_and_oxygen_saturation( uint32_t *pun_ir_buffer, int32_t n_
  * \retval       None
  */
 {
-	uint32_t un_ir_mean, un_only_once;
+	uint32_t un_ir_mean;
 	int32_t	 k, n_i_ratio_count;
-	int32_t	 i, s, m, n_exact_ir_valley_locs_count, n_middle_idx;
-	int32_t	 n_th1, n_npks, n_c_min;
+	int32_t	 i, n_exact_ir_valley_locs_count, n_middle_idx;
+	int32_t	 n_th1, n_npks;
 	int32_t	 an_ir_valley_locs[15];
 	int32_t	 n_peak_interval_sum;
 

@@ -144,8 +144,7 @@ bool maxim_max30102_read_fifo( uint32_t *pun_red_led, uint32_t *pun_ir_led )
  * \retval       true on success
  */
 {
-	uint32_t un_temp;
-	uint8_t	 uch_temp;
+	uint8_t uch_temp;
 	*pun_ir_led	 = 0;
 	*pun_red_led = 0;
 	maxim_max30102_read_reg( REG_INTR_STATUS_1, &uch_temp );

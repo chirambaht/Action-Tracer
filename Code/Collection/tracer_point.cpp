@@ -92,6 +92,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
 }
+
 /**
  * @brief Construct a new Action Tracer:: TracePoint::Trace Point object.
  *
@@ -109,11 +110,13 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 #ifdef ON_PI
 	pinMode( _pin_number, OUTPUT );
 #endif
+
 	_device_interrupt_flag = false;
 
 	debugPrint( "Initializing %s...\n", _device_name.c_str() );
 
 	this->_select_me();
+
 	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
 
 	_device->initialize();
@@ -149,7 +152,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	debugPrint( "Init variable dump\n" );
 
-	debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
+	debugPrint( "\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
 }
 
 /**
@@ -194,48 +197,43 @@ std::string ActionTracer::TracePoint::identify() {
  */
 void ActionTracer::TracePoint::print_last_data_packet() {
 #ifdef GET_DATA_QUATERNION
-
 	debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
 #endif
 
 #ifdef GET_DATA_EULER
-
 	debugPrint( "Output data type: Euler\nLast packet was: %5f, %5f, %5f\n", _euler_packet[0], _euler_packet[1], _euler_packet[2] );
 #endif
 
 #ifdef GET_DATA_ACCELEROMETER
-
 	debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
 #endif
 
 #ifdef GET_DATA_GYROSCOPE
-
 	debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _gyroscope_float_packet[0], _gyroscope_float_packet[1], _gyroscope_float_packet[2] );
 #endif
 
 #ifdef GET_DATA_YAWPITCHROLL
-
 	debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
 #endif
 }
+
 /**
  * @brief Obtain the data from the sensor. Collects the FIFO packet and extracts the needed data.
  *
  */
 void ActionTracer::TracePoint::get_data() {
-	this->_select_me();
-
 	if( !_dmp_ready ) {
 		debugPrint( "DMP not initialised\n" );
 		this->_deselect_me();
 		return;
 	}
 
+	this->_select_me();
+
 	_device_interrupt_status = _device->getIntStatus();
 
 	// does the FIFO have data in it?
 	if( ( _device_interrupt_status & 0x02 ) < 1 ) {
-		// debugPrint( "Data not ready\n" );
 		this->_deselect_me();
 		return;
 	}

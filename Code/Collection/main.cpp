@@ -1,7 +1,6 @@
 // This is the main file that will be used to run the program for data
 // collection from the 3 IMU's and send them to the server as is necessary.
-#define DEBUG
-#define ARRAY_SOLUTION
+
 #include "main.h"
 
 #include "debug_printer.h"
@@ -70,7 +69,6 @@ void setup() {
 
 #ifdef ON_PI
 	// Adds an interrupt to across ACT 4 for the heart rate sensor to read the FIFO
-
 	int resp = wiringPiISR( ACT_DEVICE_4, INT_EDGE_BOTH, read_heart_rate_fifo );
 	if( resp < 0 ) {
 		debugPrint( "Error. Got code %d\n", resp ); // ISR failed to init.
@@ -139,12 +137,12 @@ void read_heart_rate_fifo() {
 		return;
 	}
 
+	maxim_max30102_read_fifo( ( aun_red_buffer + collected_hr_samples ), ( aun_ir_buffer + collected_hr_samples ) ); // read from MAX30102 FIFO
+	maxim_max30102_read_reg( REG_INTR_STATUS_1, &uch_dummy );														 // Reads/clears the interrupt status register
+
 	if( i2c_hr_waiting ) {
 		i2c_hr_waiting = false;
 	}
-
-	maxim_max30102_read_fifo( ( aun_red_buffer + collected_hr_samples ), ( aun_ir_buffer + collected_hr_samples ) ); // read from MAX30102 FIFO
-	maxim_max30102_read_reg( REG_INTR_STATUS_1, &uch_dummy );														 // Reads/clears the interrupt status register
 
 	if( un_min > aun_red_buffer[collected_hr_samples] )
 		un_min = aun_red_buffer[collected_hr_samples]; // update signal min

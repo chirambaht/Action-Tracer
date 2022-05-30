@@ -83,8 +83,8 @@ const uint8_t uch_spo2_table[184] = { 95, 95, 95, 96, 96, 96, 97, 97, 97, 97, 97
 	28, 27, 26, 25, 23, 22, 21, 20, 19, 17, 16, 15, 14, 12, 11, 10, 9, 7, 6, 5,
 	3, 2, 1 };
 
-static int32_t an_x[BUFFER_SIZE]; // ir
-static int32_t an_y[BUFFER_SIZE]; // red
+// static int32_t an_x[BUFFER_SIZE]; // ir
+// static int32_t an_y[BUFFER_SIZE]; // red
 
 void maxim_heart_rate_and_oxygen_saturation( uint32_t *pun_ir_buffer, int32_t n_ir_buffer_length, uint32_t *pun_red_buffer, int32_t *pn_spo2, int8_t *pch_spo2_valid, int32_t *pn_heart_rate, int8_t *pch_hr_valid );
 void maxim_find_peaks( int32_t *pn_locs, int32_t *n_npks, int32_t *pn_x, int32_t n_size, int32_t n_min_height, int32_t n_min_distance, int32_t n_max_num );
