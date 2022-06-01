@@ -9,18 +9,7 @@
 	#include <cxxopts.hpp>
 #endif
 
-// #include <dirent.h> // directory searcher
-// #include <filesystem> //
-// #include <fstream>
-// #include <iostream>
-// #include <math.h>
 #include <signal.h>
-// #include <stdint.h>
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <string.h>
-// #include <sys/stat.h>
-// #include <unistd.h>
 
 #ifdef ON_PI
 	#include <wiringPi.h>
@@ -55,8 +44,7 @@ void setup() {
 	communicator->init_tcp(); // Will break here if it doesn't find a TCP socket available
 
 	for( size_t i = 0; i < _sensors; i++ ) {
-		body_sensor[i] = new TracePoint( "", get_pi_location( i + 1 ) );
-		// body_sensor[i] = new TracePoint( "", get_pi_location( i ) );
+		body_sensor[i] = new TracePoint( "", get_pi_location( i + 1 ) ); // offset by 1 is to ensure we are starting at ACT_DEVICE_1
 	}
 }
 
@@ -117,6 +105,7 @@ int main( int argc, char const *argv[] ) {
 		// TODO: Read CSV file for parameters for each item
 	}
 #else
+
 	#ifndef SEND_ADDRESS
 	// Read from setup.csv
 	std::ifstream infile( "setup.csv" );
