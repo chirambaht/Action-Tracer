@@ -9,18 +9,18 @@
 	#include <cxxopts.hpp>
 #endif
 
-#include <dirent.h>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <math.h>
+// #include <dirent.h> // directory searcher
+// #include <filesystem> //
+// #include <fstream>
+// #include <iostream>
+// #include <math.h>
 #include <signal.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
+// #include <stdint.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <string.h>
+// #include <sys/stat.h>
+// #include <unistd.h>
 
 #ifdef ON_PI
 	#include <wiringPi.h>
