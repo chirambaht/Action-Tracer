@@ -21,6 +21,27 @@ using namespace ActionTracer;
 cxxopts::Options options( "Action Tracer", "This program runs a given number of MPU6050 IMU's and sends the data packets via UDP." );
 #endif
 
+#ifdef ON_PI
+PI_THREAD( net_worker ) {
+	communicator					 = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
+	communicator->_number_of_devices = _sensors;
+	communicator->save_enable( true );
+	communicator->init_tcp();
+
+	for( ;; ) {
+		while( !send_ready ) {
+			continue;
+		}
+		// Send packet
+		communicator->send_packet();
+
+		piLock( 1 );
+		send_ready = false;
+		piUnlock( 1 );
+	}
+}
+#endif
+
 /**
  * @brief Initialise all the devices in the network. Store them in objects in main.h
  * @return 0 if success
@@ -38,10 +59,15 @@ void setup() {
 
 	sigaction( SIGINT, &sigIntHandler, NULL );
 
-	communicator					 = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
-	communicator->_number_of_devices = _sensors;
-	communicator->save_enable( true );
-	communicator->init_tcp(); // Will break here if it doesn't find a TCP socket available
+	// Create thread to work on networking with the packager
+
+#ifdef ON_PI
+	// Will break here if it doesn't find a TCP socket available
+	if( piThreadCreate( net_worker ) != 0 ) {
+		debugPrint( "Failed to create network worker thread\n" );
+		exit( EXIT_FAILURE );
+	}
+#endif
 
 	for( size_t i = 0; i < _sensors; i++ ) {
 		body_sensor[i] = new TracePoint( "", get_pi_location( i + 1 ) ); // offset by 1 is to ensure we are starting at ACT_DEVICE_1
@@ -71,9 +97,11 @@ void loop() {
 		}
 		communicator->load_packet( data_package, 4 );
 	}
-
-	// Send packet
-	communicator->send_packet();
+#ifdef ON_PI
+	piLock( 1 );
+	send_ready = true;
+	piUnlock( 1 );
+#endif
 }
 
 /**

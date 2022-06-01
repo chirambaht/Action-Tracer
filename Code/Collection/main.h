@@ -27,6 +27,8 @@ size_t		_sensors		= 0;		   // Number of sensors being used
 std::string _address		= "127.0.0.1"; // Address to send the data to for the communicator
 float		data_package[4] = { 0 };	   //
 
+bool send_ready = false;
+
 uint8_t data_buffer[512];
 
 void setup();

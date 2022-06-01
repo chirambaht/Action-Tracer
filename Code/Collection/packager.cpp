@@ -123,8 +123,7 @@ __int16_t ActionTracer::Packager::_float_to_int( float value ) {
  * @return 0 if successful.
  */
 int ActionTracer::Packager::send_packet() {
-	std::thread offloaded_send( &ActionTracer::Packager::_send_packet, this );
-	offloaded_send.detach();
+	ActionTracer::Packager::_send_packet();
 	return 0;
 }
 
