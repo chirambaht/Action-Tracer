@@ -26,15 +26,6 @@ namespace ActionTracer {
 		std::string _dest;
 
 #ifdef SEND_INT
-		// Package header
-		// d = DATA_ELEMENTS
-		// [   0   ] [   1   ] [     2      ] [  3 - (d - 4)  ] [ (d - 4) - d ]
-		//   Count     n_IMU     HR_present        IMU_data         HR_data
-		// Count    	- number of packets that have been sent (or attempted)
-		// N_IMU    	- number of IMUs in use
-		// HR_present  	- is there a heart rate device in use
-		// IMU_data 	- q, x, y, z
-		// HR_data  	- hr, sp02, hr_valid, sp02_valid
 		__int16_t _package[PACKAGE_LENGTH] = { 0 }; // For a start this will be a 4 (data points) * 4 (devices) integer
 
 		size_t _package_pointer = PACKAGE_DATA_START;

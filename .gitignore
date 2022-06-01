@@ -42,3 +42,6 @@ Code/Collection/pc_runner.cpp
 *.act
 Code/Collection/quixker.py
 Code/Collection/quicker.py
+Code/Collection/i2c_aid.py
+Code/Collection/assist_network.py
+Code/Collection/assist_i2c_aid.py
