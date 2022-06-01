@@ -27,32 +27,11 @@ size_t		_sensors		= 0;		   // Number of sensors being used
 std::string _address		= "127.0.0.1"; // Address to send the data to for the communicator
 float		data_package[4] = { 0 };	   //
 
-// Heart rate sensor variables
-uint32_t	  aun_ir_buffer[100];  // infrared LED sensor data
-uint32_t	  aun_red_buffer[100]; // red LED sensor data
-int32_t		  n_ir_buffer_length;  // data length
-int32_t		  n_spo2;			   // SPO2 value
-int8_t		  ch_spo2_valid;	   // indicator to show if the SPO2 calculation is valid
-int32_t		  n_heart_rate;		   // heart rate value
-int8_t		  ch_hr_valid;		   // indicator to show if the heart rate calculation is valid
-uint8_t		  uch_dummy;
-uint32_t	  un_min				  = 0x3FFFF;
-uint32_t	  un_max				  = 0;
-uint32_t	  un_prev_data			  = 0;
-const uint8_t hr_ir_red_buffer_length = 100;
-
 uint8_t data_buffer[512];
-
-bool ready_for_hr	= false;
-bool i2c_busy		= false;
-bool i2c_hr_waiting = false;
-
-uint32_t collected_hr_samples = 0;
 
 void setup();
 void loop();
 void exit_handler( int s );
-void read_heart_rate_fifo();
 // namespace ActionTracer
 
 #endif
