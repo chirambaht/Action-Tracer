@@ -4,7 +4,6 @@
 #include "main.h"
 
 #include "debug_printer.h"
-#include "hr_algorithm.h"
 
 #ifdef TAKE_ARGUMENTS
 	#include <cxxopts.hpp>
@@ -21,9 +20,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-// #include <sys/time.h>
-// #include <sys/timeb.h>
-// #include <thread>
 #include <unistd.h>
 
 #ifdef ON_PI
@@ -62,10 +58,6 @@ void setup() {
 		body_sensor[i] = new TracePoint( "", get_pi_location( i + 1 ) );
 		// body_sensor[i] = new TracePoint( "", get_pi_location( i ) );
 	}
-
-	maxim_max30102_reset();
-	maxim_max30102_read_reg( REG_INTR_STATUS_1, &uch_dummy ); // Reads/clears the interrupt status register
-	maxim_max30102_init();									  // initialize the MAX30102
 
 #ifdef ON_PI
 	// Adds an interrupt to across ACT 4 for the heart rate sensor to read the FIFO
@@ -137,9 +129,6 @@ void read_heart_rate_fifo() {
 		return;
 	}
 
-	maxim_max30102_read_fifo( ( aun_red_buffer + collected_hr_samples ), ( aun_ir_buffer + collected_hr_samples ) ); // read from MAX30102 FIFO
-	maxim_max30102_read_reg( REG_INTR_STATUS_1, &uch_dummy );														 // Reads/clears the interrupt status register
-
 	if( i2c_hr_waiting ) {
 		i2c_hr_waiting = false;
 	}
@@ -180,8 +169,6 @@ void read_heart_rate_fifo() {
 			continue;
 		}
 	}
-
-	maxim_heart_rate_and_oxygen_saturation( aun_ir_buffer, n_ir_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid );
 }
 
 /**

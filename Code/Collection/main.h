@@ -9,7 +9,6 @@
 #define MAX_SENSORS 20	 // Number of points track on the body.
 
 #include "action_pi.hpp"
-#include "max30102.h"
 #include "packager.h"
 #include "tracer_point.h"
 
