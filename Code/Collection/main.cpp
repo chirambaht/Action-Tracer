@@ -32,11 +32,13 @@ PI_THREAD( net_worker ) {
 		while( !send_ready ) {
 			continue;
 		}
-		// Send packet
-		communicator->send_packet();
 
 		piLock( 1 );
+
+		// Send packet
+		communicator->send_packet();
 		send_ready = false;
+
 		piUnlock( 1 );
 	}
 }
