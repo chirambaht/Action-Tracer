@@ -193,7 +193,7 @@ void ActionTracer::Packager::_send_packet() {
  */
 int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 #ifdef SEND_INT
-	_package_pointer = ( _package[1] * 4 ) + PACKAGE_DATA_START;
+	_package_pointer = ( _package[2] * 4 ) + PACKAGE_DATA_START;
 #endif
 	for( int i = 0; i < length; i++ ) {
 #ifdef SEND_INT
