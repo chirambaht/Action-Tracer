@@ -36,6 +36,8 @@ uint8_t data_buffer[512];
 void setup();
 void loop();
 void exit_handler( int s );
+
+long loop_start = 0;
 // namespace ActionTracer
 
 #endif

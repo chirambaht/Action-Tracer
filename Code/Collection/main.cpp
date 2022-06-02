@@ -104,7 +104,9 @@ void exit_handler( int s ) {
  */
 void loop() {
 	float *body;
-
+#ifdef ON_PI
+	loop_start = millis();
+#endif
 	for( size_t i = 0; i < _sensors; i++ ) {
 		body = body_sensor[i]->read_data( 1 );
 		for( size_t j = 0; j < 4; j++ ) {
@@ -116,6 +118,11 @@ void loop() {
 #ifdef ON_PI
 	piLock( 1 );
 	send_ready = true;
+
+	// Wait for 5 milliseconds before continuing
+	while( millis() - loop_start < 5 ) {
+		continue;
+	}
 	piUnlock( 1 );
 #endif
 }
