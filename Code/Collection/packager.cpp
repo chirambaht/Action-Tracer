@@ -44,8 +44,8 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
 void ActionTracer::Packager::init_tcp() {
 	_descriptor = socket( AF_INET, SOCK_STREAM, 0 );
 	int _opt	= 1;
-	if( _descriptor == 0 ) {
-		debugPrint( "Error" );
+	if( _descriptor == -1 ) {
+		debugPrint( "Error: %s\n", strerror( errno ) );
 	}
 
 	// This helps in manipulating options for the socket referred by the file descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as: “address already in use”.
@@ -72,8 +72,8 @@ void ActionTracer::Packager::init_tcp() {
  */
 void ActionTracer::Packager::init_udp() {
 	_descriptor = socket( AF_INET, SOCK_DGRAM, 0 );
-	if( _descriptor == 0 ) {
-		debugPrint( "Error" );
+	if( _descriptor == -1 ) {
+		debugPrint( "Error: %s\n", strerror( errno ) );
 	}
 
 	_server.sin_addr.s_addr = inet_addr( _dest.c_str() ); // Destination address
