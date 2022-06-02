@@ -160,7 +160,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
  */
 void ActionTracer::TracePoint::_select_me() {
 #ifdef ON_PI
-	digitalWrite( _pin_number, LOW );
+	digitalWrite( _pin_number, HIGH );
 #endif
 }
 
@@ -169,7 +169,7 @@ void ActionTracer::TracePoint::_select_me() {
  */
 void ActionTracer::TracePoint::_deselect_me() {
 #ifdef ON_PI
-	digitalWrite( _pin_number, HIGH );
+	digitalWrite( _pin_number, LOW );
 #endif
 }
 
