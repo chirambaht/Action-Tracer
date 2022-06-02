@@ -13,7 +13,7 @@
 #define SEND_INT
 
 #ifndef DEVICES_IN_USE
-	#define DEVICES_IN_USE	   4 // 3 IMUs and 1 HR Sensor
+	#define DEVICES_IN_USE	   3 // 3 IMUs
 	#define DATA_ELEMENTS	   DEVICES_IN_USE * 4
 	#define PACKAGE_LENGTH	   DATA_ELEMENTS + 3
 	#define PACKAGE_DATA_START 3 // 3 is the number of elements in the header
