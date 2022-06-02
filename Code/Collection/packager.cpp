@@ -42,11 +42,14 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
  *
  */
 void ActionTracer::Packager::init_tcp() {
+	debugPrint( "Creating network socket via TCP on port %d, to IP:%s...\n", _port, _dest.c_str() );
 	_descriptor = socket( AF_INET, SOCK_STREAM, 0 );
-	int _opt	= 1;
+
 	if( _descriptor == -1 ) {
 		debugPrint( "Error: %s\n", strerror( errno ) );
 	}
+
+	int _opt = 1;
 
 	// This helps in manipulating options for the socket referred by the file descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as: “address already in use”.
 	if( setsockopt( _descriptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
@@ -58,12 +61,13 @@ void ActionTracer::Packager::init_tcp() {
 	_server.sin_family		= AF_INET;
 	_server.sin_port		= htons( _port ); // Destination port
 
-	if( connect( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
+	int con_res = connect( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) );
+
+	if( con_res < 0 ) {
 		perror( "connection failed" );
 		exit( EXIT_FAILURE );
 	}
-
-	debugPrint( "Creating network socket via TCP on port %d, to IP:%s...\n", _port, _dest.c_str() );
+	debugPrint( "TCP socket connected with descriptor: %d\n", _descriptor );
 }
 
 /**
@@ -71,23 +75,24 @@ void ActionTracer::Packager::init_tcp() {
  *
  */
 void ActionTracer::Packager::init_udp() {
+	debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
+	_server.sin_addr.s_addr = inet_addr( _dest.c_str() ); // Destination address
+	_server.sin_family		= AF_INET;
+	_server.sin_port		= htons( _port ); // Destination port
+
 	_descriptor = socket( AF_INET, SOCK_DGRAM, 0 );
 	if( _descriptor == -1 ) {
 		debugPrint( "Error: %s\n", strerror( errno ) );
 	}
 
-	_server.sin_addr.s_addr = inet_addr( _dest.c_str() ); // Destination address
-	_server.sin_family		= AF_INET;
-	_server.sin_port		= htons( _port ); // Destination port
-
 	// Connect to remote server
-	if( connect( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
-		debugPrint( "connect error\n" );
+	int con_res = connect( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) );
+	if( ( con_res ) < 0 ) {
+		debugPrint( "Error: %s\n", strerror( errno ) );
 	} else {
 		debugPrint( "UDP client ready!\n" );
 	}
-
-	debugPrint( "Creating network socket via UDP on port %d, to IP:%s...\n", _port, _dest.c_str() );
+	debugPrint( "Connected\n" );
 }
 
 /**
