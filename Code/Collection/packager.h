@@ -11,13 +11,21 @@
 #include <thread>
 
 #define SEND_INT
+
 #ifndef DEVICES_IN_USE
-	#define DEVICES_IN_USE 4 // 3 IMUs and 1 HR Sensor
-	#define DATA_ELEMENTS  DEVICES_IN_USE * 4
-	// #define PACKAGE_HEADER_LENGTH 3;
-	// #define PACKAGE_LENGTH		  DATA_ELEMENTS + PACKAGE_HEADER_LENGTH
+	#define DEVICES_IN_USE	   4 // 3 IMUs and 1 HR Sensor
+	#define DATA_ELEMENTS	   DEVICES_IN_USE * 4
 	#define PACKAGE_LENGTH	   DATA_ELEMENTS + 3
-	#define PACKAGE_DATA_START 3
+	#define PACKAGE_DATA_START 3 // 3 is the number of elements in the header
+
+/*
+	|  HEADER  |           DATA           |
+	|  0 -> 2  |  3 -> DATA_ELEMENTS - 1  |
+
+	HEADER 0: Time
+	HEADER 1: Count
+	HEADER 2: Devices Connected
+*/
 #endif
 
 namespace ActionTracer {
@@ -43,6 +51,7 @@ namespace ActionTracer {
 		int32_t			   _recording_start_time = 0;
 		struct sockaddr_in _server;
 		std::thread		   sender;
+		int				   _packed = 0;
 
 	  public:
 		size_t _number_of_devices = 3;
@@ -52,7 +61,6 @@ namespace ActionTracer {
 		void init_tcp();
 		int	 send_packet();
 		int	 load_packet( float *data, uint8_t length );
-		int	 load_hr_packet( uint16_t *data, uint8_t length );
 		~Packager();
 		void save_enable( bool );
 		bool save_status();
