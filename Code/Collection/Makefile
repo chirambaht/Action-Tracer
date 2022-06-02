@@ -26,8 +26,8 @@ RATE = 4
 #   12 -->   10 
 #   13 -->   10 
 
-HDRS = helper_3dmath.h I2Cdev.h MPU6050.h action_pi.hpp packager.h tracer_point.h main.h
-OBJS = I2Cdev.o MPU6050.o action_pi.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o main.o 
+HDRS = helper_3dmath.h I2Cdev.h MPU6050.h action_pi.hpp packager.h tracer_point.h cxxopts.hpp main.h
+OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o main.o 
 
 EXE = collector
 ACTISH = actish
