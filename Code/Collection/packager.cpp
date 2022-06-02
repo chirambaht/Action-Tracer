@@ -147,6 +147,7 @@ void ActionTracer::Packager::_send_packet() {
 	if( int send_response = send( _descriptor, _package, sizeof( _package ), 0 ) < 0 ) {
 		debugPrint( "Send failed. Code %d\n", send_response );
 		debugPrint( "Error: %s\n", strerror( errno ) );
+		return;
 	}
 #else
 	if( send( _descriptor, _package.c_str(), strlen( _package.c_str() ), 0 ) < 0 ) {
