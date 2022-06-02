@@ -29,6 +29,8 @@ float		data_package[4] = { 0 };	   //
 
 bool send_ready = false;
 
+void turn_off_all_devices();
+
 uint8_t data_buffer[512];
 
 void setup();

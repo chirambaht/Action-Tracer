@@ -165,6 +165,13 @@ void ActionTracer::TracePoint::_select_me() {
 }
 
 /**
+ * @brief Deselects a given MPU6050 node. Public function to avoid issues.
+ */
+void ActionTracer::TracePoint::turn_off() {
+	_deselect_me();
+}
+
+/**
  * @brief Deselects a given MPU6050 node.
  */
 void ActionTracer::TracePoint::_deselect_me() {

@@ -42,6 +42,12 @@ PI_THREAD( net_worker ) {
 }
 #endif
 
+void turn_off_all_devices() {
+	for( size_t i = 0; i < _sensors; i++ ) {
+		body_sensor[i]->turn_off();
+	}
+}
+
 /**
  * @brief Initialise all the devices in the network. Store them in objects in main.h
  * @return 0 if success
@@ -83,6 +89,7 @@ void setup() {
 
 void exit_handler( int s ) {
 	debugPrint( "\n" );
+	turn_off_all_devices();
 	if( communicator->save_status() )
 		communicator->close_file();
 	communicator->close_socket();
