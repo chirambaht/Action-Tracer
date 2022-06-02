@@ -68,9 +68,16 @@ void setup() {
 		exit( EXIT_FAILURE );
 	}
 #endif
-
+	std::string name;
 	for( size_t i = 0; i < _sensors; i++ ) {
-		body_sensor[i] = new TracePoint( "", get_pi_location( i + 1 ) ); // offset by 1 is to ensure we are starting at ACT_DEVICE_1
+		if( i == 0 ) {
+			name = "IMU_1";
+		} else if( i == 1 ) {
+			name = "IMU_2";
+		} else if( i == 2 ) {
+			name = "IMU_3";
+		}
+		body_sensor[i] = new TracePoint( name, get_pi_location( i + 1 ) ); // offset by 1 is to ensure we are starting at ACT_DEVICE_1
 	}
 }
 
