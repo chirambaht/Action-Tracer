@@ -43,16 +43,16 @@ ActionTracer::Packager::Packager( std::string destination, int port ) {
  */
 void ActionTracer::Packager::init_tcp() {
 	debugPrint( "Creating network socket via TCP on port %d, to IP:%s...\n", _port, _dest.c_str() );
-	_descriptor = socket( AF_INET, SOCK_STREAM, 0 );
+	*_descriptor = socket( AF_INET, SOCK_STREAM, 0 );
 
-	if( _descriptor == -1 ) {
+	if( *_descriptor == -1 ) {
 		debugPrint( "Error: %s\n", strerror( errno ) );
 	}
 
 	int _opt = 1;
 
 	// This helps in manipulating options for the socket referred by the file descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as: “address already in use”.
-	if( setsockopt( _descriptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
+	if( setsockopt( *_descriptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
 		perror( "setsockopt" );
 		exit( EXIT_FAILURE );
 	}
@@ -61,13 +61,13 @@ void ActionTracer::Packager::init_tcp() {
 	_server.sin_family		= AF_INET;
 	_server.sin_port		= htons( _port ); // Destination port
 
-	int con_res = connect( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) );
+	int con_res = connect( *_descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) );
 
 	if( con_res < 0 ) {
 		perror( "connection failed" );
 		exit( EXIT_FAILURE );
 	}
-	debugPrint( "TCP socket connected with descriptor: %d\n", _descriptor );
+	debugPrint( "TCP socket connected with descriptor: %d\n", *_descriptor );
 }
 
 /**
@@ -80,13 +80,13 @@ void ActionTracer::Packager::init_udp() {
 	_server.sin_family		= AF_INET;
 	_server.sin_port		= htons( _port ); // Destination port
 
-	_descriptor = socket( AF_INET, SOCK_DGRAM, 0 );
-	if( _descriptor == -1 ) {
+	*_descriptor = socket( AF_INET, SOCK_DGRAM, 0 );
+	if( *_descriptor == -1 ) {
 		debugPrint( "Error: %s\n", strerror( errno ) );
 	}
 
 	// Connect to remote server
-	int con_res = connect( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) );
+	int con_res = connect( *_descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) );
 	if( ( con_res ) < 0 ) {
 		debugPrint( "Error: %s\n", strerror( errno ) );
 	} else {
@@ -147,7 +147,8 @@ void ActionTracer::Packager::_send_packet() {
 	_package[0] = millis() - _recording_start_time;
 	#endif
 	_package[1] = _count;
-	if( int send_response = send( _descriptor, _package, sizeof( _package ), 0 ) < 0 ) {
+	_count++;
+	if( int send_response = send( *_descriptor, _package, sizeof( _package ), 0 ) < 0 ) {
 		debugPrint( "Send failed. Code %d\n Arguments were:\n\tDescriptor: %d\n\t Package: [", send_response, _descriptor );
 		for( int arprint = 0; arprint < sizeof( _package ) / sizeof( _package[0] ); arprint++ ) {
 			debugPrint( " %d,", _package[arprint] );
@@ -156,7 +157,7 @@ void ActionTracer::Packager::_send_packet() {
 		return;
 	}
 #else
-	if( send( _descriptor, _package.c_str(), strlen( _package.c_str() ), 0 ) < 0 ) {
+	if( send( *_descriptor, _package.c_str(), strlen( _package.c_str() ), 0 ) < 0 ) {
 		debugPrint( "Send failed\n" );
 	}
 #endif
@@ -185,7 +186,6 @@ void ActionTracer::Packager::_send_packet() {
 	debugPrint( "%8i,%7i,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
 #endif
 
-	_count++;
 #ifdef SEND_INT
 	for( size_t r = PACKAGE_DATA_START; r < _number_of_devices * 4; r++ ) {
 		_package[r] = 0;
@@ -275,5 +275,6 @@ void ActionTracer::Packager::open_file() {
  * @brief Closes the socket connection.
  */
 void ActionTracer::Packager::close_socket() {
-	close( _descriptor );
+	debugPrint( "Closing socket with descriptor %d\n", _descriptor );
+	close( *_descriptor );
 }
