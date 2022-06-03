@@ -230,7 +230,7 @@ void ActionTracer::TracePoint::print_last_data_packet() {
  */
 void ActionTracer::TracePoint::get_data() {
 	if( !_dmp_ready ) {
-		debugPrint( "%d: DMP not initialised\n", _device_name.c_str() );
+		debugPrint( "%s: DMP not initialised\n", _device_name.c_str() );
 		this->_deselect_me();
 		return;
 	}
