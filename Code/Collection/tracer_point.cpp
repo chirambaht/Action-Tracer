@@ -230,7 +230,7 @@ void ActionTracer::TracePoint::print_last_data_packet() {
  */
 void ActionTracer::TracePoint::get_data() {
 	if( !_dmp_ready ) {
-		debugPrint( "DMP not initialised\n" );
+		debugPrint( "%d: DMP not initialised\n", _device_name.c_str() );
 		this->_deselect_me();
 		return;
 	}
@@ -248,7 +248,7 @@ void ActionTracer::TracePoint::get_data() {
 	_fifo_count = _device->getFIFOCount();
 
 	if( _fifo_count < _packet_size ) {
-		debugPrintln( "MPU interrupt not ready or not enough elements in FIFO\n" );
+		debugPrintln( "%s: MPU interrupt not ready or not enough elements in FIFO\n", _device_name.c_str() );
 		this->_deselect_me();
 		return;
 	}
@@ -257,7 +257,7 @@ void ActionTracer::TracePoint::get_data() {
 		// reset so we can continue cleanly
 		_device->resetFIFO();
 
-		debugPrint( "FIFO overflow!\n" );
+		debugPrint( "%s: FIFO overflow!\n", _device_name.c_str() );
 		return;
 	}
 
@@ -373,6 +373,7 @@ void ActionTracer::TracePoint::_set_device_offsets() {
 	std::ifstream infile( "pointers.csv" );
 	if( !infile.good() ) {
 		_set_default_device_offsets();
+		set = true;
 	} else {
 		// If file exists, use it to set offsets.
 		std::string	  line;
