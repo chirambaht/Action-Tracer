@@ -192,7 +192,7 @@ void ActionTracer::Packager::_send_packet() {
 #endif
 
 #ifdef SEND_INT
-	for( size_t r = PACKAGE_DATA_START; r < _number_of_devices * 4; r++ ) {
+	for( size_t r = PACKAGE_DATA_START - 1; r < _number_of_devices * 4; r++ ) {
 		_package[r] = 0;
 	}
 #else
