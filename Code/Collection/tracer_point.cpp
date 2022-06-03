@@ -53,7 +53,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 	debugPrint( "Initializing %s...\n", _device_name.c_str() );
 
 	this->_select_me();
-	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
+	_device = new MPU6050( MPU6050_ADDRESS_AD0_HIGH );
 
 	_device->initialize();
 
@@ -117,7 +117,7 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
 
 	this->_select_me();
 
-	_device = new MPU6050( MPU6050_ADDRESS_AD0_LOW );
+	_device = new MPU6050( MPU6050_ADDRESS_AD0_HIGH );
 
 	_device->initialize();
 
