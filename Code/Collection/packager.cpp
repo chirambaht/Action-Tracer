@@ -275,6 +275,6 @@ void ActionTracer::Packager::open_file() {
  * @brief Closes the socket connection.
  */
 void ActionTracer::Packager::close_socket() {
-	debugPrint( "Closing socket with descriptor %d\n", _descriptor );
+	debugPrint( "Closing socket with descriptor %d\n", *_descriptor );
 	close( *_descriptor );
 }
