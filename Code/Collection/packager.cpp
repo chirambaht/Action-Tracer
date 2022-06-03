@@ -141,12 +141,15 @@ void ActionTracer::Packager::_send_packet() {
 #ifdef SEND_INT
 	// When this data is sent, it will be sent a single array element at a time. each element is 2 bytes (16 bits) but they are sent in reverse order i.e. TP captures 0x23ef but packager will send it as  0xef23.
 	#ifdef ON_PI
+	if( _count == 0 ) {
+		_recording_start_time = millis();
+	}
 	_package[0] = millis() - _recording_start_time;
 	#endif
 	_package[1] = _count;
 	if( int send_response = send( _descriptor, _package, sizeof( _package ), 0 ) < 0 ) {
 		debugPrint( "Send failed. Code %d\n Arguments were:\n\tDescriptor: %d\n\t Package: [", send_response, _descriptor );
-		for( int arprint = 0; arprint < sizeof( _package ); arprint++ ) {
+		for( int arprint = 0; arprint < sizeof( _package ) / sizeof( _package[0] ); arprint++ ) {
 			debugPrint( " %d,", _package[arprint] );
 		}
 		debugPrint( "]\n\tBytes to send: %d\nError: %s\n", sizeof( _package ), strerror( errno ) );
