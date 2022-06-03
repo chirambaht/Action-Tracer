@@ -41,7 +41,7 @@ namespace ActionTracer {
 		std::string _package;
 #endif
 		int				   _port;
-		int				   _descriptor = 6;
+		int				   _descriptor = 0;
 		__uint32_t		   _count;
 		std::string		   _float_to_string( float value, int prec );
 		__int16_t		   _float_to_int( float value );
