@@ -41,7 +41,7 @@ namespace ActionTracer {
 		std::string _package;
 #endif
 		int				   _port;
-		int			   *_descriptor = new int;
+		int				   _descriptor = 6;
 		__uint32_t		   _count;
 		std::string		   _float_to_string( float value, int prec );
 		__int16_t		   _float_to_int( float value );
@@ -68,6 +68,7 @@ namespace ActionTracer {
 		void _send_packet();
 		void open_file( void );
 		void close_socket( void );
+		void set_descriptor( int );
 	};
 
 } // namespace ActionTracer
