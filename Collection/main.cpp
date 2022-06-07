@@ -92,6 +92,7 @@ void setup() {
 void exit_handler( int s ) {
 	debugPrint( "\n" );
 	turn_off_all_devices();
+	communicator->dump_vars();
 	if( communicator->save_status() )
 		communicator->close_file();
 	communicator->close_socket();

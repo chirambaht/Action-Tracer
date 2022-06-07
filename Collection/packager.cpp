@@ -160,7 +160,7 @@ void ActionTracer::Packager::_send_packet() {
 	}
 	debugPrint( "\n" );
 
-	for( size_t r = PACKAGE_DATA_START - 1; r < _number_of_devices * 4; r++ ) {
+	for( size_t r = PACKAGE_DATA_START - 1; r < PACKAGE_LENGTH; r++ ) {
 		_package[r] = 0;
 	}
 
@@ -239,4 +239,22 @@ void ActionTracer::Packager::close_socket() {
 void ActionTracer::Packager::set_descriptor( int descriptor ) {
 	debugPrint( "Setting descriptor to %d\n", descriptor );
 	_descriptor = descriptor;
+}
+
+void ActionTracer::Packager::dump_vars( void ) {
+	debugPrint( "Packed: %d\n", _packed );
+	debugPrint( "Package pointer: %d\n", _package_pointer );
+	debugPrint( "Count: %d\n", _count );
+	debugPrint( "Package: [ " );
+	for( size_t i = 0; i < PACKAGE_LENGTH; i++ ) {
+		debugPrint( "%d,", _package[i] );
+	}
+	debugPrint( "]\n" );
+
+	debugPrint( "Recording start time: %d\n", _recording_start_time );
+	debugPrint( "Save: %d\n", _save );
+
+	debugPrint( "Descriptor: %d\n", _descriptor );
+	debugPrint( "Destination: %s\n", _dest.c_str() );
+	debugPrint( "Port: %d\n", _port );
 }
