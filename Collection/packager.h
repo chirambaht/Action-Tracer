@@ -30,10 +30,8 @@ namespace ActionTracer {
 	  private:
 		std::string _dest;
 
-		__int16_t _package[PACKAGE_LENGTH] = { 0 }; // For a start this will be a 4 (data points) * 4 (devices) integer
-
-		size_t _package_pointer = PACKAGE_DATA_START;
-
+		__int16_t		   _package[PACKAGE_LENGTH] = { 0 }; // For a start this will be a 4 (data points) * 4 (devices) integer
+		size_t			   _package_pointer			= PACKAGE_DATA_START;
 		int				   _port;
 		int				   _descriptor = 6;
 		__uint32_t		   _count;
@@ -42,8 +40,7 @@ namespace ActionTracer {
 		int32_t			   _recording_start_time = 0;
 		struct sockaddr_in _server;
 		int				   _packed = 0;
-
-		__int16_t _float_to_int( float value );
+		__int16_t		   _float_to_int( float value );
 
 	  public:
 		size_t _number_of_devices = 3;
@@ -62,6 +59,7 @@ namespace ActionTracer {
 		void close_socket( void );
 		void set_descriptor( int );
 		void dump_vars( void );
+		void reset_vars( void );
 	};
 
 } // namespace ActionTracer

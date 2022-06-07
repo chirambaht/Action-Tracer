@@ -141,6 +141,8 @@ void ActionTracer::Packager::_send_packet() {
 			debugPrint( " %d,", _package[arprint] );
 		}
 		debugPrint( "]\n\tBytes to send: %d\nError: %s\n", sizeof( _package ), strerror( errno ) );
+
+		reset_vars();
 		return;
 	}
 
@@ -258,4 +260,17 @@ void ActionTracer::Packager::dump_vars( void ) {
 	debugPrint( "Descriptor: %d\n", _descriptor );
 	debugPrint( "Destination: %s\n", _dest.c_str() );
 	debugPrint( "Port: %d\n", _port );
+}
+
+void ActionTracer::Packager::reset_vars( void ) {
+	for( size_t r = 0; r < PACKAGE_LENGTH; r++ ) {
+		_package[r] = 0;
+	}
+	_package_pointer	  = PACKAGE_DATA_START;
+	_port				  = 9022;
+	_descriptor			  = 6;
+	_count				  = 0;
+	_save				  = true;
+	_recording_start_time = 0;
+	_packed				  = 0;
 }
