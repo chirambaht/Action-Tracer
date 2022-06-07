@@ -130,7 +130,7 @@ void ActionTracer::Packager::_send_packet() {
 	if( _count == 0 ) {
 		_recording_start_time = millis();
 	}
-	_package[0] = millis() - _recording_start_time;
+	_package[0] = ( millis() - _recording_start_time ) / 1000; // Time in seconds
 #endif
 
 	_package[1] = _count;
