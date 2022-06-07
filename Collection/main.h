@@ -1,10 +1,6 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-// #define ARRAY_SOLUTION
-
-// #define COUNT_FRAMES
-
 #define PORT		9022 // Main UDP data port for the data to be sent through
 #define MAX_SENSORS 20	 // Number of points track on the body.
 #define WAIT_TIME	7	 // Time to before getting next data sample (in ms)
