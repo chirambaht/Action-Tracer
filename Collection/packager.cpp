@@ -242,5 +242,5 @@ void ActionTracer::Packager::close_socket() {
 
 void ActionTracer::Packager::set_descriptor( int descriptor ) {
 	debugPrint( "Setting descriptor to %d\n", descriptor );
-	// _descriptor = descriptor;
+	_descriptor = descriptor;
 }

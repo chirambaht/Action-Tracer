@@ -35,13 +35,11 @@ namespace ActionTracer {
 
 		size_t _package_pointer = PACKAGE_DATA_START;
 
-		int		  _port;
-		const int _descriptor = 6;
+		int _port;
+		int _descriptor = 6;
 		// int				   _descriptor = 6;
-		__uint32_t _count;
-		// std::string		   _float_to_string( float value, int prec );
+		__uint32_t		   _count;
 		__int16_t		   _float_to_int( float value );
-		void			   _log( std::string data );
 		bool			   _save = false;
 		FILE			  *_recording;
 		int32_t			   _recording_start_time = 0;
