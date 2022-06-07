@@ -175,14 +175,15 @@ void ActionTracer::Packager::_send_packet() {
  */
 int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 	_package_pointer = ( _package[2] * 4 ) + PACKAGE_DATA_START;
-
+	_packed			 = 0;
 	for( int i = 0; i < length; i++ ) {
 		_package[_package_pointer++] = _float_to_int( data[i] );
+		_packed++;
 	}
 
 	_package[2] += 1; // Increase the number of device added
 
-	return ++_packed;
+	return _packed;
 }
 
 /**

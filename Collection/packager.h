@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <string.h> //strlen
 #include <sys/socket.h>
-#include <thread>
 
 #ifndef DEVICES_IN_USE
 	#define DEVICES_IN_USE	   3 // 3 IMUs
@@ -42,7 +41,6 @@ namespace ActionTracer {
 		FILE			  *_recording;
 		int32_t			   _recording_start_time = 0;
 		struct sockaddr_in _server;
-		std::thread		   sender;
 		int				   _packed = 0;
 
 		__int16_t _float_to_int( float value );
