@@ -10,8 +10,6 @@
 #include <sys/socket.h>
 #include <thread>
 
-#define SEND_INT
-
 #ifndef DEVICES_IN_USE
 	#define DEVICES_IN_USE	   3 // 3 IMUs
 	#define DATA_ELEMENTS	   DEVICES_IN_USE * 4
@@ -33,18 +31,15 @@ namespace ActionTracer {
 	  private:
 		std::string _dest;
 
-#ifdef SEND_INT
 		__int16_t _package[PACKAGE_LENGTH] = { 0 }; // For a start this will be a 4 (data points) * 4 (devices) integer
 
 		size_t _package_pointer = PACKAGE_DATA_START;
-#else
-		std::string _package;
-#endif
+
 		int		  _port;
 		const int _descriptor = 6;
 		// int				   _descriptor = 6;
-		__uint32_t		   _count;
-		std::string		   _float_to_string( float value, int prec );
+		__uint32_t _count;
+		// std::string		   _float_to_string( float value, int prec );
 		__int16_t		   _float_to_int( float value );
 		void			   _log( std::string data );
 		bool			   _save = false;

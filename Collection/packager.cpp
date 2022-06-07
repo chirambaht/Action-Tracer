@@ -101,24 +101,6 @@ void ActionTracer::Packager::init_udp() {
 }
 
 /**
- * @brief Converts a given float value to a string to a specified number of decimal places.
- *
- * @param value float to be converted to string
- * @param prec number of decimal places. Defaults to 6
- * @return std::string representation of given float
- */
-std::string ActionTracer::Packager::_float_to_string( float value, int prec = 6 ) {
-	std::stringstream stream;
-	if( value < 0 ) {
-		prec -= 1;
-	}
-	stream << std::fixed << std::setprecision( prec ) << value;
-	std::string s = stream.str();
-
-	return s;
-}
-
-/**
  * @brief Converts a given float value to a integer to 3 decimal places.
  *
  * @param value float to be converted to integer
@@ -142,15 +124,15 @@ int ActionTracer::Packager::send_packet() {
  * @return 0 if successful.
  */
 void ActionTracer::Packager::_send_packet() {
-// Send some data
-#ifdef SEND_INT
+	// Send some data
 	// When this data is sent, it will be sent a single array element at a time. each element is 2 bytes (16 bits) but they are sent in reverse order i.e. TP captures 0x23ef but packager will send it as  0xef23.
-	#ifdef ON_PI
+#ifdef ON_PI
 	if( _count == 0 ) {
 		_recording_start_time = millis();
 	}
 	_package[0] = millis() - _recording_start_time;
-	#endif
+#endif
+
 	_package[1] = _count;
 	_count++;
 	if( int send_response = send( _descriptor, _package, sizeof( _package ), 0 ) < 0 ) {
@@ -161,11 +143,6 @@ void ActionTracer::Packager::_send_packet() {
 		debugPrint( "]\n\tBytes to send: %d\nError: %s\n", sizeof( _package ), strerror( errno ) );
 		return;
 	}
-#else
-	if( send( _descriptor, _package.c_str(), strlen( _package.c_str() ), 0 ) < 0 ) {
-		debugPrint( "Send failed\n" );
-	}
-#endif
 
 #ifdef ON_PI
 	if( _save ) {
@@ -181,24 +158,15 @@ void ActionTracer::Packager::_send_packet() {
 	}
 #endif
 
-#ifdef SEND_INT
 	debugPrint( "%8d,%7d", millis() - _recording_start_time, _count );
 	for( size_t cc = PACKAGE_DATA_START; cc < PACKAGE_LENGTH; cc++ ) {
 		debugPrint( ",%4i", _package[cc] );
 	}
 	debugPrint( "\n" );
-#else
-	debugPrint( "%8i,%7i,%s\n", millis() - _recording_start_time, _count, _package.c_str() );
-#endif
 
-#ifdef SEND_INT
 	for( size_t r = PACKAGE_DATA_START - 1; r < _number_of_devices * 4; r++ ) {
 		_package[r] = 0;
 	}
-#else
-	_package = "";
-
-#endif
 
 	// return 0;
 }
@@ -210,25 +178,13 @@ void ActionTracer::Packager::_send_packet() {
  * @return Number of elements that have been packed.
  */
 int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
-#ifdef SEND_INT
 	_package_pointer = ( _package[2] * 4 ) + PACKAGE_DATA_START;
-#endif
+
 	for( int i = 0; i < length; i++ ) {
-#ifdef SEND_INT
 		_package[_package_pointer++] = _float_to_int( data[i] );
-#else
-		_package += _float_to_string( data[i], 6 );
-		if( i != length - 1 ) {
-			_package += ",";
-		}
-#endif
 	}
 
-#ifndef SEND_INT
-	_package += ":";
-#else
 	_package[2] += 1; // Increase the number of device added
-#endif
 
 	return ++_packed;
 }
