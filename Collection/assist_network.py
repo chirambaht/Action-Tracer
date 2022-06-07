@@ -54,7 +54,7 @@ def packet_print(data_packet):
     for i in range(len(data_packet) // 4):
         for j in range(4):
             try:
-                print( f"{data_packet[j+(i*len(data_packet) // 4)] / 100000:^2.3f} ", end="")
+                print( f"{data_packet[j+(i*len(data_packet) // 4)] / 10000:^2.3f} ", end="")
             except :
                 print("")
                 break
@@ -77,7 +77,7 @@ def packet_file_print( data_packet, document):
     for i in range(len(data_packet) // 4):
         for j in range(4):
             try:
-                print(f"{data_packet[j+(i*len(data_packet) // 4)] / 100000:^4.4f} ", end="", file=document)
+                print(f"{data_packet[j+(i*len(data_packet) // 4)] / 10000:^4.4f} ", end="", file=document)
             except:
                 print("")
                 break
@@ -124,7 +124,7 @@ while (True):
         packet_file_print(t, logger)
         c = t[1]
         
-        cs.append(clean_arr(t, 100000, 3))
+        cs.append(clean_arr(t, 10000, 3))
     logger.close()
 
     print("Last log to %s.act" % (current_time))

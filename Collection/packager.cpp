@@ -107,7 +107,7 @@ void ActionTracer::Packager::init_udp() {
  * @return 16 bit integer of the inital value
  */
 __int16_t ActionTracer::Packager::_float_to_int( float value ) {
-	return static_cast<__int16_t>( value * 100000 );
+	return static_cast<__int16_t>( value * 10000 );
 }
 
 /**
@@ -246,9 +246,9 @@ void ActionTracer::Packager::dump_vars( void ) {
 	debugPrint( "Packed: %d\n", _packed );
 	debugPrint( "Package pointer: %d\n", _package_pointer );
 	debugPrint( "Count: %d\n", _count );
-	debugPrint( "Package: [ " );
-	for( size_t i = 0; i < PACKAGE_LENGTH; i++ ) {
-		debugPrint( "%d,", _package[i] );
+	debugPrint( "Package: [ %d", _package[0] );
+	for( size_t i = 1; i < PACKAGE_LENGTH; i++ ) {
+		debugPrint( ", %d", _package[i] );
 	}
 	debugPrint( "]\n" );
 
