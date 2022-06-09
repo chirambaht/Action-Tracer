@@ -1,6 +1,6 @@
 all: collector
 
-HOST_ADDRESS = "192.168.1.103"
+HOST_ADDRESS = "192.168.1.101"
 
 RATE = 4
 # MPU6050_DMP_FIFO_RATE_DIVISOR values and their linked rate
