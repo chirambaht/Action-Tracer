@@ -241,6 +241,7 @@ void ActionTracer::TracePoint::get_data() {
 
 	// does the FIFO have data in it?
 	if( ( _device_interrupt_status & 0x02 ) < 1 ) {
+		debugPrintln( "%s: Interrupt not raised\n", _device_name.c_str() );
 		this->_deselect_me();
 		return;
 	}
@@ -258,6 +259,7 @@ void ActionTracer::TracePoint::get_data() {
 		_device->resetFIFO();
 
 		debugPrint( "%s: FIFO overflow!\n", _device_name.c_str() );
+		this->_deselect_me();
 		return;
 	}
 
