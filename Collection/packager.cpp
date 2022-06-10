@@ -162,9 +162,11 @@ void ActionTracer::Packager::_send_packet() {
 	}
 	debugPrint( "\n" );
 
-	for( size_t r = PACKAGE_DATA_START - 1; r < PACKAGE_LENGTH; r++ ) {
-		_package[r] = 0;
-	}
+	// for( size_t r = PACKAGE_DATA_START - 1; r < PACKAGE_LENGTH; r++ ) {
+	// 	_package[r] = 0;
+	// }
+
+	_package[2] = 0;
 
 	// return 0;
 }
