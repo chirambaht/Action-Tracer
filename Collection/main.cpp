@@ -28,6 +28,8 @@ PI_THREAD( net_worker ) {
 	communicator->save_enable( true );
 	communicator->init_tcp();
 
+	communicator->dump_vars();
+
 	for( ;; ) {
 		while( !send_ready ) {
 			continue;
