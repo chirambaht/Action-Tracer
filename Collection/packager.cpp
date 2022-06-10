@@ -247,24 +247,27 @@ void ActionTracer::Packager::set_descriptor( int descriptor ) {
 }
 
 void ActionTracer::Packager::dump_vars( void ) {
-	debugPrint( "Packed: %d\n", _packed );
-	debugPrint( "Package pointer: %d\n", _package_pointer );
-	debugPrint( "Count: %d\n", _count );
-	debugPrint( "Package: [ %d", _package[0] );
+	printf( "Packed: %d\n", _packed );
+	printf( "Package pointer: %d\n", _package_pointer );
+	printf( "Count: %d\n", _count );
+	printf( "Package: [ %d", _package[0] );
 	for( size_t i = 1; i < PACKAGE_LENGTH; i++ ) {
-		debugPrint( ", %d", _package[i] );
+		printf( ", %d", _package[i] );
 	}
-	debugPrint( "]\n" );
+	printf( "]\n" );
 
-	debugPrint( "Recording start time: %d\n", _recording_start_time );
-	debugPrint( "Save: %d\n", _save );
+	printf( "Recording start time: %d\n", _recording_start_time );
+	printf( "Save: %d\n", _save );
 
-	debugPrint( "Descriptor: %d\n", _descriptor );
-	debugPrint( "Destination: %s\n", _dest.c_str() );
-	debugPrint( "Port: %d\n", _port );
+	printf( "Descriptor: %d\n", _descriptor );
+	printf( "Destination: %s\n", _dest.c_str() );
+	printf( "Port: %d\n", _port );
 }
 
 void ActionTracer::Packager::reset_vars( void ) {
+	printf( "Error! Resetting variables\n" );
+	this->dump_vars();
+
 	for( size_t r = 0; r < PACKAGE_LENGTH; r++ ) {
 		_package[r] = 0;
 	}
