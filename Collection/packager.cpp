@@ -250,10 +250,10 @@ void ActionTracer::Packager::dump_vars( void ) {
 	printf( "\n\n\n\nSize of Packager is %d\n", sizeof( Packager ) );
 
 	printf( "Some memory addresses: \n" );
-	printf( "Port: %p\n", &_port );
-	printf( "Descriptor: %p\n", &_descriptor );
-	printf( "Package Pointer: %p\n", &_package_pointer );
-	printf( "Package: %p\n", &_package );
+	printf( "Port: %x\n", &_port );
+	printf( "Descriptor: %x\n", &_descriptor );
+	printf( "Package Pointer: %x\n", &_package_pointer );
+	printf( "Package: %x\n", &_package );
 
 	printf( "Packed: %d\n", _packed );
 	printf( "Package pointer: %d\n", _package_pointer );
