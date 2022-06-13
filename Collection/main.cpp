@@ -23,6 +23,7 @@ cxxopts::Options options( "Action Tracer", "This program runs a given number of 
 
 #ifdef ON_PI
 PI_THREAD( net_worker ) {
+	printf("Network Thread starting...\n");
 	communicator					 = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->_number_of_devices = _sensors;
 	communicator->save_enable( true );
@@ -74,7 +75,7 @@ void setup() {
 #ifdef ON_PI
 	// Will break here if it doesn't find a TCP socket available
 	if( piThreadCreate( net_worker ) != 0 ) {
-		debugPrint( "Failed to create network worker thread\n" );
+		printf( "Failed to create network worker thread\n" );
 		exit( EXIT_FAILURE );
 	}
 #endif
@@ -87,6 +88,8 @@ void setup() {
 		} else if( i == 2 ) {
 			name = "IMU_3";
 		}
+
+		printf("New device initialising on WiringPi pin %d aka ACT_%d\n",get_pi_location( i + 1 ), i + 1 );
 		body_sensor[i] = new TracePoint( name, get_pi_location( i + 1 ) ); // offset by 1 is to ensure we are starting at ACT_DEVICE_1
 	}
 }
@@ -192,8 +195,10 @@ int main( int argc, char const *argv[] ) {
 #endif
 
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
+	printf("Running basic setup routine\n");
 	setup();
 
+	printf("\nSetup Complete! Running now\n\n");
 	while( 1 ) {
 		loop();
 	}
