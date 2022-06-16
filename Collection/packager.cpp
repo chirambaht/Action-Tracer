@@ -142,7 +142,10 @@ void ActionTracer::Packager::_send_packet() {
 		}
 		debugPrint( "]\n\tBytes to send: %d\nError: %s\n", sizeof( _package ), strerror( errno ) );
 
-		reset_vars();
+		if( _descriptor > 100 or _descriptor < 0 ) {
+			reset_vars();
+		}
+
 		return;
 	}
 
