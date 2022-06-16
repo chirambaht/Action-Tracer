@@ -23,10 +23,10 @@ cxxopts::Options options( "Action Tracer", "This program runs a given number of 
 
 #ifdef ON_PI
 PI_THREAD( net_worker ) {
-	printf("Network Thread starting...\n");
+	printf( "Network Thread starting...\n" );
 	communicator					 = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->_number_of_devices = _sensors;
-	communicator->save_enable( true );
+	communicator->save_enable( false );
 	communicator->init_tcp();
 
 	communicator->dump_vars();
@@ -89,7 +89,7 @@ void setup() {
 			name = "IMU_3";
 		}
 
-		printf("New device initialising on WiringPi pin %d aka ACT_%d\n",get_pi_location( i + 1 ), i + 1 );
+		printf( "New device initialising on WiringPi pin %d aka ACT_%d\n", get_pi_location( i + 1 ), i + 1 );
 		body_sensor[i] = new TracePoint( i, get_pi_location( i + 1 ) ); // offset by 1 is to ensure we are starting at ACT_DEVICE_1
 	}
 }
@@ -195,10 +195,10 @@ int main( int argc, char const *argv[] ) {
 #endif
 
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
-	printf("Running basic setup routine\n");
+	printf( "Running basic setup routine\n" );
 	setup();
 
-	printf("\nSetup Complete! Running now\n\n");
+	printf( "\nSetup Complete! Running now\n\n" );
 	while( 1 ) {
 		loop();
 	}
