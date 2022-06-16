@@ -119,19 +119,18 @@ while (True):
         # correct the order that data comes in (saved in t)
         t = swapper(data)[:15]
 
-        
         packet_print(t)
         packet_file_print(t, logger)
-        c = t[1]
         
         cs.append(clean_arr(t, 10000, 3))
+        c = t[1]
     logger.close()
 
     print("Last log to %s.act" % (current_time))
     ft = (end_time - start_time) / 1
 
     print(
-        f"Average packets received was {c/ft:.2f}/s. \n{c} packets were received in {ft:.3f}s.\nTotal packets Recevied: {c} or {len(cs)}")
+        f"Average packets received was {c/ft:.2f}/s. \n{c} packets were received in {ft:.3f}s.\nTotal packets Recevied: {len(cs)}/{c} {round((len(cs)/c)*100,2)}%")
 
     df = pd.DataFrame(cs, columns=col)
     df.to_csv(f"{current_time}.csv", index=False)
