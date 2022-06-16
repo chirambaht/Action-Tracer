@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <string>
 
 #ifdef DEBUG
 	#define debugPrint( ... )	printf( __VA_ARGS__ )
@@ -33,14 +34,14 @@ ActionTracer::TracePoint::TracePoint() {}
 /**
  * @brief Construct a new Action Tracer:: TracePoint::Trace Point object.
  *
- * @param name Name given to the device
+ * @param identifier Identifier given to the device
  * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
  * @param interrupt_pin WiringPi interrupt pin
  */
-ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number, int interrupt_pin ) {
+ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_number, uint8_t interrupt_pin ) {
 	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
 
-	_device_name = name;
+	_identifier = identifier;
 
 	_pin_number = wiring_Pi_pin_number;
 
@@ -99,10 +100,10 @@ ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number
  * @param name Name given to the device
  * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
  */
-ActionTracer::TracePoint::TracePoint( std::string name, int wiring_Pi_pin_number ) {
+ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_number ) {
 	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
 
-	_device_name = name;
+	_identifier = identifier;
 
 	_pin_number = wiring_Pi_pin_number;
 
@@ -183,7 +184,7 @@ void ActionTracer::TracePoint::_deselect_me() {
 /** @brief Calls on the selected sensor to identify itself by returning its name. It will physically indicate this by blinking an onboard LED.
  * @return Device name/id
  */
-std::string ActionTracer::TracePoint::identify() {
+uint8_t ActionTracer::TracePoint::identify() {
 // Blink device led
 #ifdef ON_PI
 	for( size_t i = 0; i < 5; i++ ) {
@@ -194,7 +195,7 @@ std::string ActionTracer::TracePoint::identify() {
 	}
 #endif
 
-	return _device_name;
+	return _identifier;
 }
 
 /**
@@ -353,15 +354,6 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 #ifdef GET_DATA_YAWPITCHROLL
 	return _yaw_pitch_roll_packet;
 #endif
-}
-
-/**
- * @brief Returns the given device name
- *
- * @return std::string containing the device name
- */
-std::string ActionTracer::TracePoint::get_name() {
-	return _device_name;
 }
 
 /**

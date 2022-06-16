@@ -90,7 +90,7 @@ void setup() {
 		}
 
 		printf("New device initialising on WiringPi pin %d aka ACT_%d\n",get_pi_location( i + 1 ), i + 1 );
-		body_sensor[i] = new TracePoint( name, get_pi_location( i + 1 ) ); // offset by 1 is to ensure we are starting at ACT_DEVICE_1
+		body_sensor[i] = new TracePoint( i, get_pi_location( i + 1 ) ); // offset by 1 is to ensure we are starting at ACT_DEVICE_1
 	}
 }
 
