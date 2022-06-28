@@ -128,14 +128,15 @@ void ActionTracer::Packager::run_socket_manager() {
 		}
 
 		activity = select( max_sd + 1, &_readfds, NULL, NULL, &_timeout );
+		printf( "fd: %d\n", _descriptor );
 
 		if( ( activity < 0 ) && ( errno != EINTR ) ) {
-			printf( "select error" );
+			printf( "select error\n" );
 		}
 
 		if( FD_ISSET( _descriptor, &_readfds ) ) {
 			if( ( new_socket = accept( _descriptor, ( struct sockaddr * ) &_server, ( socklen_t * ) sizeof( _server ) ) ) < 0 ) {
-				perror( "accept" );
+				perror( "accept\n" );
 				exit( EXIT_FAILURE );
 			}
 		}
