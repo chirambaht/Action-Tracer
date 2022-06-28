@@ -126,8 +126,7 @@ void ActionTracer::Packager::run_socket_manager() {
 		}
 	}
 
-	activity = select( max_sd + 1, &_readfds, NULL, NULL, &_timeout );
-	printf( "fd: %d\n", _descriptor );
+	activity = select( max_sd + 1, &_readfds, NULL, NULL, NULL );
 
 	if( ( activity < 0 ) && ( errno != EINTR ) ) {
 		printf( "select error\n" );
@@ -138,14 +137,12 @@ void ActionTracer::Packager::run_socket_manager() {
 			perror( "accept\n" );
 			exit( EXIT_FAILURE );
 		}
-	}
-
-	printf( "New connection , socket fd is %d , ip is : %s , port : %d\n", new_socket, inet_ntoa( _server.sin_addr ), ntohs( _server.sin_port ) );
-
-	for( i = 0; i < MAX_CLIENTS; i++ ) {
-		if( _client_sockets[i] == 0 ) {
-			_client_sockets[i] = new_socket;
-			break;
+		printf( "New connection , socket fd is %d , ip is : %s , port : %d\n", new_socket, inet_ntoa( _server.sin_addr ), ntohs( _server.sin_port ) );
+		for( i = 0; i < MAX_CLIENTS; i++ ) {
+			if( _client_sockets[i] == 0 ) {
+				_client_sockets[i] = new_socket;
+				break;
+			}
 		}
 	}
 
