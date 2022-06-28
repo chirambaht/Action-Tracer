@@ -40,7 +40,7 @@ PI_THREAD( net_worker ) {
 	communicator->_number_of_devices = _sensors;
 	communicator->save_enable( false );
 	// communicator->init_tcp();
-	int desc_ = communicator->socket_setup();
+	communicator->socket_setup();
 
 	communicator->dump_vars();
 
