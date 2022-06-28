@@ -46,7 +46,7 @@ PI_THREAD( network_watcher ) {
 	}
 }
 
-PI_THREAD( _network_sender ) {
+PI_THREAD( network_sender ) {
 	printf( "Sending thread starting...\n" );
 	for( ;; ) {
 		while( !send_ready ) {
@@ -90,7 +90,11 @@ void setup() {
 
 #ifdef ON_PI
 	// Will break here if it doesn't find a TCP socket available
-	if( piThreadCreate( net_worker ) != 0 ) {
+	if( piThreadCreate( network_watcher ) != 0 ) {
+		printf( "Failed to create network worker thread\n" );
+		exit( EXIT_FAILURE );
+	}
+	if( piThreadCreate( network_sender ) != 0 ) {
 		printf( "Failed to create network worker thread\n" );
 		exit( EXIT_FAILURE );
 	}
