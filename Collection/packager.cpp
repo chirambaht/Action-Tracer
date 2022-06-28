@@ -128,7 +128,7 @@ void ActionTracer::Packager::run_socket_manager() {
 
 	printf( "Waiting for connection for fd: %d\n", max_sd + 1 );
 	activity = select( max_sd + 1, &_readfds, NULL, NULL, NULL );
-
+	printf( "Activity: %d\n", activity );
 	if( ( activity < 0 ) && ( errno != EINTR ) ) {
 		printf( "select error\n" );
 	}
@@ -139,9 +139,23 @@ void ActionTracer::Packager::run_socket_manager() {
 			exit( EXIT_FAILURE );
 		}
 		printf( "New connection , socket fd is %d , ip is : %s , port : %d\n", new_socket, inet_ntoa( _server.sin_addr ), ntohs( _server.sin_port ) );
+
+		// send new connection greeting message
+		char message[] = "Data incoming!";
+		if( send( new_socket, message, strlen( message ), 0 ) != strlen( message ) ) {
+			perror( "send" );
+		}
+
 		for( i = 0; i < MAX_CLIENTS; i++ ) {
 			if( _client_sockets[i] == 0 ) {
 				_client_sockets[i] = new_socket;
+
+				// print all the clients connected
+				for( i = 0; i < MAX_CLIENTS; i++ ) {
+					if( sd > 0 ) {
+						printf( "Client %d is connected with fd %d\n", i, _client_sockets[i] );
+					}
+				}
 				break;
 			}
 		}
