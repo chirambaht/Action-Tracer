@@ -9,7 +9,17 @@
 	#include <cxxopts.hpp>
 #endif
 
+#include <arpa/inet.h> //close
+#include <errno.h>
+#include <netinet/in.h>
 #include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h> //strlen
+#include <sys/socket.h>
+#include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
+#include <sys/types.h>
+#include <unistd.h> //close
 
 #ifdef ON_PI
 	#include <wiringPi.h>
@@ -23,11 +33,14 @@ cxxopts::Options options( "Action Tracer", "This program runs a given number of 
 
 #ifdef ON_PI
 PI_THREAD( net_worker ) {
+	// void n() {
+
 	printf( "Network Thread starting...\n" );
 	communicator					 = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->_number_of_devices = _sensors;
 	communicator->save_enable( false );
-	communicator->init_tcp();
+	// communicator->init_tcp();
+	int desc_ = communicator->socket_setup();
 
 	communicator->dump_vars();
 
@@ -39,7 +52,8 @@ PI_THREAD( net_worker ) {
 		piLock( 1 );
 
 		// Send packet
-		communicator->send_packet();
+		//  communicator->send_packet();
+		communicator->run_socket_manager();
 		send_ready = false;
 
 		piUnlock( 1 );

@@ -73,6 +73,108 @@ void ActionTracer::Packager::init_tcp() {
 }
 
 /**
+ * @brief Setup device as TCP server
+ *
+ * @return int File descriptor of the socket
+ */
+
+int ActionTracer::Packager::socket_setup() {
+	if( _descriptor = socket( AF_INET, SOCK_STREAM, 0 ) < 0 ) {
+		perror( "socket failed" );
+		exit( EXIT_FAILURE );
+	}
+	debugPrint( "TCP socket created with descriptor: %d\n", _descriptor );
+	int _opt = 1;
+
+	// This helps in manipulating options for the socket referred by the file descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as: “address already in use”.
+	if( setsockopt( _descriptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
+		perror( "setsockopt" );
+		exit( EXIT_FAILURE );
+	}
+
+	_server.sin_addr.s_addr = INADDR_ANY;
+	_server.sin_family		= AF_INET;
+	_server.sin_port		= htons( _port ); // My open port
+
+	if( bind( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
+		perror( "bind failed" );
+		exit( EXIT_FAILURE );
+	}
+	if( listen( _descriptor, ( MAX_CLIENTS / 2 ) ) == 1 ) {
+		perror( "Error when trying to listen" );
+		exit( EXIT_FAILURE );
+	}
+
+	_timeout.tv_sec	 = 0;
+	_timeout.tv_usec = 500; // 0.5ms
+
+	return _descriptor;
+}
+
+void ActionTracer::Packager::run_socket_manager() {
+	while( true ) {
+		FD_ZERO( &_readfds );
+		FD_SET( _descriptor, &_readfds );
+		max_sd = _descriptor;
+
+		for( i = 0; i < MAX_CLIENTS; i++ ) {
+			sd = _client_sockets[i];
+			if( sd > 0 ) {
+				FD_SET( sd, &_readfds );
+			}
+			if( sd > max_sd ) {
+				max_sd = sd;
+			}
+		}
+
+		activity = select( max_sd + 1, &_readfds, NULL, NULL, &_timeout );
+
+		if( ( activity < 0 ) && ( errno != EINTR ) ) {
+			printf( "select error" );
+		}
+
+		if( FD_ISSET( _descriptor, &_readfds ) ) {
+			if( ( new_socket = accept( _descriptor, ( struct sockaddr * ) &_server, ( socklen_t * ) sizeof( _server ) ) ) < 0 ) {
+				perror( "accept" );
+				exit( EXIT_FAILURE );
+			}
+		}
+
+		printf( "New connection , socket fd is %d , ip is : %s , port : %d\n", new_socket, inet_ntoa( _server.sin_addr ), ntohs( _server.sin_port ) );
+
+		for( i = 0; i < MAX_CLIENTS; i++ ) {
+			if( _client_sockets[i] == 0 ) {
+				_client_sockets[i] = new_socket;
+				break;
+			}
+		}
+
+		// Normal work resumes here
+		for( i = 0; i < MAX_CLIENTS; i++ ) {
+			sd = _client_sockets[i];
+
+			if( FD_ISSET( sd, &_readfds ) ) {
+				// Check if it was for closing , and also read the
+				// incoming message
+				if( ( valread = read( sd, _buffer, 1024 ) ) == 0 ) {
+					// Somebody disconnected , get his details and print
+					getpeername( sd, ( struct sockaddr * ) &_server, ( socklen_t * ) sizeof( _server ) );
+					printf( "Host disconnected , ip %s , port %d \n",
+						inet_ntoa( _server.sin_addr ), ntohs( _server.sin_port ) );
+					close( sd );
+					_client_sockets[i] = 0;
+				}
+
+				// Echo back the message that came in
+				else {
+					_send_packet( sd );
+				}
+			}
+		}
+	}
+}
+
+/**
  * @brief Initialize a UDP client on the device
  *
  */
@@ -123,7 +225,10 @@ int ActionTracer::Packager::send_packet() {
  * This is used to send the stored data packet in @code _packet @endcode
  * @return 0 if successful.
  */
-void ActionTracer::Packager::_send_packet() {
+void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
+	if( file_descriptor == -1 ) {
+		file_descriptor = _descriptor;
+	}
 	// Send some data
 	// When this data is sent, it will be sent a single array element at a time. each element is 2 bytes (16 bits) but they are sent in reverse order i.e. TP captures 0x23ef but packager will send it as  0xef23.
 #ifdef ON_PI
@@ -135,14 +240,14 @@ void ActionTracer::Packager::_send_packet() {
 
 	_package[1] = _count;
 	_count++;
-	if( int send_response = send( _descriptor, _package, sizeof( _package ), 0 ) < 0 ) {
-		debugPrint( "Send failed. Code %d\n Arguments were:\n\tDescriptor: %d\n\t Package: [", send_response, _descriptor );
+	if( int send_response = send( file_descriptor, _package, sizeof( _package ), 0 ) < 0 ) {
+		debugPrint( "Send failed. Code %d\n Arguments were:\n\tDescriptor: %d\n\t Package: [", send_response, file_descriptor );
 		for( unsigned int arprint = 0; arprint < sizeof( _package ) / sizeof( _package[0] ); arprint++ ) {
 			debugPrint( " %d,", _package[arprint] );
 		}
 		debugPrint( "]\n\tBytes to send: %d\nError: %s\n", sizeof( _package ), strerror( errno ) );
 
-		if( _descriptor > 100 or _descriptor < 0 ) {
+		if( file_descriptor > 100 or file_descriptor < 0 ) {
 			reset_vars();
 		}
 
