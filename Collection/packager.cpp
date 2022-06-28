@@ -79,7 +79,7 @@ void ActionTracer::Packager::init_tcp() {
  */
 
 int ActionTracer::Packager::socket_setup() {
-	if( _descriptor = socket( AF_INET, SOCK_STREAM, 0 ) < 0 ) {
+	if( ( _descriptor = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 ) {
 		perror( "socket failed" );
 		exit( EXIT_FAILURE );
 	}
@@ -217,7 +217,7 @@ __int16_t ActionTracer::Packager::_float_to_int( float value ) {
  * @return 0 if successful.
  */
 int ActionTracer::Packager::send_packet() {
-	ActionTracer::Packager::_send_packet();
+	ActionTracer::Packager::_send_packet( -1 );
 	return 0;
 }
 
@@ -240,7 +240,7 @@ void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
 
 	_package[1] = _count;
 	_count++;
-	if( int send_response = send( file_descriptor, _package, sizeof( _package ), 0 ) < 0 ) {
+	if( send_response = send( file_descriptor, _package, sizeof( _package ), 0 ) < 0 ) {
 		debugPrint( "Send failed. Code %d\n Arguments were:\n\tDescriptor: %d\n\t Package: [", send_response, file_descriptor );
 		for( unsigned int arprint = 0; arprint < sizeof( _package ) / sizeof( _package[0] ); arprint++ ) {
 			debugPrint( " %d,", _package[arprint] );
