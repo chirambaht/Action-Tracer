@@ -120,12 +120,13 @@ void ActionTracer::Packager::run_socket_manager() {
 		sd = _client_sockets[i];
 		if( sd > 0 ) {
 			FD_SET( sd, &_readfds );
-		}
-		if( sd > max_sd ) {
-			max_sd = sd;
+			if( sd > max_sd ) {
+				max_sd = sd;
+			}
 		}
 	}
 
+	printf( "Waiting for connection for fd: %d\n", max_sd + 1 );
 	activity = select( max_sd + 1, &_readfds, NULL, NULL, NULL );
 
 	if( ( activity < 0 ) && ( errno != EINTR ) ) {
