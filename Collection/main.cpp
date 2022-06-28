@@ -32,28 +32,30 @@ cxxopts::Options options( "Action Tracer", "This program runs a given number of 
 #endif
 
 #ifdef ON_PI
-PI_THREAD( net_worker ) {
+PI_THREAD( network_watcher ) {
 	// void n() {
 
-	printf( "Network Thread starting...\n" );
+	printf( "Network Management Thread starting...\n" );
 	communicator					 = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->_number_of_devices = _sensors;
 	communicator->save_enable( false );
-	// communicator->init_tcp();
 	communicator->socket_setup();
 
-	communicator->dump_vars();
+	for( ;; ) {
+		communicator->run_socket_manager();
+	}
+}
 
+PI_THREAD( _network_sender ) {
+	printf( "Sending thread starting...\n" );
 	for( ;; ) {
 		while( !send_ready ) {
 			continue;
 		}
-
 		piLock( 1 );
 
 		// Send packet
-		//  communicator->send_packet();
-		communicator->run_socket_manager();
+		communicator->send_to_connected_devices();
 		send_ready = false;
 
 		piUnlock( 1 );

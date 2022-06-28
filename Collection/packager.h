@@ -76,6 +76,7 @@ namespace ActionTracer {
 		void reset_vars( void );
 		int	 socket_setup();
 		void run_socket_manager();
+		void send_to_connected_devices();
 	};
 
 } // namespace ActionTracer

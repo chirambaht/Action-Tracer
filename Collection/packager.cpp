@@ -112,64 +112,65 @@ int ActionTracer::Packager::socket_setup() {
 }
 
 void ActionTracer::Packager::run_socket_manager() {
-	while( true ) {
-		FD_ZERO( &_readfds );
-		FD_SET( _descriptor, &_readfds );
-		max_sd = _descriptor;
+	FD_ZERO( &_readfds );
+	FD_SET( _descriptor, &_readfds );
+	max_sd = _descriptor;
 
-		for( i = 0; i < MAX_CLIENTS; i++ ) {
-			sd = _client_sockets[i];
-			if( sd > 0 ) {
-				FD_SET( sd, &_readfds );
-			}
-			if( sd > max_sd ) {
-				max_sd = sd;
-			}
+	for( i = 0; i < MAX_CLIENTS; i++ ) {
+		sd = _client_sockets[i];
+		if( sd > 0 ) {
+			FD_SET( sd, &_readfds );
 		}
-
-		activity = select( max_sd + 1, &_readfds, NULL, NULL, &_timeout );
-		printf( "fd: %d\n", _descriptor );
-
-		if( ( activity < 0 ) && ( errno != EINTR ) ) {
-			printf( "select error\n" );
+		if( sd > max_sd ) {
+			max_sd = sd;
 		}
+	}
 
-		if( FD_ISSET( _descriptor, &_readfds ) ) {
-			if( ( new_socket = accept( _descriptor, ( struct sockaddr * ) &_server, ( socklen_t * ) sizeof( _server ) ) ) < 0 ) {
-				perror( "accept\n" );
-				exit( EXIT_FAILURE );
+	activity = select( max_sd + 1, &_readfds, NULL, NULL, &_timeout );
+	printf( "fd: %d\n", _descriptor );
+
+	if( ( activity < 0 ) && ( errno != EINTR ) ) {
+		printf( "select error\n" );
+	}
+
+	if( FD_ISSET( _descriptor, &_readfds ) ) {
+		if( ( new_socket = accept( _descriptor, ( struct sockaddr * ) &_server, ( socklen_t * ) sizeof( _server ) ) ) < 0 ) {
+			perror( "accept\n" );
+			exit( EXIT_FAILURE );
+		}
+	}
+
+	printf( "New connection , socket fd is %d , ip is : %s , port : %d\n", new_socket, inet_ntoa( _server.sin_addr ), ntohs( _server.sin_port ) );
+
+	for( i = 0; i < MAX_CLIENTS; i++ ) {
+		if( _client_sockets[i] == 0 ) {
+			_client_sockets[i] = new_socket;
+			break;
+		}
+	}
+
+	// Normal work resumes here
+}
+
+void ActionTracer::Packager::send_to_connected_devices() {
+	for( i = 0; i < MAX_CLIENTS; i++ ) {
+		sd = _client_sockets[i];
+
+		if( FD_ISSET( sd, &_readfds ) ) {
+			// Check if it was for closing , and also read the
+			// incoming message
+			if( ( valread = read( sd, _buffer, 1024 ) ) == 0 ) {
+				// Somebody disconnected , get his details and print
+				getpeername( sd, ( struct sockaddr * ) &_server, ( socklen_t * ) sizeof( _server ) );
+				printf( "Host disconnected , ip %s , port %d \n",
+					inet_ntoa( _server.sin_addr ), ntohs( _server.sin_port ) );
+				close( sd );
+				_client_sockets[i] = 0;
 			}
-		}
 
-		printf( "New connection , socket fd is %d , ip is : %s , port : %d\n", new_socket, inet_ntoa( _server.sin_addr ), ntohs( _server.sin_port ) );
-
-		for( i = 0; i < MAX_CLIENTS; i++ ) {
-			if( _client_sockets[i] == 0 ) {
-				_client_sockets[i] = new_socket;
-				break;
-			}
-		}
-
-		// Normal work resumes here
-		for( i = 0; i < MAX_CLIENTS; i++ ) {
-			sd = _client_sockets[i];
-
-			if( FD_ISSET( sd, &_readfds ) ) {
-				// Check if it was for closing , and also read the
-				// incoming message
-				if( ( valread = read( sd, _buffer, 1024 ) ) == 0 ) {
-					// Somebody disconnected , get his details and print
-					getpeername( sd, ( struct sockaddr * ) &_server, ( socklen_t * ) sizeof( _server ) );
-					printf( "Host disconnected , ip %s , port %d \n",
-						inet_ntoa( _server.sin_addr ), ntohs( _server.sin_port ) );
-					close( sd );
-					_client_sockets[i] = 0;
-				}
-
-				// Echo back the message that came in
-				else {
-					_send_packet( sd );
-				}
+			// Echo back the message that came in
+			else {
+				_send_packet( sd );
 			}
 		}
 	}
