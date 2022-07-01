@@ -81,7 +81,7 @@ namespace ActionTracer {
 	};
 
 	struct ActionClient{
-			sockaddr_in _socket_address = NULL;
+			sockaddr_in _socket_address;
 			int _socket_descriptor = 0;
 
 			void print_info( int index ){

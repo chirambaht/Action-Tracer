@@ -112,14 +112,14 @@ int ActionTracer::Packager::socket_setup() {
 }
 
 void ActionTracer::Packager::run_socket_manager() {
-
-	_client_sockets[_client_pointer]._socket_address = accept( _descriptor, ( sockaddr * ) _client_sockets[_client_pointer]._socket_address, sizeof(_client_sockets[_client_pointer]._socket_address) ); // Blocking call waiting for new connection
-	if( _client_sockets[_client_pointer]._socket_address < 0 ) {
+	_client_sockets[_client_pointer] = new ActionClient;
+	_client_sockets[_client_pointer]->_socket_address = accept( _descriptor, ( sockaddr * ) _client_sockets[_client_pointer]->_socket_address, sizeof(_client_sockets[_client_pointer]->_socket_address) ); // Blocking call waiting for new connection
+	if( _client_sockets[_client_pointer]._socket_descriptor < 0 ) {
 		perror( "accept failed" );
 		exit( EXIT_FAILURE );
 	} else {
 		_client_pointer++;
-		printf( "Connected to client on %s:%d. Descriptor is %d\n", inet_ntoa( newSockAddr.sin_addr ), ntohs( newSockAddr.sin_port ), newSd );
+		_client_sockets[_client_pointer]->print_info();
 	}
 
 	dump_vars();
@@ -127,8 +127,8 @@ void ActionTracer::Packager::run_socket_manager() {
 
 void ActionTracer::Packager::send_to_connected_devices() {
 	for( int i = 0; i < MAX_CLIENTS; i++ ) {
-		if( _client_sockets[i] != 0 ) {
-			_send_packet( _client_sockets[i] );
+		if( _client_sockets[i]->_socket_descriptor > 0 ) {
+			_send_packet( _client_sockets[i]->_socket_descriptor );
 		}
 	}
 }
