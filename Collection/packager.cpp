@@ -85,7 +85,7 @@ void ActionTracer::Packager::run_socket_manager() {
 }
 
 void ActionTracer::Packager::send_to_connected_devices() {
-	for( int i = 0; i < MAX_CLIENTS; i++ ) {
+	for( int i = 0; i < _client_pointer; i++ ) {
 		if( _client_sockets[i]->_socket_descriptor > 0 ) {
 			_send_packet( _client_sockets[i]->_socket_descriptor );
 		}
@@ -259,7 +259,7 @@ void ActionTracer::Packager::dump_vars( void ) {
 
 	printf( "Client pointer: %d\n", _client_pointer );
 
-	for( size_t i = 0; i < _client_pointer; i++ ) {
+	for( int i = 0; i < _client_pointer; i++ ) {
 		if ( _client_sockets[i]->_socket_descriptor < 0){
 			_client_sockets[i]->print_info(i);
 		}
