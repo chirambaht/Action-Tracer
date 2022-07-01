@@ -80,13 +80,13 @@ namespace ActionTracer {
 		void send_to_connected_devices();
 	};
 
-	struct ActionClient{
+	typedef struct ActionClient{
 			sockaddr_in _socket_address;
 			int _socket_descriptor = 0;
 
 			void print_info( int index ){
 				printf("%d. Address: %s:%d, Descriptor: %d\n", index, inet_ntoa(_socket_address.sin_addr), ntohs(_socket_address.sin_port), _socket_descriptor);
 			}
-	};
+	} ActionClient;
 
 } // namespace ActionTracer
