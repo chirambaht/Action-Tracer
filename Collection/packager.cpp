@@ -268,6 +268,5 @@ void ActionTracer::Packager::dump_vars( void ) {
 	printf( "Save: %d\n", _save );
 
 	printf( "Descriptor: %d\n", _descriptor );
-	printf( "Destination: %s\n", _dest.c_str() );
 	printf( "Port: %d\n", _port );
 }
