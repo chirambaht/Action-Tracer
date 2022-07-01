@@ -113,7 +113,7 @@ int ActionTracer::Packager::socket_setup() {
 
 void ActionTracer::Packager::run_socket_manager() {
 	_client_sockets[_client_pointer] = new ActionClient;
-	_client_sockets[_client_pointer]->_socket_address = accept( _descriptor, ( sockaddr * ) &_client_sockets[_client_pointer]->_socket_address, &_client_sockets[_client_pointer]->_socket_address_len ); // Blocking call waiting for new connection
+	_client_sockets[_client_pointer]->_socket_descriptor = accept( _descriptor, ( sockaddr * ) &_client_sockets[_client_pointer]->_socket_address, &_client_sockets[_client_pointer]->_socket_address_len ); // Blocking call waiting for new connection
 	if( _client_sockets[_client_pointer]->_socket_descriptor < 0 ) {
 		perror( "accept failed" );
 		exit( EXIT_FAILURE );
