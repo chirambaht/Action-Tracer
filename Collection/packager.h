@@ -36,13 +36,9 @@
 namespace ActionTracer {
 	typedef struct ActionClient{
 		sockaddr_in _socket_address;
-		socklen_t  _socket_address_len;
+		unsigned int  _socket_address_len = sizeof(sockaddr_in);
 		int _socket_descriptor = 0;
 
-		ActionClient(){
-			_socket_address_len = sizeof(_socket_address);
-		}
-		
 		void print_info( int index ){
 			printf("%d. Address: %s:%d, Descriptor: %d\n", index, inet_ntoa(_socket_address.sin_addr), ntohs(_socket_address.sin_port), _socket_descriptor);
 		}
