@@ -260,7 +260,9 @@ int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
  */
 void ActionTracer::Packager::save_enable( bool value ) {
 	_save = value;
-	this->open_file();
+	if (_save){
+this->open_file();
+	}
 }
 
 /**
@@ -291,9 +293,6 @@ void ActionTracer::Packager::open_file() {
 	auto str = oss.str();
 	str += ".act";
 	_recording = fopen( str.c_str(), "w" );
-#ifdef ON_PI
-	_recording_start_time = millis();
-#endif
 }
 
 /**
@@ -326,13 +325,13 @@ void ActionTracer::Packager::dump_vars( void ) {
 		printf( ", %d", _package[i] );
 	}
 	printf( "]\n" );
-	printf( "Client pointer: %d\n", _client_pointer );
 
-	printf( "Clients: [ %d", _client_sockets[0] );
-	for( size_t i = 1; i < MAX_CLIENTS; i++ ) {
-		printf( ", %d", _client_sockets[i] );
-	}
-	printf( "]\n" );
+	printf( "Client pointer: %d\n", _client_pointer );
+	for( size_t i = 0; i < MAX_CLIENTS; i++ ) {
+		if ( _client_sockets[i]->_socket_descriptor < 0){
+			_client_sockets[i]->print_info();
+		}
+	}	
 
 	printf( "Recording start time: %d\n", _recording_start_time );
 	printf( "Save: %d\n", _save );
@@ -341,21 +340,3 @@ void ActionTracer::Packager::dump_vars( void ) {
 	printf( "Destination: %s\n", _dest.c_str() );
 	printf( "Port: %d\n", _port );
 }
-
-void ActionTracer::Packager::reset_vars( void ) {
-	printf( "Error! Resetting variables\n" );
-	this->dump_vars();
-
-	for( size_t r = 0; r < PACKAGE_LENGTH; r++ ) {
-		_package[r] = 0;
-	}
-	_package_pointer	  = PACKAGE_DATA_START;
-	_port				  = 9022;
-	_descriptor			  = 6;
-	_count				  = 0;
-	_save				  = true;
-	_recording_start_time = 0;
-	_packed				  = 0;
-}
-
-
