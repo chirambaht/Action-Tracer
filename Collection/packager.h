@@ -37,7 +37,7 @@ namespace ActionTracer {
 	class Packager {
 	  private:
 		std::string		   _dest;
-		int				   _client_sockets[MAX_CLIENTS] = { 0 };
+		ActionClient		*_client_sockets[MAX_CLIENTS];
 		int				   _client_pointer				= 0;
 		__int16_t		   _package[PACKAGE_LENGTH]		= { 0 }; // For a start this will be a 4 (data points) * 4 (devices) integer
 		size_t			   _package_pointer				= PACKAGE_DATA_START;
@@ -78,6 +78,15 @@ namespace ActionTracer {
 		int	 socket_setup();
 		void run_socket_manager();
 		void send_to_connected_devices();
+	};
+
+	struct ActionClient{
+			sockaddr_in _socket_address;
+			int _socket_descriptor;
+
+			void print_info( void ){
+				printf("Address: %s:%d, Descriptor: %d\n", inet_ntoa(_socket_address.sin_addr), ntohs(_socket_address.sin_port), _socket_descriptor);
+			}
 	};
 
 } // namespace ActionTracer

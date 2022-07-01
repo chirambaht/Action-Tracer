@@ -112,15 +112,13 @@ int ActionTracer::Packager::socket_setup() {
 }
 
 void ActionTracer::Packager::run_socket_manager() {
-	sockaddr_in newSockAddr;
-	socklen_t	newSockAddrSize = sizeof( newSockAddr );
 
-	int newSd = accept( _descriptor, ( sockaddr * ) &newSockAddr, &newSockAddrSize ); // Blocking call waiting for new connection
-	if( newSd < 0 ) {
+	_client_sockets[_client_pointer]._socket_address = accept( _descriptor, ( sockaddr * ) _client_sockets[_client_pointer]._socket_address, sizeof(_client_sockets[_client_pointer]._socket_address) ); // Blocking call waiting for new connection
+	if( _client_sockets[_client_pointer]._socket_address < 0 ) {
 		perror( "accept failed" );
 		exit( EXIT_FAILURE );
 	} else {
-		_client_sockets[_client_pointer++] = newSd;
+		_client_pointer++;
 		printf( "Connected to client on %s:%d. Descriptor is %d\n", inet_ntoa( newSockAddr.sin_addr ), ntohs( newSockAddr.sin_port ), newSd );
 	}
 
@@ -359,3 +357,5 @@ void ActionTracer::Packager::reset_vars( void ) {
 	_recording_start_time = 0;
 	_packed				  = 0;
 }
+
+
