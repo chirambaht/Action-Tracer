@@ -56,7 +56,7 @@ namespace ActionTracer {
 		struct timeval	   _timeout; // a 5ms timeout
 
 	  public:
-		int max_sd = 0, sd, i, activity, new_socket, valread, send_response;
+		int send_response;
 
 		size_t _number_of_devices = 3;
 		Packager();

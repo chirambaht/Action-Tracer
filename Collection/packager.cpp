@@ -126,9 +126,9 @@ void ActionTracer::Packager::run_socket_manager() {
 }
 
 void ActionTracer::Packager::send_to_connected_devices() {
-	for( i = 0; i < MAX_CLIENTS; i++ ) {
+	for( int i = 0; i < MAX_CLIENTS; i++ ) {
 		if( _client_sockets[i] != 0 ) {
-			_send_packet( sd );
+			_send_packet( _client_sockets[i] );
 		}
 	}
 }
