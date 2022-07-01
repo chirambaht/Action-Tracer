@@ -31,13 +31,14 @@
 	HEADER 2: Devices Connected
 */
 #endif
-#define MAX_CLIENTS 30
+#define MAX_CLIENTS 10
 
 namespace ActionTracer {
 	class Packager {
 	  private:
 		std::string		   _dest;
 		int				   _client_sockets[MAX_CLIENTS] = { 0 };
+		int				   _client_pointer				= 0;
 		__int16_t		   _package[PACKAGE_LENGTH]		= { 0 }; // For a start this will be a 4 (data points) * 4 (devices) integer
 		size_t			   _package_pointer				= PACKAGE_DATA_START;
 		int				   _port;
