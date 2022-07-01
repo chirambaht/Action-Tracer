@@ -15,7 +15,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h> //strlen
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
 #include <sys/types.h>
@@ -36,7 +36,7 @@ PI_THREAD( network_watcher ) {
 	// void n() {
 
 	printf( "Network Management Thread starting...\n" );
-	communicator					 = new Packager( _address, PORT ); // Initialize the communicator that will send data packets to the server
+	communicator					 = new Packager( PORT ); // Initialize the communicator that will send data packets to the server
 	communicator->_number_of_devices = _sensors;
 	communicator->save_enable( false );
 	communicator->socket_setup();
@@ -114,6 +114,7 @@ void setup() {
 		printf( "New device initialising on WiringPi pin %d aka ACT_%d\n", get_pi_location( 0 ), i + 1 );
 		body_sensor[i] = new TracePoint( i, get_pi_location( 0 ) );
 		#else 
+		printf( "New device initialising on WiringPi pin %d aka ACT_%d\n", get_pi_location( i+1 ), i + 1 );
 		body_sensor[i] = new TracePoint( i, get_pi_location( i + 1 ) ); // offset by 1 is to ensure we are starting at ACT_DEVICE_1
 		#endif
 	}
@@ -170,7 +171,6 @@ void loop() {
  */
 int main( int argc, char const *argv[] ) {
 #ifdef TAKE_ARGUMENTS
-	options.add_options()( "a,address", "Address to send UDP packets to", cxxopts::value<std::string>()->default_value( "127.0.0.1" ) );
 	options.add_options()( "f,file", "Define variables using a file. If a file is given, all other given parameters will be overwritten.", cxxopts::value<std::string>()->default_value( "" ) );
 	options.add_options()( "h,help", "Print usage" );
 	options.add_options()( "t,tracepoints", "Number of body devices being used on the body", cxxopts::value<int>()->default_value( "0" ) );
@@ -182,7 +182,6 @@ int main( int argc, char const *argv[] ) {
 		exit( 0 );
 	}
 
-	_address = result["address"].as<std::string>();
 
 	_sensors = result["tracepoints"].as<int>();
 
@@ -191,35 +190,12 @@ int main( int argc, char const *argv[] ) {
 	}
 #else
 
-	#ifndef SEND_ADDRESS
-	// Read from setup.csv
-	std::ifstream infile( "setup.csv" );
-	if( !infile.good() ) {
-		_address = "";
-	} else {
-		// If file exists, use it to set offsets.
-		std::string	  line;
-		std::ifstream myfile( "setup.csv" );
-		std::getline( myfile, line );
-
-		std::stringstream point_line( line );
-		std::string		  value;
-		size_t			  count = 0;
-
-		while( getline( point_line, value, ',' ) ) {
-			// First check if the needed pin exists. If not, set defaults
-			if( count == 0 ) {
-				_address = value;
-			}
-		}
-	#else
-	_address = SEND_ADDRESS;
-	#endif
+	
 		_sensors = 3;
 		printf( "Devices connected: %d\n", _sensors );
 #endif
 
-	// TODO: Run a new setup method that accounts for debug, custom tps, files and addresses
+	// TODO: Run a new setup method that accounts for debug, custom tps, files and
 	printf( "Running basic setup routine\n" );
 	setup();
 

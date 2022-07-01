@@ -10,7 +10,6 @@
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h> //strlen
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -46,7 +45,6 @@ namespace ActionTracer {
 
 	class Packager {
 	  private:
-		std::string		   _dest;
 		ActionClient		*_client_sockets[MAX_CLIENTS];
 		int				   _client_pointer				= 0;
 		__int16_t		   _package[PACKAGE_LENGTH]		= { 0 }; // For a start this will be a 4 (data points) * 4 (devices) integer
@@ -70,9 +68,7 @@ namespace ActionTracer {
 
 		size_t _number_of_devices = 3;
 		Packager();
-		Packager( std::string destination, int port );
-		void init_udp();
-		void init_tcp();
+		Packager( int port );
 		int	 send_packet();
 		int	 load_packet( float *data, uint8_t length );
 		~Packager();
