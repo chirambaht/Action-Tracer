@@ -258,7 +258,8 @@ void ActionTracer::Packager::dump_vars( void ) {
 	printf( "]\n" );
 
 	printf( "Client pointer: %d\n", _client_pointer );
-	for( size_t i = 0; i < MAX_CLIENTS; i++ ) {
+
+	for( size_t i = 0; i < _client_pointer; i++ ) {
 		if ( _client_sockets[i]->_socket_descriptor < 0){
 			_client_sockets[i]->print_info(i);
 		}
