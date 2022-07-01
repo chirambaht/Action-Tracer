@@ -113,8 +113,8 @@ int ActionTracer::Packager::socket_setup() {
 
 void ActionTracer::Packager::run_socket_manager() {
 	_client_sockets[_client_pointer] = new ActionClient;
-	_client_sockets[_client_pointer]->_socket_address = accept( _descriptor, ( sockaddr * ) _client_sockets[_client_pointer]->_socket_address, sizeof(_client_sockets[_client_pointer]->_socket_address) ); // Blocking call waiting for new connection
-	if( _client_sockets[_client_pointer]._socket_descriptor < 0 ) {
+	_client_sockets[_client_pointer]->_socket_address = accept( _descriptor, ( sockaddr * ) &_client_sockets[_client_pointer]->_socket_address, sizeof(_client_sockets[_client_pointer]->_socket_address) ); // Blocking call waiting for new connection
+	if( _client_sockets[_client_pointer]->_socket_descriptor < 0 ) {
 		perror( "accept failed" );
 		exit( EXIT_FAILURE );
 	} else {
@@ -329,7 +329,7 @@ void ActionTracer::Packager::dump_vars( void ) {
 	printf( "Client pointer: %d\n", _client_pointer );
 	for( size_t i = 0; i < MAX_CLIENTS; i++ ) {
 		if ( _client_sockets[i]->_socket_descriptor < 0){
-			_client_sockets[i]->print_info();
+			_client_sockets[i]->print_info(i);
 		}
 	}	
 
