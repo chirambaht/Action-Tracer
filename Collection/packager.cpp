@@ -328,6 +328,13 @@ void ActionTracer::Packager::dump_vars( void ) {
 		printf( ", %d", _package[i] );
 	}
 	printf( "]\n" );
+	printf( "Client pointer: %d\n", _client_pointer );
+
+	printf( "Clients: [ %d", _client_sockets[0] );
+	for( size_t i = 1; i < MAX_CLIENTS; i++ ) {
+		printf( ", %d", _client_sockets[i] );
+	}
+	printf( "]\n" );
 
 	printf( "Recording start time: %d\n", _recording_start_time );
 	printf( "Save: %d\n", _save );
