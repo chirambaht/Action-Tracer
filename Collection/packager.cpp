@@ -123,6 +123,8 @@ void ActionTracer::Packager::run_socket_manager() {
 		_client_sockets[_client_pointer++] = newSd;
 		printf( "Connected to client on %s:%d. Descriptor is %d\n", inet_ntoa( newSockAddr.sin_addr ), ntohs( newSockAddr.sin_port ), newSd );
 	}
+
+	dump_vars();
 }
 
 void ActionTracer::Packager::send_to_connected_devices() {
