@@ -79,7 +79,7 @@ void ActionTracer::Packager::run_socket_manager() {
 	} else {
 		// get ip of client
 		for (int j = 0; j < _client_pointer; j++){
-			if (_client_sockets[j]->_socket_address.sin_addr == _client_sockets[_client_pointer]->_socket_address.sin_addr) {
+			if (inet_ntoa(_client_sockets[j]->_socket_address.sin_addr) == inet_ntoa(_client_sockets[_client_pointer]->_socket_address.sin_addr)) {
 				delete _client_sockets[_client_pointer];
 				printf("Client already connected\n");
 				break;
