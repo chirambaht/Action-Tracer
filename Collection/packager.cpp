@@ -81,7 +81,7 @@ void ActionTracer::Packager::run_socket_manager() {
 		_client_pointer++;
 	}
 
-	dump_vars();
+	// dump_vars();
 }
 
 void ActionTracer::Packager::send_to_connected_devices() {
