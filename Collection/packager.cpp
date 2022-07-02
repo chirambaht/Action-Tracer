@@ -77,6 +77,14 @@ void ActionTracer::Packager::run_socket_manager() {
 		perror( "accept failed" );
 		exit( EXIT_FAILURE );
 	} else {
+		// get ip of client
+		for (int j = 0; j < _client_pointer; j++){
+			if (_client_sockets[j]->_socket_address.sin_addr == _client_sockets[_client_pointer]->_socket_address.sin_addr) {
+				delete _client_sockets[_client_pointer];
+				printf("Client already connected\n");
+				break;
+			}  
+		}
 		_client_sockets[_client_pointer]->print_info(_client_pointer);
 		_client_pointer++;
 	}
