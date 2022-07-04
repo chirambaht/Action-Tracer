@@ -40,9 +40,7 @@ PI_THREAD( network_watcher ) {
 
 	for( ;; ) {
 		if( send_ready == false ) {
-			piLock( 1 );
 			communicator->run_socket_manager();
-			piUnlock( 1 );
 		}
 	}
 }
