@@ -5,7 +5,6 @@
 #include <iomanip>
 #include <unistd.h>
 
-
 #ifdef ON_PI
 	#include <wiringPi.h>
 #endif

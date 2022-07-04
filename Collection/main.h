@@ -5,13 +5,10 @@
 #define MAX_SENSORS 20	 // Number of points track on the body.
 #define WAIT_TIME	7	 // Time to before getting next data sample (in ms)
 
-#include "action_pi.hpp"
 #include "packager.h"
 #include "tracer_point.h"
 
-#include <array>
-#include <memory.h>
-#include <vector>
+#include <cstdint>
 
 using namespace ActionTracer;
 

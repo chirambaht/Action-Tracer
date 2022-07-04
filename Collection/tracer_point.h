@@ -3,14 +3,14 @@
 
 #include "MPU6050.h"
 
-
+#include <cstdint>
 
 namespace ActionTracer {
 	class TracePoint {
 	  private:
-		MPU6050	*_device;
-		uint8_t _identifier;
-		int			_pin_number;
+		MPU6050 *_device;
+		uint8_t	 _identifier;
+		int		 _pin_number;
 
 		uint8_t _device_status;
 
@@ -52,13 +52,13 @@ namespace ActionTracer {
 
 		~TracePoint();
 
-		void		turn_off();
-		MPU6050		get_device();
-		void		get_data();				   // Gets data from the device it is attached to
-		float	  *read_data( int get_data ); // Reads the internally stored data and optionally fetches data first
+		void	turn_off();
+		MPU6050 get_device();
+		void	get_data();				   // Gets data from the device it is attached to
+		float  *read_data( int get_data ); // Reads the internally stored data and optionally fetches data first
 		uint8_t identify();				   // Blinks the sensor for 5 seconds. Realistically, it is raising the interupt line for the device in quesion
-		void		print_last_data_packet();  // Prints the last data packet obtained by this node
-		void		tracepoint_isr();
+		void	print_last_data_packet();  // Prints the last data packet obtained by this node
+		void	tracepoint_isr();
 	};
 } // namespace ActionTracer
 

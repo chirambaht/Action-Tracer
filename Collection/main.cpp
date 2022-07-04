@@ -3,23 +3,16 @@
 
 #include "main.h"
 
+#include "action_pi.hpp"
 #include "debug_printer.h"
 
 #ifdef TAKE_ARGUMENTS
 	#include <cxxopts.hpp>
 #endif
 
-#include <arpa/inet.h> //close
-#include <errno.h>
-#include <netinet/in.h>
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include <sys/socket.h>
-// #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
-#include <sys/types.h>
-#include <unistd.h> //close
 
 #ifdef ON_PI
 	#include <wiringPi.h>

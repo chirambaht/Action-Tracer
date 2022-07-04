@@ -1,7 +1,7 @@
 #ifndef _DEBUG_PRINTER_H_
 #define _DEBUG_PRINTER_H_
 
-#include <stdio.h>
+#include <cstdio>
 
 #ifdef DEBUG
 	#define debugPrint( ... )	 printf( __VA_ARGS__ )
