@@ -1,12 +1,5 @@
 #include <arpa/inet.h> //inet_addr
 #include <cstdio>
-// #include <cmath>
-// #include <netinet/in.h>
-// #include <stdlib.h>
-// #include <sys/socket.h>
-// #include <sys/time.h>
-// #include <sys/types.h>
-// #include <unistd.h> //close
 
 #ifndef DEVICES_IN_USE
 	#define DEVICES_IN_USE	   3 // 3 IMUs

@@ -1,9 +1,5 @@
 #include "tracer_point.h"
 
-// #include <fstream>
-// #include <sstream>
-// #include <string>
-
 #ifdef DEBUG
 	#define debugPrint( ... )	printf( __VA_ARGS__ )
 	#define debugPrintln( ... ) printf( __VA_ARGS__ )
