@@ -113,7 +113,7 @@ void ActionTracer::Packager::send_to_connected_devices() {
 }
 
 bool ActionTracer::Packager::_client_connected() {
-	return _client_pointer > 0;
+	return ( _client_pointer > 0 );
 }
 
 /**
