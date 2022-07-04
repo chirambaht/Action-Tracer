@@ -12,7 +12,6 @@
 
 #include <signal.h>
 #include <stdlib.h>
-#include <string>
 
 #ifdef ON_PI
 	#include <wiringPi.h>
@@ -31,7 +30,6 @@ PI_THREAD( network_watcher ) {
 	printf( "Network Management Thread starting...\n" );
 	communicator = new Packager( PORT ); // Initialize the communicator that will send data packets to the server
 	// communicator->_number_of_devices = _sensors;
-	communicator->save_enable( false );
 	communicator->socket_setup();
 
 	for( ;; ) {

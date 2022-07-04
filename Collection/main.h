@@ -9,6 +9,7 @@
 #include "tracer_point.h"
 
 #include <cstdint>
+#include <string>
 
 using namespace ActionTracer;
 
