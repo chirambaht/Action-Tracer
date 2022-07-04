@@ -15,9 +15,9 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <sys/socket.h>
-#include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
+// #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
 #include <sys/types.h>
 #include <unistd.h> //close
 
@@ -36,8 +36,8 @@ PI_THREAD( network_watcher ) {
 	// void n() {
 
 	printf( "Network Management Thread starting...\n" );
-	communicator					 = new Packager( PORT ); // Initialize the communicator that will send data packets to the server
-	communicator->_number_of_devices = _sensors;
+	communicator = new Packager( PORT ); // Initialize the communicator that will send data packets to the server
+	// communicator->_number_of_devices = _sensors;
 	communicator->save_enable( false );
 	communicator->socket_setup();
 
@@ -109,14 +109,14 @@ void setup() {
 			name = "IMU_3";
 		}
 
-		#ifdef SINGLE_ACT_0
+#ifdef SINGLE_ACT_0
 		// Init all the devices as the IMU on the Pi Connector
 		printf( "New device initialising on WiringPi pin %d aka ACT_%d\n", get_pi_location( 0 ), i + 1 );
 		body_sensor[i] = new TracePoint( i, get_pi_location( 0 ) );
-		#else 
-		printf( "New device initialising on WiringPi pin %d aka ACT_%d\n", get_pi_location( i+1 ), i + 1 );
+#else
+		printf( "New device initialising on WiringPi pin %d aka ACT_%d\n", get_pi_location( i + 1 ), i + 1 );
 		body_sensor[i] = new TracePoint( i, get_pi_location( i + 1 ) ); // offset by 1 is to ensure we are starting at ACT_DEVICE_1
-		#endif
+#endif
 	}
 }
 
@@ -124,8 +124,6 @@ void exit_handler( int s ) {
 	debugPrint( "\n" );
 	turn_off_all_devices();
 	communicator->dump_vars();
-	if( communicator->save_status() )
-		communicator->close_file();
 	communicator->close_socket();
 	exit( 1 );
 }
@@ -182,7 +180,6 @@ int main( int argc, char const *argv[] ) {
 		exit( 0 );
 	}
 
-
 	_sensors = result["tracepoints"].as<int>();
 
 	if( result.count( "file" ) ) {
@@ -190,9 +187,8 @@ int main( int argc, char const *argv[] ) {
 	}
 #else
 
-	
-		_sensors = 3;
-		printf( "Devices connected: %d\n", _sensors );
+	_sensors = 3;
+	printf( "Devices connected: %d\n", _sensors );
 #endif
 
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and

@@ -1,21 +1,21 @@
+
+#include "packager.h"
+
+#include <errno.h>
+#include <iomanip>
+#include <unistd.h>
+
+
+#ifdef ON_PI
+	#include <wiringPi.h>
+#endif
+
 #ifdef DEBUG
 	#define debugPrint( ... )	printf( __VA_ARGS__ )
 	#define debugPrintln( ... ) printf( __VA_ARGS__ )
 #else
 	#define debugPrint( ... )
 	#define debugPrintln( ... )
-#endif
-
-#include "packager.h"
-
-#include <ctime>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
-#include <unistd.h>
-
-#ifdef ON_PI
-	#include <wiringPi.h>
 #endif
 
 using namespace ActionTracer;
@@ -25,11 +25,21 @@ using namespace ActionTracer;
  *
  * @param port Destination UDP Port to send data to
  */
-ActionTracer::Packager::Packager(  int port ) {
+ActionTracer::Packager::Packager( int port ) {
 	_port  = port;
 	_count = 0;
 }
 
+/**
+ * @brief Construct a new Action Tracer:: Packager:: Packager object
+ *
+ * @param port Destination UDP Port to send data to
+ */
+ActionTracer::Packager::~Packager() {
+	for( int i = 0; i < _client_pointer; i++ ) {
+		delete _client_sockets[i];
+	}
+}
 
 /**
  * @brief Setup device as TCP server
@@ -71,21 +81,21 @@ int ActionTracer::Packager::socket_setup() {
 }
 
 void ActionTracer::Packager::run_socket_manager() {
-	_client_sockets[_client_pointer] = new ActionClient;
+	_client_sockets[_client_pointer]					 = new ActionClient;
 	_client_sockets[_client_pointer]->_socket_descriptor = accept( _descriptor, ( sockaddr * ) &_client_sockets[_client_pointer]->_socket_address, &_client_sockets[_client_pointer]->_socket_address_len ); // Blocking call waiting for new connection
 	if( _client_sockets[_client_pointer]->_socket_descriptor < 0 ) {
 		perror( "accept failed" );
 		exit( EXIT_FAILURE );
 	} else {
 		// get ip of client
-		for (int j = 0; j < _client_pointer; j++){
-			if (inet_ntoa(_client_sockets[j]->_socket_address.sin_addr) == inet_ntoa(_client_sockets[_client_pointer]->_socket_address.sin_addr)) {
+		for( int j = 0; j < _client_pointer; j++ ) {
+			if( inet_ntoa( _client_sockets[j]->_socket_address.sin_addr ) == inet_ntoa( _client_sockets[_client_pointer]->_socket_address.sin_addr ) ) {
 				delete _client_sockets[_client_pointer];
-				printf("Client already connected\n");
+				printf( "Client already connected\n" );
 				return;
-			}  
+			}
 		}
-		_client_sockets[_client_pointer]->print_info(_client_pointer);
+		_client_sockets[_client_pointer]->print_info( _client_pointer );
 		_client_pointer++;
 	}
 
@@ -148,25 +158,11 @@ void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
 		return;
 	}
 
-#ifdef ON_PI
-	if( _save ) {
-		fprintf( _recording, "%8d,%7d", millis() - _recording_start_time, _count );
-		for( size_t cc = PACKAGE_DATA_START; cc < PACKAGE_LENGTH; cc++ ) {
-			fprintf( _recording, ",%4i", _package[cc] );
-		}
-		fprintf( _recording, "\n" );
-	}
-#endif
-
 	debugPrint( "%8d,%7d", millis() - _recording_start_time, _count );
 	for( size_t cc = PACKAGE_DATA_START; cc < PACKAGE_LENGTH; cc++ ) {
 		debugPrint( ",%4i", _package[cc] );
 	}
 	debugPrint( "\n" );
-
-	// for( size_t r = PACKAGE_DATA_START - 1; r < PACKAGE_LENGTH; r++ ) {
-	// 	_package[r] = 0;
-	// }
 
 	_package[2] = 0;
 
@@ -193,48 +189,6 @@ int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
 }
 
 /**
- * @brief Set file saving on or off. Automatically opens the file when called.
- *
- * @param value true or false
- */
-void ActionTracer::Packager::save_enable( bool value ) {
-	_save = value;
-	if (_save){
-this->open_file();
-	}
-}
-
-/**
- * @brief Checks if the data is being recorded on the Pi
- *
- * @param value true or false
- */
-bool ActionTracer::Packager::save_status() {
-	return _save;
-}
-
-/**
- * @brief Closes the recording file
- */
-void ActionTracer::Packager::close_file() {
-	fclose( _recording );
-}
-
-/**
- * @brief Opens the recording file.
- */
-void ActionTracer::Packager::open_file() {
-	auto t	= std::time( nullptr );
-	auto tm = *std::localtime( &t );
-
-	std::ostringstream oss;
-	oss << std::put_time( &tm, "%Y%m%d-%H%M%S" );
-	auto str = oss.str();
-	str += ".act";
-	_recording = fopen( str.c_str(), "w" );
-}
-
-/**
  * @brief Closes the socket connection.
  */
 void ActionTracer::Packager::close_socket() {
@@ -248,13 +202,7 @@ void ActionTracer::Packager::set_descriptor( int descriptor ) {
 }
 
 void ActionTracer::Packager::dump_vars( void ) {
-	printf( "\n\n\n\nSize of Packager is %d\n", sizeof( Packager ) );
-
-	printf( "Some memory addresses: \n" );
-	printf( "Port: %p\n", &_port );
-	printf( "Descriptor: %p\n", &_descriptor );
-	printf( "Package Pointer: %p\n", &_package_pointer );
-	printf( "Package: %p\n", &_package );
+	printf( "\n\nSize of Packager is %d\n", sizeof( Packager ) );
 
 	printf( "Packed: %d\n", _packed );
 	printf( "Package pointer: %d\n", _package_pointer );
@@ -265,16 +213,13 @@ void ActionTracer::Packager::dump_vars( void ) {
 	}
 	printf( "]\n" );
 
-	printf( "Client pointer: %d\n", _client_pointer );
+	printf( "\nClient pointer: %d\n", _client_pointer );
 
 	for( int i = 0; i < _client_pointer; i++ ) {
-		if ( _client_sockets[i]->_socket_descriptor < 0){
-			_client_sockets[i]->print_info(i);
+		if( _client_sockets[i]->_socket_descriptor < 0 ) {
+			_client_sockets[i]->print_info( i );
 		}
-	}	
-
-	printf( "Recording start time: %d\n", _recording_start_time );
-	printf( "Save: %d\n", _save );
+	}
 
 	printf( "Descriptor: %d\n", _descriptor );
 	printf( "Port: %d\n", _port );
