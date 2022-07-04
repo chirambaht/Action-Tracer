@@ -65,6 +65,7 @@ namespace ActionTracer {
 		void set_descriptor( int );
 		void dump_vars( void );
 		int	 load_packet( float *data, uint8_t length );
+		bool _client_connected();
 	};
 
 } // namespace ActionTracer

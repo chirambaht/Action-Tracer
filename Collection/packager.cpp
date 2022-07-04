@@ -112,6 +112,10 @@ void ActionTracer::Packager::send_to_connected_devices() {
 	}
 }
 
+bool ActionTracer::Packager::_client_connected() {
+	return _client_pointer > 0;
+}
+
 /**
  * @brief Converts a given float value to a integer to 3 decimal places.
  *
