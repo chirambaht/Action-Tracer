@@ -35,7 +35,7 @@ PI_THREAD( network_watcher ) {
 	while( communicator->_clients_connected() < 1 ) {
 		continue;
 	}
-	printf( "At least 1 client connected\n" );
+	printf( "At least 1 client connected: %d\n", communicator->_clients_connected() );
 
 	for( ;; ) {
 		communicator->run_socket_manager();
