@@ -87,6 +87,7 @@ void ActionTracer::Packager::run_socket_manager() {
 		exit( EXIT_FAILURE );
 	} else {
 		// get ip of client
+		_client_sockets[_client_pointer]->print_info( _client_pointer + 1 );
 		for( int j = 0; j < _client_pointer; j++ ) {
 			if( inet_ntoa( _client_sockets[j]->_socket_address.sin_addr ) == inet_ntoa( _client_sockets[_client_pointer]->_socket_address.sin_addr ) ) {
 				delete _client_sockets[_client_pointer];
@@ -103,11 +104,9 @@ void ActionTracer::Packager::run_socket_manager() {
 
 void ActionTracer::Packager::send_to_connected_devices() {
 	for( int i = 0; i < _client_pointer; i++ ) {
-		if( _client_sockets[i] != nullptr ) {
-			if( _client_sockets[i]->_socket_descriptor > 0 ) {
-				printf( "Sending to client %d\n", i + 1 );
-				_send_packet( _client_sockets[i]->_socket_descriptor );
-			}
+		if( _client_sockets[i]->_socket_descriptor > 0 ) {
+			printf( "Sending to client %d\n", i + 1 );
+			_send_packet( _client_sockets[i]->_socket_descriptor );
 		}
 	}
 }
