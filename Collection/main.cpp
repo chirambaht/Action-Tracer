@@ -32,7 +32,7 @@ PI_THREAD( network_watcher ) {
 	// communicator->_number_of_devices = _sensors;
 	communicator->socket_setup();
 
-	while( !communicator->_client_connected() ) {
+	while( communicator->_clients_connected() < 1 ) {
 		continue;
 	}
 	printf( "At least 1 client connected\n" );

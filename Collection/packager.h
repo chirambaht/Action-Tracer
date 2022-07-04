@@ -61,11 +61,11 @@ namespace ActionTracer {
 		void run_socket_manager();
 		void send_to_connected_devices();
 
-		void close_socket( void );
-		void set_descriptor( int );
-		void dump_vars( void );
-		int	 load_packet( float *data, uint8_t length );
-		bool _client_connected();
+		void	close_socket( void );
+		void	set_descriptor( int );
+		void	dump_vars( void );
+		int		load_packet( float *data, uint8_t length );
+		uint8_t _clients_connected();
 	};
 
 } // namespace ActionTracer
