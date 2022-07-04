@@ -33,13 +33,13 @@ PI_THREAD( network_watcher ) {
 	// communicator->_number_of_devices = _sensors;
 	communicator->socket_setup();
 
-	while( communicator->_clients_connected() < 1 ) {
-		printf( "clients: %d\n", communicator->_clients_connected() );
-	}
-	printf( "At least 1 client connected: %d\n", communicator->_clients_connected() );
+	// while( communicator->_clients_connected() < 1 ) {
+	// 	printf( "clients: %d\n", communicator->_clients_connected() );
+	// }
+	// printf( "At least 1 client connected: %d\n", communicator->_clients_connected() );
 
 	for( ;; ) {
-		if( send_ready = false ) {
+		if( send_ready == false ) {
 			piLock( 1 );
 			communicator->run_socket_manager();
 			piUnlock( 1 );
