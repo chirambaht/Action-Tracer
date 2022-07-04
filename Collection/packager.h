@@ -26,6 +26,7 @@
 #define MAX_CLIENTS 10
 
 namespace ActionTracer {
+
 	typedef struct ActionClient {
 		sockaddr_in	 _socket_address;
 		unsigned int _socket_address_len = sizeof( sockaddr_in );
@@ -38,19 +39,17 @@ namespace ActionTracer {
 
 	class Packager {
 	  private:
-		__int16_t _package[PACKAGE_LENGTH] = { 0 }; // For a start this will be a 4 (data points) * 4 (devices) integer
-		bool	  _save					   = false;
-		int		  _packed				   = 0;
-		int		  _client_pointer		   = 0;
-		size_t	  _package_pointer		   = PACKAGE_DATA_START;
+		__int16_t _package[PACKAGE_LENGTH] = { 0 };
+		__uint8_t _packed				   = 0;
+		__uint8_t _client_pointer		   = 0;
+		__uint8_t _package_pointer		   = PACKAGE_DATA_START;
 
 		ActionClient		 *_client_sockets[MAX_CLIENTS];
 		int				   _port;
-		int				   _descriptor;
+		__uint8_t		   _descriptor;
 		__uint16_t		   _count;
 		__uint16_t		   _recording_start_time;
 		struct sockaddr_in _server;
-		fd_set			   _readfds;
 		struct timeval	   _timeout; // a 5ms timeout
 
 		void	  _send_packet( int );
@@ -61,7 +60,7 @@ namespace ActionTracer {
 		~Packager();
 		Packager( int port );
 
-		int send_response;
+		__int8_t send_response;
 
 		int send_packet();
 
