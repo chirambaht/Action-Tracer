@@ -51,7 +51,7 @@ int ActionTracer::Packager::socket_setup() {
 	_timeout.tv_usec = 500; // 0.5ms
 
 	if( ( _descriptor = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 ) {
-		perror( "socket failed" );
+		printf( "socket failed" );
 		exit( EXIT_FAILURE );
 	}
 	debugPrint( "TCP socket created with descriptor: %d\n", _descriptor );
@@ -59,7 +59,7 @@ int ActionTracer::Packager::socket_setup() {
 
 	// This helps in manipulating options for the socket referred by the file descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as: “address already in use”.
 	if( setsockopt( _descriptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
-		perror( "setsockopt" );
+		printf( "setsockopt" );
 		exit( EXIT_FAILURE );
 	}
 
@@ -68,11 +68,11 @@ int ActionTracer::Packager::socket_setup() {
 	_server.sin_port		= htons( _port ); // My open port
 
 	if( bind( _descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
-		perror( "bind failed" );
+		printf( "bind failed" );
 		exit( EXIT_FAILURE );
 	}
 	if( listen( _descriptor, ( MAX_CLIENTS / 2 ) ) < 0 ) {
-		perror( "Error when trying to listen" );
+		printf( "Error when trying to listen" );
 		exit( EXIT_FAILURE );
 	}
 
@@ -83,7 +83,7 @@ void ActionTracer::Packager::run_socket_manager() {
 	_client_sockets[_client_pointer]					 = new ActionClient;
 	_client_sockets[_client_pointer]->_socket_descriptor = accept( _descriptor, ( sockaddr * ) &_client_sockets[_client_pointer]->_socket_address, &_client_sockets[_client_pointer]->_socket_address_len ); // Blocking call waiting for new connection
 	if( _client_sockets[_client_pointer]->_socket_descriptor < 0 ) {
-		perror( "accept failed" );
+		printf( "accept failed" );
 		exit( EXIT_FAILURE );
 	} else {
 		// get ip of client
