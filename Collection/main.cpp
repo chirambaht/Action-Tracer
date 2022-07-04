@@ -39,7 +39,11 @@ PI_THREAD( network_watcher ) {
 	printf( "At least 1 client connected: %d\n", communicator->_clients_connected() );
 
 	for( ;; ) {
-		communicator->run_socket_manager();
+		if( send_ready = false ) {
+			piLock( 1 );
+			communicator->run_socket_manager();
+			piUnlock( 1 );
+		}
 	}
 }
 
