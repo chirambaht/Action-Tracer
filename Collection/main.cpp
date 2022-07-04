@@ -112,9 +112,11 @@ void setup() {
 }
 
 void exit_handler( int s ) {
-	debugPrint( "\n" );
+	printf( "\nTurning off all devices...\n" );
 	turn_off_all_devices();
+	printf( "Cleaning up the communicator\n" );
 	communicator->dump_vars();
+	printf( "Closing socket\n" );
 	communicator->close_socket();
 	exit( 1 );
 }
