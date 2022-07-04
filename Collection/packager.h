@@ -45,7 +45,6 @@ namespace ActionTracer {
 		size_t	  _package_pointer		   = PACKAGE_DATA_START;
 
 		ActionClient		 *_client_sockets[MAX_CLIENTS];
-		char			   _buffer[1025]; // data buffer of 1K
 		int				   _port;
 		int				   _descriptor;
 		__uint16_t		   _count;
