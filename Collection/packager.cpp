@@ -95,14 +95,15 @@ void ActionTracer::Packager::run_socket_manager() {
 				return;
 			}
 		}
-		_client_sockets[_client_pointer]->print_info( _client_pointer );
 		_client_pointer++;
 	}
-
-	// dump_vars();
 }
 
 void ActionTracer::Packager::send_to_connected_devices() {
+	if( _client_pointer == 0 ) {
+		return;
+	}
+
 	for( int i = 0; i < _client_pointer; i++ ) {
 		if( _client_sockets[i]->_socket_descriptor > 0 ) {
 			printf( "Sending to client %d\n", i + 1 );
