@@ -8,6 +8,7 @@
 
 #ifdef TAKE_ARGUMENTS
 	#include <cxxopts.hpp>
+	#include <string>
 #endif
 
 #include <signal.h>
@@ -95,16 +96,7 @@ void setup() {
 		exit( EXIT_FAILURE );
 	}
 #endif
-	std::string name;
 	for( size_t i = 0; i < _sensors; i++ ) {
-		if( i == 0 ) {
-			name = "IMU_1";
-		} else if( i == 1 ) {
-			name = "IMU_2";
-		} else if( i == 2 ) {
-			name = "IMU_3";
-		}
-
 #ifdef SINGLE_ACT_0
 		// Init all the devices as the IMU on the Pi Connector
 		printf( "New device initialising on WiringPi pin %d aka ACT_%d\n", get_pi_location( 0 ), i + 1 );

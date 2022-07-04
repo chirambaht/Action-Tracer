@@ -9,18 +9,15 @@
 #include "tracer_point.h"
 
 #include <cstdint>
-#include <string>
 
 using namespace ActionTracer;
 
 Packager *communicator; // The speaker dude
 
 TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
-// std::array<TracePoint, MAX_SENSORS> *body_sensor; // These are the N sensors on the body.
 
-size_t		_sensors		= 0;		   // Number of sensors being used
-std::string _address		= "127.0.0.1"; // Address to send the data to for the communicator
-float		data_package[4] = { 0 };	   //
+size_t _sensors		   = 0;		// Number of sensors being used
+float  data_package[4] = { 0 }; //
 
 bool send_ready = false;
 

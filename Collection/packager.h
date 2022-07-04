@@ -25,7 +25,7 @@ namespace ActionTracer {
 		unsigned int _socket_address_len = sizeof( sockaddr_in );
 		int			 _socket_descriptor	 = 0;
 
-		void print_info( int index ) {
+		void print_info( int index = -1 ) {
 			printf( "%d. Address: %s:%d, Descriptor: %d\n", index, inet_ntoa( _socket_address.sin_addr ), ntohs( _socket_address.sin_port ), _socket_descriptor );
 		}
 	} ActionClient;
@@ -38,7 +38,7 @@ namespace ActionTracer {
 		__uint8_t _package_pointer		   = PACKAGE_DATA_START;
 
 		ActionClient		 *_client_sockets[MAX_CLIENTS];
-		int				   _port;
+		uint32_t		   _port;
 		__uint8_t		   _descriptor;
 		__uint16_t		   _count;
 		__uint16_t		   _recording_start_time;
@@ -46,26 +46,26 @@ namespace ActionTracer {
 		struct timeval	   _timeout; // a 5ms timeout
 
 		void	  _send_packet( int );
-		__int16_t _float_to_int( float value );
+		__int16_t _float_to_int( float );
 
 	  public:
 		Packager();
 		~Packager();
-		Packager( int port );
+		Packager( int );
 
 		__int8_t send_response;
 
-		int send_packet();
+		int send_packet( void );
 
-		int	 socket_setup();
-		void run_socket_manager();
-		void send_to_connected_devices();
+		int	 socket_setup( void );
+		void run_socket_manager( void );
+		void send_to_connected_devices( void );
 
 		void	close_socket( void );
 		void	set_descriptor( int );
 		void	dump_vars( void );
-		int		load_packet( float *data, uint8_t length );
-		uint8_t _clients_connected();
+		int		load_packet( float *, uint8_t );
+		uint8_t _clients_connected( void );
 	};
 
 } // namespace ActionTracer
