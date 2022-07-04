@@ -33,9 +33,10 @@ namespace ActionTracer {
 	class Packager {
 	  private:
 		__int16_t _package[PACKAGE_LENGTH] = { 0 };
-		__uint8_t _packed				   = 0;
-		__uint8_t _client_pointer		   = 0;
-		__uint8_t _package_pointer		   = PACKAGE_DATA_START;
+		char	  buf[128];
+		__uint8_t _packed		   = 0;
+		__uint8_t _client_pointer  = 0;
+		__uint8_t _package_pointer = PACKAGE_DATA_START;
 
 		ActionClient		 *_client_sockets[MAX_CLIENTS];
 		uint32_t		   _port;
