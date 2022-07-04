@@ -103,8 +103,8 @@ void ActionTracer::Packager::run_socket_manager() {
 
 void ActionTracer::Packager::send_to_connected_devices() {
 	for( int i = 0; i < _client_pointer; i++ ) {
-		printf( "Sending to client %d\n", i + 1 );
 		if( _client_sockets[i]->_socket_descriptor > 0 ) {
+			printf( "Sending to client %d\n", i + 1 );
 			_send_packet( _client_sockets[i]->_socket_descriptor );
 		}
 	}
