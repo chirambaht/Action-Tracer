@@ -100,6 +100,7 @@ void ActionTracer::Packager::run_socket_manager() {
 }
 
 void ActionTracer::Packager::send_to_connected_devices() {
+	printf( "client_pointer: %d\n", _client_pointer );
 	if( _client_pointer == 0 ) {
 		return;
 	}
