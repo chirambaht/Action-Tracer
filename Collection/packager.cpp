@@ -82,7 +82,7 @@ void ActionTracer::Packager::run_socket_manager() {
 			if (inet_ntoa(_client_sockets[j]->_socket_address.sin_addr) == inet_ntoa(_client_sockets[_client_pointer]->_socket_address.sin_addr)) {
 				delete _client_sockets[_client_pointer];
 				printf("Client already connected\n");
-				break;
+				return;
 			}  
 		}
 		_client_sockets[_client_pointer]->print_info(_client_pointer);
