@@ -154,11 +154,8 @@ void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
 	_package[1] = _count;
 	_count++;
 	if( ( send_response = send( file_descriptor, _package, sizeof( _package ), 0 ) ) < 0 ) {
-		debugPrint( "Send failed. Code %d\n Arguments were:\n\tDescriptor: %d\n\t Package: [", send_response, file_descriptor );
-		for( unsigned int arprint = 0; arprint < sizeof( _package ) / sizeof( _package[0] ); arprint++ ) {
-			debugPrint( " %d,", _package[arprint] );
-		}
-		debugPrint( "]\n\tBytes to send: %d\nError: %s\n", sizeof( _package ), strerror( errno ) );
+		printf( "Send failed. Code %d\n Arguments were:\n\tDescriptor: %d\n", send_response, file_descriptor );
+		printf( "\tBytes to send: %d\nError: %s\n", sizeof( _package ), strerror( errno ) );
 
 		return;
 	}
