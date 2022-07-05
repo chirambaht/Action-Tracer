@@ -364,6 +364,7 @@ void ActionTracer::TracePoint::_set_device_offsets() {
 
 	switch( _identifier ) {
 		case 0:
+
 			_offsets[0] = -3151;
 			_offsets[1] = 723;
 			_offsets[2] = 13189;
