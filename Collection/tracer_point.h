@@ -13,6 +13,7 @@ namespace ActionTracer {
 		int		 _pin_number;
 
 		uint8_t _device_status;
+		int16_t _offsets[6] = { 0 }; // ACC x y z GYRO x y z
 
 		bool _dmp_ready;
 
