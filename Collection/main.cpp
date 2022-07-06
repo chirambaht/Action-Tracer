@@ -43,6 +43,8 @@ PI_THREAD( network_watcher ) {
 			communicator->run_socket_manager();
 		}
 	}
+
+	printf( "For some reason, this has run: manager" );
 }
 
 PI_THREAD( network_sender ) {
@@ -59,6 +61,7 @@ PI_THREAD( network_sender ) {
 
 		piUnlock( 1 );
 	}
+	printf( "For some reason, this has run: sender" );
 }
 #endif
 
@@ -192,5 +195,7 @@ int main( int argc, char const *argv[] ) {
 	while( 1 ) {
 		loop();
 	}
+
+	printf( "For some reason, this has run: main" );
 	return 0;
 }
