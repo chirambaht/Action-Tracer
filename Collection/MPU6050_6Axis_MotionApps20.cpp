@@ -57,10 +57,10 @@ THE SOFTWARE.
 		#define __PGMSPACE_H_ 1
 		#include <inttypes.h>
 
-		#define PROGMEM
-		#define PGM_P		const char *
-		#define PSTR( str ) ( str )
-		#define F( x )		x
+		// #define PROGMEM
+		#define PGM_P  const char *
+		// #define PSTR( str ) ( str )
+		#define F( x ) x
 
 typedef void		  prog_void;
 typedef char		  prog_char;
@@ -72,14 +72,14 @@ typedef uint16_t	  prog_uint16_t;
 typedef int32_t		  prog_int32_t;
 typedef uint32_t	  prog_uint32_t;
 
-		#define strcpy_P( dest, src ) strcpy( ( dest ), ( src ) )
-		#define strcat_P( dest, src ) strcat( ( dest ), ( src ) )
-		#define strcmp_P( a, b )	  strcmp( ( a ), ( b ) )
+		#define strcpy_P( dest, src )  strcpy( ( dest ), ( src ) )
+		#define strcat_P( dest, src )  strcat( ( dest ), ( src ) )
+		#define strcmp_P( a, b )	   strcmp( ( a ), ( b ) )
 
-		#define pgm_read_byte( addr )  ( *( const unsigned char * ) ( addr ) )
-		#define pgm_read_word( addr )  ( *( const unsigned short * ) ( addr ) )
+		// #define pgm_read_byte( addr )  ( *( const unsigned char * ) ( addr ) )
+		// #define pgm_read_word( addr )  ( *( const unsigned short * ) ( addr ) )
 		#define pgm_read_dword( addr ) ( *( const unsigned long * ) ( addr ) )
-		#define pgm_read_float( addr ) ( *( const float * ) ( addr ) )
+	// #define pgm_read_float( addr ) ( *( const float * ) ( addr ) )
 
 		#define pgm_read_byte_near( addr )	pgm_read_byte( addr )
 		#define pgm_read_word_near( addr )	pgm_read_word( addr )
@@ -334,9 +334,9 @@ uint8_t MPU6050::dmpInitialize() {
 	unsigned char dmpUpdate[] = { 0x00, MPU6050_DMP_FIFO_RATE_DIVISOR };
 	writeMemoryBlock( dmpUpdate, 0x02, 0x02, 0x16 ); // Lets write the dmpUpdate data to the Firmware image, we have 2 bytes to write in bank 0x02 with the Offset 0x16
 
-	//write start address MSB into register
+	// write start address MSB into register
 	setDMPConfig1( 0x03 );
-	//write start address LSB into register
+	// write start address LSB into register
 	setDMPConfig2( 0x00 );
 
 	debugPrintln( F( "Clearing OTP Bank flag..." ) );
@@ -385,9 +385,9 @@ bool MPU6050::dmpPacketAvailable() {
 // uint8_t MPU6050::dmpGetSampleFrequency();
 // int32_t MPU6050::dmpDecodeTemperature(int8_t tempReg);
 
-//uint8_t MPU6050::dmpRegisterFIFORateProcess(inv_obj_func func, int16_t priority);
-//uint8_t MPU6050::dmpUnregisterFIFORateProcess(inv_obj_func func);
-//uint8_t MPU6050::dmpRunFIFORateProcesses();
+// uint8_t MPU6050::dmpRegisterFIFORateProcess(inv_obj_func func, int16_t priority);
+// uint8_t MPU6050::dmpUnregisterFIFORateProcess(inv_obj_func func);
+// uint8_t MPU6050::dmpRunFIFORateProcesses();
 
 // uint8_t MPU6050::dmpSendQuaternion(uint_fast16_t accuracy);
 // uint8_t MPU6050::dmpSendGyro(uint_fast16_t elements, uint_fast16_t accuracy);
@@ -576,12 +576,12 @@ uint8_t MPU6050::dmpGetYawPitchRoll( float *data, Quaternion *q, VectorFloat *gr
 uint8_t MPU6050::dmpProcessFIFOPacket( const unsigned char *dmpData ) {
 	( void ) dmpData; // unused parameter
 	/*for (uint8_t k = 0; k < dmpPacketSize; k++) {
-        if (dmpData[k] < 0x10) Serial.print("0");
-        Serial.print(dmpData[k], HEX);
-        Serial.print(" ");
-    }
-    Serial.print("\n");*/
-	//Serial.println((uint16_t)dmpPacketBuffer);
+		if (dmpData[k] < 0x10) Serial.print("0");
+		Serial.print(dmpData[k], HEX);
+		Serial.print(" ");
+	}
+	Serial.print("\n");*/
+	// Serial.println((uint16_t)dmpPacketBuffer);
 	return 0;
 }
 uint8_t MPU6050::dmpReadAndProcessFIFOPacket( uint8_t numPackets, uint8_t *processed ) {

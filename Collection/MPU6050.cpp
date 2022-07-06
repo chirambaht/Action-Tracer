@@ -923,7 +923,7 @@ void MPU6050::setMasterClockSpeed( uint8_t speed ) {
  * operation, and if it is cleared, then it's a write operation. The remaining
  * bits (6-0) are the 7-bit device address of the slave device.
  *
- * In read mode, the result of the read is placed in the lowest available 
+ * In read mode, the result of the read is placed in the lowest available
  * EXT_SENS_DATA register. For further information regarding the allocation of
  * read results, please refer to the EXT_SENS_DATA register description
  * (Registers 73 - 96).
@@ -3105,22 +3105,22 @@ bool MPU6050::writeMemoryBlock( const uint8_t *data, uint16_t dataSize, uint8_t 
 			I2Cdev::readBytes( devAddr, MPU6050_RA_MEM_R_W, chunkSize, verifyBuffer );
 			if( memcmp( progBuffer, verifyBuffer, chunkSize ) != 0 ) {
 				/*Serial.print("Block write verification error, bank ");
-                Serial.print(bank, DEC);
-                Serial.print(", address ");
-                Serial.print(address, DEC);
-                Serial.print("!\nExpected:");
-                for (j = 0; j < chunkSize; j++) {
-                    Serial.print(" 0x");
-                    if (progBuffer[j] < 16) Serial.print("0");
-                    Serial.print(progBuffer[j], HEX);
-                }
-                Serial.print("\nReceived:");
-                for (uint8_t j = 0; j < chunkSize; j++) {
-                    Serial.print(" 0x");
-                    if (verifyBuffer[i + j] < 16) Serial.print("0");
-                    Serial.print(verifyBuffer[i + j], HEX);
-                }
-                Serial.print("\n");*/
+				Serial.print(bank, DEC);
+				Serial.print(", address ");
+				Serial.print(address, DEC);
+				Serial.print("!\nExpected:");
+				for (j = 0; j < chunkSize; j++) {
+					Serial.print(" 0x");
+					if (progBuffer[j] < 16) Serial.print("0");
+					Serial.print(progBuffer[j], HEX);
+				}
+				Serial.print("\nReceived:");
+				for (uint8_t j = 0; j < chunkSize; j++) {
+					Serial.print(" 0x");
+					if (verifyBuffer[i + j] < 16) Serial.print("0");
+					Serial.print(verifyBuffer[i + j], HEX);
+				}
+				Serial.print("\n");*/
 				free( verifyBuffer );
 				if( useProgMem )
 					free( progBuffer );
@@ -3179,11 +3179,11 @@ bool MPU6050::writeDMPConfigurationSet( const uint8_t *data, uint16_t dataSize, 
 		if( length > 0 ) {
 			// regular block of data to write
 			/*Serial.print("Writing config block to bank ");
-            Serial.print(bank);
-            Serial.print(", offset ");
-            Serial.print(offset);
-            Serial.print(", length=");
-            Serial.println(length);*/
+			Serial.print(bank);
+			Serial.print(", offset ");
+			Serial.print(offset);
+			Serial.print(", length=");
+			Serial.println(length);*/
 			if( useProgMem ) {
 				if( sizeof( progBuffer ) < length )
 					progBuffer = ( uint8_t * ) realloc( progBuffer, length );
@@ -3206,14 +3206,14 @@ bool MPU6050::writeDMPConfigurationSet( const uint8_t *data, uint16_t dataSize, 
 				special = data[i++];
 			}
 			/*Serial.print("Special command code ");
-            Serial.print(special, HEX);
-            Serial.println(" found...");*/
+			Serial.print(special, HEX);
+			Serial.println(" found...");*/
 			if( special == 0x01 ) {
 				// enable DMP-related interrupts
 
-				//setIntZeroMotionEnabled(true);
-				//setIntFIFOBufferOverflowEnabled(true);
-				//setIntDMPEnabled(true);
+				// setIntZeroMotionEnabled(true);
+				// setIntFIFOBufferOverflowEnabled(true);
+				// setIntDMPEnabled(true);
 				I2Cdev::writeByte( devAddr, MPU6050_RA_INT_ENABLE, 0x32 ); // single operation
 
 				success = true;
@@ -3258,358 +3258,3 @@ void MPU6050::setDMPConfig2( uint8_t config ) {
 int8_t MPU6050::GetCurrentFIFOPacket( uint8_t *data, uint8_t length ) { // overflow proof
 	return 1;
 }
-
-// //Added from MPU6050_6Axis_MotionApps20.h
-
-// uint8_t MPU6050::dmpInitialize() {
-// 	// reset device
-// 	reset();
-// 	usleep( 30000 ); // wait after reset
-
-// 	setSleepEnabled( false );
-// 	// get X/Y/Z gyro offsets
-
-// 	int8_t xgOffset = getXGyroOffset();
-// 	int8_t ygOffset = getYGyroOffset();
-// 	int8_t zgOffset = getZGyroOffset();
-
-// 	// setup weird slave stuff (?)
-// 	setSlaveAddress( 0, 0x7F );
-// 	setI2CMasterModeEnabled( false );
-// 	setSlaveAddress( 0, 0x68 );
-// 	resetI2CMaster();
-// 	usleep( 20000 );
-
-// 	// load DMP code into memory banks
-// 	DEBUG_PRINT( F( "Writing DMP code to MPU memory banks (" ) );
-// 	DEBUG_PRINT( MPU6050_DMP_CODE_SIZE );
-// 	DEBUG_PRINTLN( F( " bytes)" ) );
-// 	if( writeProgMemoryBlock( dmpMemory, MPU6050_DMP_CODE_SIZE ) ) {
-// 		printf( "Success! DMP code written and verified.\n" );
-
-// 		// write DMP configuration
-// 		if( writeProgDMPConfigurationSet( dmpConfig, MPU6050_DMP_CONFIG_SIZE ) ) {
-// 			printf( "Success! DMP configuration written and verified.\n" );
-
-// 			DEBUG_PRINTLN( F( "Setting clock source to Z Gyro..." ) );
-// 			setClockSource( MPU6050_CLOCK_PLL_ZGYRO );
-
-// 			DEBUG_PRINTLN( F( "Setting DMP and FIFO_OFLOW interrupts enabled..." ) );
-// 			setIntEnabled( 0x12 );
-
-// 			DEBUG_PRINTLN( F( "Setting sample rate to 200Hz..." ) );
-// 			setRate( 4 ); // 1khz / (1 + 4) = 200 Hz
-
-// 			DEBUG_PRINTLN( F( "Setting external frame sync to TEMP_OUT_L[0]..." ) );
-// 			setExternalFrameSync( MPU6050_EXT_SYNC_TEMP_OUT_L );
-
-// 			DEBUG_PRINTLN( F( "Setting DLPF bandwidth to 42Hz..." ) );
-// 			setDLPFMode( MPU6050_DLPF_BW_42 );
-
-// 			DEBUG_PRINTLN( F( "Setting gyro sensitivity to +/- 2000 deg/sec..." ) );
-// 			setFullScaleGyroRange( MPU6050_GYRO_FS_2000 );
-
-// 			DEBUG_PRINTLN( F( "Setting DMP configuration bytes (function unknown)..." ) );
-// 			setDMPConfig1( 0x03 );
-// 			setDMPConfig2( 0x00 );
-
-// 			DEBUG_PRINTLN( F( "Clearing OTP Bank flag..." ) );
-// 			setOTPBankValid( false );
-
-// 			DEBUG_PRINTLN( F( "Setting X/Y/Z gyro offsets to previous values..." ) );
-// 			setXGyroOffset( xgOffset );
-// 			setYGyroOffset( ygOffset );
-// 			setZGyroOffset( zgOffset );
-
-// 			DEBUG_PRINTLN( F( "Setting X/Y/Z gyro user offsets to zero..." ) );
-// 			setXGyroOffsetUser( 0 );
-// 			setYGyroOffsetUser( 0 );
-// 			setZGyroOffsetUser( 0 );
-
-// 			DEBUG_PRINTLN( F( "Writing final memory update 1/7 (function unknown)..." ) );
-// 			uint8_t	 dmpUpdate[16], j;
-// 			uint16_t pos = 0;
-// 			for( j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++ )
-// 				dmpUpdate[j] = pgm_read_byte( &dmpUpdates[pos] );
-// 			writeMemoryBlock( dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1] );
-
-// 			DEBUG_PRINTLN( F( "Writing final memory update 2/7 (function unknown)..." ) );
-// 			for( j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++ )
-// 				dmpUpdate[j] = pgm_read_byte( &dmpUpdates[pos] );
-// 			writeMemoryBlock( dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1] );
-
-// 			DEBUG_PRINTLN( F( "Resetting FIFO..." ) );
-// 			resetFIFO();
-
-// 			DEBUG_PRINTLN( F( "Reading FIFO count..." ) );
-// 			uint8_t fifoCount = getFIFOCount();
-// 			uint8_t fifoBuffer[128];
-
-// 			printf( "Current FIFO count=%d\n", fifoCount );
-// 			DEBUG_PRINTLN( fifoCount );
-// 			if( fifoCount > 0 )
-// 				getFIFOBytes( fifoBuffer, fifoCount );
-
-// 			DEBUG_PRINTLN( F( "Setting motion detection threshold to 2..." ) );
-// 			setMotionDetectionThreshold( 2 );
-
-// 			DEBUG_PRINTLN( F( "Setting zero-motion detection threshold to 156..." ) );
-// 			setZeroMotionDetectionThreshold( 156 );
-
-// 			DEBUG_PRINTLN( F( "Setting motion detection duration to 80..." ) );
-// 			setMotionDetectionDuration( 80 );
-
-// 			DEBUG_PRINTLN( F( "Setting zero-motion detection duration to 0..." ) );
-// 			setZeroMotionDetectionDuration( 0 );
-
-// 			DEBUG_PRINTLN( F( "Resetting FIFO..." ) );
-// 			resetFIFO();
-
-// 			DEBUG_PRINTLN( F( "Enabling FIFO..." ) );
-// 			setFIFOEnabled( true );
-
-// 			DEBUG_PRINTLN( F( "Enabling DMP..." ) );
-// 			setDMPEnabled( true );
-
-// 			DEBUG_PRINTLN( F( "Resetting DMP..." ) );
-// 			resetDMP();
-
-// 			DEBUG_PRINTLN( F( "Writing final memory update 3/7 (function unknown)..." ) );
-// 			for( j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++ )
-// 				dmpUpdate[j] = pgm_read_byte( &dmpUpdates[pos] );
-// 			writeMemoryBlock( dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1] );
-
-// 			DEBUG_PRINTLN( F( "Writing final memory update 4/7 (function unknown)..." ) );
-// 			for( j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++ )
-// 				dmpUpdate[j] = pgm_read_byte( &dmpUpdates[pos] );
-// 			writeMemoryBlock( dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1] );
-
-// 			DEBUG_PRINTLN( F( "Writing final memory update 5/7 (function unknown)..." ) );
-// 			for( j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++ )
-// 				dmpUpdate[j] = pgm_read_byte( &dmpUpdates[pos] );
-// 			writeMemoryBlock( dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1] );
-
-// 			printf( "Waiting for FIFO count > 2...\n" );
-// 			while( ( fifoCount = getFIFOCount() ) < 3 )
-// 				;
-
-// 			printf( "Current FIFO count=%d", fifoCount );
-// 			DEBUG_PRINTLN( fifoCount );
-// 			DEBUG_PRINTLN( F( "Reading FIFO data..." ) );
-// 			getFIFOBytes( fifoBuffer, fifoCount );
-
-// 			DEBUG_PRINTLN( F( "Reading interrupt status..." ) );
-// 			uint8_t mpuIntStatus __attribute__( ( __unused__ ) ) = getIntStatus();
-
-// 			DEBUG_PRINT( F( "Current interrupt status=" ) );
-// 			DEBUG_PRINTLNF( mpuIntStatus, HEX );
-
-// 			DEBUG_PRINTLN( F( "Reading final memory update 6/7 (function unknown)..." ) );
-// 			for( j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++ )
-// 				dmpUpdate[j] = pgm_read_byte( &dmpUpdates[pos] );
-// 			readMemoryBlock( dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1] );
-
-// 			DEBUG_PRINTLN( F( "Waiting for FIFO count > 2..." ) );
-// 			while( ( fifoCount = getFIFOCount() ) < 3 )
-// 				;
-
-// 			DEBUG_PRINT( F( "Current FIFO count=" ) );
-// 			DEBUG_PRINTLN( fifoCount );
-
-// 			DEBUG_PRINTLN( F( "Reading FIFO data..." ) );
-// 			getFIFOBytes( fifoBuffer, fifoCount );
-
-// 			DEBUG_PRINTLN( F( "Reading interrupt status..." ) );
-// 			mpuIntStatus = getIntStatus();
-
-// 			DEBUG_PRINT( F( "Current interrupt status=" ) );
-// 			DEBUG_PRINTLNF( mpuIntStatus, HEX );
-
-// 			DEBUG_PRINTLN( F( "Writing final memory update 7/7 (function unknown)..." ) );
-// 			for( j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++ )
-// 				dmpUpdate[j] = pgm_read_byte( &dmpUpdates[pos] );
-// 			writeMemoryBlock( dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1] );
-
-// 			DEBUG_PRINTLN( F( "DMP is good to go! Finally." ) );
-
-// 			DEBUG_PRINTLN( F( "Disabling DMP (you turn it on later)..." ) );
-// 			setDMPEnabled( false );
-
-// 			DEBUG_PRINTLN( F( "Setting up internal 42-byte (default) DMP packet buffer..." ) );
-// 			dmpPacketSize = 42;
-// 			/*if ((dmpPacketBuffer = (uint8_t *)malloc(42)) == 0) {
-//                 return 3; // TODO: proper error code for no memory
-//             }*/
-
-// 			DEBUG_PRINTLN( F( "Resetting FIFO and clearing INT status one last time..." ) );
-// 			resetFIFO();
-// 			getIntStatus();
-// 		} else {
-// 			DEBUG_PRINTLN( F( "ERROR! DMP configuration verification failed." ) );
-// 			return 2; // configuration block loading failed
-// 		}
-// 	} else {
-// 		DEBUG_PRINTLN( F( "ERROR! DMP code verification failed." ) );
-// 		return 1; // main binary block loading failed
-// 	}
-// 	return 0; // success
-// }
-
-// uint8_t MPU6050::dmpGetAccel( int32_t *data, const uint8_t *packet ) {
-// 	// TODO: accommodate different arrangements of sent data (ONLY default supported now)
-// 	if( packet == 0 )
-// 		packet = dmpPacketBuffer;
-// 	data[0] = ( ( packet[28] << 24 ) + ( packet[29] << 16 ) + ( packet[30] << 8 ) + packet[31] );
-// 	data[1] = ( ( packet[32] << 24 ) + ( packet[33] << 16 ) + ( packet[34] << 8 ) + packet[35] );
-// 	data[2] = ( ( packet[36] << 24 ) + ( packet[37] << 16 ) + ( packet[38] << 8 ) + packet[39] );
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpGetAccel( int16_t *data, const uint8_t *packet ) {
-// 	// TODO: accommodate different arrangements of sent data (ONLY default supported now)
-// 	if( packet == 0 )
-// 		packet = dmpPacketBuffer;
-// 	data[0] = ( packet[28] << 8 ) + packet[29];
-// 	data[1] = ( packet[32] << 8 ) + packet[33];
-// 	data[2] = ( packet[36] << 8 ) + packet[37];
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpGetAccel( VectorInt16 *v, const uint8_t *packet ) {
-// 	// TODO: accommodate different arrangements of sent data (ONLY default supported now)
-// 	if( packet == 0 )
-// 		packet = dmpPacketBuffer;
-// 	v->x = ( packet[28] << 8 ) + packet[29];
-// 	v->y = ( packet[32] << 8 ) + packet[33];
-// 	v->z = ( packet[36] << 8 ) + packet[37];
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpGetQuaternion( int32_t *data, const uint8_t *packet ) {
-// 	// TODO: accommodate different arrangements of sent data (ONLY default supported now)
-// 	if( packet == 0 )
-// 		packet = dmpPacketBuffer;
-// 	data[0] = ( ( packet[0] << 24 ) + ( packet[1] << 16 ) + ( packet[2] << 8 ) + packet[3] );
-// 	data[1] = ( ( packet[4] << 24 ) + ( packet[5] << 16 ) + ( packet[6] << 8 ) + packet[7] );
-// 	data[2] = ( ( packet[8] << 24 ) + ( packet[9] << 16 ) + ( packet[10] << 8 ) + packet[11] );
-// 	data[3] = ( ( packet[12] << 24 ) + ( packet[13] << 16 ) + ( packet[14] << 8 ) + packet[15] );
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpGetQuaternion( int16_t *data, const uint8_t *packet ) {
-// 	// TODO: accommodate different arrangements of sent data (ONLY default supported now)
-// 	if( packet == 0 )
-// 		packet = dmpPacketBuffer;
-// 	data[0] = ( ( packet[0] << 8 ) + packet[1] );
-// 	data[1] = ( ( packet[4] << 8 ) + packet[5] );
-// 	data[2] = ( ( packet[8] << 8 ) + packet[9] );
-// 	data[3] = ( ( packet[12] << 8 ) + packet[13] );
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpGetQuaternion( Quaternion *q, const uint8_t *packet ) {
-// 	// TODO: accommodate different arrangements of sent data (ONLY default supported now)
-// 	int16_t qI[4];
-// 	uint8_t status = dmpGetQuaternion( qI, packet );
-// 	if( status == 0 ) {
-// 		q->w = ( float ) qI[0] / 16384.0f;
-// 		q->x = ( float ) qI[1] / 16384.0f;
-// 		q->y = ( float ) qI[2] / 16384.0f;
-// 		q->z = ( float ) qI[3] / 16384.0f;
-// 		return 0;
-// 	}
-// 	return status; // int16 return value, indicates error if this line is reached
-// }
-
-// uint8_t MPU6050::dmpGetGyro( int32_t *data, const uint8_t *packet ) {
-// 	// TODO: accommodate different arrangements of sent data (ONLY default supported now)
-// 	if( packet == 0 )
-// 		packet = dmpPacketBuffer;
-// 	data[0] = ( ( packet[16] << 24 ) + ( packet[17] << 16 ) + ( packet[18] << 8 ) + packet[19] );
-// 	data[1] = ( ( packet[20] << 24 ) + ( packet[21] << 16 ) + ( packet[22] << 8 ) + packet[23] );
-// 	data[2] = ( ( packet[24] << 24 ) + ( packet[25] << 16 ) + ( packet[26] << 8 ) + packet[27] );
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpGetGyro( int16_t *data, const uint8_t *packet ) {
-// 	// TODO: accommodate different arrangements of sent data (ONLY default supported now)
-// 	if( packet == 0 )
-// 		packet = dmpPacketBuffer;
-// 	data[0] = ( packet[16] << 8 ) + packet[17];
-// 	data[1] = ( packet[20] << 8 ) + packet[21];
-// 	data[2] = ( packet[24] << 8 ) + packet[25];
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpGetLinearAccel( VectorInt16 *v, VectorInt16 *vRaw, VectorFloat *gravity ) {
-// 	// get rid of the gravity component (+1g = +4096 in standard DMP FIFO packet)
-// 	v->x = vRaw->x - gravity->x * 4096;
-// 	v->y = vRaw->y - gravity->y * 4096;
-// 	v->z = vRaw->z - gravity->z * 4096;
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpGetLinearAccelInWorld( VectorInt16 *v, VectorInt16 *vReal, Quaternion *q ) {
-// 	// rotate measured 3D acceleration vector into original state
-// 	// frame of reference based on orientation quaternion
-// 	memcpy( v, vReal, sizeof( VectorInt16 ) );
-// 	v->rotate( q );
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpGetGravity( VectorFloat *v, Quaternion *q ) {
-// 	v->x = 2 * ( q->x * q->z - q->w * q->y );
-// 	v->y = 2 * ( q->w * q->x + q->y * q->z );
-// 	v->z = q->w * q->w - q->x * q->x - q->y * q->y + q->z * q->z;
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpGetEuler( float *data, Quaternion *q ) {
-// 	data[0] = atan2( 2 * q->x * q->y - 2 * q->w * q->z, 2 * q->w * q->w + 2 * q->x * q->x - 1 ); // psi
-// 	data[1] = -asin( 2 * q->x * q->z + 2 * q->w * q->y );										 // theta
-// 	data[2] = atan2( 2 * q->y * q->z - 2 * q->w * q->x, 2 * q->w * q->w + 2 * q->z * q->z - 1 ); // phi
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpGetYawPitchRoll( float *data, Quaternion *q, VectorFloat *gravity ) {
-// 	// yaw: (about Z axis)
-// 	data[0] = atan2( 2 * q->x * q->y - 2 * q->w * q->z, 2 * q->w * q->w + 2 * q->x * q->x - 1 );
-// 	// pitch: (nose up/down, about Y axis)
-// 	data[1] = atan( gravity->x / sqrt( gravity->y * gravity->y + gravity->z * gravity->z ) );
-// 	// roll: (tilt left/right, about X axis)
-// 	data[2] = atan( gravity->y / sqrt( gravity->x * gravity->x + gravity->z * gravity->z ) );
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpProcessFIFOPacket( const unsigned char *dmpData ) {
-// 	/*for (uint8_t k = 0; k < dmpPacketSize; k++) {
-//         if (dmpData[k] < 0x10) Serial.print("0");
-//         Serial.print(dmpData[k], HEX);
-//         Serial.print(" ");
-//     }
-//     Serial.print("\n");*/
-// 	//Serial.println((uint16_t)dmpPacketBuffer);
-// 	return 0;
-// }
-
-// uint8_t MPU6050::dmpReadAndProcessFIFOPacket( uint8_t numPackets, uint8_t *processed ) {
-// 	uint8_t status;
-// 	uint8_t buf[dmpPacketSize];
-// 	for( uint8_t i = 0; i < numPackets; i++ ) {
-// 		// read packet from FIFO
-// 		getFIFOBytes( buf, dmpPacketSize );
-
-// 		// process packet
-// 		if( ( status = dmpProcessFIFOPacket( buf ) ) > 0 )
-// 			return status;
-
-// 		// increment external process count variable, if supplied
-// 		if( processed != 0 )
-// 			( *processed )++;
-// 	}
-// 	return 0;
-// }
-
-// uint16_t MPU6050::dmpGetFIFOPacketSize() {
-// 	return dmpPacketSize;
-// }

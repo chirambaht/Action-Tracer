@@ -1,22 +1,19 @@
-# This is the overall makefile that will run the code from both ends.
+clean:
+	@ cd Offsets/ && $(MAKE) clean && cd ../
+	@ cd Collection/ && $(MAKE) clean && cd ../
 
-check:
-	@ echo "Done and dusted"
+all: 
+	@ cd Collection/ && $(MAKE) all
+	@ cd Offsets/ && $(MAKE) all
 
-pi_compile:
-	@ cd Code/Capture/Collection &&  $(MAKE) all
+compile_collection:
+	@  cd Collection/ && $(MAKE) all
 
-pi_clean:
-	@ cd Code/Capture/Collection && $(MAKE) clean
+compile_offsets:
+	@  cd Offsets/ && $(MAKE) all
 
-pi_run:
-	@ cd Code/Capture/Collection && ./collect_data
+collect:
+	@ cd Collection/ && ./collect_data
 
-imu_zero_compile:
-	@ cd Code/Capture/Offsets && $(MAKE) all
-
-imu_zero_clean:
-	@ cd Code/Capture/Offsets && $(MAKE) clean
-
-imu_zero_run:
-	@ cd Code/Capture/Offsets && ./IMU_zero
+IMU_zero:
+	@ cd Offsets/ && ./IMU_zero

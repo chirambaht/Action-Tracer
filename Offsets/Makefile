@@ -7,10 +7,12 @@ EXE = IMU_zero
 
 IMU_OBJS = IMU_zero.o 
 
+FAST_SLOW = 1000
+
 LOCAL_IP = $(shell ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | awk '{print $1}')
 LOCAL_PORT = 5000
 
-CXXFLAGS = -Wall -DON_PI -g 
+CXXFLAGS = -Wall -DON_PI -g -DNFAST_VALUE=$(FAST_SLOW) -DNSLOW_VALUE=$(FAST_SLOW)
 
  $(CMN_OBJS) $(CLD_OBJS) $(IMU_OBJS): $(HDRS)
 

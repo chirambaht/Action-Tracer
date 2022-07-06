@@ -1,6 +1,5 @@
-# Action-Tracer
-> A Masters project being done at the University of Cape Town by Humphrey Chiramba, being supervised by Dr Simon Winberg.
-## Purpose
-This project aims to develop a real-time motion capture system for the purpose of activity capture. This is to be done and applied to mobile health, rehabilitation and in sport.
+# Collection and Modeling
+This unit is used to show how data can both be collected from the Pi and sent to the host server on the machine to model the collected data.
 
----
+## Collection
+This is the code used by the Raspberry Pi code as well as wiring diagram.
