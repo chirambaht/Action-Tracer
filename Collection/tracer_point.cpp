@@ -1,12 +1,6 @@
 #include "tracer_point.h"
 
-#ifdef DEBUG
-	#define debugPrint( ... )	printf( __VA_ARGS__ )
-	#define debugPrintln( ... ) printf( __VA_ARGS__ )
-#else
-	#define debugPrint( ... )
-	#define debugPrintln( ... )
-#endif
+#include "debug_printer.h"
 
 #ifdef ON_PI
 	#include <wiringPi.h>

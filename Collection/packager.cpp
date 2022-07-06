@@ -1,20 +1,14 @@
 
 #include "packager.h"
 
+#include "debug_printer.h"
+
 #include <cerrno>
 #include <iomanip>
 #include <unistd.h>
 
 #ifdef ON_PI
 	#include <wiringPi.h>
-#endif
-
-#ifdef DEBUG
-	#define debugPrint( ... )	printf( __VA_ARGS__ )
-	#define debugPrintln( ... ) printf( __VA_ARGS__ )
-#else
-	#define debugPrint( ... )
-	#define debugPrintln( ... )
 #endif
 
 using namespace ActionTracer;
@@ -161,11 +155,13 @@ void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
 		return;
 	}
 
+#ifdef DEBUG
 	debugPrint( "%8d,%7d", millis() - _recording_start_time, _count );
 	for( size_t cc = PACKAGE_DATA_START; cc < PACKAGE_LENGTH; cc++ ) {
 		debugPrint( ",%4i", _package[cc] );
 	}
 	debugPrint( "\n" );
+#endif
 
 	_package[2] = 0;
 
