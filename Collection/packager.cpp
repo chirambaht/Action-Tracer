@@ -1,7 +1,7 @@
 
 #include "packager.h"
 
-#include <errno.h>
+#include <cerrno>
 #include <iomanip>
 #include <unistd.h>
 
@@ -155,7 +155,8 @@ void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
 	_count++;
 	if( ( send_response = send( file_descriptor, _package, sizeof( _package ), 0 ) ) < 0 ) {
 		printf( "Send failed. Code %d\n Arguments were:\n\tDescriptor: %d\n", send_response, file_descriptor );
-		printf( "\tBytes to send: %d\nError: %s\n", sizeof( _package ), strerror( errno ) );
+		printf( "\tBytes to send: %d\n", sizeof( _package ) );
+		perror( "Error: " );
 
 		return;
 	}
