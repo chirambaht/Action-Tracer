@@ -109,6 +109,27 @@ uint8_t ActionTracer::Packager::_clients_connected() {
 	return _client_pointer;
 }
 
+void ActionTracer::Packager::disconnect_client( int8_t descriptor ) {
+#ifdef ON_PI
+	piLock( 1 );
+	for( int i = 0; i < _client_pointer; i++ ) {
+		if( _client_sockets[i]->_socket_descriptor == descriptor ) {
+			// Close descriptor and delete pointer in array
+			close( descriptor );
+			delete _client_sockets[i];
+
+			for( int j = i; j < _client_pointer - 1; j++ ) {
+				_client_sockets[j] = _client_sockets[j + 1];
+			}
+			_client_pointer--;
+			piUnlock( 1 );
+			return;
+		}
+	}
+	piUnlock( 1 );
+#endif
+}
+
 /**
  * @brief Converts a given float value to a integer to 3 decimal places.
  *
@@ -149,8 +170,11 @@ void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
 	_count++;
 	if( ( send_response = send( file_descriptor, _package, sizeof( _package ), 0 ) ) < 0 ) {
 		printf( "Send failed. Code %d\n Arguments were:\n\tDescriptor: %d\n", send_response, file_descriptor );
-		printf( "\tBytes to send: %d\n", sizeof( _package ) );
-		perror( "Error: " );
+		perror( "Error" );
+		if( send_response == -1 ) {
+			// Client disconnected
+			disconnect_client( file_descriptor );
+		}
 
 		return;
 	}
