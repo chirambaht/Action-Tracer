@@ -16,8 +16,9 @@ Packager *communicator; // The speaker dude
 
 TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
 
-size_t _sensors		   = 0;		// Number of sensors being used
-float  data_package[4] = { 0 }; //
+size_t	_sensors		= 0;	 // Number of sensors being used
+uint8_t _sensors_init	= 0;	 // Number of sensors that have been initialized
+float	data_package[4] = { 0 }; //
 
 bool send_ready = false;
 
