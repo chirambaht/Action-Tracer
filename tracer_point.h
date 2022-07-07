@@ -20,6 +20,8 @@ namespace ActionTracer {
 		uint8_t _device_interrupt_status;
 		bool	_device_interrupt_flag;
 
+		bool _calibrate;
+
 		uint8_t	 _fifo_buffer[64] = { 0 };
 		uint16_t _packet_size;
 		uint16_t _fifo_count;
@@ -60,6 +62,8 @@ namespace ActionTracer {
 		uint8_t identify();				   // Blinks the sensor for 5 seconds. Realistically, it is raising the interupt line for the device in quesion
 		void	print_last_data_packet();  // Prints the last data packet obtained by this node
 		void	tracepoint_isr();
+		bool	calibrate( uint8_t );
+		void	set_calibrate( bool );
 	};
 } // namespace ActionTracer
 

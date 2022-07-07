@@ -1,5 +1,6 @@
 #include "tracer_point.h"
 
+#include "calibrator.hpp"
 #include "debug_printer.h"
 
 #ifdef ON_PI
@@ -19,7 +20,8 @@ using namespace ActionTracer;
  * @brief Construct a new defult Action Tracer::Trace Point::Trace Point object
  *
  */
-ActionTracer::TracePoint::TracePoint() {}
+ActionTracer::TracePoint::TracePoint() {
+}
 
 /**
  * @brief Construct a new Action Tracer:: TracePoint::Trace Point object.
@@ -351,48 +353,14 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
  * @return Nothing
  */
 void ActionTracer::TracePoint::_set_device_offsets() {
+	// run calibration program
 	// Get new offset code
 	//  0,-3151,  723,13189,  127,  178,  -26
 	//  2, -579, -255, 12089, 20, -59, -9
 	//  3, -1569, 1663, 14383, 139, 2, 9
 
-	switch( _identifier ) {
-		case 0:
-
-			_offsets[0] = -3151;
-			_offsets[1] = 723;
-			_offsets[2] = 13189;
-			_offsets[3] = 127;
-			_offsets[4] = 178;
-			_offsets[5] = -26;
-			break;
-		case 1:
-			_offsets[0] = -579;
-			_offsets[1] = -255;
-			_offsets[2] = 12089;
-			_offsets[3] = 220;
-			_offsets[4] = -59;
-			_offsets[5] = -9;
-			break;
-		case 2:
-			_offsets[0] = -1569;
-			_offsets[1] = 1663;
-			_offsets[2] = 14383;
-			_offsets[3] = 139;
-			_offsets[4] = 2;
-			_offsets[5] = 9;
-			break;
-		default:
-			_set_default_device_offsets();
-			break;
-	}
-	_device->setXAccelOffset( _offsets[0] );
-	_device->setYAccelOffset( _offsets[1] );
-	_device->setZAccelOffset( _offsets[2] );
-	_device->setXGyroOffset( _offsets[3] );
-	_device->setYGyroOffset( _offsets[4] );
-	_device->setZGyroOffset( _offsets[5] );
-	_set_default_device_offsets();
+	_calibrate_device( _device, 250 );
+	// _set_default_device_offsets();
 }
 
 /**
@@ -406,4 +374,22 @@ void ActionTracer::TracePoint::_set_default_device_offsets() {
 	_device->setXGyroOffset( -17 );
 	_device->setYGyroOffset( 1477 );
 	_device->setZGyroOffset( 4971 );
+}
+
+/**
+ * @brief Calibrate the sensor. This will set the offsets as well.
+ * @return current setting of _calibrate variable.
+ */
+bool ActionTracer::TracePoint::calibrate( uint8_t fast_slow_rate = 250 ) {
+	// Implement calibration of *this sensor
+
+	return _calibrate;
+}
+
+/**
+ * @brief Sets the _calibrate value.
+ * @return None
+ */
+void ActionTracer::TracePoint::set_calibrate( bool in_value ) {
+	_calibrate = in_value;
 }
