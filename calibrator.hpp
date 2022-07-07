@@ -3,7 +3,7 @@
 #include <cstdint>
 
 namespace ActionTracer {
-	const __uint8_t FAST_SLOW_LIMIT = 500;
+	const __int16_t FAST_SLOW_LIMIT = 500;
 
 	const int iAx = 0;
 	const int iAy = 1;
