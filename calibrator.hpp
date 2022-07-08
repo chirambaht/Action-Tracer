@@ -108,9 +108,9 @@ namespace ActionTracer {
 					LowValue[i]	 = Smoothed[i];
 				} // use upper half
 			}	  // closing in
-			  // ShowProgress();
-		} // still working
-	}	  // PullBracketsIn
+				  // ShowProgress();
+		}		  // still working
+	}			  // PullBracketsIn
 
 	void PullBracketsOut( MPU6050 *_device ) {
 		bool Done = false;
@@ -157,7 +157,7 @@ namespace ActionTracer {
 		} // keep going
 	}	  // PullBracketsOut
 
-	int _calibrate_device( MPU6050 *_device, uint8_t falst_slow_limit ) {
+	void _calibrate_device( MPU6050 *_device, uint8_t falst_slow_limit ) {
 		NFast		= falst_slow_limit;
 		NSlow		= falst_slow_limit;
 		Target[iAz] = 16384;
@@ -167,7 +167,6 @@ namespace ActionTracer {
 		PullBracketsIn( _device );
 
 		SetOffsets( _device, LowOffset );
-		return 0;
 	}
 } // namespace ActionTracer
 

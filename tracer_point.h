@@ -20,7 +20,7 @@ namespace ActionTracer {
 		uint8_t _device_interrupt_status;
 		bool	_device_interrupt_flag;
 
-		bool _calibrate;
+		bool _calibrate = true;
 
 		uint8_t	 _fifo_buffer[64] = { 0 };
 		uint16_t _packet_size;

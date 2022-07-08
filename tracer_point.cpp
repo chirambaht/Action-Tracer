@@ -349,41 +349,11 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 }
 
 /**
- * @brief Sets device offsets based on a pointers.csv file. This file should contain the callibration details of each device. Such a csv can be obtained by running the IMU_Zero program in the Offsts directory
+ * @brief Calibrates the device obtaining the offsets of the sensor.
  * @return Nothing
  */
 void ActionTracer::TracePoint::_set_device_offsets() {
-	// run calibration program
-	// Get new offset code
-	//  0,-3151,  723,13189,  127,  178,  -26
-	//  2, -579, -255, 12089, 20, -59, -9
-	//  3, -1569, 1663, 14383, 139, 2, 9
-
-	_calibrate_device( _device, 250 );
-	// _set_default_device_offsets();
-}
-
-/**
- * @brief Sets default values for the offsets on a sensor.
- * @return Nothing
- */
-void ActionTracer::TracePoint::_set_default_device_offsets() {
-	_device->setXAccelOffset( 43 );
-	_device->setYAccelOffset( 25 );
-	_device->setZAccelOffset( 73 );
-	_device->setXGyroOffset( -17 );
-	_device->setYGyroOffset( 1477 );
-	_device->setZGyroOffset( 4971 );
-}
-
-/**
- * @brief Calibrate the sensor. This will set the offsets as well.
- * @return current setting of _calibrate variable.
- */
-bool ActionTracer::TracePoint::calibrate( uint8_t fast_slow_rate = 250 ) {
-	// Implement calibration of *this sensor
-
-	return _calibrate;
+	_calibrate_device( _device, 250 ); // Callibrate the device with the given number of samples
 }
 
 /**

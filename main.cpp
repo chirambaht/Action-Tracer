@@ -66,8 +66,10 @@ PI_THREAD( network_sender ) {
 #endif
 
 void turn_off_all_devices() {
-	for( size_t i = 0; i < _sensors_init; i++ ) {
-		body_sensor[i]->turn_off();
+	for( int dev = 0; dev < num_action_devices; dev++ ) {
+#ifdef ON_PI
+		digitalWrite( get_pi_location( dev ), LOW );
+#endif
 	}
 }
 
@@ -101,6 +103,7 @@ void setup() {
 		exit( EXIT_FAILURE );
 	}
 #endif
+
 	for( size_t i = 0; i < _sensors; i++ ) {
 #ifdef SINGLE_ACT_0
 		// Init all the devices as the IMU on the Pi Connector
