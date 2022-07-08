@@ -34,8 +34,8 @@
 */
 
 namespace ActionTracer {
-	int get_pi_location( int locator );
-	int get_action_tracer_device( int device_numeber );
+	// int get_pi_location( int locator );
+	// int get_action_tracer_device( int device_numeber );
 
 #define ACT_I2C_DATA  8
 #define ACT_I2C_CLOCK 9
