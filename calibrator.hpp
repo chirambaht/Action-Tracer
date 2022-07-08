@@ -1,8 +1,10 @@
-#include "action_pi.hpp"
+#ifndef CALIBRATOR_HPP
+##define CALIBRATOR_HPP
+	#include "action_pi.hpp"
 
-#include <cstdint>
+	#include <cstdint>
 
-namespace ActionTracer {
+	namespace ActionTracer {
 	const __int16_t FAST_SLOW_LIMIT = 500;
 
 	const int iAx = 0;
@@ -25,7 +27,7 @@ namespace ActionTracer {
 
 	int N;
 
-	void SetOffsets( MPU6050 *_device, int TheOffsets[6] ) {
+	void SetOffsets( MPU6050 * _device, int TheOffsets[6] ) {
 		_device->setXAccelOffset( TheOffsets[iAx] );
 		_device->setYAccelOffset( TheOffsets[iAy] );
 		_device->setZAccelOffset( TheOffsets[iAz] );
@@ -34,7 +36,7 @@ namespace ActionTracer {
 		_device->setZGyroOffset( TheOffsets[iGz] );
 	} // SetOffsets
 
-	void GetSmoothed( MPU6050 *_device ) {
+	void GetSmoothed( MPU6050 * _device ) {
 		int16_t RawValue[6];
 		int		i;
 		long	Sums[6] = { 0 };
@@ -61,7 +63,7 @@ namespace ActionTracer {
 		N = NewN;
 	} // SetAveraging
 
-	void PullBracketsIn( MPU6050 *_device ) {
+	void PullBracketsIn( MPU6050 * _device ) {
 		bool AllBracketsNarrow;
 		bool StillWorking;
 		int	 NewOffset[6];
@@ -111,7 +113,7 @@ namespace ActionTracer {
 		}		  // still working
 	}			  // PullBracketsIn
 
-	void PullBracketsOut( MPU6050 *_device ) {
+	void PullBracketsOut( MPU6050 * _device ) {
 		bool Done = false;
 		int	 NextLowOffset[6];
 		int	 NextHighOffset[6];
@@ -156,7 +158,7 @@ namespace ActionTracer {
 		} // keep going
 	}	  // PullBracketsOut
 
-	int _calibrate_device( MPU6050 *_device, uint8_t falst_slow_limit ) {
+	int _calibrate_device( MPU6050 * _device, uint8_t falst_slow_limit ) {
 		NFast		= falst_slow_limit;
 		NSlow		= falst_slow_limit;
 		Target[iAz] = 16384;
@@ -169,3 +171,5 @@ namespace ActionTracer {
 		return 0;
 	}
 } // namespace ActionTracer
+
+#endif
