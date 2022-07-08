@@ -1,6 +1,5 @@
 #ifndef CALIBRATOR_HPP
 #define CALIBRATOR_HPP
-#include "action_pi.hpp"
 
 #include <cstdint>
 
@@ -109,9 +108,9 @@ namespace ActionTracer {
 					LowValue[i]	 = Smoothed[i];
 				} // use upper half
 			}	  // closing in
-				  // ShowProgress();
-		}		  // still working
-	}			  // PullBracketsIn
+			  // ShowProgress();
+		} // still working
+	}	  // PullBracketsIn
 
 	void PullBracketsOut( MPU6050 *_device ) {
 		bool Done = false;
