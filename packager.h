@@ -41,7 +41,8 @@ namespace ActionTracer {
 		ActionClient		 *_client_sockets[MAX_CLIENTS];
 		uint32_t		   _port;
 		__uint8_t		   _descriptor;
-		__uint16_t		   _count;
+		__uint16_t		   _count = 0;
+		__uint16_t		   _previous_count = 0;
 		__uint16_t		   _recording_start_time;
 		struct sockaddr_in _server;
 		struct timeval	   _timeout; // a 5ms timeout

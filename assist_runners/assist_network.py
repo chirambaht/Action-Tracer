@@ -1,6 +1,7 @@
 
 import socket
 from datetime import datetime
+#use socket io
 import numpy as np
 import time
 # import pandas as pd
@@ -21,11 +22,15 @@ def bin_to_good(data_in, bytes_per_data_point, convert_to_float=False):
         pre_work.append(data_in[i*bytes_per_data_point:(i*bytes_per_data_point)+bytes_per_data_point])
     
     for i in pre_work:
+        bin_string_array = i
+        ss = "%2x%2x%2x%2x" % (bin_string_array[3],bin_string_array[2],bin_string_array[1], bin_string_array[0])
+        si = int(ss.replace(" ", "0"), 32)
         if convert_to_float:
-            data_packet.append(int.from_bytes(i, byteorder="little", signed=True) / 10000)
-            
+            # data_packet.append(int.from_bytes(i, byteorder="little", signed=True) / 10000.0)
+            data_packet.append(si / 10000.0)
         else:
-            data_packet.append(int.from_bytes(i, byteorder="little", signed=True) )
+            # data_packet.append(int.from_bytes(i, byteorder="little", signed=True) )
+            data_packet.append(si)
 
     return data_packet
 
@@ -133,18 +138,16 @@ while (True):
         header = data[:12]
 
         rest_of_data = data[12:240]
-        print("Received data: %s" % (bin_to_readable_data(data, 4)))
         # correct the order that data comes in (saved in t)
         t = bin_to_good(rest_of_data, 4, True)
         h_data = bin_to_good(header, 4)
-
+        
         print(f"\nTime: {h_data[0]}, Count: {h_data[1]}, Devices: {h_data[2]}")
 
         # print t data in groups of 19.
         for i in range(len(t)//19):
             print(f"Device {i+1}:{t[i*19:(i*19)+19]}")
-       
-        # cs.appensd(clean_arr(t, 10000, 3))
+
         c = h_data[1]
     logger.close()
 

@@ -163,7 +163,15 @@ void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
 	if( _count == 0 ) {
 		_recording_start_time = millis();
 	}
-	_package[0] = ( millis() - _recording_start_time ) / 1000; // Time in seconds
+
+	// This section will get the new time but also calculate how many packets were sent
+	int32_t new_time = ( millis() - _recording_start_time ) / 1000;
+	if  (_package[0] < new_time ){
+		printf("%d packets sent in the last second.". _count - _previous_count);
+		_previous_count = _count;
+	}
+	_package[0] = new_time; // Time in seconds
+
 #endif
 
 	_package[1] = _count;
