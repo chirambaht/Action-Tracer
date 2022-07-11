@@ -32,6 +32,7 @@ namespace ActionTracer {
 		VectorInt16 _gyroscope_packet;
 		VectorFloat _gravity_packet;
 
+		float _complete_float_packet[19]	= { 0 };
 		float _gyroscope_float_packet[3]	= { 0 };
 		float _acceleration_float_packet[3] = { 0 };
 		float _gravity_float_packet[3]		= { 0 };
@@ -39,7 +40,7 @@ namespace ActionTracer {
 		float _euler_packet[3]				= { 0 };
 		float _yaw_pitch_roll_packet[3]		= { 0 };
 
-		__int16_t _teapot_raw_packet[10] = { 0 };
+		// __int16_t _teapot_raw_packet[10] = { 0 };
 
 		void _select_me();
 		void _deselect_me();
@@ -64,6 +65,7 @@ namespace ActionTracer {
 		void	tracepoint_isr();
 		bool	calibrate( uint8_t );
 		void	set_calibrate( bool );
+		uint8_t how_big_is_a_packet();
 	};
 } // namespace ActionTracer
 

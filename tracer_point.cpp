@@ -8,9 +8,9 @@
 #endif
 
 // Select the data you want out of the senser here. Only select one.
-#define GET_DATA_QUATERNION
+#define GET_WHOLE_DATA
+// #define GET_DATA_QUATERNION
 // #define GET_DATA_EULER
-// #define GET_DATA_ALL
 // #define GET_DATA_GYROSCOPE
 // #define GET_DATA_ACCELEROMETER
 // #define GET_DATA_YAWPITCHROLL
@@ -268,17 +268,45 @@ void ActionTracer::TracePoint::get_data() {
 	 |  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41                          |
 	 * ================================================================================================ */
 
-#ifdef GET_DATA_TEAPOT
-	_teapot_raw_packet[0] = ( ( _fifo_buffer[0] << 8 ) | _fifo_buffer[1] );	  // Quat W
-	_teapot_raw_packet[1] = ( ( _fifo_buffer[4] << 8 ) | _fifo_buffer[5] );	  // Quat X
-	_teapot_raw_packet[2] = ( ( _fifo_buffer[8] << 8 ) | _fifo_buffer[9] );	  // Quat Y
-	_teapot_raw_packet[3] = ( ( _fifo_buffer[12] << 8 ) | _fifo_buffer[13] ); // Quat Z
-	_teapot_raw_packet[4] = ( _fifo_buffer[16] << 8 ) | _fifo_buffer[17];	  // GYR X
-	_teapot_raw_packet[5] = ( _fifo_buffer[20] << 8 ) | _fifo_buffer[21];	  // GYR Y
-	_teapot_raw_packet[6] = ( _fifo_buffer[24] << 8 ) | _fifo_buffer[25];	  // GYR Z
-	_teapot_raw_packet[7] = ( _fifo_buffer[28] << 8 ) | _fifo_buffer[29];	  // Acc X
-	_teapot_raw_packet[8] = ( _fifo_buffer[32] << 8 ) | _fifo_buffer[33];	  // Acc Y
-	_teapot_raw_packet[9] = ( _fifo_buffer[36] << 8 ) | _fifo_buffer[37];	  // Acc Z
+#ifdef GET_WHOLE_DATA
+	// First get dmpQuaternion data as it is pivotal to all work
+	_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+
+	// Get acceleration data next
+	_device->dmpGetAccel( &_acceleration_packet, _fifo_buffer );
+
+	// Get gyroscope data next
+	_device->dmpGetGyro( &_gyroscope_packet, _fifo_buffer );
+
+	// Get gravity data next
+	_device->dmpGetGravity( &_gravity_packet, &_quaternion_packet );
+
+	// Now get the yaw, pitch and roll data
+	_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet[0], &_quaternion_packet, &_gravity_packet );
+
+	// Get Euler angles
+	_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
+
+	// Add all data to the teapot float packet
+	_complete_float_packet[0]  = _quaternion_packet.w;
+	_complete_float_packet[1]  = _quaternion_packet.x;
+	_complete_float_packet[2]  = _quaternion_packet.y;
+	_complete_float_packet[3]  = _quaternion_packet.z;
+	_complete_float_packet[4]  = _acceleration_packet.x;
+	_complete_float_packet[5]  = _acceleration_packet.y;
+	_complete_float_packet[6]  = _acceleration_packet.z;
+	_complete_float_packet[7]  = _gyroscope_packet.x;
+	_complete_float_packet[8]  = _gyroscope_packet.y;
+	_complete_float_packet[9]  = _gyroscope_packet.z;
+	_complete_float_packet[10] = _yaw_pitch_roll_packet[0];
+	_complete_float_packet[11] = _yaw_pitch_roll_packet[1];
+	_complete_float_packet[12] = _yaw_pitch_roll_packet[2];
+	_complete_float_packet[13] = _euler_packet[0];
+	_complete_float_packet[14] = _euler_packet[1];
+	_complete_float_packet[15] = _euler_packet[2];
+	_complete_float_packet[16] = _gravity_packet.x;
+	_complete_float_packet[17] = _gravity_packet.y;
+	_complete_float_packet[18] = _gravity_packet.z;
 #endif
 
 #ifdef GET_DATA_QUATERNION
@@ -328,8 +356,8 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 		this->get_data();
 	}
 
-#ifdef GET_DATA_TEAPOT
-	return _teapot_raw_packet;
+#ifdef GET_WHOLE_DATA
+	return _complete_float_packet;
 #endif
 #ifdef GET_DATA_QUATERNION
 	return _quaternion_float_packet;
@@ -362,4 +390,29 @@ void ActionTracer::TracePoint::_set_device_offsets() {
  */
 void ActionTracer::TracePoint::set_calibrate( bool in_value ) {
 	_calibrate = in_value;
+}
+
+/**
+ * @brief Gets the number of float packets that will be returned to the user
+ * @return size of float array being returned
+ */
+uint8_t ActionTracer::TracePoint::how_big_is_a_packet() {
+#ifdef GET_WHOLE_DATA
+	return 19;
+#endif
+#ifdef GET_DATA_QUATERNION
+	return 4;
+#endif
+#ifdef GET_DATA_EULER
+	return 3;
+#endif
+#ifdef GET_DATA_GYROSCOPE
+	return 3;
+#endif
+#ifdef GET_DATA_ACCELEROMETER
+	return 3;
+#endif
+#ifdef GET_DATA_YAWPITCHROLL
+	return 3;
+#endif
 }
