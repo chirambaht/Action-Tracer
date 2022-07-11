@@ -3,7 +3,7 @@
 
 #ifndef DEVICES_IN_USE
 	#define DEVICES_IN_USE	   3 // 3 IMUs
-	#define DATA_ELEMENTS	   DEVICES_IN_USE * 4
+	#define DATA_ELEMENTS	   DEVICES_IN_USE * 19
 	#define PACKAGE_LENGTH	   DATA_ELEMENTS + 3
 	#define PACKAGE_DATA_START 3 // 3 is the number of elements in the header
 
@@ -32,7 +32,7 @@ namespace ActionTracer {
 
 	class Packager {
 	  private:
-		__int16_t _package[PACKAGE_LENGTH] = { 0 };
+		__int32_t _package[PACKAGE_LENGTH] = { 0 };
 		char	  buf[128];
 		__uint8_t _packed		   = 0;
 		__uint8_t _client_pointer  = 0;
@@ -66,7 +66,7 @@ namespace ActionTracer {
 		void	close_socket( void );
 		void	set_descriptor( int );
 		void	dump_vars( void );
-		int		load_packet( float *, uint8_t );
+		int		load_packet( float *, int8_t, uint8_t );
 		uint8_t _clients_connected( void );
 	};
 

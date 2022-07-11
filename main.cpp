@@ -142,11 +142,10 @@ void loop() {
 #endif
 	for( size_t i = 0; i < _sensors; i++ ) {
 		body = body_sensor[i]->read_data( 1 );
-		for( size_t j = 0; j < 4; j++ ) {
-			data_package[j] = *body;
-			body++;
+		for( size_t j = 0; j < 19; j++ ) {
+			data_package[j] = *body++;
 		}
-		communicator->load_packet( data_package, 4 );
+		communicator->load_packet( data_package, i + 1, 19 );
 	}
 #ifdef ON_PI
 	piLock( 1 );

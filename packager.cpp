@@ -137,7 +137,7 @@ void ActionTracer::Packager::disconnect_client( int8_t descriptor ) {
  * @return 16 bit integer of the inital value
  */
 __int16_t ActionTracer::Packager::_float_to_int( float value ) {
-	return static_cast<__int16_t>( value * 10000 );
+	return static_cast<__int32_t>( value * 10000 );
 }
 
 /**
@@ -195,12 +195,18 @@ void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
 /**
  * This is used to add data to a package that is going to be sent. It takes an array of floats.
  * @param *data A reference to an array of floats
- * @param length number of floats in array to convert. Defaults to 4
+ * @param device_number. Device to work with. Starts from 1 and will place data in the correct position in the package.
+ * @param length number of floats in array to convert. Defaults to 19
  * @return Number of elements that have been packed.
  */
-int ActionTracer::Packager::load_packet( float *data, uint8_t length = 4 ) {
-	_package_pointer = ( _package[2] * 4 ) + PACKAGE_DATA_START;
-	_packed			 = 0;
+int ActionTracer::Packager::load_packet( float *data, int8_t device_number = -1, uint8_t length = 19 ) {
+	if( device_number <= 0 ) {
+		_package_pointer = ( _package[2] * length ) + PACKAGE_DATA_START;
+	} else {
+		_package_pointer = ( ( device_number - 1 ) * length ) + PACKAGE_DATA_START;
+	}
+
+	_packed = 0;
 	for( int i = 0; i < length; i++ ) {
 		_package[_package_pointer++] = _float_to_int( data[i] );
 		_packed++;
