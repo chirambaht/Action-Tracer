@@ -110,7 +110,8 @@ def packet_file_print( data_packet, document):
     print (f")\tTime - {data_packet[0]:5d}", file=document)
 
 c= 0
-HOST = "192.168.1.100"  # The server's hostname or IP address
+# HOST = "192.168.1.100"  # The server's hostname or IP address
+HOST = "192.168.43.77"  # The server's hostname or IP address
 PORT = 9022  # The port used by the server
 tt = 1
 while (True):
