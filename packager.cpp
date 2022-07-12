@@ -244,9 +244,9 @@ void ActionTracer::Packager::dump_vars( void ) {
 	printf( "Packed: %d\n", _packed );
 	printf( "Package pointer: %d\n", _package_pointer );
 	printf( "Count: %d\n", _count );
-	printf( "Package: [ %d", _package[0] );
+	printf( "Package: [ %f", _package[0] );
 	for( size_t i = 1; i < PACKAGE_LENGTH; i++ ) {
-		printf( ", %d", _package[i] );
+		printf( ", %f", _package[i] );
 	}
 	printf( "]\n" );
 
