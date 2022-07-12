@@ -24,8 +24,11 @@ def bin_to_good(data_in, bytes_per_data_point, convert_to_float=False):
     for i in pre_work:
         bin_string_array = i
         ss = "%2x%2x%2x%2x" % (bin_string_array[3],bin_string_array[2],bin_string_array[1], bin_string_array[0])
-        si = int(ss.replace(" ", "0"), 32)
-        if convert_to_float:
+        # si = int(ss.replace(" ", "0"), 32)
+        si = float(ss.replace(" ", "0"))
+
+        if 1==0:
+        # if convert_to_float:
             # data_packet.append(int.from_bytes(i, byteorder="little", signed=True) / 10000.0)
             data_packet.append(si / 10000.0)
         else:
@@ -119,7 +122,7 @@ while (True):
     end_time = time.time()
     current_time = now.strftime("%Y%m%d-%H%M%S")
 
-    logger = open(current_time+".act", "w")
+    # logger = open(current_time+".act", "w")
 
     print("Connected to %s on port %s" % (str(HOST), str(PORT)))
     print("Writting data to %s.act" % (current_time))
@@ -149,7 +152,7 @@ while (True):
             print(f"Device {i+1}:{t[i*19:(i*19)+19]}")
 
         c = h_data[1]
-    logger.close()
+    # logger.close()
 
     print("Last log to %s.act" % (current_time))
     ft = (end_time - start_time) / 1

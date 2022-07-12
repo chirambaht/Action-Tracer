@@ -137,7 +137,7 @@ void ActionTracer::Packager::disconnect_client( int8_t descriptor ) {
  * @return 16 bit integer of the inital value
  */
 __int16_t ActionTracer::Packager::_float_to_int( float value ) {
-	return static_cast<__int32_t>( value * 10000 );
+	return static_cast<__int32_t>( value * FLOAT_SCALING_FACTOR );
 }
 
 /**
@@ -216,7 +216,8 @@ int ActionTracer::Packager::load_packet( float *data, int8_t device_number = -1,
 
 	_packed = 0;
 	for( int i = 0; i < length; i++ ) {
-		_package[_package_pointer++] = _float_to_int( data[i] );
+		// _package[_package_pointer++] = _float_to_int( data[i] );
+		_package[_package_pointer++] = data[i];
 		_packed++;
 	}
 

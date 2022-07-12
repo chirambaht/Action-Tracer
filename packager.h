@@ -16,7 +16,8 @@
 	HEADER 2: Devices Connected
 */
 #endif
-#define MAX_CLIENTS 10
+#define MAX_CLIENTS			 10
+#define FLOAT_SCALING_FACTOR 10000
 
 namespace ActionTracer {
 
@@ -32,7 +33,8 @@ namespace ActionTracer {
 
 	class Packager {
 	  private:
-		__int32_t _package[PACKAGE_LENGTH] = { 0 };
+		float _package[PACKAGE_LENGTH] = { 0 };
+		// __int32_t _package[PACKAGE_LENGTH] = { 0 };
 		char	  buf[128];
 		__uint8_t _packed		   = 0;
 		__uint8_t _client_pointer  = 0;
@@ -41,7 +43,7 @@ namespace ActionTracer {
 		ActionClient		 *_client_sockets[MAX_CLIENTS];
 		uint32_t		   _port;
 		__uint8_t		   _descriptor;
-		__uint16_t		   _count = 0;
+		__uint16_t		   _count		   = 0;
 		__uint16_t		   _previous_count = 0;
 		__uint16_t		   _recording_start_time;
 		struct sockaddr_in _server;
