@@ -292,7 +292,7 @@ void ActionTracer::TracePoint::get_data() {
 	_complete_float_packet[1]  = _quaternion_packet.x;		// Max Value: 1.0
 	_complete_float_packet[2]  = _quaternion_packet.y;		// Max Value: 1.0
 	_complete_float_packet[3]  = _quaternion_packet.z;		// Max Value: 1.0
-	_complete_float_packet[4]  = _acceleration_packet.x;	// Max Value: 2.0
+	_complete_float_packet[4]  = _acceleration_packet.x;	// Max Value:
 	_complete_float_packet[5]  = _acceleration_packet.y;	// Max Value:
 	_complete_float_packet[6]  = _acceleration_packet.z;	// Max Value:
 	_complete_float_packet[7]  = _gyroscope_packet.x;		// Max Value:

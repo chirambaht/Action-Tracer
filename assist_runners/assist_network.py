@@ -4,60 +4,19 @@ from datetime import datetime
 import struct
 import numpy as np
 import time
-# import pandas as pd
+import pandas as pd
 
+np.set_printoptions(suppress=True) #prevent numpy exponential 
 
 col = ['Time', 'Count', 'Devices']
 for f in range(3):
     for k in ["W", "I", "J", "K"]:
         col.append(k + str(f+1) )
 
-
-# Get the data from the packet as an array of integers
-def bin_to_good(data_in, bytes_per_data_point, convert_to_float=False):
-    pre_work = []
-    data_packet = []
-    
-    for i in range(len(data_in) // bytes_per_data_point):
-        pre_work.append(data_in[i*bytes_per_data_point:(i*bytes_per_data_point)+bytes_per_data_point])
-    
-    for i in pre_work:
-        bin_string_array = i
-        ss = ("%2x%2x%2x%2x" % (bin_string_array[3],bin_string_array[2],bin_string_array[1], bin_string_array[0])).replace(" ", "0")
-        # si = int(ss, 32)
-        # si = np.float32(ss)
-        si = struct.unpack('f', bytes.fromhex(ss))[0]
-
-
-        if 1==0:
-        # if convert_to_float:
-            # data_packet.append(int.from_bytes(i, byteorder="little", signed=True) / 10000.0)
-            data_packet.append(si / 10000.0)
-        else:
-            # data_packet.append(int.from_bytes(i, byteorder="little", signed=True) )
-            data_packet.append(si)
-
-    return data_packet
-
-def bin_to_readable_data(data_in, bytes_per_data_point):
-    pre_work = bin_to_good(data_in, bytes_per_data_point, False)
-    buffer_string_thing = ""
-
-    # print(pre_work)
-
-    for i in pre_work:
-        buffer_string_thing += str(i) + " "
-    return buffer_string_thing
-
-
-def millis():
-    t = datetime.now().m
-    return t.second + t.n
-
+ft =0
 
 ss = time.time()
 running = False
-
 
 def check_time():
     global running
@@ -68,103 +27,77 @@ def check_time():
     return ss
 
 
-def packet_print(data_packet):
-    
-    print(f"{data_packet[1]:5d} - (", end="")
-    for i in range(len(data_packet) // 4):
-        for j in range(4):
-            try:
-                print( f"{data_packet[j+(i*len(data_packet) // 4)] / 10000:^2.3f} ", end="")
-            except :
-                print("")
-                break
-
-        if i < len(data_packet) // 4 - 1:
-            print(" <=-=> ", end="")
-
-
-    print (f")\tTime - {data_packet[0]:5d}")
-
-def clean_arr(arr, val, offset):
-    print(arr)
-    for i in range(len(arr) - offset):
-        arr[i + offset] = arr[i + offset] / val
-    print(arr)
-    return arr
-
-def packet_file_print( data_packet, document):
-    print(f"{data_packet[1]} - (", end="", file=document)
-    for i in range(len(data_packet) // 4):
-        for j in range(4):
-            try:
-                print(f"{data_packet[j+(i*len(data_packet) // 4)] / 10000:^4.4f} ", end="", file=document)
-            except:
-                print("")
-                break
-        if i < len(data_packet) // 4 - 1:
-            print(" < = > ", end="", file=document)
-    print (f")\tTime - {data_packet[0]:5d}", file=document)
-
-c= 0
+given_packet_count = 0
+csv_document_buffer = []
 HOST = "192.168.1.100"  # The server's hostname or IP address
 # HOST = "192.168.43.77"  # The server's hostname or IP address
 PORT = 9022  # The port used by the server
-tt = 1
+connection_count = 1
+lost_packets = 0
 while (True):
-    cs = []
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    print("Waiting for TCP connection %d" % (tt))
-
-    # s.bind((HOST, PORT))
-    s.connect((HOST, PORT))
-
-    now = datetime.now()
-    start_time = time.time()
-    end_time = time.time()
-    current_time = now.strftime("%Y%m%d-%H%M%S")
-
-    # logger = open(current_time+".act", "w")
-
-    print("Connected to %s on port %s" % (str(HOST), str(PORT)))
-    print("Writting data to %s.act" % (current_time))
-
-    while(True):
-        data = s.recv(255)
-        start_time = check_time()
-
-        if not data:
-            end_time = time.time()
-            running = False
-            break
+    try:
         
-        print("Received data length: %d" % (len(data)))
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        print("Waiting for TCP connection %d" % (connection_count))
 
-        header = data[:12]
+        # s.bind((HOST, PORT))
+        s.connect((HOST, PORT))
 
-        rest_of_data = data[12:240]
-        # correct the order that data comes in (saved in t)
-        t = bin_to_good(rest_of_data, 4, True)
-        h_data = bin_to_good(header, 4)
-        
-        print(f"\nTime: {int(h_data[0])}, Count: {int(h_data[1])}, Devices: {int(h_data[2])}")
+        now = datetime.now()
+        start_time = time.time()
+        end_time = time.time()
+        current_time = now.strftime("%Y%m%d-%H%M%S")
 
-        # print t data in groups of 19.
-        for i in range(len(t)//19):
-            print(f"Device {i+1}:{t[i*19:(i*19)+19]}")
+        print("Connected to %s on port %s" % (str(HOST), str(PORT)))
+        print("Writting data to %s.act" % (current_time))
 
-        c = int(h_data[1])
-    # logger.close()
+        while(True):
+            data = s.recv(255)
+            start_time = check_time()
 
-    print("Last log to %s.act" % (current_time))
-    ft = (end_time - start_time) / 1
+            if not data:
+                end_time = time.time()
+                running = False
+                break
+            
+            # Skip to the next packet if not sufficient data is received
+            if len(data) != 240:
+                lost_packets += 1
+                continue
 
-    print(
-        f"Average packets received was {c/ft:.2f}/s. \n{c} packets were received in {ft:.3f}s.\nTotal packets Recevied: {len(cs)}/{c} {round((len(cs)/c)*100,2)}%")
+            header = data[:12]
+            rest_of_data = data[12:240]
 
-    # df = pd.DataFrame(cs, columns=col)
-    # df.to_csv(f"{current_time}.csv", index=False)
-    tt += 1
+            sens_data = np.frombuffer(rest_of_data, dtype=np.float32)
+            h_data = np.frombuffer(header, dtype=np.float32)
+
+            sens_data = np.round(sens_data, 4)
+            
+            print(f"\nTime: {int(h_data[0])}, Count: {int(h_data[1])}, Devices: {int(h_data[2])}")
+
+            # print t data in groups of 19.
+            for i in range(len(sens_data)//19):
+                print(f"Device {i+1}:{sens_data[i*19:(i*19)+19]}")
+
+            given_packet_count = int(h_data[1])
+            cs.append(sens_data)
+
+        print("Last log to %s.act" % (current_time))
+        ft = (end_time - start_time) / 1
+       
+        connection_count += 1
+    except KeyboardInterrupt:
+        print("\nExiting...")
+        end_time = time.time()
+        print(
+            f"Average packets received was {c/ft:.2f}/s. \n{c} packets were received in {ft:.3f}s.\nTotal packets Recevied: {len(cs)}/{c} {round((len(cs)/c)*100,2)}%.\n Lost packets: {lost_packets}")
+        df = pd.DataFrame(cs, columns=col)
+        df.to_csv(f"{current_time}.csv", index=False)
+        break
+    except Exception as e:
+        print(e)
+        break
 
 
 # swap two numbers
