@@ -29,8 +29,8 @@ def check_time():
 
 given_packet_count = 0
 csv_document_buffer = []
-HOST = "192.168.1.100"  # The server's hostname or IP address
-# HOST = "192.168.43.77"  # The server's hostname or IP address
+# HOST = "192.168.1.100"  # The server's hostname or IP address
+HOST = "192.168.43.77"  # The server's hostname or IP address
 PORT = 9022  # The port used by the server
 connection_count = 1
 lost_packets = 0
