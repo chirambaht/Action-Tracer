@@ -240,8 +240,7 @@ void ActionTracer::Packager::set_descriptor( int descriptor ) {
 }
 
 void ActionTracer::Packager::dump_vars( void ) {
-	printf( "\n\nSize of Packager is %d\n", sizeof( Packager ) );
-
+	printf( "\n\nSize of package is %d", sizeof( _package ) );
 	printf( "Packed: %d\n", _packed );
 	printf( "Package pointer: %d\n", _package_pointer );
 	printf( "Count: %d\n", _count );

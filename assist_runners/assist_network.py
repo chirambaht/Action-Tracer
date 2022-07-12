@@ -1,7 +1,7 @@
 
 import socket
 from datetime import datetime
-
+import struct
 import numpy as np
 import time
 # import pandas as pd
@@ -23,9 +23,11 @@ def bin_to_good(data_in, bytes_per_data_point, convert_to_float=False):
     
     for i in pre_work:
         bin_string_array = i
-        ss = "%2x%2x%2x%2x" % (bin_string_array[3],bin_string_array[2],bin_string_array[1], bin_string_array[0])
-        # si = int(ss.replace(" ", "0"), 32)
-        si = float(ss.replace(" ", "0"))
+        ss = ("%2x%2x%2x%2x" % (bin_string_array[3],bin_string_array[2],bin_string_array[1], bin_string_array[0])).replace(" ", "0")
+        # si = int(ss, 32)
+        # si = np.float32(ss)
+        si = struct.unpack('f', bytes.fromhex(ss))[0]
+
 
         if 1==0:
         # if convert_to_float:
@@ -145,13 +147,13 @@ while (True):
         t = bin_to_good(rest_of_data, 4, True)
         h_data = bin_to_good(header, 4)
         
-        print(f"\nTime: {h_data[0]}, Count: {h_data[1]}, Devices: {h_data[2]}")
+        print(f"\nTime: {int(h_data[0])}, Count: {int(h_data[1])}, Devices: {int(h_data[2])}")
 
         # print t data in groups of 19.
         for i in range(len(t)//19):
             print(f"Device {i+1}:{t[i*19:(i*19)+19]}")
 
-        c = h_data[1]
+        c = int(h_data[1])
     # logger.close()
 
     print("Last log to %s.act" % (current_time))
