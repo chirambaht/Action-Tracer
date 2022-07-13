@@ -106,7 +106,7 @@ void setup() {
 
 #ifdef SINGLE_ACT_0
 	// Init all the devices as the IMU on the Pi Connector
-	printf( "Only 1 device being initialised on pin %d but it will be copied across the sensor array\n", get_pi_location( 0 ), i + 1 );
+	printf( "Only 1 device being initialised on pin %d but it will be copied across the sensor array\n", get_pi_location( 0 ) );
 	body_sensor[0] = new TracePoint( 0, get_pi_location( 0 ) );
 	body_sensor[1] = body_sensor[0];
 	body_sensor[2] = body_sensor[0];
