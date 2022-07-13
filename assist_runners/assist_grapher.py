@@ -23,19 +23,6 @@ if not os.path.exists("graphs"):
 for file in glob.glob("graphs/*"):
     os.remove(file)
 
-# Convert all Accelerometer values to m/s^2
-for i in range(len(df.columns)):
-    # If column has Accel in its heading, convert all column data to m/s^2
-
-    # If column has Gyro in its heading, convert to rad/s
-    if "Accel" in df.columns[i]:
-        print("Accel was: ", data[:,i], end="")
-        data[i,1] = (data[i,1] / 16384 ) * 9.81 # Convert to m/s^2
-        print("Now: ", data[:,i])
-    elif "Gyro" in df.columns[i]:
-        print("Gyro was: ", data[:,i], end="")
-        data[i,1] = (data[i,1] / 16.4) * (2*numpy.pi/360) # Convert to rad/s
-        print("Now: ", data[:,i])
 
 # Iterate through the columns and plot the data against column number 1 and skip column 2
     
