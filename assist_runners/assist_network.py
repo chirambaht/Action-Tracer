@@ -8,12 +8,11 @@ import pandas as pd
 
 np.set_printoptions(suppress=True) #prevent numpy exponential 
 
-col = ['Time', 'Count', 'Devices']
+col = ["Time", "Count"]
 for f in range(3):
-    for k in ["W", "I", "J", "K"]:
-        col.append(k + str(f+1) )
+    for k in ["Quat W", "Quat X", "Quat Y", "Quat Z", "Accel X", "Accel Y", "Accel Z", "Gyro X", "Gyro Y", "Gyro Z", "Yaw", "Pitch", "Roll", "X", "Y", "Z", "Grav X", "Grav Y", "Grav Z"]:
+        col.append(k + str(f+1))
 
-ft =0
 
 ss = time.time()
 running = False
@@ -28,9 +27,10 @@ def check_time():
 
 
 given_packet_count = 0
+total_run_time =0
 csv_document_buffer = []
-# HOST = "192.168.1.100"  # The server's hostname or IP address
-HOST = "192.168.43.77"  # The server's hostname or IP address
+HOST = "192.168.1.100"  # The server's hostname or IP address
+# HOST = "192.168.43.77"  # The server's hostname or IP address
 PORT = 9022  # The port used by the server
 connection_count = 1
 lost_packets = 0
@@ -53,7 +53,7 @@ while (True):
         print("Writting data to %s.act" % (current_time))
 
         while(True):
-            data = s.recv(255)
+            data = s.recv(240)
             start_time = check_time()
 
             if not data:
@@ -81,23 +81,20 @@ while (True):
                 print(f"Device {i+1}:{sens_data[i*19:(i*19)+19]}")
 
             given_packet_count = int(h_data[1])
-            cs.append(sens_data)
+            csv_document_buffer.append(header[:2] + sens_data)
 
         print("Last log to %s.act" % (current_time))
-        ft = (end_time - start_time) / 1
-       
+    
         connection_count += 1
     except KeyboardInterrupt:
         print("\nExiting...")
         end_time = time.time()
+        total_run_time = (end_time - start_time) / 1
         print(
-            f"Average packets received was {c/ft:.2f}/s. \n{c} packets were received in {ft:.3f}s.\nTotal packets Recevied: {len(cs)}/{c} {round((len(cs)/c)*100,2)}%.\n Lost packets: {lost_packets}")
-        df = pd.DataFrame(cs, columns=col)
+            f"Average packets received was {given_packet_count/total_run_time:.2f}/s. \n{given_packet_count} packets were received in {total_run_time:.3f}s.\nTotal packets Recevied: {len(csv_document_buffer)}/{given_packet_count} {round((len(csv_document_buffer)/given_packet_count)*100,2)}%.\n Lost packets: {lost_packets}")
+        df = pd.DataFrame(csv_document_buffer, columns=col)
         df.to_csv(f"{current_time}.csv", index=False)
         break
     except Exception as e:
         print(e)
         break
-
-
-# swap two numbers

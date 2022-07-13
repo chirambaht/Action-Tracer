@@ -74,21 +74,22 @@ int ActionTracer::Packager::socket_setup() {
 }
 
 void ActionTracer::Packager::run_socket_manager() {
-	_client_sockets[_client_pointer]					 = new ActionClient;
-	_client_sockets[_client_pointer]->_socket_descriptor = accept( _descriptor, ( sockaddr * ) &_client_sockets[_client_pointer]->_socket_address, &_client_sockets[_client_pointer]->_socket_address_len ); // Blocking call waiting for new connection
-	if( _client_sockets[_client_pointer]->_socket_descriptor < 0 ) {
+	ActionClient *temp_client		= new ActionClient;
+	temp_client->_socket_descriptor = accept( _descriptor, ( sockaddr * ) &temp_client->_socket_address, &temp_client->_socket_address_len ); // Blocking call waiting for new connection
+	if( temp_client->_socket_descriptor < 0 ) {
 		printf( "accept failed" );
 		exit( EXIT_FAILURE );
 	} else {
 		// get ip of client
-		_client_sockets[_client_pointer]->print_info( _client_pointer + 1 );
+		temp_client->print_info( _client_pointer + 1 );
 		for( int j = 0; j < _client_pointer; j++ ) {
 			if( inet_ntoa( _client_sockets[j]->_socket_address.sin_addr ) == inet_ntoa( _client_sockets[_client_pointer]->_socket_address.sin_addr ) ) {
-				delete _client_sockets[_client_pointer];
+				delete temp_client;
 				printf( "Client already connected\n" );
 				return;
 			}
 		}
+		_client_sockets[_client_pointer] = temp_client;
 		_client_pointer++;
 	}
 }
@@ -110,24 +111,19 @@ uint8_t ActionTracer::Packager::_clients_connected() {
 }
 
 void ActionTracer::Packager::disconnect_client( int8_t descriptor ) {
-#ifdef ON_PI
-	piLock( 1 );
 	for( int i = 0; i < _client_pointer; i++ ) {
 		if( _client_sockets[i]->_socket_descriptor == descriptor ) {
 			// Close descriptor and delete pointer in array
 			close( descriptor );
 			delete _client_sockets[i];
 
-			for( int j = i; j < _client_pointer - 1; j++ ) {
+			for( int j = i; j < _client_pointer; j++ ) {
 				_client_sockets[j] = _client_sockets[j + 1];
 			}
 			_client_pointer--;
-			piUnlock( 1 );
 			return;
 		}
 	}
-	piUnlock( 1 );
-#endif
 }
 
 /**
