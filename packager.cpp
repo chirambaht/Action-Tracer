@@ -114,6 +114,7 @@ void ActionTracer::Packager::disconnect_client( int8_t descriptor ) {
 	for( int i = 0; i < _client_pointer; i++ ) {
 		if( _client_sockets[i]->_socket_descriptor == descriptor ) {
 			// Close descriptor and delete pointer in array
+			printf( "Client with address %s has been diconnected.", inet_ntoa( _client_sockets[i]->_socket_address.sin_addr ) );
 			close( descriptor );
 			delete _client_sockets[i];
 
@@ -173,11 +174,11 @@ void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
 	_package[1] = _count;
 	_count++;
 	if( ( send_response = send( file_descriptor, _package, sizeof( _package ), 0 ) ) == -1 ) {
-		printf( "Send failed. Code %d\n Arguments were:\n\tDescriptor: %d\n", send_response, file_descriptor );
-		perror( "Error" );
 		if( send_response == -1 ) {
 			// Client disconnected
 			disconnect_client( file_descriptor );
+		} else {
+			perror( "Error" );
 		}
 
 		return;

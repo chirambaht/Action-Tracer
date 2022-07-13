@@ -94,7 +94,7 @@ while (True):
 
             sens_data = np.round(sens_data, 4)
             
-            print(f"\nTime: {int(h_data[0])}, Count: {int(h_data[1])}, Devices: {int(h_data[2])}")
+            print(f"Time: {int(h_data[0])}, Count: {int(h_data[1])}, Devices: {int(h_data[2])}")
 
             # print t data in groups of 19.
             # for i in range(len(sens_data)//19):
