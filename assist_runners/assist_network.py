@@ -71,7 +71,7 @@ while (True):
             rest_of_data = data[12:240]
 
             
-            h_data = np.frombuffer(header, dtype=np.float32).astype(np.int32)
+            h_data = np.frombuffer(header, dtype=np.float32).round(3)
             if first_received_packet_number < 10:
                 first_received_packet_number = h_data[1]
 
@@ -89,12 +89,10 @@ while (True):
                     lost_packets += 1
                     continue
 
-            sens_data = np.frombuffer(rest_of_data, dtype=np.float32)
+            sens_data = np.frombuffer(rest_of_data, dtype=np.float32).round(5)
             
-
-            sens_data = np.round(sens_data, 4)
             
-            print(f"Time: {int(h_data[0])}, Count: {int(h_data[1])}, Devices: {int(h_data[2])}")
+            print(f"Time: {round(h_data[0],3)}, Count: {int(h_data[1])}, Devices: {int(h_data[2])}")
 
             # print t data in groups of 19.
             # for i in range(len(sens_data)//19):

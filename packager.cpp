@@ -114,7 +114,7 @@ void ActionTracer::Packager::disconnect_client( int8_t descriptor ) {
 	for( int i = 0; i < _client_pointer; i++ ) {
 		if( _client_sockets[i]->_socket_descriptor == descriptor ) {
 			// Close descriptor and delete pointer in array
-			printf( "Client with address %s has been diconnected.", inet_ntoa( _client_sockets[i]->_socket_address.sin_addr ) );
+			printf( "Client with address %s has been diconnected.\n", inet_ntoa( _client_sockets[i]->_socket_address.sin_addr ) );
 			close( descriptor );
 			delete _client_sockets[i];
 
@@ -162,7 +162,7 @@ void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
 	}
 
 	// This section will get the new time but also calculate how many packets were sent
-	int32_t new_time = ( millis() - _recording_start_time ) / 1000;
+	float new_time = ( millis() - _recording_start_time ) / 1000.0;
 	if( _package[0] < new_time ) {
 		printf( "%d packets sent in the last second. - %ds\n", _count - _previous_count, new_time );
 		_previous_count = _count;
