@@ -144,6 +144,7 @@ void loop() {
 	}
 	loop_start = millis();
 #endif
+#ifndef SINGLE_ACT_0
 	for( size_t i = 0; i < _sensors; i++ ) {
 		body = body_sensor[i]->read_data( 1 );
 		for( size_t j = 0; j < 19; j++ ) {
@@ -151,6 +152,15 @@ void loop() {
 		}
 		communicator->load_packet( data_package, i + 1, 19 );
 	}
+#else
+	body = body_sensor[0]->read_data( 1 );
+	for( size_t j = 0; j < 19; j++ ) {
+		data_package[j] = *body++;
+	}
+	communicator->load_packet( data_package, 1, 19 );
+	communicator->load_packet( data_package, 2, 19 );
+	communicator->load_packet( data_package, 3, 19 );
+#endif
 #ifdef ON_PI
 	piLock( 1 );
 	send_ready = true;
