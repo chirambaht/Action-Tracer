@@ -287,17 +287,23 @@ void ActionTracer::TracePoint::get_data() {
 	// Get Euler angles
 	_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
 
+	// Get Temperature
+	// _temperature_packet = ( _device->getTemperature() / 340.0 ) + 36.53;
+
 	// Add all data to the teapot float packet
-	_complete_float_packet[0]  = _quaternion_packet.w;		// Max value: 1.0
-	_complete_float_packet[1]  = _quaternion_packet.x;		// Max Value: 1.0
-	_complete_float_packet[2]  = _quaternion_packet.y;		// Max Value: 1.0
-	_complete_float_packet[3]  = _quaternion_packet.z;		// Max Value: 1.0
-	_complete_float_packet[4]  = _acceleration_packet.x;	// Max Value:
-	_complete_float_packet[5]  = _acceleration_packet.y;	// Max Value:
-	_complete_float_packet[6]  = _acceleration_packet.z;	// Max Value:
-	_complete_float_packet[7]  = _gyroscope_packet.x;		// Max Value:
-	_complete_float_packet[8]  = _gyroscope_packet.y;		// Max Value:
-	_complete_float_packet[9]  = _gyroscope_packet.z;		// Max Value:
+	_complete_float_packet[0] = _quaternion_packet.w; // Max value: 1.0
+	_complete_float_packet[1] = _quaternion_packet.x; // Max Value: 1.0
+	_complete_float_packet[2] = _quaternion_packet.y; // Max Value: 1.0
+	_complete_float_packet[3] = _quaternion_packet.z; // Max Value: 1.0
+
+	_complete_float_packet[4] = ( _acceleration_packet.x / 16384.0 ) * 9.81; // Max Value: 2
+	_complete_float_packet[5] = ( _acceleration_packet.y / 16384.0 ) * 9.81; // Max Value: 2
+	_complete_float_packet[6] = ( _acceleration_packet.z / 16384.0 ) * 9.81; // Max Value: 2
+
+	_complete_float_packet[7] = ( _gyroscope_packet.x / 16.4 ); // Max Value: 2000
+	_complete_float_packet[8] = ( _gyroscope_packet.y / 16.4 ); // Max Value: 2000
+	_complete_float_packet[9] = ( _gyroscope_packet.z / 16.4 ); // Max Value: 2000
+
 	_complete_float_packet[10] = _yaw_pitch_roll_packet[0]; // Max Value:
 	_complete_float_packet[11] = _yaw_pitch_roll_packet[1]; // Max Value:
 	_complete_float_packet[12] = _yaw_pitch_roll_packet[2]; // Max Value:
@@ -307,6 +313,8 @@ void ActionTracer::TracePoint::get_data() {
 	_complete_float_packet[16] = _gravity_packet.x;			// Max Value:
 	_complete_float_packet[17] = _gravity_packet.y;			// Max Value:
 	_complete_float_packet[18] = _gravity_packet.z;			// Max Value:
+
+	// _complete_float_packet[19] = _temperature_packet;		// Max Value:
 #endif
 
 #ifdef GET_DATA_QUATERNION

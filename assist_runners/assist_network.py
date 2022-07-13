@@ -91,6 +91,11 @@ while (True):
 
             sens_data = np.frombuffer(rest_of_data, dtype=np.float32).round(5)
             
+            # Add filter to header to count number of zeros in sens_data
+            if (np.count_nonzero(sens_data) == 0):
+                lost_packets += 1
+                continue
+
             
             print(f"Time: {round(h_data[0],3)}, Count: {int(h_data[1])}, Devices: {int(h_data[2])}")
 

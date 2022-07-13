@@ -39,6 +39,7 @@ namespace ActionTracer {
 		float _quaternion_float_packet[4]	= { 0 };
 		float _euler_packet[3]				= { 0 };
 		float _yaw_pitch_roll_packet[3]		= { 0 };
+		float _temperature_packet			= 0;
 
 		// __int16_t _teapot_raw_packet[10] = { 0 };
 
