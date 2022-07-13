@@ -24,9 +24,17 @@ for file in glob.glob("graphs/*"):
     os.remove(file)
 
 
-# Iterate through the columns and plot the data against the time
-for i in range(len(df.columns)):
+# Iterate through the columns and plot the data against column number 1 and skip column 2
+    
+for i in range(len(df.columns)-1):
+    if i < 1:
+        continue
+    # Label the axis
+    matplotlib.pyplot.xlabel(df.columns[0])
+    matplotlib.pyplot.ylabel(df.columns[i])
+    # Plot the data
     matplotlib.pyplot.plot(data[:,0], data[:,i+1])
     matplotlib.pyplot.title(f"{df.columns[i]}")
     matplotlib.pyplot.savefig(f"graphs/{df.columns[i]}.png")
     matplotlib.pyplot.close()
+

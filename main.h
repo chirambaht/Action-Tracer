@@ -3,7 +3,7 @@
 
 #define PORT		9022 // Main UDP data port for the data to be sent through
 #define MAX_SENSORS 20	 // Number of points track on the body.
-#define WAIT_TIME	7	 // Time to before getting next data sample (in ms)
+#define WAIT_TIME	5	 // Time to before getting next data sample (in ms)
 
 #include "packager.h"
 #include "tracer_point.h"
