@@ -15,18 +15,16 @@ using namespace ActionTracer;
 
 /**
  * @brief Construct a new Action Tracer:: Packager:: Packager object
- *
  * @param port Destination UDP Port to send data to
+ * @constructor
  */
 ActionTracer::Packager::Packager( int port ) {
-	_port  = port;
 	_count = 0;
 }
 
 /**
  * @brief Construct a new Action Tracer:: Packager:: Packager object
- *
- * @param port Destination UDP Port to send data to
+ * @constructor
  */
 ActionTracer::Packager::~Packager() {
 	for( int i = 0; i < _client_pointer; i++ ) {
@@ -81,11 +79,13 @@ void ActionTracer::Packager::run_socket_manager() {
 		exit( EXIT_FAILURE );
 	} else {
 		// get ip of client
+		
 		temp_client->print_info( _client_pointer + 1 );
 		for( int j = 0; j < _client_pointer; j++ ) {
 			if( inet_ntoa( _client_sockets[j]->_socket_address.sin_addr ) == inet_ntoa( _client_sockets[_client_pointer]->_socket_address.sin_addr ) ) {
 				delete temp_client;
 				printf( "Client already connected\n" );
+				_descriptor = temp_client->_socket_descriptor
 				return;
 			}
 		}
@@ -115,7 +115,7 @@ void ActionTracer::Packager::disconnect_client( int8_t descriptor ) {
 		if( _client_sockets[i]->_socket_descriptor == descriptor ) {
 			// Close descriptor and delete pointer in array
 			printf( "Client with address %s has been diconnected.\n", inet_ntoa( _client_sockets[i]->_socket_address.sin_addr ) );
-			close( descriptor );
+			close_socket( descriptor );
 			delete _client_sockets[i];
 
 			for( int j = i; j < _client_pointer; j++ ) {
@@ -138,24 +138,25 @@ __int16_t ActionTracer::Packager::_float_to_int( float value ) {
 }
 
 /**
- * This is used to send the stored data packet in @code _packet @endcode
+ * This is used to send the stored data package to the default _descriptor
  * @return 0 if successful.
  */
 int ActionTracer::Packager::send_packet() {
-	ActionTracer::Packager::_send_packet( -1 );
+	ActionTracer::Packager::send_packet( _descriptor );
 	return 0;
 }
 
 /**
- * This is used to send the stored data packet in @code _packet @endcode
- * @return 0 if successful.
+ * This is used to send the stored data packet to a given socket described by a socket descriptor
+ * @param file_descriptor An opened file descriptor. Defults to the default descriptor 
+ * @return Nothing
  */
-void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
+void ActionTracer::Packager::send_packet( int file_descriptor = -1 ) {
+	// If no file descriptor is given, use the last device to be added to the network
 	if( file_descriptor == -1 ) {
 		file_descriptor = _descriptor;
 	}
 	// Send some data
-	// When this data is sent, it will be sent a single array element at a time. each element is 2 bytes (16 bits) but they are sent in reverse order i.e. TP captures 0x23ef but packager will send it as  0xef23.
 #ifdef ON_PI
 	if( _count == 0 ) {
 		_recording_start_time = millis();
@@ -183,24 +184,14 @@ void ActionTracer::Packager::_send_packet( int file_descriptor = -1 ) {
 		return;
 	}
 
-#ifdef DEBUG
-	debugPrint( "%8d,%7d", millis() - _recording_start_time, _count );
-	for( size_t cc = PACKAGE_DATA_START; cc < PACKAGE_LENGTH; cc++ ) {
-		debugPrint( ",%4i", _package[cc] );
-	}
-	debugPrint( "\n" );
-#endif
-
 	_package[2] = 0;
-
-	// return 0;
 }
 
 /**
  * This is used to add data to a package that is going to be sent. It takes an array of floats.
- * @param *data A reference to an array of floats
+ * @param data A reference to an array of floats
  * @param device_number. Device to work with. Starts from 1 and will place data in the correct position in the package.
- * @param length number of floats in array to convert. Defaults to 19
+ * @param length number of floats in array to convert. Defaults to 20
  * @return Number of elements that have been packed.
  */
 int ActionTracer::Packager::load_packet( float *data, int8_t device_number = -1, uint8_t length = 19 ) {
@@ -210,7 +201,8 @@ int ActionTracer::Packager::load_packet( float *data, int8_t device_number = -1,
 		_package_pointer = ( ( device_number - 1 ) * length ) + PACKAGE_DATA_START;
 	}
 
-	_packed = 0;
+	_packed = 0; // Reset the _packed
+
 	for( int i = 0; i < length; i++ ) {
 		// _package[_package_pointer++] = _float_to_int( data[i] );
 		_package[_package_pointer++] = data[i];
@@ -223,19 +215,30 @@ int ActionTracer::Packager::load_packet( float *data, int8_t device_number = -1,
 }
 
 /**
- * @brief Closes the socket connection.
+ * @brief Closes the a given socket given a descriptor
+ * @returns Nothing
  */
-void ActionTracer::Packager::close_socket() {
+void ActionTracer::Packager::close_socket(int closing_descriptor) {
 	debugPrint( "Closing socket with descriptor %d\n", _descriptor );
 	close( _descriptor );
 }
 
+/**
+ * @brief Sets the class wide descriptor to the value passed into this method
+ * 
+ * @param descriptor opened file descriptor
+ * @returns Nothing
+ */
 void ActionTracer::Packager::set_descriptor( int descriptor ) {
 	debugPrint( "Setting descriptor to %d\n", descriptor );
 	_descriptor = descriptor;
 }
 
-void ActionTracer::Packager::dump_vars( void ) {
+/**
+ * @brief Prints out all the variables in the packager including the last collected packet to be sent.
+ * @returns Nothing
+ */
+void ActionTracer::Packager::dump_variables( void ) {
 	printf( "\n\nSize of package is %d\n", sizeof( _package ) );
 	printf( "Packed: %d\n", _packed );
 	printf( "Package pointer: %d\n", _package_pointer );
