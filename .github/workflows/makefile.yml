@@ -1,0 +1,20 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: ["collection"]
+  pull_request:
+    branches: ["collection"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: make
+
+      - name: Run documentation generator
+        run: make documentaion
