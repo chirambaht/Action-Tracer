@@ -84,7 +84,8 @@ ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_
 }
 
 /**
- * @brief Selects a given MPU6050 node. Must be deselected to avoid issues.
+ * @brief Selects a given MPU6050 node. Must be deselected after use
+ * @returns Nothing
  */
 void ActionTracer::TracePoint::_select_me() {
 #ifdef ON_PI
@@ -107,7 +108,8 @@ void ActionTracer::TracePoint::dump_variables() {
 }
 
 /**
- * @brief Deselects a given MPU6050 node.
+ * @brief Deselects a given MPU6050 node by turning off it's pin.
+ * @return Nothing
  */
 void ActionTracer::TracePoint::_deselect_me() {
 #ifdef ON_PI
@@ -115,8 +117,9 @@ void ActionTracer::TracePoint::_deselect_me() {
 #endif
 }
 
-/** @brief Calls on the selected sensor to identify itself by returning its name. It will physically indicate this by blinking an onboard LED.
- * @return Device name/id
+/**
+ * @brief Calls on the selected sensor to identify itself by returning it's identifier. It will physically indicate this by blinking an onboard LED.
+ * @return device identifier
  */
 uint8_t ActionTracer::TracePoint::identify() {
 // Blink device led
