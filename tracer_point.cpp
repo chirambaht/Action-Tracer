@@ -78,9 +78,9 @@ ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_
 
 	this->_deselect_me();
 
-	#ifdef DEBUG
+#ifdef DEBUG
 	this->dump_variables();
-	#endif
+#endif
 }
 
 /**
@@ -104,8 +104,6 @@ void ActionTracer::TracePoint::dump_variables() {
 	printf( "DMP ready: %d\n", _dmp_ready );
 	printf( "Packet size: %d\n", _packet_size );
 	printf( "Device interrupt flag: %d\n", _device_interrupt_flag );
-
-
 }
 
 /**
@@ -170,7 +168,7 @@ void ActionTracer::TracePoint::print_last_data_packet() {
 
 /**
  * @brief Obtain the data from the sensor. Collects the FIFO packet and extracts the needed data.
- * 	   ================================================================================================ 
+ * 	   ================================================================================================
  *	 | Default MotionApps v2.0 42-byte FIFO packet structure:                                           |
  *	 |                                                                                                  |
  *	 | [QUAT W][      ][QUAT X][      ][QUAT Y][      ][QUAT Z][      ][GYRO X][      ][GYRO Y][      ] |
@@ -178,7 +176,7 @@ void ActionTracer::TracePoint::print_last_data_packet() {
  *	 |                                                                                                  |
  *	 | [GYRO Z][      ][ACC X ][      ][ACC Y ][      ][ACC Z ][      ][      ]                         |
  *	 |  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41                          |
- *	   ================================================================================================ 
+ *	   ================================================================================================
  * @return  Nothing
  */
 void ActionTracer::TracePoint::get_data() {
