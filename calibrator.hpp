@@ -2,6 +2,7 @@
 #define CALIBRATOR_HPP
 
 #include <cstdint>
+#include "MPU6050.h"
 
 namespace ActionTracer {
 	const __int16_t FAST_SLOW_LIMIT = 500;
