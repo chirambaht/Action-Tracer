@@ -10,7 +10,7 @@ np.set_printoptions(suppress=True) #prevent numpy exponential
 
 col = ["Time", "Count"]
 for f in range(3):
-    for k in ["Quat W", "Quat X", "Quat Y", "Quat Z", "Accel X (g)", "Accel Y (g)", "Accel Z (g)", "Gyro X (deg/s)", "Gyro Y (deg/s)", "Gyro Z (deg/s)", "Yaw", "Pitch", "Roll", "X", "Y", "Z", "Grav X", "Grav Y", "Grav Z"]:
+    for k in ["Quat W", "Quat X", "Quat Y", "Quat Z", "Accel X (g)", "Accel Y (g)", "Accel Z (g)", "Gyro X (dps)", "Gyro Y (dps)", "Gyro Z (dps)", "Yaw", "Pitch", "Roll", "X", "Y", "Z", "Grav X", "Grav Y", "Grav Z"]:
         col.append(k + str(f+1))
 
 

@@ -17,13 +17,13 @@ file_name = all_files[file_number-1]
 df = pandas.read_csv(file_name, header=0)
 data = df.to_numpy()
 
-if not os.path.exists("graphs"):
-        os.makedirs("graphs")
+
 # delete all files in graphs folder
 for file in glob.glob("graphs/*"):
     os.remove(file)
 
-
+if not os.path.exists("graphs"):
+        os.makedirs("graphs")
 # Iterate through the columns and plot the data against column number 1 and skip column 2
     
 for i in range(len(df.columns)-1):
