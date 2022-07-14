@@ -43,8 +43,9 @@ collector: $(OBJS)
 	@ echo "Program made!"
 	
 clean:
-	@ echo "Ahh clean!"
 	@ rm -f $(OBJS) $(EXE) *.o $(ACTISH) test
+	@ echo "Ahh clean!"
+	
 
 gui_collector_debug:
 	@ echo "http://$(LOCAL_IP):$(LOCAL_PORT)"
@@ -57,3 +58,5 @@ gui_actish_debug:
 	@ echo "http://$(LOCAL_IP):$(LOCAL_PORT)"
 	@ gdbgui $(ACTISH) --host $(LOCAL_IP)  --port $(LOCAL_PORT)
 
+documentation:
+	@ doxygen docs/Doxyfile
