@@ -12,6 +12,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      with:
+        submodules: "true"
+
+      - name: Install Doxygen
+      run: sudo apt-get install doxygen -y
+      shell: bash
 
       - name: Run documentation generator
         run: make documentation
