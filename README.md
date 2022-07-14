@@ -8,4 +8,6 @@ This is the code used by the Raspberry Pi code as well as wiring diagram.
 
 ## Documentation
 
-[![pages-build-deployment](https://github.com/chirambaht/Action-Tracer/actions/workflows/pages/pages-build-deployment/badge.svg?branch=collection)](https://github.com/chirambaht/Action-Tracer/actions/workflows/pages/pages-build-deployment)
+[![Updating documentation](https://github.com/chirambaht/Action-Tracer/actions/workflows/makefile.yml/badge.svg?branch=collection&event=push)](https://github.com/chirambaht/Action-Tracer/actions/workflows/makefile.yml)
+[![Documentation Page](https://github.com/chirambaht/Action-Tracer/actions/workflows/pages/pages-build-deployment/badge.svg?branch=collection)](https://github.com/chirambaht/Action-Tracer/actions/workflows/pages/pages-build-deployment)
+View the [documentation](https://chirambaht.github.io/Action-Tracer/)
