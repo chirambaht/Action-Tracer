@@ -16,81 +16,18 @@
 // #define GET_DATA_YAWPITCHROLL
 
 using namespace ActionTracer;
+
 /**
  * @brief Construct a new defult Action Tracer::Trace Point::Trace Point object
- *
+ * @constructor
  */
-ActionTracer::TracePoint::TracePoint() {
-}
+ActionTracer::TracePoint::TracePoint() {}
 
 /**
  * @brief Construct a new Action Tracer:: TracePoint::Trace Point object.
- *
- * @param identifier Identifier given to the device
- * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
- * @param interrupt_pin WiringPi interrupt pin
- */
-ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_number, uint8_t interrupt_pin ) {
-	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
-
-	_identifier = identifier;
-
-	_pin_number = wiring_Pi_pin_number;
-
-// Set pin information
-#ifdef ON_PI
-	pinMode( _pin_number, OUTPUT );
-#endif
-	_device_interrupt_flag = false;
-
-	debugPrint( "Initializing %s...\n", _device_name.c_str() );
-
-	this->_select_me();
-	_device = new MPU6050( MPU6050_ADDRESS_AD0_HIGH );
-
-	_device->initialize();
-
-	// TODO: At this stage an interrupt pin is initialised
-
-	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
-
-	// DMP Initialization
-
-	debugPrint( "Initalising DMP\n" );
-	_device_status = _device->dmpInitialize();
-
-	_set_device_offsets();
-
-	if( _device_status == 0 ) {
-		debugPrint( "Enabling DMP..." );
-		_device->setDMPEnabled( true );
-
-		// TODO: Attach interrupt here
-
-		_device_interrupt_status = _device->getIntStatus();
-
-		_dmp_ready = true;
-
-		_packet_size = _device->dmpGetFIFOPacketSize();
-
-		debugPrint( "Enabled!\n" );
-	} else {
-		debugPrint( "Can't initialise DMP\n" );
-		_dmp_ready = false;
-	}
-
-	this->_deselect_me();
-
-	debugPrint( "Init variable dump\n" );
-
-	debugPrint( "\n\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
-}
-
-/**
- * @brief Construct a new Action Tracer:: TracePoint::Trace Point object.
- *
  * @param name Name given to the device
  * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
+ * @constructor
  */
 ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_number ) {
 	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
@@ -129,8 +66,6 @@ ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_
 		debugPrint( "Enabling DMP..." );
 		_device->setDMPEnabled( true );
 
-		// TODO: Attach interrupt here
-
 		_dmp_ready = true;
 
 		_packet_size = _device->dmpGetFIFOPacketSize();
@@ -143,9 +78,9 @@ ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_
 
 	this->_deselect_me();
 
-	debugPrint( "Init variable dump\n" );
-
-	debugPrint( "\tDevice Name:\t\t%s\n\tPin number:\t\t%d\n\tDMP Status:\t\t%d\n\tFIFO Packet Size:\t%d\n\n", _device_name.c_str(), _pin_number, _dmp_ready, _packet_size );
+	#ifdef DEBUG
+	this->dump_variables();
+	#endif
 }
 
 /**
@@ -158,10 +93,19 @@ void ActionTracer::TracePoint::_select_me() {
 }
 
 /**
- * @brief Deselects a given MPU6050 node. Public function to avoid issues.
+ * @brief Prints out all the data from this device.
+ * @returns Nothing
  */
-void ActionTracer::TracePoint::turn_off() {
-	_deselect_me();
+void ActionTracer::TracePoint::dump_variables() {
+	// Print out the private variables
+	printf( "Identifier: %d\n", _identifier );
+	printf( "Pin number: %d\n", _pin_number );
+	printf( "Device status: %d\n", _device_status );
+	printf( "DMP ready: %d\n", _dmp_ready );
+	printf( "Packet size: %d\n", _packet_size );
+	printf( "Device interrupt flag: %d\n", _device_interrupt_flag );
+
+
 }
 
 /**
@@ -188,6 +132,13 @@ uint8_t ActionTracer::TracePoint::identify() {
 #endif
 
 	return _identifier;
+}
+
+/**
+ * @brief Deselects a given MPU6050 node. Public function to avoid issues.
+ */
+void ActionTracer::TracePoint::turn_off() {
+	_deselect_me();
 }
 
 /**
@@ -219,7 +170,16 @@ void ActionTracer::TracePoint::print_last_data_packet() {
 
 /**
  * @brief Obtain the data from the sensor. Collects the FIFO packet and extracts the needed data.
- *
+ * 	   ================================================================================================ 
+ *	 | Default MotionApps v2.0 42-byte FIFO packet structure:                                           |
+ *	 |                                                                                                  |
+ *	 | [QUAT W][      ][QUAT X][      ][QUAT Y][      ][QUAT Z][      ][GYRO X][      ][GYRO Y][      ] |
+ *	 |   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  |
+ *	 |                                                                                                  |
+ *	 | [GYRO Z][      ][ACC X ][      ][ACC Y ][      ][ACC Z ][      ][      ]                         |
+ *	 |  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41                          |
+ *	   ================================================================================================ 
+ * @return  Nothing
  */
 void ActionTracer::TracePoint::get_data() {
 	if( !_dmp_ready ) {
@@ -356,7 +316,7 @@ void ActionTracer::TracePoint::get_data() {
 
 /**
  * @brief Obtain the data from the sensor. This will return a float array based on the requested data defined in the file.
- * @param read_first Will collect data first if set to 1 or true. After this, it will return the data
+ * @param read_first Collects data first if set to 1 or true. After this, it will return the data
  * @return Pointer to a float array with the data packet
  */
 float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
@@ -401,10 +361,10 @@ void ActionTracer::TracePoint::set_calibrate( bool in_value ) {
 }
 
 /**
- * @brief Gets the number of float packets that will be returned to the user
+ * @brief Gets the number of float packets that will be returned by each device
  * @return size of float array being returned
  */
-uint8_t ActionTracer::TracePoint::how_big_is_a_packet() {
+uint8_t ActionTracer::TracePoint::get_data_packet_size() {
 #ifdef GET_WHOLE_DATA
 	return 19;
 #endif
