@@ -69,7 +69,7 @@ namespace ActionTracer {
 		int	 socket_setup( void );
 		void disconnect_client( int8_t );
 		void run_socket_manager( void );
-		void send_to_connected_devices( void );
+		uint8_t send_to_connected_devices( void );
 
 		void	close_socket( int );
 		void	set_descriptor( int );

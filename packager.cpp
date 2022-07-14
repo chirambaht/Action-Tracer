@@ -35,7 +35,7 @@ ActionTracer::Packager::~Packager() {
 /**
  * @brief Setup device as TCP server
  *
- * @return int File descriptor of the socket
+ * @return int socket descriptor of the socket
  */
 
 int ActionTracer::Packager::socket_setup() {
@@ -49,7 +49,7 @@ int ActionTracer::Packager::socket_setup() {
 	debugPrint( "TCP socket created with descriptor: %d\n", _descriptor );
 	int _opt = 1;
 
-	// This helps in manipulating options for the socket referred by the file descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as: “address already in use”.
+	// This helps in manipulating options for the socket referred by the socket descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as: “address already in use”.
 	if( setsockopt( _descriptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
 		printf( "setsockopt" );
 		exit( EXIT_FAILURE );
@@ -71,21 +71,23 @@ int ActionTracer::Packager::socket_setup() {
 	return _descriptor;
 }
 
+/**
+ * @brief Manages the TCP server by adding clients to packagers network. It accepts a client and obtains the ncessary information to create a recepient.
+ *
+ * @return Nothing
+ */
 void ActionTracer::Packager::run_socket_manager() {
 	ActionClient *temp_client		= new ActionClient;
 	temp_client->_socket_descriptor = accept( _descriptor, ( sockaddr * ) &temp_client->_socket_address, &temp_client->_socket_address_len ); // Blocking call waiting for new connection
 	if( temp_client->_socket_descriptor < 0 ) {
 		printf( "accept failed" );
 		exit( EXIT_FAILURE );
-	} else {
-		// get ip of client
-		
+	} else {		
 		temp_client->print_info( _client_pointer + 1 );
 		for( int j = 0; j < _client_pointer; j++ ) {
 			if( inet_ntoa( _client_sockets[j]->_socket_address.sin_addr ) == inet_ntoa( _client_sockets[_client_pointer]->_socket_address.sin_addr ) ) {
 				delete temp_client;
 				printf( "Client already connected\n" );
-				_descriptor = temp_client->_socket_descriptor
 				return;
 			}
 		}
@@ -94,31 +96,48 @@ void ActionTracer::Packager::run_socket_manager() {
 	}
 }
 
-void ActionTracer::Packager::send_to_connected_devices() {
+/**
+ * @brief Send data to all connected clients
+ * @returns number of clients that received the data
+ */
+uint8_t ActionTracer::Packager::send_to_connected_devices() {
+	// If the pointer is at 0, no clients are connected
 	if( _client_pointer == 0 ) {
 		return;
 	}
 
-	for( int i = 0; i < _client_pointer; i++ ) {
+	uint8_t recepients = 0;
+
+	for( int i = 0; i < _client_pointer; i++ ,recepients++ ) {
 		if( _client_sockets[i]->_socket_descriptor > 0 ) {
-			_send_packet( _client_sockets[i]->_socket_descriptor );
+			send_packet( _client_sockets[i]->_socket_descriptor );
 		}
 	}
+
+	return recepients;
 }
 
+/**
+ * @brief Obtains the number of clients connected to the server
+ * @return number of clients connected to the server
+ */
 uint8_t ActionTracer::Packager::_clients_connected() {
 	return _client_pointer;
 }
 
+/**
+ * @brief Disconnect a client from the server given its socket descriptor
+ * 
+ * @param descriptor An open socket descriptor connected to a client
+ */
 void ActionTracer::Packager::disconnect_client( int8_t descriptor ) {
 	for( int i = 0; i < _client_pointer; i++ ) {
 		if( _client_sockets[i]->_socket_descriptor == descriptor ) {
 			// Close descriptor and delete pointer in array
-			printf( "Client with address %s has been diconnected.\n", inet_ntoa( _client_sockets[i]->_socket_address.sin_addr ) );
 			close_socket( descriptor );
 			delete _client_sockets[i];
-
-			for( int j = i; j < _client_pointer; j++ ) {
+			printf( "Client with address %s has been diconnected.\n", inet_ntoa( _client_sockets[i]->_socket_address.sin_addr ) );
+			for( int j = i; j < _client_pointer - 1; j++ ) {
 				_client_sockets[j] = _client_sockets[j + 1];
 			}
 			_client_pointer--;
@@ -148,11 +167,11 @@ int ActionTracer::Packager::send_packet() {
 
 /**
  * This is used to send the stored data packet to a given socket described by a socket descriptor
- * @param file_descriptor An opened file descriptor. Defults to the default descriptor 
+ * @param file_descriptor An opened socket descriptor. Defults to the default descriptor 
  * @return Nothing
  */
-void ActionTracer::Packager::send_packet( int file_descriptor = -1 ) {
-	// If no file descriptor is given, use the last device to be added to the network
+void ActionTracer::Packager::send_packet( int file_descriptor = _descriptor ) {
+	// If no socket descriptor is given, use the last device to be added to the network
 	if( file_descriptor == -1 ) {
 		file_descriptor = _descriptor;
 	}
@@ -172,8 +191,7 @@ void ActionTracer::Packager::send_packet( int file_descriptor = -1 ) {
 
 #endif
 
-	_package[1] = _count;
-	_count++;
+	_package[1] = _count++;
 	if( ( send_response = send( file_descriptor, _package, sizeof( _package ), 0 ) ) == -1 ) {
 		if( send_response == -1 ) {
 			// Client disconnected
@@ -201,10 +219,9 @@ int ActionTracer::Packager::load_packet( float *data, int8_t device_number = -1,
 		_package_pointer = ( ( device_number - 1 ) * length ) + PACKAGE_DATA_START;
 	}
 
-	_packed = 0; // Reset the _packed
+	_packed = 0; // Reset _packed
 
 	for( int i = 0; i < length; i++ ) {
-		// _package[_package_pointer++] = _float_to_int( data[i] );
 		_package[_package_pointer++] = data[i];
 		_packed++;
 	}
@@ -226,7 +243,7 @@ void ActionTracer::Packager::close_socket(int closing_descriptor) {
 /**
  * @brief Sets the class wide descriptor to the value passed into this method
  * 
- * @param descriptor opened file descriptor
+ * @param descriptor opened socket descriptor
  * @returns Nothing
  */
 void ActionTracer::Packager::set_descriptor( int descriptor ) {
