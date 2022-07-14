@@ -11,13 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    with:
-      submodules: "true"
+      - uses: actions/checkout@v3
 
-    - name: Install Doxygen
-    run: sudo apt-get install doxygen -y
-    shell: bash
+      - name: Install Doxygen
+        run: sudo apt-get install doxygen -y
+        shell: bash
 
-    - name: Run documentation generator
-      run: make documentation
+      - name: Run documentation generator
+        run: make documentation
