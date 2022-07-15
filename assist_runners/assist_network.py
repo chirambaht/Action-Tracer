@@ -105,7 +105,7 @@ while (True):
 
             given_packet_count = int(h_data[1])
 
-            csv_document_buffer.append(h_data[:2].astype(np.int32).tolist() + np.round(sens_data,4).tolist())
+            csv_document_buffer.append(h_data[:2].tolist() + np.round(sens_data,4).tolist())
 
         print("Last log to %s.act" % (current_time))
     

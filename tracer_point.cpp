@@ -272,7 +272,7 @@ void ActionTracer::TracePoint::get_data() {
 	_complete_float_packet[17] = _gravity_packet.y;			// Max Value:
 	_complete_float_packet[18] = _gravity_packet.z;			// Max Value:
 
-	// _complete_float_packet[19] = _temperature_packet;		// Max Value:
+	_complete_float_packet[19] = _temperature_packet; // Max Value:
 #endif
 
 #ifdef GET_DATA_QUATERNION
