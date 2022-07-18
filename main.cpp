@@ -26,8 +26,6 @@ cxxopts::Options options( "Action Tracer", "This program runs a given number of 
 
 #ifdef ON_PI
 PI_THREAD( network_watcher ) {
-	// void n() {
-
 	printf( "Network Management Thread starting...\n" );
 	communicator = new Packager( PORT ); // Initialize the communicator that will send data packets to the server
 	// communicator->_number_of_devices = _sensors;
@@ -56,7 +54,7 @@ PI_THREAD( network_sender ) {
 		piLock( 1 );
 
 		// Send packet
-		communicator->send_to_connected_devices();
+		communicator -> send_to_connected_devices();
 		send_ready = false;
 
 		piUnlock( 1 );
