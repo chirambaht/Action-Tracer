@@ -5,17 +5,45 @@ import struct
 import numpy as np
 import time
 import pandas as pd
+import threading
 
 np.set_printoptions(suppress=True) #prevent numpy exponential 
 
+DEFAULT_WINDOW_SIZE = 80
 col = ["Time", "Count"]
 for f in range(3):
     for k in ["Quat W", "Quat X", "Quat Y", "Quat Z", "Accel X (g)", "Accel Y (g)", "Accel Z (g)", "Gyro X (dps)", "Gyro Y (dps)", "Gyro Z (dps)", "Yaw", "Pitch", "Roll", "X", "Y", "Z", "Grav X", "Grav Y", "Grav Z"]:
         col.append(k + str(f+1))
 
+send_ready = False
+current_data_packet = []
+clients = []
 
 ss = time.time()
 running = False
+
+# implement real time moving average filter
+def moving_average(data, window_size):
+    if window_size == 0:
+        return data
+    weights = np.repeat(1.0, window_size)/window_size
+    sma = np.convolve(data, weights, 'valid')
+    return sma
+
+# loop through data and apply moving average filter
+def filter_data(data):
+    temp_data = data
+    sma = []
+    window_size = len(data)
+    if window_size < DEFAULT_WINDOW_SIZE:
+        sma = moving_average(temp_data, window_size)
+    else:
+        sma = moving_average(data, DEFAULT_WINDOW_SIZE)
+    
+    # if not enough data, add the last value to the end of sma
+    while len(temp_data) > len(sma):
+        sma.append(sma[-1])
+    return sma
 
 def check_time():
     global running
@@ -25,16 +53,70 @@ def check_time():
         running = True
     return ss
 
+# Network server thread
+def server_thread(host, client_port=5005):
+    # create a tcp/ip socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # bind the socket to the port
+    server_address = (host, client_port)
+    print('Starting up server on %s port %s' % server_address)
+    sock.bind(server_address)
+
+    # listen for incoming connections
+    sock.listen(5)
+    global send_ready
+    global clients
+    global current_data_packet
+
+    while True:
+        # wait for a connection
+        print('waiting for a connection')
+        connection, client_address = sock.accept()
+        print('connection from', client_address)
+        clients.append(connection)
+    
+
+        while True:
+            # watch send_ready flag
+            while send_ready == False:
+                time.sleep(0.1)
+                continue
+
+            print("I have data to send")
+
+            # send current_data_packet to all connected clients
+            for client in clients:
+                try:
+                    client.send(current_data_packet)
+                except:
+                    print("Error sending data")
+                    clients.remove(client)
+                    continue
+            # reset send_ready flag
+            send_ready = False
+
+        # Clean up the connection
+        connection.close()
+
 first_received_packet_number = 0
 given_packet_count = 0
 total_run_time =0
 csv_document_buffer = []
+filtered_data = []
 HOST = "192.168.1.100"  # The server's hostname or IP address
+MY_HOST_IP = "192.168.1.102"  # The server's hostname or IP address
 # HOST = "192.168.43.77"  # The server's hostname or IP address
 PORT = 9022  # The port used by the server
 connection_count = 1
 lost_packets = 0
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# create a thread to handle the server
+server_thread = threading.Thread(target=server_thread, args=(MY_HOST_IP, PORT))
+
+# start the server thread
+server_thread.start()
+
 while (True):
     try:
         
@@ -55,6 +137,8 @@ while (True):
 
         while(True):
             data = s.recv(240)
+            if (send_ready == False):
+                continue
             start_time = check_time()
 
             if not data:
@@ -90,21 +174,19 @@ while (True):
                     continue
 
             sens_data = np.frombuffer(rest_of_data, dtype=np.float32).round(5)
-            
+            current_data_packet = np.concatenate((h_data, sens_data))
+            send_ready = True
             # Add filter to header to count number of zeros in sens_data
             if (np.count_nonzero(sens_data) == 0):
                 lost_packets += 1
                 continue
 
             
-            print(f"Time: {round(h_data[0],3)}, Count: {int(h_data[1])}, Devices: {int(h_data[2])}")
-
-            # print t data in groups of 19.
-            # for i in range(len(sens_data)//19):
-            #     print(f"Device {i+1}:{sens_data[i*19:(i*19)+19]}")
+            # print(f"Time: {round(h_data[0],3)}, Count: {int(h_data[1])}, Devices: {int(h_data[2])}")
 
             given_packet_count = int(h_data[1])
 
+            filtered_data.append(filter_data(sens_data))
             csv_document_buffer.append(h_data[:2].tolist() + np.round(sens_data,4).tolist())
 
         print("Last log to %s.act" % (current_time))
@@ -112,6 +194,9 @@ while (True):
         connection_count += 1
     except KeyboardInterrupt:
         print("\nExiting...")
+        # stop the server thread
+        server_thread.do_run = False
+        server_thread.join()
         end_time = time.time()
         total_run_time = (end_time - start_time) / 1
         print(
