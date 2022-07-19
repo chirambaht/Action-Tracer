@@ -19,6 +19,21 @@ def moving_average(data, window_size):
     sma = numpy.convolve(data, weights, 'valid')
     return sma
 
+def moving_average_2(data, window_size):
+    if window_size == 0:
+        return data
+    og_data = data.astype(numpy.float32)
+
+    for i in range(len(data)):
+        if i < window_size:
+            data[i] = numpy.mean(og_data[:i+1])
+        else:
+            data[i] = numpy.mean(og_data[i-window_size:i+1])
+
+    
+    return data
+
+
 def fix_moving_average_output(data_array, x_axis):
     while (len(data_array) != len(x_axis)):
         # fill in the missing data with the last value
@@ -98,4 +113,3 @@ for i in range(len(df.columns)-1):
     get_subplot( data[:,i+1], x_axis, y_axis_label)
 
     matplotlib.pyplot.savefig(f"graphs/{title}_multi.png")
-    matplotlib.pyplot.close()
