@@ -49,3 +49,6 @@ Code/Collection/assist_i2c_aid.py
 *.csv
 graphs/
 *.png
+.style.yapf
+assist_runners/__pycache__/action_figures.cpython-310.pyc
+assist_runners/__pycache__/action_filters.cpython-310.pyc
