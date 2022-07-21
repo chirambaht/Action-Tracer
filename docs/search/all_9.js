@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['packager_0',['Packager',['../d0/d7d/classActionTracer_1_1Packager.html',1,'ActionTracer::Packager'],['../d0/d7d/classActionTracer_1_1Packager.html#a0a0b7978bce31a3d408f5e283d543d00',1,'ActionTracer::Packager::Packager()']]],
-  ['parseresult_1',['ParseResult',['../d6/da9/classcxxopts_1_1ParseResult.html',1,'cxxopts']]],
-  ['print_5flast_5fdata_5fpacket_2',['print_last_data_packet',['../d4/d80/classActionTracer_1_1TracePoint.html#a387436a85382c515de148427c9d6c936',1,'ActionTracer::TracePoint']]]
+  ['missing_5fargument_5fexception_0',['missing_argument_exception',['../da/dfa/classcxxopts_1_1missing__argument__exception.html',1,'cxxopts']]],
+  ['mpu6050_1',['MPU6050',['../d3/d21/classMPU6050.html',1,'MPU6050'],['../d3/d21/classMPU6050.html#a7c0146d45537e4bd7a0d4c1c476fdab7',1,'MPU6050::MPU6050()'],['../d3/d21/classMPU6050.html#a94df4ec1565317ba5279122b3bf7e056',1,'MPU6050::MPU6050(uint8_t address)']]]
 ];

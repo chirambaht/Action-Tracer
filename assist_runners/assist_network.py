@@ -19,7 +19,7 @@ col = [ "Time", "Count" ]
 for f in range( 3 ):
     for k in [
             "Quat W", "Quat X", "Quat Y", "Quat Z", "Accel X (g)", "Accel Y (g)", "Accel Z (g)", "Gyro X (dps)",
-            "Gyro Y (dps)", "Gyro Z (dps)", "Yaw", "Pitch", "Roll", "X", "Y", "Z", "Grav X", "Grav Y", "Grav Z"
+            "Gyro Y (dps)", "Gyro Z (dps)", "Yaw", "Pitch", "Roll", "X", "Y", "Z", "Grav X", "Grav Y", "Grav Z", "Temp"
     ]:
         col.append( k + " " + str( f + 1 ) )
 
@@ -84,7 +84,7 @@ PORT = 9022  # The port used by the server
 connection_count = 1
 lost_packets = 0
 s = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
-
+EXPECTED_DATA = 252
 while ( True ):
     try:
         s.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
@@ -102,7 +102,9 @@ while ( True ):
         print( "Writting data to %s.act" % ( current_time ) )
 
         while ( True ):
-            data = s.recv( 240 )
+            data = s.recv( EXPECTED_DATA * 2 )
+
+            print( "Received %d bytes" % ( len( data ) ) )
 
             if ( send_ready == True ):
                 continue
@@ -114,12 +116,12 @@ while ( True ):
                 break
 
             # Skip to the next packet if not sufficient data is received
-            if len( data ) != 240:
+            if len( data ) != EXPECTED_DATA:
                 lost_packets += 1
                 continue
 
             header = data[ : 12 ]
-            rest_of_data = data[ 12 : 240 ]
+            rest_of_data = data[ 12 : EXPECTED_DATA ]
 
             h_data = np.frombuffer( header, dtype=np.float32 ).round( 3 )
             if first_received_packet_number < 10:

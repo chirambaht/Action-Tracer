@@ -1,8 +1,21 @@
 var searchData=
 [
-  ['testconnection_0',['testConnection',['../d3/d21/classMPU6050.html#a95ffab7b44fce3834236e0813687d11a',1,'MPU6050']]],
-  ['tracepoint_1',['TracePoint',['../d4/d80/classActionTracer_1_1TracePoint.html',1,'ActionTracer::TracePoint'],['../d4/d80/classActionTracer_1_1TracePoint.html#a0c0b7ce6cfff4ecf09b584de3c7624f6',1,'ActionTracer::TracePoint::TracePoint(uint8_t identifier, uint8_t wiring_Pi_pin_number)'],['../d4/d80/classActionTracer_1_1TracePoint.html#a694458e4f37d88d1f67dbd0c9048b329',1,'ActionTracer::TracePoint::TracePoint(uint8_t identifier, uint8_t wiring_Pi_pin_number, uint8_t interrupt_pin)'],['../d4/d80/classActionTracer_1_1TracePoint.html#a92df6b39e14e59a0248741e207b4e28a',1,'ActionTracer::TracePoint::TracePoint()']]],
-  ['turn_5foff_2',['turn_off',['../d4/d80/classActionTracer_1_1TracePoint.html#abf4f2ca798b42d7c4963fc85a85abcd6',1,'ActionTracer::TracePoint']]],
-  ['type_5fis_5fcontainer_3',['type_is_container',['../de/d59/structcxxopts_1_1values_1_1type__is__container.html',1,'cxxopts::values']]],
-  ['type_5fis_5fcontainer_3c_20std_3a_3avector_3c_20t_20_3e_20_3e_4',['type_is_container&lt; std::vector&lt; T &gt; &gt;',['../d6/d9a/structcxxopts_1_1values_1_1type__is__container_3_01std_1_1vector_3_01T_01_4_01_4.html',1,'cxxopts::values']]]
+  ['read_5fdata_0',['read_data',['../d4/d80/classActionTracer_1_1TracePoint.html#a3aca29d140e1c44d8c3fd546978c883c',1,'ActionTracer::TracePoint']]],
+  ['readbit_1',['readBit',['../d7/da8/classI2Cdev.html#abe6d8ea07027d362419de86188981559',1,'I2Cdev']]],
+  ['readbits_2',['readBits',['../d7/da8/classI2Cdev.html#a8e5e9742072bb80db06ccd46f52e2b6d',1,'I2Cdev']]],
+  ['readbitsw_3',['readBitsW',['../d7/da8/classI2Cdev.html#a1f417ba3e5ce99832e07c31522c97f87',1,'I2Cdev']]],
+  ['readbitw_4',['readBitW',['../d7/da8/classI2Cdev.html#aaaa3b9ef9500a7d69ccc3d0ccaae33c4',1,'I2Cdev']]],
+  ['readbyte_5',['readByte',['../d7/da8/classI2Cdev.html#ad3fb41ce124a29f93749d99611c75c33',1,'I2Cdev']]],
+  ['readbytes_6',['readBytes',['../d7/da8/classI2Cdev.html#aca9c503da5cffd6ac6f8eff9b195c5f4',1,'I2Cdev']]],
+  ['readtimeout_7',['readTimeout',['../d7/da8/classI2Cdev.html#ae2125796e0948127fc15031650111e82',1,'I2Cdev']]],
+  ['readword_8',['readWord',['../d7/da8/classI2Cdev.html#a545cd48b1e806e7e467b542c9e38e8c8',1,'I2Cdev']]],
+  ['readwords_9',['readWords',['../d7/da8/classI2Cdev.html#a1b3d895dc6a00cbb5fb3b0441b2e35de',1,'I2Cdev']]],
+  ['reset_10',['reset',['../d3/d21/classMPU6050.html#a7100b6d276c3c8664cf00d768b7b0dee',1,'MPU6050']]],
+  ['resetaccelerometerpath_11',['resetAccelerometerPath',['../d3/d21/classMPU6050.html#a99ee74708c12f32e48ef5ec69ac9f4a9',1,'MPU6050']]],
+  ['resetfifo_12',['resetFIFO',['../d3/d21/classMPU6050.html#aafa0dc38b7ea2acd1aecd5d9df8cbd08',1,'MPU6050']]],
+  ['resetgyroscopepath_13',['resetGyroscopePath',['../d3/d21/classMPU6050.html#af1599c0d70f07fd3e28683d571842c22',1,'MPU6050']]],
+  ['reseti2cmaster_14',['resetI2CMaster',['../d3/d21/classMPU6050.html#a96332c394f1b7efd44c83a4ff690e732',1,'MPU6050']]],
+  ['resetsensors_15',['resetSensors',['../d3/d21/classMPU6050.html#a9a271104d3302abc4af005c69a930094',1,'MPU6050']]],
+  ['resettemperaturepath_16',['resetTemperaturePath',['../d3/d21/classMPU6050.html#a559c2d091d36a4e0489bc639916ddbb6',1,'MPU6050']]],
+  ['run_5fsocket_5fmanager_17',['run_socket_manager',['../d0/d7d/classActionTracer_1_1Packager.html#af4268ba9e6b6e726acf4a0eea4157c4a',1,'ActionTracer::Packager']]]
 ];

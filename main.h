@@ -10,15 +10,17 @@
 
 #include <cstdint>
 
+#define PACKETS_TO_SEND 20 // Number of packets to send per loop
+
 using namespace ActionTracer;
 
 Packager *communicator; // The speaker dude
 
 TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
 
-size_t	_sensors		 = 0;	  // Number of sensors being used
-uint8_t _sensors_init	 = 0;	  // Number of sensors that have been initialized
-float	data_package[19] = { 0 }; //
+size_t	_sensors					  = 0;	   // Number of sensors being used
+uint8_t _sensors_init				  = 0;	   // Number of sensors that have been initialized
+float	data_package[PACKETS_TO_SEND] = { 0 }; //
 
 bool send_ready = false;
 

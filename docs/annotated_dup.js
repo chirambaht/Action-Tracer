@@ -1,7 +1,7 @@
 var annotated_dup =
 [
     [ "ActionTracer", "d6/d18/namespaceActionTracer.html", [
-      [ "ActionClient", "df/db4/structActionTracer_1_1ActionClient.html", null ],
+      [ "ActionClient", "df/db4/structActionTracer_1_1ActionClient.html", "df/db4/structActionTracer_1_1ActionClient" ],
       [ "Packager", "d0/d7d/classActionTracer_1_1Packager.html", "d0/d7d/classActionTracer_1_1Packager" ],
       [ "TracePoint", "d4/d80/classActionTracer_1_1TracePoint.html", "d4/d80/classActionTracer_1_1TracePoint" ]
     ] ],

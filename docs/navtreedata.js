@@ -26,7 +26,8 @@ var NAVTREE =
 [
   [ "Action Tracer", "index.html", [
     [ "Collection and Modeling", "d0/d30/md_README.html", [
-      [ "Collection", "d0/d30/md_README.html#autotoc_md1", null ]
+      [ "Collection", "d0/d30/md_README.html#autotoc_md1", null ],
+      [ "Documentation", "d0/d30/md_README.html#autotoc_md2", null ]
     ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
@@ -54,7 +55,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"d4/d80/classActionTracer_1_1TracePoint.html#a2f5267c725c66fed0ecbe6dd53bf608d"
+"d3/d21/classMPU6050.html#af6d6fa9869636989a8b29c4827ad7de8"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
