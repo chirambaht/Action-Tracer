@@ -2,8 +2,8 @@
 #include <cstdio>
 
 #ifndef DEVICES_IN_USE
-	#define DEVICES_IN_USE	   3 // 3 IMUs
-	#define DATA_ELEMENTS	   DEVICES_IN_USE * 19
+	#define DEVICES_IN_USE	   3				   // 3 IMUs
+	#define DATA_ELEMENTS	   DEVICES_IN_USE * 20 // 20 data elements per IMU
 	#define PACKAGE_LENGTH	   DATA_ELEMENTS + 3
 	#define PACKAGE_DATA_START 3 // 3 is the number of elements in the header
 
