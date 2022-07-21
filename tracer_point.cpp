@@ -249,7 +249,7 @@ void ActionTracer::TracePoint::get_data() {
 	_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
 
 	// Get Temperature
-	// _temperature_packet = ( _device->getTemperature() / 340.0 ) + 36.53;
+	_temperature_packet = ( _device->getTemperature() / 340.0 ) + 36.53;
 
 	// Add all data to the teapot float packet
 	_complete_float_packet[0] = _quaternion_packet.w; // Max value: 1.0

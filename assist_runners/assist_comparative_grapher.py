@@ -77,10 +77,10 @@ for i in range( len( colled_data ) ):
     dat = colled_data[ i ]
     dat2 = colled_data2[ i ]
     dat3 = colled_data3[ i ]
-    plt.plot( x_axis, dat, label=f"{nam} raw" )
-    plt.plot( x_axis, dat2, label=f"{nam} mean" )
+    # plt.plot( x_axis, dat, label=f"{nam} raw" )
+    # plt.plot( x_axis, dat2, label=f"{nam} mean" )
     plt.plot( x_axis, dat3, label=f"{nam} median" )
-    plt.plot( x_axis, act.mean_filter( dat, 500 ), label=f"{nam} post" )
+    # plt.plot( x_axis, act.mean_filter( dat, 500 ), label=f"{nam} post" )
     plt.legend()
     plt.savefig( f"graphs/{nam}.png" )
     plt.close()
