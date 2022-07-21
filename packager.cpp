@@ -19,6 +19,17 @@ using namespace ActionTracer;
  * @constructor
  */
 ActionTracer::Packager::Packager( int port ) {
+	_port  = port;
+	_count = 0;
+}
+
+/**
+ * @brief Construct a new Action Tracer:: Packager:: Packager object
+ * @param port Destination UDP Port to send data to
+ * @constructor
+ */
+ActionTracer::Packager::Packager() {
+	_port  = 9022;
 	_count = 0;
 }
 
@@ -82,7 +93,7 @@ void ActionTracer::Packager::run_socket_manager() {
 	if( temp_client->_socket_descriptor < 0 ) {
 		printf( "accept failed" );
 		exit( EXIT_FAILURE );
-	} else {		
+	} else {
 		temp_client->print_info( _client_pointer + 1 );
 		for( int j = 0; j < _client_pointer; j++ ) {
 			if( inet_ntoa( _client_sockets[j]->_socket_address.sin_addr ) == inet_ntoa( _client_sockets[_client_pointer]->_socket_address.sin_addr ) ) {
@@ -103,12 +114,12 @@ void ActionTracer::Packager::run_socket_manager() {
 uint8_t ActionTracer::Packager::send_to_connected_devices() {
 	// If the pointer is at 0, no clients are connected
 	if( _client_pointer == 0 ) {
-		return;
+		return 0;
 	}
 
 	uint8_t recepients = 0;
 
-	for( int i = 0; i < _client_pointer; i++ ,recepients++ ) {
+	for( int i = 0; i < _client_pointer; i++, recepients++ ) {
 		if( _client_sockets[i]->_socket_descriptor > 0 ) {
 			send_packet( _client_sockets[i]->_socket_descriptor );
 		}
@@ -127,7 +138,7 @@ uint8_t ActionTracer::Packager::_clients_connected() {
 
 /**
  * @brief Disconnect a client from the server given its socket descriptor
- * 
+ *
  * @param descriptor An open socket descriptor connected to a client
  */
 void ActionTracer::Packager::disconnect_client( int8_t descriptor ) {
@@ -167,10 +178,10 @@ int ActionTracer::Packager::send_packet() {
 
 /**
  * This is used to send the stored data packet to a given socket described by a socket descriptor
- * @param file_descriptor An opened socket descriptor. Defults to the default descriptor 
+ * @param file_descriptor An opened socket descriptor. Defults to the default descriptor
  * @return Nothing
  */
-void ActionTracer::Packager::send_packet( int file_descriptor = _descriptor ) {
+void ActionTracer::Packager::send_packet( int file_descriptor = 6 ) {
 	// If no socket descriptor is given, use the last device to be added to the network
 	if( file_descriptor == -1 ) {
 		file_descriptor = _descriptor;
@@ -235,14 +246,14 @@ int ActionTracer::Packager::load_packet( float *data, int8_t device_number = -1,
  * @brief Closes the a given socket given a descriptor
  * @returns Nothing
  */
-void ActionTracer::Packager::close_socket(int closing_descriptor) {
+void ActionTracer::Packager::close_socket( int closing_descriptor ) {
 	debugPrint( "Closing socket with descriptor %d\n", _descriptor );
 	close( _descriptor );
 }
 
 /**
  * @brief Sets the class wide descriptor to the value passed into this method
- * 
+ *
  * @param descriptor opened socket descriptor
  * @returns Nothing
  */
@@ -255,7 +266,7 @@ void ActionTracer::Packager::set_descriptor( int descriptor ) {
  * @brief Prints out all the variables in the packager including the last collected packet to be sent.
  * @returns Nothing
  */
-void ActionTracer::Packager::dump_variables( void ) {
+void ActionTracer::Packager::dump_vars( void ) {
 	printf( "\n\nSize of package is %d\n", sizeof( _package ) );
 	printf( "Packed: %d\n", _packed );
 	printf( "Package pointer: %d\n", _package_pointer );

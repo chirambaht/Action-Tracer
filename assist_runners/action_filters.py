@@ -1,8 +1,12 @@
 import numpy as np
 
+# Constants
+MEDIAN_FILTER = 0
+MEAN_FILTER = 1
+
 
 # median filter
-def median_filter_main( data, window_size ):
+def median_filter( data, window_size ):
     if window_size == 0:
         return data
     weights = np.repeat( 1.0, window_size ) / window_size
@@ -12,20 +16,6 @@ def median_filter_main( data, window_size ):
         median = np.append( median, median[ -1 ] )
 
     return median
-
-
-def median_filter_secondary( data, window_size ):
-    if window_size == 0:
-        return data
-
-    og_data = data
-
-    for i in range( len( data ) ):
-        if i < window_size:
-            data[ i ] = np.median( og_data[ : i + 1 ] )
-        else:
-            data[ i ] = np.median( og_data[ i - window_size : i + 1 ] )
-    return data
 
 
 # mean filter

@@ -88,7 +88,7 @@ colled_data = []
 x_axis = data[ :, 0 ]
 # get all data as columns
 for i in range( C ):
-    if i < 2:
+    if i > 2:
         colled_data.append( data[ :, i ] )
     else:
         colled_data.append( data[ :, i ] - data[ :, i - 1 ] )
@@ -96,9 +96,7 @@ for i in range( C ):
 for i in range( len( colled_data ) ):
     nam = df.columns[ i ]
     dat = colled_data[ i ]
-    act_fig.get_single_figure( dat, x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_c_{i}" )
+    act_fig.get_single_figure( dat, x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_o" )
     act_fig.get_single_figure( act.mean_filter( dat, 80 ), x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_mean" )
     act_fig.get_single_figure(
         act.median_filter_main( dat, 80 ), x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_median" )
-    act_fig.get_single_figure(
-        act.median_filter_secondary( dat, 80 ), x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_median_2" )

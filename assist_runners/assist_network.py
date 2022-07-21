@@ -1,10 +1,9 @@
 import socket
 from datetime import datetime
-import struct
 import numpy as np
 import time
 import pandas as pd
-import threading
+
 import action_filters as act
 
 
@@ -14,29 +13,24 @@ import action_filters as act
 np.set_printoptions( suppress=True )  # prevent numpy exponential
 # Settings above are for numpy
 
-d_line = 0
 DEFAULT_WINDOW_SIZE = 80
 
 col = [ "Time", "Count" ]
 for f in range( 3 ):
     for k in [
-            "Quat W", "Quat X", "Quat Y", "Quat Z", "Accel X (g)",
-            "Accel Y (g)", "Accel Z (g)", "Gyro X (dps)", "Gyro Y (dps)",
-            "Gyro Z (dps)", "Yaw", "Pitch", "Roll", "X", "Y", "Z", "Grav X",
-            "Grav Y", "Grav Z"
+            "Quat W", "Quat X", "Quat Y", "Quat Z", "Accel X (g)", "Accel Y (g)", "Accel Z (g)", "Gyro X (dps)",
+            "Gyro Y (dps)", "Gyro Z (dps)", "Yaw", "Pitch", "Roll", "X", "Y", "Z", "Grav X", "Grav Y", "Grav Z"
     ]:
-        col.append( k + str( f + 1 ) )
+        col.append( k + " " + str( f + 1 ) )
 
 first_received_packet_number = 0
 given_packet_count = 1
 total_run_time = 0
 csv_document_buffer = []
 csv_document_buffer_2 = []
+csv_document_buffer_3 = []
 
-filter_buffer = []
-
-for i in range( 80 ):
-    filter_buffer.append( np.zeros( len( col ) - 2 ) )
+filter_buffer = np.zeros( ( DEFAULT_WINDOW_SIZE * 10, len( col ) - 2 ) )
 
 send_ready = False
 current_data_packet = []
@@ -46,36 +40,10 @@ ss = time.time()
 running = False
 
 
-def debug_print():
-    global d_line
-
-    print( f"Got to debug_print {d_line}" )
-    d_line += 1
-
-
-# implement real time moving average filter
-
-
-def moving_average( data, window_size ):
-    if window_size == 0:
-        return data
-    weights = np.repeat( 1.0, window_size ) / window_size
-    sma = np.convolve( data, weights, 'valid' )
-    return sma
-
-
-# loop through data and apply moving average filter
-
-
 def filter_data( data ):
     temp_data = data
     sma = []
     window_size = len( data )
-
-    if window_size < DEFAULT_WINDOW_SIZE:
-        sma = moving_average( temp_data, window_size )
-    else:
-        sma = moving_average( data, DEFAULT_WINDOW_SIZE )
 
     # if not enough data, add the last value to the end of sma
     while len( temp_data ) > len( sma ):
@@ -92,69 +60,21 @@ def check_time():
     return ss
 
 
-def run_filter( latest_data ):
+def run_filter( latest_data, filter_choice="mean" ):
     global filter_buffer
+    # global DEFAULT_WINDOW_SIZE
 
-    if len( filter_buffer ) < DEFAULT_WINDOW_SIZE:
-        filter_buffer.append( latest_data )
+    # remove first elemet, add latest data
+    filter_buffer = np.delete( filter_buffer, 0, 0 )
+    filter_buffer = np.append( filter_buffer, [ latest_data ], 0 )
+
+    # filter data
+    if filter_choice == "mean":
+        return np.mean( filter_buffer, axis=0 )
+    elif filter_choice == "median":
+        return np.median( filter_buffer, axis=0 )
     else:
-        filter_buffer.pop( 0 )
-        filter_buffer.append( latest_data )
-
-    # convert filter_buffer to columns
-    filter_buffer = np.array( filter_buffer )
-    df = pd.DataFrame( filter_buffer, columns=col[ 2 : ] ).to_numpy()
-    print( df )
-    # apply moving average filter
-    filtered_data = filter_data( df )
-
-    return filtered_data
-
-
-# Network server thread
-def server_thread( host, client_port=5005 ):
-    # create a tcp/ip socket
-    sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
-    # bind the socket to the port
-    server_address = ( host, client_port )
-    print( 'Starting up server on %s port %s' % server_address )
-    sock.bind( server_address )
-
-    # listen for incoming connections
-    sock.listen( 5 )
-    global send_ready
-    global clients
-    global current_data_packet
-
-    while True:
-        # wait for a connection
-        print( 'waiting for a connection' )
-        connection, client_address = sock.accept()
-        print( 'connection from', client_address )
-        clients.append( connection )
-
-        while True:
-            # watch send_ready flag
-            while send_ready == False:
-                # check every 100ms if send_ready is True
-                time.sleep( 0.1 )
-                continue
-
-            print( "I have data to send" )
-
-            # send current_data_packet to all connected clients
-            for client in clients:
-                try:
-                    client.send( current_data_packet )
-                except:
-                    print( "Error sending data" )
-                    clients.remove( client )
-                    continue
-            # reset send_ready flag
-            send_ready = False
-
-        # Clean up the connection
-        connection.close()
+        return latest_data
 
 
 HOST = "192.168.1.100"  # The server's hostname or IP address
@@ -165,16 +85,8 @@ connection_count = 1
 lost_packets = 0
 s = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
 
-# create a thread to handle the server
-server_thread = threading.Thread( target=server_thread,
-                                  args=( MY_HOST_IP, PORT ) )
-
-# start the server thread
-# server_thread.start()
-
 while ( True ):
     try:
-
         s.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
         print( "Waiting for TCP connection %d" % ( connection_count ) )
 
@@ -191,7 +103,7 @@ while ( True ):
 
         while ( True ):
             data = s.recv( 240 )
-            debug_print()
+
             if ( send_ready == True ):
                 continue
             start_time = check_time()
@@ -200,7 +112,7 @@ while ( True ):
                 end_time = time.time()
                 running = False
                 break
-            debug_print()
+
             # Skip to the next packet if not sufficient data is received
             if len( data ) != 240:
                 lost_packets += 1
@@ -213,7 +125,6 @@ while ( True ):
             if first_received_packet_number < 10:
                 first_received_packet_number = h_data[ 1 ]
 
-            print( "Packet number: %d" % ( h_data[ 1 ] ) )
             if ( h_data[ 0 ] == 0 ):
                 continue
 
@@ -228,33 +139,30 @@ while ( True ):
                     lost_packets += 1
                     continue
 
-            sens_data = np.frombuffer( rest_of_data,
-                                       dtype=np.float32 ).round( 5 )
+            sens_data = np.frombuffer( rest_of_data, dtype=np.float32 ).round( 5 )
             current_data_packet = np.concatenate( ( h_data, sens_data ) )
-            send_ready = True
+            # send_ready = True
+
             # Add filter to header to count number of zeros in sens_data
             if ( np.count_nonzero( sens_data ) == 0 ):
                 lost_packets += 1
                 continue
 
-            # print(f"Time: {round(h_data[0],3)}, Count: {int(h_data[1])}, Devices: {int(h_data[2])}")
-
             given_packet_count = int( h_data[ 1 ] )
 
-            new_one = run_filter( filter_data )  # reprocess the data
-            csv_document_buffer.append( h_data[ : 2 ].tolist() +
-                                        np.round( sens_data, 4 ).tolist() )
-            csv_document_buffer_2.append( h_data[ : 2 ].tolist() +
-                                          np.round( new_one, 4 ).tolist() )
+            new_one = run_filter( sens_data )  # reprocess the data
+            new_one_2 = run_filter( sens_data, "median" )  # reprocess the data
+
+            csv_document_buffer.append( h_data[ : 2 ].tolist() + np.round( sens_data, 4 ).tolist() )
+
+            csv_document_buffer_2.append( h_data[ : 2 ].tolist() + np.round( new_one, 4 ).tolist() )
+            csv_document_buffer_3.append( h_data[ : 2 ].tolist() + np.round( new_one_2, 4 ).tolist() )
 
         print( "Last log to %s.act" % ( current_time ) )
 
         connection_count += 1
     except KeyboardInterrupt:
         print( "\nExiting..." )
-        # stop the server thread
-        # server_thread.do_run = False
-        # server_thread.join()
         end_time = time.time()
         total_run_time = ( end_time - start_time ) / 1.0
         print(
@@ -264,7 +172,8 @@ while ( True ):
         df.to_csv( f"{current_time}.csv", index=False )
         df = pd.DataFrame( csv_document_buffer_2, columns=col )
         df.to_csv( f"{current_time}_2.csv", index=False )
-        # close the connection
+        df = pd.DataFrame( csv_document_buffer_3, columns=col )
+        df.to_csv( f"{current_time}_3.csv", index=False )
         s.close()
         break
     except Exception as e:
