@@ -244,11 +244,24 @@ int ActionTracer::Packager::load_packet( float *data, int8_t device_number = -1,
 
 /**
  * @brief Closes the a given socket given a descriptor
+ * @param descriptor An open socket descriptor
  * @returns Nothing
  */
 void ActionTracer::Packager::close_socket( int closing_descriptor ) {
 	debugPrint( "Closing socket with descriptor %d\n", _descriptor );
 	close( _descriptor );
+}
+
+/**
+ * @brief Closes all the active sockets
+ * @returns Nothing
+ */
+void ActionTracer::Packager::close_all_sockets() {
+	debugPrint( "Closing all sockets\n" );
+
+	for( int i = 0; i < _client_pointer; i++ ) {
+		close_socket( _client_sockets[i]->_socket_descriptor );
+	}
 }
 
 /**

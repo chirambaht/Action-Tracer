@@ -72,6 +72,7 @@ namespace ActionTracer {
 		uint8_t send_to_connected_devices( void );
 
 		void	close_socket( int );
+		void	close_all_sockets();
 		void	set_descriptor( int );
 		void	dump_vars( void );
 		int		load_packet( float *, int8_t, uint8_t );

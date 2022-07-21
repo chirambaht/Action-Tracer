@@ -54,7 +54,7 @@ PI_THREAD( network_sender ) {
 		piLock( 1 );
 
 		// Send packet
-		communicator -> send_to_connected_devices();
+		communicator->send_to_connected_devices();
 		send_ready = false;
 
 		piUnlock( 1 );
@@ -124,8 +124,8 @@ void exit_handler( int s ) {
 	turn_off_all_devices();
 	printf( "Cleaning up the communicator\n" );
 	communicator->dump_vars();
-	printf( "Closing socket\n" );
-	communicator->close_socket();
+	printf( "Closing sockets\n" );
+	communicator->close_all_sockets();
 	exit( 1 );
 }
 
