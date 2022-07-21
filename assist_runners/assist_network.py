@@ -30,7 +30,7 @@ csv_document_buffer = []
 csv_document_buffer_2 = []
 csv_document_buffer_3 = []
 
-filter_buffer = np.zeros( ( DEFAULT_WINDOW_SIZE * 10, len( col ) - 2 ) )
+filter_buffer = np.zeros( ( DEFAULT_WINDOW_SIZE, len( col ) - 2 ) )
 
 send_ready = False
 current_data_packet = []

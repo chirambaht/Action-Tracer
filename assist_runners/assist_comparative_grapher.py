@@ -22,6 +22,11 @@ all_files = glob.glob( "*.csv" )  # All available CSV files
 all_files.sort()
 # Ask user to select file to open
 
+while ( all_files.__contains__( "_" ) ):
+    for i in range( len( all_files ) ):
+        if ( all_files[ i ].__contains__( "_" ) ):
+            all_files.remove( all_files[ i ] )
+
 print( "Available files:" )
 for i in range( len( all_files ) ):
     print( f"{i+1}. {all_files[i]}" )

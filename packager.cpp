@@ -194,7 +194,7 @@ void ActionTracer::Packager::send_packet( int file_descriptor = 6 ) {
 
 	// This section will get the new time but also calculate how many packets were sent
 	float new_time = ( millis() - _recording_start_time ) / 1000.0;
-	if( ( _package[0] - new_time ) < 1 ) {
+	if( ( _package[0] - new_time ) > 1 ) {
 		printf( "%d packets sent in the last second. - %.3fs\n", _count - _previous_count, new_time );
 		_previous_count = _count;
 	}
