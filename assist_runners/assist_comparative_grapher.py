@@ -13,7 +13,7 @@ import action_figures as act_fig
 window_sizes = [ 0.01, 0.02, 0.05 ]
 
 # make plot size bigger
-plt.rcParams[ 'figure.figsize' ] = ( 15, 19 )
+plt.rcParams[ 'figure.figsize' ] = ( 20, 14 )
 # adjust the subplot spacing
 plt.subplots_adjust( hspace=0.35 )
 
@@ -35,7 +35,7 @@ file_number = int( input( "Select file to open with twin: " ) )
 file_name = all_files[ file_number - 1 ]
 
 # open file in pandas and convert to numpy array and take the first C columns
-C = 21
+C = 22
 df = pandas.read_csv( file_name, header=0 ).iloc[ :, : C ]
 df2 = pandas.read_csv( file_name[ :-4 ] + "_2.csv", header=0 ).iloc[ :, : C ]
 df3 = pandas.read_csv( file_name[ :-4 ] + "_3.csv", header=0 ).iloc[ :, : C ]
@@ -77,10 +77,10 @@ for i in range( len( colled_data ) ):
     dat = colled_data[ i ]
     dat2 = colled_data2[ i ]
     dat3 = colled_data3[ i ]
-    # plt.plot( x_axis, dat, label=f"{nam} raw" )
-    # plt.plot( x_axis, dat2, label=f"{nam} mean" )
+    plt.plot( x_axis, dat, label=f"{nam} raw" )
+    plt.plot( x_axis, dat2, label=f"{nam} mean" )
     plt.plot( x_axis, dat3, label=f"{nam} median" )
-    # plt.plot( x_axis, act.mean_filter( dat, 500 ), label=f"{nam} post" )
+    plt.plot( x_axis, act.mean_filter( dat, 500 ), label=f"{nam} post" )
     plt.legend()
     plt.savefig( f"graphs/{nam}.png" )
     plt.close()

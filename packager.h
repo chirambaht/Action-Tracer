@@ -45,12 +45,15 @@ namespace ActionTracer {
 		__uint8_t _client_pointer  = 0;
 		__uint8_t _package_pointer = PACKAGE_DATA_START;
 
-		ActionClient		 *_client_sockets[MAX_CLIENTS] = { 0 };
-		uint32_t		   _port						= DEFAULT_PORT;
-		__uint8_t		   _descriptor					= 0;
-		__uint16_t		   _count						= 0;
-		__uint16_t		   _previous_count				= 0;
-		__uint16_t		   _recording_start_time;
+		ActionClient *_client_sockets[MAX_CLIENTS] = { 0 };
+		uint32_t	  _port						   = DEFAULT_PORT;
+		__uint8_t	  _descriptor				   = 0;
+		__uint16_t	  _count					   = 0;
+		__uint16_t	  _previous_count			   = 0;
+		__uint16_t	  _recording_start_time;
+
+		float _clocked = 0.0;
+
 		struct sockaddr_in _server;
 		struct timeval	   _timeout; // a 5ms timeout
 
