@@ -81,6 +81,7 @@ for i in range( len( colled_data ) ):
     plt.plot( x_axis, dat2, label=f"{nam} mean" )
     plt.plot( x_axis, dat3, label=f"{nam} median" )
     plt.plot( x_axis, act.mean_filter( dat, 500 ), label=f"{nam} post" )
+    plt.plot( x_axis, act.mean_median_comp( dat, 200, 0.5 ), label=f"{nam} post comp" )
     plt.legend()
     plt.savefig( f"graphs/{nam}.png" )
     plt.close()

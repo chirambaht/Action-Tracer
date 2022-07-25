@@ -97,6 +97,8 @@ for i in range( len( colled_data ) ):
     nam = df.columns[ i ]
     dat = colled_data[ i ]
     act_fig.get_single_figure( dat, x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_o" )
+    act_fig.get_single_figure(
+        act.mean_median_comp( dat, 80, 0.2 ), x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_comp" )
     act_fig.get_single_figure( act.mean_filter( dat, 80 ), x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_mean" )
     act_fig.get_single_figure(
         act.median_filter_main( dat, 80 ), x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_median" )

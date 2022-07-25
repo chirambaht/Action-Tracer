@@ -31,3 +31,7 @@ def mean_filter( data, window_size ):
             data[ i ] = np.mean( og_data[ i - window_size : i + 1 ] )
 
     return data
+
+
+def mean_median_comp( data, window, mean_bias=0.5 ):
+    return ( mean_bias * mean_filter( data, window ) ) + ( ( 1 - mean_bias ) * median_filter( data, window ) )
