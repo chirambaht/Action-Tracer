@@ -60,7 +60,7 @@ def check_time():
     return ss
 
 
-def run_filter( latest_data, filter_choice="mean" ):
+def run_filter( latest_data, filter_choice="mean", comp_bias=0.5 ):
     global filter_buffer
     # global DEFAULT_WINDOW_SIZE
 
@@ -73,6 +73,9 @@ def run_filter( latest_data, filter_choice="mean" ):
         return np.mean( filter_buffer, axis=0 )
     elif filter_choice == "median":
         return np.median( filter_buffer, axis=0 )
+    elif filter_choice == "comparative":
+        return ( np.mean( filter_buffer, axis=0 ) * comp_bias ) + (
+            np.median( filter_buffer, axis=0 ) * ( 1 - comp_bias ) )
     else:
         return latest_data
 
@@ -103,8 +106,6 @@ while ( True ):
 
         while ( True ):
             data = s.recv( EXPECTED_DATA * 2 )
-
-            print( "Received %d bytes" % ( len( data ) ) )
 
             if ( send_ready == True ):
                 continue
@@ -153,7 +154,7 @@ while ( True ):
             given_packet_count = int( h_data[ 1 ] )
 
             new_one = run_filter( sens_data )  # reprocess the data
-            new_one_2 = run_filter( sens_data, "median" )  # reprocess the data
+            new_one_2 = run_filter( sens_data, "comparative", 0.8 )  # reprocess the data
 
             csv_document_buffer.append( h_data[ : 2 ].tolist() + np.round( sens_data, 4 ).tolist() )
 
