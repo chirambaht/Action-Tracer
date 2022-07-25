@@ -1,6 +1,6 @@
 all: collector
 
-RATE = 1
+RATE = 2
 # MPU6050_DMP_FIFO_RATE_DIVISOR values and their linked rate
 # 	n  --> Rate (Hz)
 #    0 -->  200 
