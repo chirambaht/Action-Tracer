@@ -13,7 +13,7 @@ import action_filters as act
 np.set_printoptions( suppress=True )  # prevent numpy exponential
 # Settings above are for numpy
 
-DEFAULT_WINDOW_SIZE = 80
+DEFAULT_WINDOW_SIZE = 100
 
 col = [ "Time", "Count" ]
 for f in range( 3 ):
@@ -27,8 +27,6 @@ first_received_packet_number = 0
 given_packet_count = 1
 total_run_time = 0
 csv_document_buffer = []
-csv_document_buffer_2 = []
-csv_document_buffer_3 = []
 
 filter_buffer = np.zeros( ( DEFAULT_WINDOW_SIZE, len( col ) - 2 ) )
 
@@ -153,13 +151,9 @@ while ( True ):
 
             given_packet_count = int( h_data[ 1 ] )
 
-            new_one = run_filter( sens_data )  # reprocess the data
-            new_one_2 = run_filter( sens_data, "comparative", 0.8 )  # reprocess the data
+            filtered_data = run_filter( sens_data )  # reprocess the data
 
             csv_document_buffer.append( h_data[ : 2 ].tolist() + np.round( sens_data, 4 ).tolist() )
-
-            csv_document_buffer_2.append( h_data[ : 2 ].tolist() + np.round( new_one, 4 ).tolist() )
-            csv_document_buffer_3.append( h_data[ : 2 ].tolist() + np.round( new_one_2, 4 ).tolist() )
 
         print( "Last log to %s.act" % ( current_time ) )
 

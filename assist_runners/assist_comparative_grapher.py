@@ -7,25 +7,23 @@ import action_filters as act
 import action_figures as act_fig
 
 
-
-
-
-window_sizes = [ 0.01, 0.02, 0.05 ]
-
 # make plot size bigger
 plt.rcParams[ 'figure.figsize' ] = ( 20, 14 )
 # adjust the subplot spacing
 plt.subplots_adjust( hspace=0.35 )
 
-all_files = glob.glob( "*.csv" )  # All available CSV files
+all_files = glob.glob( "examples/*.csv" )  # All available CSV files
+
+# Ask user to select file to open
+rem = []
+for i in all_files:
+    if str(i).__contains__("_"):
+        rem.append(str(i))
+        
+for i in rem:
+    all_files.remove(i)
 
 all_files.sort()
-# Ask user to select file to open
-
-while ( all_files.__contains__( "_" ) ):
-    for i in range( len( all_files ) ):
-        if ( all_files[ i ].__contains__( "_" ) ):
-            all_files.remove( all_files[ i ] )
 
 print( "Available files:" )
 for i in range( len( all_files ) ):
@@ -79,9 +77,13 @@ for i in range( len( colled_data ) ):
     dat3 = colled_data3[ i ]
     plt.plot( x_axis, dat, label=f"{nam} raw" )
     # plt.plot( x_axis, dat2, label=f"{nam} mean" )
-    plt.plot( x_axis, dat3, label=f"{nam} median" )
+    # plt.plot( x_axis, dat3, label=f"{nam} median" )
     # plt.plot( x_axis, act.mean_filter( dat, 500 ), label=f"{nam} post" )
-    plt.plot( x_axis, act.mean_median_comp( dat, 200, 0.5 ), label=f"{nam} post comp" )
+
+    plt.plot( x_axis, act.mean_median_comp( dat, 200, 0 ), label=f"{nam}_post_comp_0" )
+
+    
     plt.legend()
     plt.savefig( f"graphs/{nam}.png" )
     plt.close()
+    
