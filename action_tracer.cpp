@@ -7,6 +7,39 @@
 ActionTracer::ActionTracer::ActionTracer() {
 }
 
+// Overload the copy constructor
+/**
+ * @brief Construct a new Action Tracer:: Action Tracer:: Action Tracer object
+ *
+ * @param other
+ */
+ActionTracer::ActionTracer::ActionTracer( const ActionTracer &other ) {}
+
+// Overload the move constructor
+/**
+ * @brief Construct a new Action Tracer:: Action Tracer:: Action Tracer object
+ *
+ * @param other
+ */
+ActionTracer::ActionTracer::ActionTracer( ActionTracer &&other ) {}
+
+// Overload the copy assignment operator
+/**
+ * @brief Construct a new Action Tracer:: Action Tracer:: Action Tracer object
+ *
+ * @param other
+ * @return ActionTracer&
+ */
+ActionTracer::ActionTracer &ActionTracer::ActionTracer::operator=( const ActionTracer &other ) {}
+
+/**
+ * @brief Construct a new Action Tracer:: Action Tracer:: Action Tracer object
+ *
+ * @param other
+ * @return ActionTracer&
+ */
+ActionTracer::ActionTracer &ActionTracer::ActionTracer::operator=( ActionTracer &&other ) {}
+
 /**
  * @brief Destroy the Action Tracer:: Action Tracer:: Action Tracer object
  *
