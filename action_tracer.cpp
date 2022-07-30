@@ -52,6 +52,7 @@ ActionTracer::ActionTracer::~ActionTracer() {
  *
  */
 void ActionTracer::ActionTracer::start() {
+    // This will confirm that the server or listener is ready to receive data and will start sending data packets.
 }
 
 /**
@@ -59,6 +60,7 @@ void ActionTracer::ActionTracer::start() {
  *
  */
 void ActionTracer::ActionTracer::stop() {
+    // This will stop the Action Device from collecting data and closing all the connections
 }
 
 /**
@@ -66,6 +68,8 @@ void ActionTracer::ActionTracer::stop() {
  *
  */
 void ActionTracer::ActionTracer::pause() {
+    // Temporarily pause packet sending. Do not close receivers
+    // Send pause signal message
 }
 
 /**
@@ -73,6 +77,8 @@ void ActionTracer::ActionTracer::pause() {
  *
  */
 void ActionTracer::ActionTracer::resume() {
+    // Continue sending data to clients.
+    // Start by sending receive message
 }
 
 /**
@@ -80,4 +86,30 @@ void ActionTracer::ActionTracer::resume() {
  *
  */
 void ActionTracer::ActionTracer::reset() {
+}
+
+/**
+ * @brief Initialise the sensors being used for the program. This will take time depending on how many devices are being initialized.
+ *
+ */
+void ActionTracer::ActionTracer::initialize(int16_t device_sum) {
+    // Based on ACT_# we can OR to find which device have been selected.
+    // First we check 0, then (in do-while) 1 - 13 and in the control loop, init, set rate and work. 
+}
+
+
+void ActionTracer::ActionTracer::set_fifo_rate(int16_t device, uint8_t){
+    
+}
+
+void ActionTracer::ActionTracer::get_fifo_rate(int16_t device){
+
+}
+
+void ActionTracer::ActionTracer::set_sample_rate(int8_t sample_rate){
+    
+}
+
+void ActionTracer::ActionTracer::get_sample_rate() const{
+    return _act_sample_rate;
 }
