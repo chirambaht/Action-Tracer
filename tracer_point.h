@@ -54,7 +54,10 @@ namespace ActionTracer {
 		float _temperature_packet										= 0;
 		float _yaw_pitch_roll_packet[YAW_PITCH_ROLL_DATA_POINT_SIZE]	= { 0 };
 
+		bool _device_initialized = false;
+
 		void _deselect_me();
+		void _initialize();
 		void _select_me();
 		void _set_device_offsets();
 		void _set_default_device_offsets();
@@ -72,7 +75,9 @@ namespace ActionTracer {
 		void set_calibrate( bool );
 		void tracepoint_isr();
 		void turn_off();
+		void set_sample_rate( uint16_t );
 
+		void	initialize( uint8_t, uint8_t );
 		bool	calibrate( uint8_t );
 		float  *read_data( int get_data );
 		MPU6050 get_device();

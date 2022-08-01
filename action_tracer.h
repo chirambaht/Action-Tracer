@@ -23,8 +23,8 @@
 namespace ActionTracer {
 	class ActionTracer {
 	  private:
-		std::vector<TracePoint> _devices_in_use;
-		uint16_t				_act_sample_rate;
+		std::vector<TracePoint *> _devices_in_use;
+		uint16_t				  _act_sample_rate;
 
 	  public:
 		ActionTracer( /* args */ );
@@ -47,7 +47,7 @@ namespace ActionTracer {
 		void initialize( int16_t );
 		void close();
 
-		void map_device();
+		void map_device( uint16_t );
 		void unmap_device();
 		void device_status();
 
@@ -55,8 +55,8 @@ namespace ActionTracer {
 
 		void set_packet_data();
 
-		void	set_fifo_rate( uint16_t, uint8_t );
-		uint8_t get_fifo_rate( uint16_t ) const;
+		void	set_fifo_rate( uint8_t, uint8_t );
+		uint8_t get_fifo_rate( uint8_t ) const;
 		void	set_sample_rate( uint8_t );
 		uint8_t get_sample_rate() const;
 	};

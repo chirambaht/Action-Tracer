@@ -95,16 +95,38 @@ void ActionTracer::ActionTracer::reset() {
 void ActionTracer::ActionTracer::initialize( int16_t device_sum ) {
 	// Based on ACT_# we can OR to find which device have been selected.
 	// First we check 0, then (in do-while) 1 - 13 and in the control loop, init, set rate and work.
+
+	if( device_sum & ACT_0 ) {
+		// Initialize device 0. Since we know the device number, we know the pin it's conencted to.
+	}
 }
 
-void ActionTracer::ActionTracer::set_fifo_rate( uint16_t device, uint8_t ) {
+void ActionTracer::ActionTracer::map_device( uint16_t sample_rate = 0 ) {
+	// Add a new Tracerpoint device to the list of devices in use.
+	// Create Tracerpoint
+	TracePoint *temp_device = new TracePoint();
+
+	// Add to list of devices in use.
+	_devices_in_use.push_back( temp_device );
 }
 
-uint8_t ActionTracer::ActionTracer::get_fifo_rate( uint16_t device ) const {
+void ActionTracer::ActionTracer::set_fifo_rate( uint8_t device, uint8_t ) {
+}
+
+uint8_t ActionTracer::ActionTracer::get_fifo_rate( uint8_t device ) const {
 	return 1;
 }
 
+/**
+ * @brief Set the sample rate for all the devices in use to a single given rate.
+ *  @param sample_rate The sample rate to set all devices to.
+ * @return Nothing
+ */
 void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate ) {
+	// For each deviece in use in_devices_in_use, set the sample rate to the given sample rate.
+	for( auto &device : _devices_in_use ) {
+		device->set_sample_rate( 2 );
+	}
 }
 
 uint8_t ActionTracer::ActionTracer::get_sample_rate() const {

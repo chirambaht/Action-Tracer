@@ -29,12 +29,8 @@ ActionTracer::TracePoint::TracePoint() {}
  * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
  * @constructor
  */
-ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_number ) {
+ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_number ) : _identifier( identifier ), _pin_number( wiring_Pi_pin_number ) {
 	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
-
-	_identifier = identifier;
-
-	_pin_number = wiring_Pi_pin_number;
 
 // Set pin information
 #ifdef ON_PI
@@ -81,6 +77,60 @@ ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_
 #ifdef DEBUG
 	this->dump_variables();
 #endif
+
+	_device_initialized = true;
+}
+
+void ActionTracer::TracePoint::initialize( uint8_t pin_number, uint8_t _identifier ) {
+	_pin_number = pin_number;
+	_identifier = _identifier;
+
+	_initialize();
+}
+
+void ActionTracer::TracePoint::_initialize() {
+	// Check if device has already been initialized
+	if( _device_initialized ) {
+		debugPrintln( "Device already initialized\n" );
+		return;
+	}
+	this->_select_me();
+
+	debugPrintln( "Initializing the device as is needed. Name = %s\n", name.c_str() );
+	_device->initialize();
+
+	// TODO: At this stage an interrupt pin is initialised
+
+	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
+
+	// DMP Initialization
+
+	debugPrint( "Initalising DMP\n" );
+	_device_status = _device->dmpInitialize();
+
+	_set_device_offsets();
+
+	if( _device_status == 0 ) {
+		debugPrint( "Enabling DMP..." );
+		_device->setDMPEnabled( true );
+
+		_dmp_ready = true;
+
+		_packet_size = _device->dmpGetFIFOPacketSize();
+
+		debugPrint( "Enabled!\n" );
+	} else {
+		debugPrint( "Can't initialise DMP\n" );
+		_dmp_ready = false;
+	}
+
+	this->_deselect_me();
+
+#ifdef DEBUG
+	this->dump_variables();
+#endif
+
+	_device_initialized = true;
 }
 
 /**
@@ -384,4 +434,8 @@ uint8_t ActionTracer::TracePoint::get_data_packet_size() {
 #ifdef GET_DATA_YAWPITCHROLL
 	return 3;
 #endif
+}
+
+void ActionTracer::TracePoint::set_sample_rate( uint16_t new_rate ) {
+	_device->dmpSetFIFORate( new_rate );
 }
