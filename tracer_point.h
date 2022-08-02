@@ -83,6 +83,9 @@ namespace ActionTracer {
 		MPU6050 get_device();
 		uint8_t get_data_packet_size();
 		uint8_t identify();
+
+		uint8_t get_pin_number();
+		void	set_pin_number( uint8_t );
 	};
 } // namespace ActionTracer
 

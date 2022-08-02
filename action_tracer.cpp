@@ -1,5 +1,9 @@
 #include "action_tracer.h"
 
+#include <cstdio>
+
+const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN, ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
+
 /**
  * @brief Construct a new Action Tracer:: Action Tracer:: Action Tracer object
  *
@@ -101,13 +105,18 @@ void ActionTracer::ActionTracer::initialize( int16_t device_sum ) {
 	}
 }
 
-void ActionTracer::ActionTracer::map_device( uint16_t sample_rate = 0 ) {
+/**
+ * @brief Set the rate of the Action Tracer Device.
+ *
+ * @param rate
+ */
+void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_part ) {
 	// Add a new Tracerpoint device to the list of devices in use.
 	// Create Tracerpoint
 	TracePoint *temp_device = new TracePoint();
 
 	// Add to list of devices in use.
-	_devices_in_use.push_back( temp_device );
+	_devices_waiting_for_use.push_back( temp_device );
 }
 
 void ActionTracer::ActionTracer::set_fifo_rate( uint8_t device, uint8_t ) {
@@ -131,4 +140,24 @@ void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate ) {
 
 uint8_t ActionTracer::ActionTracer::get_sample_rate() const {
 	return _act_sample_rate;
+}
+
+void ActionTracer::ActionTracer::show_body() {
+	// Show the body being used and which ACT_DEVICE_# is connected
+
+	printf( "  R             +---+                L  \n" );
+	printf( "  R             | %-2i|                L  \n", _devices_in_use[8]->get_pin_number() );
+	printf( "  R             +- -+                L  \n" );
+	printf( "  R            +--%-2i-+               L  \n", _devices_in_use[7]->get_pin_number() );
+	printf( "  R         %2i/  | |  \\%-2i            L  \n", _devices_in_use[1]->get_pin_number(), _devices_in_use[4]->get_pin_number() );
+	printf( "  R          +   | |   +-%2i-+%2i<     L  \n", _devices_in_use[5]->get_pin_number(), _devices_in_use[6]->get_pin_number() );
+	printf( "  R       %2i/    |%1i|                 L  \n", _devices_in_use[2]->get_pin_number(), _devices_in_use[0]->get_pin_number() ); // 0 is the center;
+	printf( "  R    >%2i-+  %2i/   \\%-2i              L  \n", _devices_in_use[3]->get_pin_number(), _devices_in_use[15]->get_pin_number(), _devices_in_use[16]->get_pin_number() );
+	printf( "  R             |   |                L  \n" );
+	printf( "  R            %2i   %-2i               L  \n", _devices_in_use[9]->get_pin_number(), _devices_in_use[12]->get_pin_number() );
+	printf( "  R             +   +                L  \n" );
+	printf( "  R            %2i   %-2i               L  \n", _devices_in_use[10]->get_pin_number(), _devices_in_use[13]->get_pin_number() );
+	printf( "  R             |   |                L  \n" );
+	printf( "  R             +   +                L  \n" );
+	printf( "  R          %2i/     \\%-2i             L  \n", _devices_in_use[11]->get_pin_number(), _devices_in_use[14]->get_pin_number() );
 }
