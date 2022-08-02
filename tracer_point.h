@@ -23,7 +23,7 @@ namespace ActionTracer {
 	class TracePoint {
 	  private:
 		MPU6050 *_device;
-		uint8_t	 _identifier = 0;
+		uint16_t _identifier = 0;
 		uint8_t	 _pin_number = 0;
 
 		uint8_t _device_status;
@@ -84,8 +84,10 @@ namespace ActionTracer {
 		uint8_t get_data_packet_size();
 		uint8_t identify();
 
-		uint8_t get_pin_number();
-		void	set_pin_number( uint8_t );
+		uint16_t get_pin_number();
+		void	 set_pin_number( uint16_t );
+		uint16_t get_identifier();
+		void	 set_identifier( uint16_t );
 	};
 } // namespace ActionTracer
 

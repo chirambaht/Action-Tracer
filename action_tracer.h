@@ -56,7 +56,7 @@
 #define ACT_BODY_LEFT_FOREARM  ( 1 << 4 )
 #define ACT_BODY_LEFT_HAND	   ( 1 << 5 )
 #define ACT_BODY_CHEST		   ( 1 << 6 )
-#define ACT_BODY_WAIST		   ( 1 << 7 )
+#define ACT_BODY_HEAD		   ( 1 << 7 )
 #define ACT_BODY_RIGHT_THIGH   ( 1 << 8 )
 #define ACT_BODY_RIGHT_KNEE	   ( 1 << 9 )
 #define ACT_BODY_RIGHT_FOOT	   ( 1 << 10 )
@@ -73,7 +73,9 @@ namespace ActionTracer {
 		std::vector<TracePoint *> _devices_waiting_for_use;
 		uint16_t				  _act_sample_rate;
 
-		void show_body();
+		void	 show_body();
+		uint16_t _get_body_identifier( uint16_t );
+		uint16_t _get_ACT_device_pin( uint16_t );
 
 	  public:
 		ActionTracer( /* args */ );
