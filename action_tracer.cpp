@@ -1,9 +1,35 @@
 #include "action_tracer.h"
 
 #include <cstdio>
+#include <pthread.h>
 #include <stdexcept>
 
 const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN, ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
+
+/**
+ * @brief The main method that runs the I2C communication with the action devices and collects the data.
+ *
+ * @return void*
+ */
+void *ActionTracer::ActionTracer::data_collection_thread() {
+	while( _paused == false ) {
+		for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
+			if( _devices_in_use[i]->is_active() ) {
+				_devices_in_use[i]->read_data( 1 );
+			}
+		}
+	}
+}
+
+/**
+ * @brief The main method that runs the data transmission to a server or client.
+ *
+ * @return void*
+ */
+void *ActionTracer::ActionTracer::data_collection_thread() {
+	while( _paused == false ) {
+	}
+}
 
 /**
  * @brief Construct a new Action Tracer:: Action Tracer:: Action Tracer object
@@ -58,6 +84,9 @@ ActionTracer::ActionTracer::~ActionTracer() {
  */
 void ActionTracer::ActionTracer::start() {
 	// This will confirm that the server or listener is ready to receive data and will start sending data packets.
+
+	// Set the running flag to true
+	_running = true;
 }
 
 /**
@@ -66,6 +95,11 @@ void ActionTracer::ActionTracer::start() {
  */
 void ActionTracer::ActionTracer::stop() {
 	// This will stop the Action Device from collecting data and closing all the connections
+	// First pause the device, then do everything else that the pause does not do
+	pause();
+
+	// Set the running flag to false
+	_running = false;
 }
 
 /**
@@ -74,7 +108,11 @@ void ActionTracer::ActionTracer::stop() {
  */
 void ActionTracer::ActionTracer::pause() {
 	// Temporarily pause packet sending. Do not close receivers
+
 	// Send pause signal message
+
+	// Set the _ flag to true
+	_paused = false;
 }
 
 /**
@@ -91,25 +129,35 @@ void ActionTracer::ActionTracer::resume() {
  *
  */
 void ActionTracer::ActionTracer::reset() {
+	// Check if the device is running
+	if( _running ) {
+		// Stop the device
+		stop();
+	}
+
+	// Continue resetting the device
 }
 
 /**
- * @brief Initialise the sensors being used for the program. This will take time depending on how many devices are being initialized.
- *
+ * @brief Initialise the sensors being used for the program. This will take time depending on how many devices are being initialized. It will go through each device that has been mapped and intialises it.
+ * @param device_map
+ * @returns Nothing
+ * @throws BAD_MAPPING When the divece has not correctly been mapped.
+ * @throws INVALID_SAMPLE_RATE The device has been passed an incorrcet sample rate.
  */
-void ActionTracer::ActionTracer::initialize( int16_t device_sum ) {
-	// Based on ACT_# we can OR to find which device have been selected.
-	// First we check 0, then (in do-while) 1 - 13 and in the control loop, init, set rate and work.
-
-	if( device_sum & ACT_0 ) {
-		// Initialize device 0. Since we know the device number, we know the pin it's conencted to.
+void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
+	for( auto &device : _devices_waiting_for_use ) {
+		if( device == nullptr ) {
+			continue;
+		}
+		device->initialize( device->get_pin_number(), device->get_identifier() );
 	}
 }
 
 /**
- * @brief Map ACT device and set its internal state to the desired state. This state is it's Wiring Pi pin and its identifier
- *
- * @param rate
+ * @brief Map ACT device and set its internal state to the desired state. This state is it's Wiring Pi pin and its identifier. Only takes one device and part at a time.
+ * @param ACT_device The device to be mapped.
+ * @param body_part The body part that the device is being mapped to.
  */
 void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_part ) {
 	// Add a new Tracerpoint device to the list of devices in use.
@@ -145,76 +193,86 @@ void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate ) {
 	}
 }
 
+/**
+ * @brief Get the general device sample rate that is being used by all devices.
+ *  @return The sample rate of all devices in use.
+ */
 uint8_t ActionTracer::ActionTracer::get_sample_rate() const {
 	return _act_sample_rate;
 }
 
-uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t code ) {
-	if( code == ACT_BODY_WAIST ) {
+/**
+ * @brief Finds a given body part identifier and returns it.
+ *  @param body_part_code The body part code to validate and return.
+ * @return Identifier for the body part code passed in
+ * @throws INVALID_ARGUMENT When the body part code is not valid.
+ */
+uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t body_part_code ) {
+	if( body_part_code == ACT_BODY_WAIST ) {
 		return ACT_BODY_WAIST;
 	} else
 
-		if( code == ACT_BODY_RIGHT_BICEP ) {
+		if( body_part_code == ACT_BODY_RIGHT_BICEP ) {
 		return ACT_BODY_RIGHT_BICEP;
 	} else
 
-		if( code == ACT_BODY_RIGHT_FOREARM ) {
+		if( body_part_code == ACT_BODY_RIGHT_FOREARM ) {
 		return ACT_BODY_RIGHT_FOREARM;
 	} else
 
-		if( code == ACT_BODY_RIGHT_HAND ) {
+		if( body_part_code == ACT_BODY_RIGHT_HAND ) {
 		return ACT_BODY_RIGHT_HAND;
 	} else
 
-		if( code == ACT_BODY_LEFT_BICEP ) {
+		if( body_part_code == ACT_BODY_LEFT_BICEP ) {
 		return ACT_BODY_LEFT_BICEP;
 	} else
 
-		if( code == ACT_BODY_LEFT_FOREARM ) {
+		if( body_part_code == ACT_BODY_LEFT_FOREARM ) {
 		return ACT_BODY_LEFT_FOREARM;
 	} else
 
-		if( code == ACT_BODY_LEFT_HAND ) {
+		if( body_part_code == ACT_BODY_LEFT_HAND ) {
 		return ACT_BODY_LEFT_HAND;
 	} else
 
-		if( code == ACT_BODY_CHEST ) {
+		if( body_part_code == ACT_BODY_CHEST ) {
 		return ACT_BODY_CHEST;
 	} else
 
-		if( code == ACT_BODY_HEAD ) {
+		if( body_part_code == ACT_BODY_HEAD ) {
 		return ACT_BODY_HEAD;
 	} else
 
-		if( code == ACT_BODY_RIGHT_THIGH ) {
+		if( body_part_code == ACT_BODY_RIGHT_THIGH ) {
 		return ACT_BODY_RIGHT_THIGH;
 	} else
 
-		if( code == ACT_BODY_RIGHT_KNEE ) {
+		if( body_part_code == ACT_BODY_RIGHT_KNEE ) {
 		return ACT_BODY_RIGHT_KNEE;
 	} else
 
-		if( code == ACT_BODY_RIGHT_FOOT ) {
+		if( body_part_code == ACT_BODY_RIGHT_FOOT ) {
 		return ACT_BODY_RIGHT_FOOT;
 	} else
 
-		if( code == ACT_BODY_LEFT_THIGH ) {
+		if( body_part_code == ACT_BODY_LEFT_THIGH ) {
 		return ACT_BODY_LEFT_THIGH;
 	} else
 
-		if( code == ACT_BODY_LEFT_KNEE ) {
+		if( body_part_code == ACT_BODY_LEFT_KNEE ) {
 		return ACT_BODY_LEFT_KNEE;
 	} else
 
-		if( code == ACT_BODY_LEFT_FOOT ) {
+		if( body_part_code == ACT_BODY_LEFT_FOOT ) {
 		return ACT_BODY_LEFT_FOOT;
 	} else
 
-		if( code == ACT_BODY_RIGHT_HIP ) {
+		if( body_part_code == ACT_BODY_RIGHT_HIP ) {
 		return ACT_BODY_RIGHT_HIP;
 	} else
 
-		if( code == ACT_BODY_LEFT_HIP ) {
+		if( body_part_code == ACT_BODY_LEFT_HIP ) {
 		return ACT_BODY_LEFT_HIP;
 	} else {
 		throw std::invalid_argument( "Received a body part identifer that is not defined." );
@@ -222,57 +280,63 @@ uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t code ) {
 	}
 }
 
+/**
+ * @brief Finds a given body part identifier and returns it.
+ *  @param ACT_device The ACT device code to validate and return.
+ * @return Identifier for the device
+ * @throws INVALID_ARGUMENT When the body part code is not valid.
+ */
 uint16_t ActionTracer::ActionTracer::_get_ACT_device_pin( uint16_t ACT_device ) {
 	if( ACT_0 ) {
-		return ACT_0;
+		return ACT_DEVICE_0_WIRING_PI_PIN;
 	} else
 
 		if( ACT_1 ) {
-		return ACT_1;
+		return ACT_DEVICE_1_WIRING_PI_PIN;
 	} else
 
 		if( ACT_2 ) {
-		return ACT_2;
+		return ACT_DEVICE_2_WIRING_PI_PIN;
 	} else
 
 		if( ACT_3 ) {
-		return ACT_3;
+		return ACT_DEVICE_3_WIRING_PI_PIN;
 	} else
 
 		if( ACT_4 ) {
-		return ACT_4;
+		return ACT_DEVICE_4_WIRING_PI_PIN;
 	} else
 
 		if( ACT_5 ) {
-		return ACT_5;
+		return ACT_DEVICE_5_WIRING_PI_PIN;
 	} else
 
 		if( ACT_6 ) {
-		return ACT_6;
+		return ACT_DEVICE_6_WIRING_PI_PIN;
 	} else
 
 		if( ACT_7 ) {
-		return ACT_7;
+		return ACT_DEVICE_7_WIRING_PI_PIN;
 	} else
 
 		if( ACT_8 ) {
-		return ACT_8;
+		return ACT_DEVICE_8_WIRING_PI_PIN;
 	} else
 
 		if( ACT_9 ) {
-		return ACT_9;
+		return ACT_DEVICE_9_WIRING_PI_PIN;
 	} else
 
 		if( ACT_10 ) {
-		return ACT_10;
+		return ACT_DEVICE_10_WIRING_PI_PIN;
 	} else
 
 		if( ACT_11 ) {
-		return ACT_11;
+		return ACT_DEVICE_11_WIRING_PI_PIN;
 	} else
 
 		if( ACT_12 ) {
-		return ACT_12;
+		return ACT_DEVICE_12_WIRING_PI_PIN;
 	} else {
 		throw std::invalid_argument( "Received an ACT device identifier that is not defined." );
 		return;

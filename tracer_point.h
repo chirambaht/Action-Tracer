@@ -38,6 +38,7 @@ namespace ActionTracer {
 		uint8_t	 _fifo_buffer[MPU6050_FIFO_BUFFER_SIZE] = { 0 };
 		uint8_t	 _packet_size;
 		uint16_t _fifo_count;
+		uint8_t	 _fifo_rate = 3;
 
 		Quaternion	_quaternion_packet;
 		VectorInt16 _acceleration_packet;
@@ -75,7 +76,9 @@ namespace ActionTracer {
 		void set_calibrate( bool );
 		void tracepoint_isr();
 		void turn_off();
-		void set_sample_rate( uint16_t );
+
+		void	set_sample_rate( uint8_t );
+		uint8_t get_sample_rate() const;
 
 		void	initialize( uint8_t, uint8_t );
 		bool	calibrate( uint8_t );
@@ -88,6 +91,8 @@ namespace ActionTracer {
 		void	 set_pin_number( uint16_t );
 		uint16_t get_identifier();
 		void	 set_identifier( uint16_t );
+
+		bool is_active();
 	};
 } // namespace ActionTracer
 

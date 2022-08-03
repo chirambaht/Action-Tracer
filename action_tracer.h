@@ -4,7 +4,8 @@
 #include "tracer_point.h"
 
 #include <vector>
-#define MAX_ACT_DEVICES 13
+#define MAX_ACT_DEVICES	  13
+#define DATA_PACKAGE_SIZE ( MAX_ACT_DEVICES * MAXIMUM_COLLECTED_DATA_POINTS * sizeof( float ) )
 
 #define ACT_I2C_DATA_WIRING_PI_PIN	8
 #define ACT_I2C_CLOCK_WIRING_PI_PIN 9
@@ -73,6 +74,12 @@ namespace ActionTracer {
 		std::vector<TracePoint *> _devices_waiting_for_use;
 		uint16_t				  _act_sample_rate;
 
+		void *data_collection_thread();
+		void *data_sending_thread();
+
+		bool _running = false;
+		bool _paused  = false;
+
 		void	 show_body();
 		uint16_t _get_body_identifier( uint16_t );
 		uint16_t _get_ACT_device_pin( uint16_t );
@@ -95,7 +102,7 @@ namespace ActionTracer {
 
 		void status();
 
-		void initialize( int16_t );
+		void initialize( int8_t );
 		void close();
 
 		void map_device( uint16_t );

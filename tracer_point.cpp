@@ -94,6 +94,7 @@ void ActionTracer::TracePoint::_initialize() {
 		debugPrintln( "Device already initialized\n" );
 		return;
 	}
+
 	this->_select_me();
 
 	debugPrintln( "Initializing the device as is needed. Name = %s\n", name.c_str() );
@@ -436,6 +437,14 @@ uint8_t ActionTracer::TracePoint::get_data_packet_size() {
 #endif
 }
 
-void ActionTracer::TracePoint::set_sample_rate( uint16_t new_rate ) {
-	_device->dmpSetFIFORate( new_rate );
+void ActionTracer::TracePoint::set_sample_rate( uint8_t new_rate ) {
+	if( _device_initialized ) {
+		// stderr( "Device is already initialized. Cannot change sample rate." );
+		throw _device_initialized;
+	}
+	_fifo_rate = new_rate;
+}
+
+bool ActionTracer::TracePoint::is_active() {
+	return _device_initialized;
 }
