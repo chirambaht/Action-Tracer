@@ -5,17 +5,17 @@
 
 #include <cstdint>
 
-#define MAXIMUM_COLLECTED_DATA_POINTS 20
+#define MAXIMUM_COLLECTED_DATA_POINTS ( 20 + 1 )
 
-#define ACCELEROMETER_DATA_POINT_SIZE	3
-#define GYROSCOPE_DATA_POINT_SIZE		3
-#define MAGNETOMETER_DATA_POINT_SIZE	3
-#define QUATERNION_DATA_POINT_SIZE		4
-#define EULER_DATA_POINT_SIZE			3
-#define ROTATION_MATRIX_DATA_POINT_SIZE 9
-#define YAW_PITCH_ROLL_DATA_POINT_SIZE	3
-#define TEMPERATURE_DATA_POINT_SIZE		1
-#define GRAVITY_DATA_POINT_SIZE			3
+#define ACCELEROMETER_DATA_POINT_SIZE	( 3 + 1 ) // +1 for identifier
+#define GYROSCOPE_DATA_POINT_SIZE		( 3 + 1 ) // +1 for identifier
+#define MAGNETOMETER_DATA_POINT_SIZE	( 3 + 1 ) // +1 for identifier
+#define QUATERNION_DATA_POINT_SIZE		( 4 + 1 ) // +1 for identifier
+#define EULER_DATA_POINT_SIZE			( 3 + 1 ) // +1 for identifier
+#define ROTATION_MATRIX_DATA_POINT_SIZE ( 9 + 1 ) // +1 for identifier
+#define YAW_PITCH_ROLL_DATA_POINT_SIZE	( 3 + 1 ) // +1 for identifier
+#define TEMPERATURE_DATA_POINT_SIZE		( 1 + 1 ) // +1 for identifier
+#define GRAVITY_DATA_POINT_SIZE			( 3 + 1 ) // +1 for identifier
 
 #define MPU6050_FIFO_BUFFER_SIZE 64
 
@@ -52,7 +52,7 @@ namespace ActionTracer {
 		float _gravity_float_packet[GRAVITY_DATA_POINT_SIZE]			= { 0 };
 		float _gyroscope_float_packet[GYROSCOPE_DATA_POINT_SIZE]		= { 0 };
 		float _quaternion_float_packet[QUATERNION_DATA_POINT_SIZE]		= { 0 };
-		float _temperature_packet										= 0;
+		float _temperature_packet[TEMPERATURE_DATA_POINT_SIZE]			= { 0 };
 		float _yaw_pitch_roll_packet[YAW_PITCH_ROLL_DATA_POINT_SIZE]	= { 0 };
 
 		bool _device_initialized = false;

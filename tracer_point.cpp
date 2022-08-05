@@ -132,6 +132,15 @@ void ActionTracer::TracePoint::_initialize() {
 	this->dump_variables();
 #endif
 
+	_complete_float_packet[0]	  = _identifier;
+	_acceleration_float_packet[0] = _identifier;
+	_euler_packet[0]			  = _identifier;
+	_gravity_float_packet[0]	  = _identifier;
+	_gyroscope_float_packet[0]	  = _identifier;
+	_quaternion_float_packet[0]	  = _identifier;
+	_temperature_packet[0]		  = _identifier;
+	_yaw_pitch_roll_packet[0]	  = _identifier;
+
 	_device_initialized = true;
 }
 
