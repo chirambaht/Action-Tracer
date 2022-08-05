@@ -5,6 +5,8 @@
 
 #ifdef ON_PI
 	#include <wiringPi.h>
+#else
+	#include "wiringPi.h"
 #endif
 
 // Select the data you want out of the senser here. Only select one.
@@ -32,10 +34,9 @@ ActionTracer::TracePoint::TracePoint() {}
 ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_number ) : _identifier( identifier ), _pin_number( wiring_Pi_pin_number ) {
 	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
 
-// Set pin information
-#ifdef ON_PI
+	// Set pin information
+
 	pinMode( _pin_number, OUTPUT );
-#endif
 
 	_device_interrupt_flag = false;
 
@@ -139,9 +140,7 @@ void ActionTracer::TracePoint::_initialize() {
  * @returns Nothing
  */
 void ActionTracer::TracePoint::_select_me() {
-#ifdef ON_PI
 	digitalWrite( _pin_number, HIGH );
-#endif
 }
 
 /**
@@ -163,9 +162,7 @@ void ActionTracer::TracePoint::dump_variables() {
  * @return Nothing
  */
 void ActionTracer::TracePoint::_deselect_me() {
-#ifdef ON_PI
 	digitalWrite( _pin_number, LOW );
-#endif
 }
 
 /**
@@ -173,15 +170,13 @@ void ActionTracer::TracePoint::_deselect_me() {
  * @return device identifier
  */
 uint8_t ActionTracer::TracePoint::identify() {
-// Blink device led
-#ifdef ON_PI
+	// Blink device led
 	for( size_t i = 0; i < 5; i++ ) {
 		_select_me();
 		delay( 250 );
 		_deselect_me();
 		delay( 250 );
 	}
-#endif
 
 	return _identifier;
 }

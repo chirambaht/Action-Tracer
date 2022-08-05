@@ -16,6 +16,8 @@
 
 #ifdef ON_PI
 	#include <wiringPi.h>
+#else
+	#include "wiringPi.h"
 #endif
 
 using namespace ActionTracer;
@@ -24,7 +26,6 @@ using namespace ActionTracer;
 cxxopts::Options options( "Action Tracer", "This program runs a given number of MPU6050 IMU's and sends the data packets via UDP." );
 #endif
 
-#ifdef ON_PI
 PI_THREAD( network_watcher ) {
 	printf( "Network Management Thread starting...\n" );
 	communicator = new Packager( PORT ); // Initialize the communicator that will send data packets to the server
@@ -38,7 +39,7 @@ PI_THREAD( network_watcher ) {
 
 	for( ;; ) {
 		if( send_ready == false ) {
-			communicator->run_socket_manager();
+			communicator->wait_for_connection();
 		}
 	}
 
@@ -54,20 +55,17 @@ PI_THREAD( network_sender ) {
 		piLock( 1 );
 
 		// Send packet
-		communicator->send_to_connected_devices();
+		communicator->send_packet();
 		send_ready = false;
 
 		piUnlock( 1 );
 	}
 	printf( "For some reason, this has run: sender" );
 }
-#endif
 
 void turn_off_all_devices() {
 	for( int dev = 0; dev < num_action_devices; dev++ ) {
-#ifdef ON_PI
 		digitalWrite( get_pi_location( dev ), LOW );
-#endif
 	}
 }
 
@@ -76,9 +74,7 @@ void turn_off_all_devices() {
  * @return 0 if success
  */
 void setup() {
-#ifdef ON_PI
 	wiringPiSetup();
-#endif
 
 	struct sigaction sigIntHandler;
 
@@ -90,7 +86,6 @@ void setup() {
 
 	// Create thread to work on networking with the packager
 
-#ifdef ON_PI
 	// Will break here if it doesn't find a TCP socket available
 	if( piThreadCreate( network_watcher ) != 0 ) {
 		printf( "Failed to create network worker thread\n" );
@@ -100,7 +95,6 @@ void setup() {
 		printf( "Failed to create network worker thread\n" );
 		exit( EXIT_FAILURE );
 	}
-#endif
 
 #ifdef SINGLE_ACT_0
 	// Init all the devices as the IMU on the Pi Connector
@@ -135,13 +129,11 @@ void exit_handler( int s ) {
  */
 void loop() {
 	float *body;
-#ifdef ON_PI
 	loop_start = millis();
 	while( millis() - loop_start < ( WAIT_TIME / 2 ) ) {
 		continue;
 	}
 	loop_start = millis();
-#endif
 #ifndef SINGLE_ACT_0
 	for( size_t i = 0; i < _sensors; i++ ) {
 		body = body_sensor[i]->read_data( 1 );
@@ -159,7 +151,6 @@ void loop() {
 	communicator->load_packet( data_package, 2, PACKETS_TO_SEND );
 	communicator->load_packet( data_package, 3, PACKETS_TO_SEND );
 #endif
-#ifdef ON_PI
 	piLock( 1 );
 	send_ready = true;
 
@@ -167,7 +158,6 @@ void loop() {
 		continue;
 	}
 	piUnlock( 1 );
-#endif
 }
 
 /**

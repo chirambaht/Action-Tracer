@@ -12,11 +12,15 @@ const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_P
  * @return void*
  */
 void *ActionTracer::ActionTracer::data_collection_thread() {
-	while( _paused == false ) {
+	while( _running == false ) {
 		for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 			if( _devices_in_use[i]->is_active() ) {
-				_devices_in_use[i]->read_data( 1 );
+				_data_package[i * SINGLE_ACT_DEVICE_PACKAGE_SIZE] = _devices_in_use[i]->read_data( 1 );
 			}
+		}
+
+		if( !_paused ) {
+			// Send data to clients
 		}
 	}
 }
