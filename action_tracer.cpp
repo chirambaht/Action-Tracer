@@ -1,5 +1,6 @@
 #include "action_tracer.h"
 
+#include <algorithm>
 #include <cstdio>
 #include <pthread.h>
 #include <stdexcept>
@@ -20,6 +21,10 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
 		}
 
 		if( !_paused ) {
+			// If ready to send data, load the data package into the communicator.
+			if( _communicator->get_ready() ) {
+				_communicator->load_packet( _data_package );
+			}
 			// Send data to clients
 		}
 	}
@@ -164,7 +169,8 @@ void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
  * @param body_part The body part that the device is being mapped to.
  */
 void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_part ) {
-	// Add a new Tracerpoint device to the list of devices in use.
+	// Add a new Tracerpoint device to the list of devices in use after validating mapping
+	_validate_mapping( ACT_device, body_part );
 	// Create Tracerpoint
 	TracePoint *temp_device = new TracePoint();
 
@@ -365,4 +371,34 @@ void ActionTracer::ActionTracer::show_body() {
 	printf( "  R             |   |                L  \n" );
 	printf( "  R             +   +                L  \n" );
 	printf( "  R          %2i/     \\%-2i             L  \n", _devices_in_use[11]->get_pin_number(), _devices_in_use[14]->get_pin_number() );
+}
+
+bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_device, uint16_t body_part ) {
+	std::vector<uint16_t> body_part_codes;
+	std::vector<uint16_t> device_codes;
+	for( auto &dev : _devices_waiting_for_use ) {
+		body_part_codes.push_back( dev->get_identifier() );
+		device_codes.push_back( dev->get_pin_number() );
+	}
+
+	std::sort( body_part_codes.begin(), body_part_codes.end() );
+	std::sort( device_codes.begin(), device_codes.end() );
+
+	// Check if there are duplicate body part codes and return false if there are.
+	for( auto i = body_part_codes.begin(); i != body_part_codes.end(); ++i ) {
+		if( std::find( i + 1, body_part_codes.end(), *i ) != body_part_codes.end() ) {
+			throw std::invalid_argument( "Bad mapping! This body part is already defined." );
+			return false;
+		}
+	}
+
+	// Check if there are duplicate body part codes and return false if there are.
+	for( auto i = device_codes.begin(); i != device_codes.end(); ++i ) {
+		if( std::find( i + 1, device_codes.end(), *i ) != device_codes.end() ) {
+			throw std::invalid_argument( "Bad mapping! This ACT device is already in use." );
+			return false;
+		}
+	}
+
+	return true;
 }

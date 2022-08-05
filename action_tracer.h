@@ -1,6 +1,7 @@
 #ifndef ACTION_TRACER_H
 #define ACTION_TRACER_H
 
+#include "packager.h"
 #include "tracer_point.h"
 
 #include <vector>
@@ -71,7 +72,9 @@
 namespace ActionTracer {
 	class ActionTracer {
 	  private:
-		TracePoint			   *_devices_in_use[MAX_ACT_DEVICES] = { new TracePoint() };
+		TracePoint *_devices_in_use[MAX_ACT_DEVICES] = { new TracePoint() };
+		Packager	 *_communicator;
+
 		std::vector<TracePoint *> _devices_waiting_for_use;
 		uint16_t				  _act_sample_rate;
 		float					*_data_package[DATA_PACKAGE_SIZE];
@@ -85,6 +88,8 @@ namespace ActionTracer {
 		void	 show_body();
 		uint16_t _get_body_identifier( uint16_t );
 		uint16_t _get_ACT_device_pin( uint16_t );
+
+		bool _validate_mapping( uint16_t, uint16_t );
 
 	  public:
 		ActionTracer( /* args */ );
