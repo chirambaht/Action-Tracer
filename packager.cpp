@@ -101,7 +101,7 @@ uint8_t ActionTracer::Packager::wait_for_connection() {
 	} else {
 		_client = temp_client;
 	}
-
+	set_ready( true );
 	return temp_client->_action_client_descriptor;
 }
 
@@ -118,7 +118,7 @@ void ActionTracer::Packager::disconnect() {
 	close_socket( _client->_action_client_descriptor );
 	delete _client;
 	printf( "Client with address %s has been diconnected.\n", inet_ntoa( _client->_action_client_address.sin_addr ) );
-
+	set_ready( false );
 	return;
 }
 
@@ -256,4 +256,12 @@ uint8_t ActionTracer::Packager::get_client_descriptor() const {
 	} else {
 		return _client->_action_client_descriptor;
 	}
+}
+
+void ActionTracer::Packager::set_ready( bool status ) {
+	_ready = status;
+}
+
+bool ActionTracer::Packager::get_ready() const {
+	return _ready;
 }

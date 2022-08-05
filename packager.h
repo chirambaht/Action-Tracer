@@ -55,8 +55,8 @@ namespace ActionTracer {
 		__uint16_t	  _previous_count = 0;
 		__uint16_t	  _recording_start_time;
 
-		float _clocked = 0.0;
-
+		float			   _clocked = 0.0;
+		bool			   _ready	= false;
 		struct sockaddr_in _server;
 		struct timeval	   _timeout; // a 5ms timeout
 
@@ -84,6 +84,9 @@ namespace ActionTracer {
 
 		void	set_client_descriptor( int );
 		uint8_t get_client_descriptor() const;
+
+		void set_ready( bool );
+		bool get_ready() const;
 	};
 
 } // namespace ActionTracer
