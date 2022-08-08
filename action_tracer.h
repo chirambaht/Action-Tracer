@@ -16,6 +16,7 @@ namespace ActionTracer {
 		std::vector<TracePoint *> _devices_waiting_for_use;
 		uint16_t				  _act_sample_rate;
 		float					*_data_package[DATA_PACKAGE_SIZE];
+		ActionDataPackage		  *_data_package_action[MAX_ACT_DEVICES] = { new ActionDataPackage() };
 
 		void *data_collection_thread();
 		void *data_sending_thread();

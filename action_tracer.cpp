@@ -13,19 +13,19 @@ const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_P
  * @return void*
  */
 void *ActionTracer::ActionTracer::data_collection_thread() {
-	while( _running == false ) {
+	while( _running != false ) {
 		for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 			if( _devices_in_use[i]->is_active() ) {
-				_data_package[i * SINGLE_ACT_DEVICE_PACKAGE_SIZE] = _devices_in_use[i]->read_data( 1 );
+				_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
+			}
+			if( !_paused && _communicator->get_ready() ) {
+				// If ready to send data, load the data package into the communicator.
+				_communicator->load_packet( _data_package_action[i] );
 			}
 		}
-
-		if( !_paused ) {
-			// If ready to send data, load the data package into the communicator.
-			if( _communicator->get_ready() ) {
-				_communicator->load_packet( _data_package );
-			}
-			// Send data to clients
+		// Send data to clients
+		if( !_paused && _communicator->get_ready() ) {
+			_communicator->send_packet();
 		}
 	}
 }

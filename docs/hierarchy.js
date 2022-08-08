@@ -1,6 +1,8 @@
 var hierarchy =
 [
     [ "ActionTracer::ActionClient", "df/db4/structActionTracer_1_1ActionClient.html", null ],
+    [ "ActionTracer::ActionDataPackage", "dd/d23/structActionTracer_1_1ActionDataPackage.html", null ],
+    [ "ActionTracer::ActionTracer", "dd/d11/classActionTracer_1_1ActionTracer.html", null ],
     [ "cxxopts::values::parser_tool::ArguDesc", "d8/df8/structcxxopts_1_1values_1_1parser__tool_1_1ArguDesc.html", null ],
     [ "std::enable_shared_from_this", null, [
       [ "cxxopts::Value", "d8/d61/classcxxopts_1_1Value.html", [
@@ -53,5 +55,6 @@ var hierarchy =
     [ "cxxopts::values::type_is_container< T >", "de/d59/structcxxopts_1_1values_1_1type__is__container.html", null ],
     [ "cxxopts::values::type_is_container< std::vector< T > >", "d6/d9a/structcxxopts_1_1values_1_1type__is__container_3_01std_1_1vector_3_01T_01_4_01_4.html", null ],
     [ "VectorFloat", "d1/d3b/classVectorFloat.html", null ],
-    [ "VectorInt16", "d5/d29/classVectorInt16.html", null ]
+    [ "VectorInt16", "d5/d29/classVectorInt16.html", null ],
+    [ "wiringPiNodeStruct", "d1/d24/structwiringPiNodeStruct.html", null ]
 ];

@@ -3,7 +3,6 @@
 #include <arpa/inet.h> //inet_addr
 #include <cstdio>
 
-
 #define FLOAT_SCALING_FACTOR 10000
 
 namespace ActionTracer {
@@ -29,8 +28,9 @@ namespace ActionTracer {
 		unsigned int _server_address_len = sizeof( sockaddr_in );
 		int			 _server_descriptor	 = 0;
 
-		float	  _package[PACKAGE_LENGTH] = { 0 };
-		uint16_t  _package_size			   = PACKAGE_LENGTH * sizeof( float );
+		float _package[PACKAGE_LENGTH] = { 0 };
+
+		uint16_t  _package_size = PACKAGE_LENGTH * sizeof( float );
 		char	  buf[128];
 		__uint8_t _packed		   = 0;
 		__uint8_t _package_pointer = PACKAGE_DATA_START;
@@ -63,7 +63,9 @@ namespace ActionTracer {
 		void close_socket( int );
 		void close_all_sockets();
 		void dump_vars( void );
-		int	 load_packet( float *, int8_t, uint8_t );
+
+		int load_packet( ActionDataPackage * );
+		int load_packet( float *, int8_t, uint8_t );
 
 		void	set_server_descriptor( int );
 		uint8_t get_server_descriptor() const;

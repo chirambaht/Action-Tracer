@@ -179,6 +179,17 @@ void ActionTracer::Packager::send_packet() {
  * @param length number of floats in array to convert. Defaults to 20
  * @return Number of elements that have been packed.
  */
+int ActionTracer::Packager::load_packet( ActionDataPackage *data ) {
+	return _packed;
+}
+
+/**
+ * This is used to add data to a package that is going to be sent. It takes an array of floats.
+ * @param data A reference to an array of floats
+ * @param device_number. Device to work with. Starts from 1 and will place data in the correct position in the package.
+ * @param length number of floats in array to convert. Defaults to 20
+ * @return Number of elements that have been packed.
+ */
 int ActionTracer::Packager::load_packet( float *data, int8_t device_number = -1, uint8_t length = 20 ) {
 	if( device_number <= 0 ) {
 		_package_pointer = ( _package[2] * length ) + PACKAGE_DATA_START;

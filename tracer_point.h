@@ -83,12 +83,13 @@ namespace ActionTracer {
 		void	set_sample_rate( uint8_t );
 		uint8_t get_sample_rate() const;
 
-		void	initialize( uint8_t, uint8_t );
-		bool	calibrate( uint8_t );
-		float  *read_data( int get_data );
-		MPU6050 get_device();
-		uint8_t get_data_packet_size();
-		uint8_t identify();
+		void			   initialize( uint8_t, uint8_t );
+		bool			   calibrate( uint8_t );
+		float			  *read_data( int get_data );
+		ActionDataPackage *read_data_action( int get_data );
+		MPU6050			   get_device();
+		uint8_t			   get_data_packet_size();
+		uint8_t			   identify();
 
 		uint16_t get_pin_number();
 		void	 set_pin_number( uint16_t );

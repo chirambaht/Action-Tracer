@@ -367,6 +367,18 @@ void ActionTracer::TracePoint::get_data() {
  * @param read_first Collects data first if set to 1 or true. After this, it will return the data
  * @return Pointer to a float array with the data packet
  */
+ActionDataPackage *ActionTracer::TracePoint::read_data_action( int read_first = 0 ) {
+	if( read_first ) {
+		this->get_data();
+	}
+	return &_data_package;
+}
+
+/**
+ * @brief Obtain the data from the sensor. This will return a float array based on the requested data defined in the file.
+ * @param read_first Collects data first if set to 1 or true. After this, it will return the data
+ * @return Pointer to a float array with the data packet
+ */
 float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 	if( read_first ) {
 		this->get_data();

@@ -52,3 +52,4 @@ graphs/
 assist_runners/__pycache__/action_figures.cpython-310.pyc
 assist_runners/__pycache__/action_filters.cpython-310.pyc
 *.zip
+action_definitions.proto
