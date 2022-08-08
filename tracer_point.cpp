@@ -433,6 +433,11 @@ uint8_t ActionTracer::TracePoint::get_data_packet_size() {
 #endif
 }
 
+/**
+ * @brief Sets the device sample rate to the given value if it has not been initialisd yet.
+ * @param new_rate Sample rate to set the device to
+ * @throws DEVICE_INITIALIZED if the device has been initialised yet meaning it can not be alterd
+ */
 void ActionTracer::TracePoint::set_sample_rate( uint8_t new_rate ) {
 	if( _device_initialized ) {
 		// stderr( "Device is already initialized. Cannot change sample rate." );
@@ -441,6 +446,11 @@ void ActionTracer::TracePoint::set_sample_rate( uint8_t new_rate ) {
 	_fifo_rate = new_rate;
 }
 
+/**
+ * @brief Obtains the device status with regard to it being initialized or not.
+ * @return True if the device is initialized
+ * @return False if the device is not yet initialized
+ */
 bool ActionTracer::TracePoint::is_active() {
 	return _device_initialized;
 }

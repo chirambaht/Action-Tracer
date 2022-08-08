@@ -84,7 +84,7 @@ int ActionTracer::Packager::socket_setup() {
 
 /**
  * @brief Manages the TCP server by adding clients to packagers network. It accepts a client and obtains the ncessary information to create a recepient.
- *
+ *	@throws INVALID_ARGUMENT If this Packager instance is still connected to a client.
  * @return Nothing
  */
 uint8_t ActionTracer::Packager::wait_for_connection() {
@@ -107,7 +107,7 @@ uint8_t ActionTracer::Packager::wait_for_connection() {
 
 /**
  * @brief Disconnect a client from the server given its socket descriptor
- *
+ * @throws INVALID_ARGUMENT if the client is not connected to the server
  */
 void ActionTracer::Packager::disconnect() {
 	if( _client == nullptr ) {
@@ -135,6 +135,7 @@ __int16_t ActionTracer::Packager::_float_to_int( float value ) {
 /**
  * This is used to send the stored data packet to a given socket described by a socket descriptor
  * @return Nothing
+ * @throws INVALID_ARGUMENT If there is no device connected to the system's network.
  */
 void ActionTracer::Packager::send_packet() {
 	// If no socket descriptor is given, use the last device to be added to the network
@@ -233,13 +234,29 @@ void ActionTracer::Packager::dump_vars( void ) {
 	}
 }
 
+/**
+ * @brief Sets the server descriptor to a given value
+ * @param server_descriptor An open socket descriptor for the server
+ * @returns Nothing
+ */
 void ActionTracer::Packager::set_server_descriptor( int server_descriptor ) {
 	_server_descriptor = server_descriptor;
 }
+
+/**
+ * @brief Obtains the server descriptor
+ * @returns _server_descriptor The server descriptor
+ */
 uint8_t ActionTracer::Packager::get_server_descriptor() const {
 	return _server_descriptor;
 }
 
+/**
+ * @brief Sets the client descriptor to a given value
+ * @param client_descriptor An open socket descriptor for the client
+ * @returns Nothing
+ * @throws INVALID_ARGUMENT Thrown if no client is connected to the system's network.
+ */
 void ActionTracer::Packager::set_client_descriptor( int client_descriptor ) {
 	if( _client == nullptr ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
@@ -249,6 +266,11 @@ void ActionTracer::Packager::set_client_descriptor( int client_descriptor ) {
 	}
 }
 
+/**
+ * @brief Obtains the client descriptor
+ * @returns _client_descriptor The client descriptor if it is connected to the system's network.
+ * @throws INVALID_ARGUMENT Thrown if no client is connected to the system's network.
+ */
 uint8_t ActionTracer::Packager::get_client_descriptor() const {
 	if( _client == nullptr ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
@@ -258,10 +280,19 @@ uint8_t ActionTracer::Packager::get_client_descriptor() const {
 	}
 }
 
+/**
+ * @brief Sets the device into a given ready mode
+ * @param status The status to set the device to
+ * @returns Nothing
+ */
 void ActionTracer::Packager::set_ready( bool status ) {
 	_ready = status;
 }
 
+/**
+ * @brief Obtains the ready status of the device
+ * @returns _ready The ready status of the device
+ */
 bool ActionTracer::Packager::get_ready() const {
 	return _ready;
 }
