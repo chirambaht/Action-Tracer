@@ -24,6 +24,7 @@ namespace ActionTracer {
 
 	class Packager {
 	  private:
+	  	ActionDataNetworkPackage _net_package;
 		sockaddr_in	 _server_address;
 		unsigned int _server_address_len = sizeof( sockaddr_in );
 		int			 _server_descriptor	 = 0;

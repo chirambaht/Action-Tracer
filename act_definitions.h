@@ -1,4 +1,5 @@
 #include <cstdint>
+#include "action_definitions.pb.h"
 
 #define MAX_ACT_DEVICES				   13
 #define SINGLE_ACT_DEVICE_PACKAGE_SIZE ( MAXIMUM_COLLECTED_DATA_POINTS * sizeof( float ) )

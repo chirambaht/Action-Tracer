@@ -39,7 +39,7 @@ LOCAL_PORT = 5000
 
 collector: $(OBJS)
 	@ echo "Compiled data collection program"
-	@ $(CXX) -o $(EXE) $^ -l wiringPi -lm -lpthread
+	@ $(CXX) -o $(EXE) $^ -l wiringPi -lm -lpthread -lprotobuf
 	@ echo "Program made!"
 	
 clean:
@@ -60,3 +60,10 @@ gui_actish_debug:
 
 documentation:
 	@ doxygen docs/Doxyfile
+
+
+proto:
+	@ g++ test.o test.cpp
+	@ g++ -o action_d.o action_definitions.pb.cc
+	
+	@ g++ -o runner test.o action_d.o

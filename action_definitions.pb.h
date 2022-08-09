@@ -45,35 +45,35 @@ struct TableStruct_action_5fdefinitions_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_action_5fdefinitions_2eproto;
 namespace ActionTracer {
-class ActionDataPackage;
-struct ActionDataPackageDefaultTypeInternal;
-extern ActionDataPackageDefaultTypeInternal _ActionDataPackage_default_instance_;
+class ActionDataNetworkPackage;
+struct ActionDataNetworkPackageDefaultTypeInternal;
+extern ActionDataNetworkPackageDefaultTypeInternal _ActionDataNetworkPackage_default_instance_;
 }  // namespace ActionTracer
 PROTOBUF_NAMESPACE_OPEN
-template<> ::ActionTracer::ActionDataPackage* Arena::CreateMaybeMessage<::ActionTracer::ActionDataPackage>(Arena*);
+template<> ::ActionTracer::ActionDataNetworkPackage* Arena::CreateMaybeMessage<::ActionTracer::ActionDataNetworkPackage>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace ActionTracer {
 
 // ===================================================================
 
-class ActionDataPackage final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ActionTracer.ActionDataPackage) */ {
+class ActionDataNetworkPackage final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ActionTracer.ActionDataNetworkPackage) */ {
  public:
-  inline ActionDataPackage() : ActionDataPackage(nullptr) {}
-  ~ActionDataPackage() override;
-  explicit PROTOBUF_CONSTEXPR ActionDataPackage(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline ActionDataNetworkPackage() : ActionDataNetworkPackage(nullptr) {}
+  ~ActionDataNetworkPackage() override;
+  explicit PROTOBUF_CONSTEXPR ActionDataNetworkPackage(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  ActionDataPackage(const ActionDataPackage& from);
-  ActionDataPackage(ActionDataPackage&& from) noexcept
-    : ActionDataPackage() {
+  ActionDataNetworkPackage(const ActionDataNetworkPackage& from);
+  ActionDataNetworkPackage(ActionDataNetworkPackage&& from) noexcept
+    : ActionDataNetworkPackage() {
     *this = ::std::move(from);
   }
 
-  inline ActionDataPackage& operator=(const ActionDataPackage& from) {
+  inline ActionDataNetworkPackage& operator=(const ActionDataNetworkPackage& from) {
     CopyFrom(from);
     return *this;
   }
-  inline ActionDataPackage& operator=(ActionDataPackage&& from) noexcept {
+  inline ActionDataNetworkPackage& operator=(ActionDataNetworkPackage&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -87,13 +87,6 @@ class ActionDataPackage final :
     return *this;
   }
 
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
   static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
     return GetDescriptor();
   }
@@ -103,20 +96,20 @@ class ActionDataPackage final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const ActionDataPackage& default_instance() {
+  static const ActionDataNetworkPackage& default_instance() {
     return *internal_default_instance();
   }
-  static inline const ActionDataPackage* internal_default_instance() {
-    return reinterpret_cast<const ActionDataPackage*>(
-               &_ActionDataPackage_default_instance_);
+  static inline const ActionDataNetworkPackage* internal_default_instance() {
+    return reinterpret_cast<const ActionDataNetworkPackage*>(
+               &_ActionDataNetworkPackage_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     0;
 
-  friend void swap(ActionDataPackage& a, ActionDataPackage& b) {
+  friend void swap(ActionDataNetworkPackage& a, ActionDataNetworkPackage& b) {
     a.Swap(&b);
   }
-  inline void Swap(ActionDataPackage* other) {
+  inline void Swap(ActionDataNetworkPackage* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -129,7 +122,7 @@ class ActionDataPackage final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(ActionDataPackage* other) {
+  void UnsafeArenaSwap(ActionDataNetworkPackage* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -137,14 +130,14 @@ class ActionDataPackage final :
 
   // implements Message ----------------------------------------------
 
-  ActionDataPackage* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<ActionDataPackage>(arena);
+  ActionDataNetworkPackage* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ActionDataNetworkPackage>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const ActionDataPackage& from);
+  void CopyFrom(const ActionDataNetworkPackage& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const ActionDataPackage& from) {
-    ActionDataPackage::MergeImpl(*this, from);
+  void MergeFrom( const ActionDataNetworkPackage& from) {
+    ActionDataNetworkPackage::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -162,15 +155,15 @@ class ActionDataPackage final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(ActionDataPackage* other);
+  void InternalSwap(ActionDataNetworkPackage* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "ActionTracer.ActionDataPackage";
+    return "ActionTracer.ActionDataNetworkPackage";
   }
   protected:
-  explicit ActionDataPackage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit ActionDataNetworkPackage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -209,11 +202,7 @@ class ActionDataPackage final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
       mutable_data();
 
-  // required uint32 device_identifier_contents = 1;
-  bool has_device_identifier_contents() const;
-  private:
-  bool _internal_has_device_identifier_contents() const;
-  public:
+  // uint32 device_identifier_contents = 1;
   void clear_device_identifier_contents();
   uint32_t device_identifier_contents() const;
   void set_device_identifier_contents(uint32_t value);
@@ -222,7 +211,7 @@ class ActionDataPackage final :
   void _internal_set_device_identifier_contents(uint32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:ActionTracer.ActionDataPackage)
+  // @@protoc_insertion_point(class_scope:ActionTracer.ActionDataNetworkPackage)
  private:
   class _Internal;
 
@@ -230,10 +219,9 @@ class ActionDataPackage final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > data_;
     uint32_t device_identifier_contents_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_action_5fdefinitions_2eproto;
@@ -247,80 +235,72 @@ class ActionDataPackage final :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// ActionDataPackage
+// ActionDataNetworkPackage
 
-// required uint32 device_identifier_contents = 1;
-inline bool ActionDataPackage::_internal_has_device_identifier_contents() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
-  return value;
-}
-inline bool ActionDataPackage::has_device_identifier_contents() const {
-  return _internal_has_device_identifier_contents();
-}
-inline void ActionDataPackage::clear_device_identifier_contents() {
+// uint32 device_identifier_contents = 1;
+inline void ActionDataNetworkPackage::clear_device_identifier_contents() {
   _impl_.device_identifier_contents_ = 0u;
-  _impl_._has_bits_[0] &= ~0x00000001u;
 }
-inline uint32_t ActionDataPackage::_internal_device_identifier_contents() const {
+inline uint32_t ActionDataNetworkPackage::_internal_device_identifier_contents() const {
   return _impl_.device_identifier_contents_;
 }
-inline uint32_t ActionDataPackage::device_identifier_contents() const {
-  // @@protoc_insertion_point(field_get:ActionTracer.ActionDataPackage.device_identifier_contents)
+inline uint32_t ActionDataNetworkPackage::device_identifier_contents() const {
+  // @@protoc_insertion_point(field_get:ActionTracer.ActionDataNetworkPackage.device_identifier_contents)
   return _internal_device_identifier_contents();
 }
-inline void ActionDataPackage::_internal_set_device_identifier_contents(uint32_t value) {
-  _impl_._has_bits_[0] |= 0x00000001u;
+inline void ActionDataNetworkPackage::_internal_set_device_identifier_contents(uint32_t value) {
+  
   _impl_.device_identifier_contents_ = value;
 }
-inline void ActionDataPackage::set_device_identifier_contents(uint32_t value) {
+inline void ActionDataNetworkPackage::set_device_identifier_contents(uint32_t value) {
   _internal_set_device_identifier_contents(value);
-  // @@protoc_insertion_point(field_set:ActionTracer.ActionDataPackage.device_identifier_contents)
+  // @@protoc_insertion_point(field_set:ActionTracer.ActionDataNetworkPackage.device_identifier_contents)
 }
 
 // repeated float data = 2;
-inline int ActionDataPackage::_internal_data_size() const {
+inline int ActionDataNetworkPackage::_internal_data_size() const {
   return _impl_.data_.size();
 }
-inline int ActionDataPackage::data_size() const {
+inline int ActionDataNetworkPackage::data_size() const {
   return _internal_data_size();
 }
-inline void ActionDataPackage::clear_data() {
+inline void ActionDataNetworkPackage::clear_data() {
   _impl_.data_.Clear();
 }
-inline float ActionDataPackage::_internal_data(int index) const {
+inline float ActionDataNetworkPackage::_internal_data(int index) const {
   return _impl_.data_.Get(index);
 }
-inline float ActionDataPackage::data(int index) const {
-  // @@protoc_insertion_point(field_get:ActionTracer.ActionDataPackage.data)
+inline float ActionDataNetworkPackage::data(int index) const {
+  // @@protoc_insertion_point(field_get:ActionTracer.ActionDataNetworkPackage.data)
   return _internal_data(index);
 }
-inline void ActionDataPackage::set_data(int index, float value) {
+inline void ActionDataNetworkPackage::set_data(int index, float value) {
   _impl_.data_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ActionTracer.ActionDataPackage.data)
+  // @@protoc_insertion_point(field_set:ActionTracer.ActionDataNetworkPackage.data)
 }
-inline void ActionDataPackage::_internal_add_data(float value) {
+inline void ActionDataNetworkPackage::_internal_add_data(float value) {
   _impl_.data_.Add(value);
 }
-inline void ActionDataPackage::add_data(float value) {
+inline void ActionDataNetworkPackage::add_data(float value) {
   _internal_add_data(value);
-  // @@protoc_insertion_point(field_add:ActionTracer.ActionDataPackage.data)
+  // @@protoc_insertion_point(field_add:ActionTracer.ActionDataNetworkPackage.data)
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-ActionDataPackage::_internal_data() const {
+ActionDataNetworkPackage::_internal_data() const {
   return _impl_.data_;
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-ActionDataPackage::data() const {
-  // @@protoc_insertion_point(field_list:ActionTracer.ActionDataPackage.data)
+ActionDataNetworkPackage::data() const {
+  // @@protoc_insertion_point(field_list:ActionTracer.ActionDataNetworkPackage.data)
   return _internal_data();
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-ActionDataPackage::_internal_mutable_data() {
+ActionDataNetworkPackage::_internal_mutable_data() {
   return &_impl_.data_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-ActionDataPackage::mutable_data() {
-  // @@protoc_insertion_point(field_mutable_list:ActionTracer.ActionDataPackage.data)
+ActionDataNetworkPackage::mutable_data() {
+  // @@protoc_insertion_point(field_mutable_list:ActionTracer.ActionDataNetworkPackage.data)
   return _internal_mutable_data();
 }
 

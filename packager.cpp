@@ -179,7 +179,14 @@ void ActionTracer::Packager::send_packet() {
  * @param length number of floats in array to convert. Defaults to 20
  * @return Number of elements that have been packed.
  */
-int ActionTracer::Packager::load_packet( ActionDataPackage *data ) {
+int ActionTracer::Packager::load_packet( ActionDataPackage *device_packet ) {
+	_packed = 0;
+	_net_package.set_device_identifier_contents(device_packet->device_identifier_contents);
+	_packed++;
+	for (int i = 0; i < DATA_ELEMENTS; i++){
+		_net_package.add_data(&device_packet->data[i]);
+		_packed++;
+	}
 	return _packed;
 }
 
