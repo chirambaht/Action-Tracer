@@ -1,5 +1,9 @@
-#include <cstdint>
+#ifndef ACT_DEFINITIONS_H
+#define ACT_DEFINITIONS_H
+
 #include "action_definitions.pb.h"
+
+#include <cstdint>
 
 #define MAX_ACT_DEVICES				   13
 #define SINGLE_ACT_DEVICE_PACKAGE_SIZE ( MAXIMUM_COLLECTED_DATA_POINTS * sizeof( float ) )
@@ -93,3 +97,4 @@ namespace ActionTracer {
 	} ActionDataPackage;
 
 } // namespace ActionTracer
+#endif
