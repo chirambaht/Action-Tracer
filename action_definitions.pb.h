@@ -30,6 +30,7 @@
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
+#include <google/protobuf/timestamp.pb.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_action_5fdefinitions_2eproto
@@ -177,10 +178,12 @@ class ActionDataNetworkPackage final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kDataFieldNumber = 2,
+    kDataFieldNumber = 4,
+    kSendTimeFieldNumber = 3,
     kDeviceIdentifierContentsFieldNumber = 1,
+    kPacketNumberFieldNumber = 2,
   };
-  // repeated float data = 2;
+  // repeated float data = 4;
   int data_size() const;
   private:
   int _internal_data_size() const;
@@ -202,6 +205,24 @@ class ActionDataNetworkPackage final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
       mutable_data();
 
+  // .google.protobuf.Timestamp send_time = 3;
+  bool has_send_time() const;
+  private:
+  bool _internal_has_send_time() const;
+  public:
+  void clear_send_time();
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp& send_time() const;
+  PROTOBUF_NODISCARD ::PROTOBUF_NAMESPACE_ID::Timestamp* release_send_time();
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* mutable_send_time();
+  void set_allocated_send_time(::PROTOBUF_NAMESPACE_ID::Timestamp* send_time);
+  private:
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp& _internal_send_time() const;
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* _internal_mutable_send_time();
+  public:
+  void unsafe_arena_set_allocated_send_time(
+      ::PROTOBUF_NAMESPACE_ID::Timestamp* send_time);
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_send_time();
+
   // uint32 device_identifier_contents = 1;
   void clear_device_identifier_contents();
   uint32_t device_identifier_contents() const;
@@ -209,6 +230,15 @@ class ActionDataNetworkPackage final :
   private:
   uint32_t _internal_device_identifier_contents() const;
   void _internal_set_device_identifier_contents(uint32_t value);
+  public:
+
+  // uint32 packet_number = 2;
+  void clear_packet_number();
+  uint32_t packet_number() const;
+  void set_packet_number(uint32_t value);
+  private:
+  uint32_t _internal_packet_number() const;
+  void _internal_set_packet_number(uint32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:ActionTracer.ActionDataNetworkPackage)
@@ -220,7 +250,9 @@ class ActionDataNetworkPackage final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > data_;
+    ::PROTOBUF_NAMESPACE_ID::Timestamp* send_time_;
     uint32_t device_identifier_contents_;
+    uint32_t packet_number_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -257,7 +289,112 @@ inline void ActionDataNetworkPackage::set_device_identifier_contents(uint32_t va
   // @@protoc_insertion_point(field_set:ActionTracer.ActionDataNetworkPackage.device_identifier_contents)
 }
 
-// repeated float data = 2;
+// uint32 packet_number = 2;
+inline void ActionDataNetworkPackage::clear_packet_number() {
+  _impl_.packet_number_ = 0u;
+}
+inline uint32_t ActionDataNetworkPackage::_internal_packet_number() const {
+  return _impl_.packet_number_;
+}
+inline uint32_t ActionDataNetworkPackage::packet_number() const {
+  // @@protoc_insertion_point(field_get:ActionTracer.ActionDataNetworkPackage.packet_number)
+  return _internal_packet_number();
+}
+inline void ActionDataNetworkPackage::_internal_set_packet_number(uint32_t value) {
+  
+  _impl_.packet_number_ = value;
+}
+inline void ActionDataNetworkPackage::set_packet_number(uint32_t value) {
+  _internal_set_packet_number(value);
+  // @@protoc_insertion_point(field_set:ActionTracer.ActionDataNetworkPackage.packet_number)
+}
+
+// .google.protobuf.Timestamp send_time = 3;
+inline bool ActionDataNetworkPackage::_internal_has_send_time() const {
+  return this != internal_default_instance() && _impl_.send_time_ != nullptr;
+}
+inline bool ActionDataNetworkPackage::has_send_time() const {
+  return _internal_has_send_time();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& ActionDataNetworkPackage::_internal_send_time() const {
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp* p = _impl_.send_time_;
+  return p != nullptr ? *p : reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Timestamp&>(
+      ::PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
+}
+inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& ActionDataNetworkPackage::send_time() const {
+  // @@protoc_insertion_point(field_get:ActionTracer.ActionDataNetworkPackage.send_time)
+  return _internal_send_time();
+}
+inline void ActionDataNetworkPackage::unsafe_arena_set_allocated_send_time(
+    ::PROTOBUF_NAMESPACE_ID::Timestamp* send_time) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.send_time_);
+  }
+  _impl_.send_time_ = send_time;
+  if (send_time) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:ActionTracer.ActionDataNetworkPackage.send_time)
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* ActionDataNetworkPackage::release_send_time() {
+  
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = _impl_.send_time_;
+  _impl_.send_time_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* ActionDataNetworkPackage::unsafe_arena_release_send_time() {
+  // @@protoc_insertion_point(field_release:ActionTracer.ActionDataNetworkPackage.send_time)
+  
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = _impl_.send_time_;
+  _impl_.send_time_ = nullptr;
+  return temp;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* ActionDataNetworkPackage::_internal_mutable_send_time() {
+  
+  if (_impl_.send_time_ == nullptr) {
+    auto* p = CreateMaybeMessage<::PROTOBUF_NAMESPACE_ID::Timestamp>(GetArenaForAllocation());
+    _impl_.send_time_ = p;
+  }
+  return _impl_.send_time_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* ActionDataNetworkPackage::mutable_send_time() {
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* _msg = _internal_mutable_send_time();
+  // @@protoc_insertion_point(field_mutable:ActionTracer.ActionDataNetworkPackage.send_time)
+  return _msg;
+}
+inline void ActionDataNetworkPackage::set_allocated_send_time(::PROTOBUF_NAMESPACE_ID::Timestamp* send_time) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.send_time_);
+  }
+  if (send_time) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(send_time));
+    if (message_arena != submessage_arena) {
+      send_time = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, send_time, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.send_time_ = send_time;
+  // @@protoc_insertion_point(field_set_allocated:ActionTracer.ActionDataNetworkPackage.send_time)
+}
+
+// repeated float data = 4;
 inline int ActionDataNetworkPackage::_internal_data_size() const {
   return _impl_.data_.size();
 }

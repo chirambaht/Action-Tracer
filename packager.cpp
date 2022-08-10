@@ -181,10 +181,10 @@ void ActionTracer::Packager::send_packet() {
  */
 int ActionTracer::Packager::load_packet( ActionDataPackage *device_packet ) {
 	_packed = 0;
-	_net_package.set_device_identifier_contents(device_packet->device_identifier_contents);
+	_net_package.set_device_identifier_contents( device_packet->device_identifier_contents );
 	_packed++;
-	for (int i = 0; i < DATA_ELEMENTS; i++){
-		_net_package.add_data(&device_packet->data[i]);
+	for( int i = 0; i < DATA_ELEMENTS; i++ ) {
+		_net_package.add_data( device_packet->data[i] );
 		_packed++;
 	}
 	return _packed;

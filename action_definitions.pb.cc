@@ -24,7 +24,9 @@ namespace ActionTracer {
 PROTOBUF_CONSTEXPR ActionDataNetworkPackage::ActionDataNetworkPackage(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.data_)*/{}
+  , /*decltype(_impl_.send_time_)*/nullptr
   , /*decltype(_impl_.device_identifier_contents_)*/0u
+  , /*decltype(_impl_.packet_number_)*/0u
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ActionDataNetworkPackageDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ActionDataNetworkPackageDefaultTypeInternal()
@@ -48,6 +50,8 @@ const uint32_t TableStruct_action_5fdefinitions_2eproto::offsets[] PROTOBUF_SECT
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::ActionTracer::ActionDataNetworkPackage, _impl_.device_identifier_contents_),
+  PROTOBUF_FIELD_OFFSET(::ActionTracer::ActionDataNetworkPackage, _impl_.packet_number_),
+  PROTOBUF_FIELD_OFFSET(::ActionTracer::ActionDataNetworkPackage, _impl_.send_time_),
   PROTOBUF_FIELD_OFFSET(::ActionTracer::ActionDataNetworkPackage, _impl_.data_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -60,15 +64,20 @@ static const ::_pb::Message* const file_default_instances[] = {
 
 const char descriptor_table_protodef_action_5fdefinitions_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\030action_definitions.proto\022\014ActionTracer"
-  "\"L\n\030ActionDataNetworkPackage\022\"\n\032device_i"
-  "dentifier_contents\030\001 \001(\r\022\014\n\004data\030\002 \003(\002b\006"
-  "proto3"
+  "\032\037google/protobuf/timestamp.proto\"\222\001\n\030Ac"
+  "tionDataNetworkPackage\022\"\n\032device_identif"
+  "ier_contents\030\001 \001(\r\022\025\n\rpacket_number\030\002 \001("
+  "\r\022-\n\tsend_time\030\003 \001(\0132\032.google.protobuf.T"
+  "imestamp\022\014\n\004data\030\004 \003(\002b\006proto3"
   ;
+static const ::_pbi::DescriptorTable* const descriptor_table_action_5fdefinitions_2eproto_deps[1] = {
+  &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
+};
 static ::_pbi::once_flag descriptor_table_action_5fdefinitions_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_action_5fdefinitions_2eproto = {
-    false, false, 126, descriptor_table_protodef_action_5fdefinitions_2eproto,
+    false, false, 230, descriptor_table_protodef_action_5fdefinitions_2eproto,
     "action_definitions.proto",
-    &descriptor_table_action_5fdefinitions_2eproto_once, nullptr, 0, 1,
+    &descriptor_table_action_5fdefinitions_2eproto_once, descriptor_table_action_5fdefinitions_2eproto_deps, 1, 1,
     schemas, file_default_instances, TableStruct_action_5fdefinitions_2eproto::offsets,
     file_level_metadata_action_5fdefinitions_2eproto, file_level_enum_descriptors_action_5fdefinitions_2eproto,
     file_level_service_descriptors_action_5fdefinitions_2eproto,
@@ -85,8 +94,19 @@ namespace ActionTracer {
 
 class ActionDataNetworkPackage::_Internal {
  public:
+  static const ::PROTOBUF_NAMESPACE_ID::Timestamp& send_time(const ActionDataNetworkPackage* msg);
 };
 
+const ::PROTOBUF_NAMESPACE_ID::Timestamp&
+ActionDataNetworkPackage::_Internal::send_time(const ActionDataNetworkPackage* msg) {
+  return *msg->_impl_.send_time_;
+}
+void ActionDataNetworkPackage::clear_send_time() {
+  if (GetArenaForAllocation() == nullptr && _impl_.send_time_ != nullptr) {
+    delete _impl_.send_time_;
+  }
+  _impl_.send_time_ = nullptr;
+}
 ActionDataNetworkPackage::ActionDataNetworkPackage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -98,11 +118,18 @@ ActionDataNetworkPackage::ActionDataNetworkPackage(const ActionDataNetworkPackag
   ActionDataNetworkPackage* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.data_){from._impl_.data_}
+    , decltype(_impl_.send_time_){nullptr}
     , decltype(_impl_.device_identifier_contents_){}
+    , decltype(_impl_.packet_number_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _this->_impl_.device_identifier_contents_ = from._impl_.device_identifier_contents_;
+  if (from._internal_has_send_time()) {
+    _this->_impl_.send_time_ = new ::PROTOBUF_NAMESPACE_ID::Timestamp(*from._impl_.send_time_);
+  }
+  ::memcpy(&_impl_.device_identifier_contents_, &from._impl_.device_identifier_contents_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.packet_number_) -
+    reinterpret_cast<char*>(&_impl_.device_identifier_contents_)) + sizeof(_impl_.packet_number_));
   // @@protoc_insertion_point(copy_constructor:ActionTracer.ActionDataNetworkPackage)
 }
 
@@ -112,7 +139,9 @@ inline void ActionDataNetworkPackage::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.data_){arena}
+    , decltype(_impl_.send_time_){nullptr}
     , decltype(_impl_.device_identifier_contents_){0u}
+    , decltype(_impl_.packet_number_){0u}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -129,6 +158,7 @@ ActionDataNetworkPackage::~ActionDataNetworkPackage() {
 inline void ActionDataNetworkPackage::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.data_.~RepeatedField();
+  if (this != internal_default_instance()) delete _impl_.send_time_;
 }
 
 void ActionDataNetworkPackage::SetCachedSize(int size) const {
@@ -142,7 +172,13 @@ void ActionDataNetworkPackage::Clear() {
   (void) cached_has_bits;
 
   _impl_.data_.Clear();
-  _impl_.device_identifier_contents_ = 0u;
+  if (GetArenaForAllocation() == nullptr && _impl_.send_time_ != nullptr) {
+    delete _impl_.send_time_;
+  }
+  _impl_.send_time_ = nullptr;
+  ::memset(&_impl_.device_identifier_contents_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.packet_number_) -
+      reinterpret_cast<char*>(&_impl_.device_identifier_contents_)) + sizeof(_impl_.packet_number_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -160,12 +196,28 @@ const char* ActionDataNetworkPackage::_InternalParse(const char* ptr, ::_pbi::Pa
         } else
           goto handle_unusual;
         continue;
-      // repeated float data = 2;
+      // uint32 packet_number = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.packet_number_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .google.protobuf.Timestamp send_time = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          ptr = ctx->ParseMessage(_internal_mutable_send_time(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated float data = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedFloatParser(_internal_mutable_data(), ptr, ctx);
           CHK_(ptr);
-        } else if (static_cast<uint8_t>(tag) == 21) {
+        } else if (static_cast<uint8_t>(tag) == 37) {
           _internal_add_data(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr));
           ptr += sizeof(float);
         } else
@@ -206,9 +258,22 @@ uint8_t* ActionDataNetworkPackage::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt32ToArray(1, this->_internal_device_identifier_contents(), target);
   }
 
-  // repeated float data = 2;
+  // uint32 packet_number = 2;
+  if (this->_internal_packet_number() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(2, this->_internal_packet_number(), target);
+  }
+
+  // .google.protobuf.Timestamp send_time = 3;
+  if (this->_internal_has_send_time()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(3, _Internal::send_time(this),
+        _Internal::send_time(this).GetCachedSize(), target, stream);
+  }
+
+  // repeated float data = 4;
   if (this->_internal_data_size() > 0) {
-    target = stream->WriteFixedPacked(2, _internal_data(), target);
+    target = stream->WriteFixedPacked(4, _internal_data(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -227,7 +292,7 @@ size_t ActionDataNetworkPackage::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated float data = 2;
+  // repeated float data = 4;
   {
     unsigned int count = static_cast<unsigned int>(this->_internal_data_size());
     size_t data_size = 4UL * count;
@@ -238,9 +303,21 @@ size_t ActionDataNetworkPackage::ByteSizeLong() const {
     total_size += data_size;
   }
 
+  // .google.protobuf.Timestamp send_time = 3;
+  if (this->_internal_has_send_time()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.send_time_);
+  }
+
   // uint32 device_identifier_contents = 1;
   if (this->_internal_device_identifier_contents() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_device_identifier_contents());
+  }
+
+  // uint32 packet_number = 2;
+  if (this->_internal_packet_number() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_packet_number());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -262,8 +339,15 @@ void ActionDataNetworkPackage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_ms
   (void) cached_has_bits;
 
   _this->_impl_.data_.MergeFrom(from._impl_.data_);
+  if (from._internal_has_send_time()) {
+    _this->_internal_mutable_send_time()->::PROTOBUF_NAMESPACE_ID::Timestamp::MergeFrom(
+        from._internal_send_time());
+  }
   if (from._internal_device_identifier_contents() != 0) {
     _this->_internal_set_device_identifier_contents(from._internal_device_identifier_contents());
+  }
+  if (from._internal_packet_number() != 0) {
+    _this->_internal_set_packet_number(from._internal_packet_number());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -283,7 +367,12 @@ void ActionDataNetworkPackage::InternalSwap(ActionDataNetworkPackage* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.data_.InternalSwap(&other->_impl_.data_);
-  swap(_impl_.device_identifier_contents_, other->_impl_.device_identifier_contents_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ActionDataNetworkPackage, _impl_.packet_number_)
+      + sizeof(ActionDataNetworkPackage::_impl_.packet_number_)
+      - PROTOBUF_FIELD_OFFSET(ActionDataNetworkPackage, _impl_.send_time_)>(
+          reinterpret_cast<char*>(&_impl_.send_time_),
+          reinterpret_cast<char*>(&other->_impl_.send_time_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ActionDataNetworkPackage::GetMetadata() const {
