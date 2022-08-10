@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package ActionTracer;
+
+message ActionDataNetworkPackage {
+    
+
+    uint32 device_identifier_contents = 1;
+    uint32 packet_number = 2;
+
+    google.protobuf.Timestamp send_time = 3;
+
+    repeated float data = 4;
+}
