@@ -1,4 +1,4 @@
-all: collector
+all: proto collector
 
 RATE = 2
 # MPU6050_DMP_FIFO_RATE_DIVISOR values and their linked rate
@@ -35,6 +35,7 @@ CXXFLAGS = -Wall -DON_PI -g -DMPU6050_DMP_FIFO_RATE_DIVISOR=$(RATE) -std=c++11 -
 LOCAL_IP = $(shell ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | awk '{print $1}')
 LOCAL_PORT = 5000
 
+# protoc -I=. --cpp_out=. ./action_definitions.proto
 @ $(OBJS): $(HDRS)
 
 collector: $(OBJS)
@@ -43,7 +44,7 @@ collector: $(OBJS)
 	@ echo "Program made!"
 	
 clean:
-	@ rm -f $(OBJS) $(EXE) *.o $(ACTISH) test
+	@ rm -f $(OBJS) $(EXE) *.o $(ACTISH) 
 	@ echo "Ahh clean!"
 	
 
@@ -61,9 +62,7 @@ gui_actish_debug:
 documentation:
 	@ doxygen docs/Doxyfile
 
-
 proto:
-	@ g++ test.o test.cpp
-	@ g++ -o action_d.o action_definitions.pb.cc
-	
-	@ g++ -o runner test.o action_d.o
+	@ protoc -I=. --cpp_out=. ./action_definitions.proto
+	@ protoc -I=. --python_out=. ./action_definitions.proto
+	@ echo "Proto header files compiled"
