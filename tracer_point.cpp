@@ -31,60 +31,16 @@ ActionTracer::TracePoint::TracePoint() {}
  * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
  * @constructor
  */
-ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_number ) : _identifier( identifier ), _pin_number( wiring_Pi_pin_number ) {
-	debugPrintln( "Constructing the device as is needed. Name = %s\n", name.c_str() );
+ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_number ) {
+	set_identifier( identifier );
+	set_pin_number( wiring_Pi_pin_number );
 
-	// Set pin information
-
-	pinMode( _pin_number, OUTPUT );
-
-	_device_interrupt_flag = false;
-
-	debugPrint( "Initializing %s...\n", _device_name.c_str() );
-
-	this->_select_me();
-
-	_device = new MPU6050( MPU6050_ADDRESS_AD0_HIGH );
-
-	_device->initialize();
-
-	// TODO: At this stage an interrupt pin is initialised
-
-	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
-
-	// DMP Initialization
-
-	debugPrint( "Initalising DMP\n" );
-	_device_status = _device->dmpInitialize();
-
-	_set_device_offsets();
-
-	if( _device_status == 0 ) {
-		debugPrint( "Enabling DMP..." );
-		_device->setDMPEnabled( true );
-
-		_dmp_ready = true;
-
-		_packet_size = _device->dmpGetFIFOPacketSize();
-
-		debugPrint( "Enabled!\n" );
-	} else {
-		debugPrint( "Can't initialise DMP\n" );
-		_dmp_ready = false;
-	}
-
-	this->_deselect_me();
-
-#ifdef DEBUG
-	this->dump_variables();
-#endif
-
-	_device_initialized = true;
+	_initialize();
 }
 
 void ActionTracer::TracePoint::initialize( uint8_t pin_number, uint8_t _identifier ) {
-	_pin_number = pin_number;
-	_identifier = _identifier;
+	set_pin_number( pin_number );
+	set_identifier( _identifier );
 
 	_initialize();
 }
@@ -95,6 +51,9 @@ void ActionTracer::TracePoint::_initialize() {
 		debugPrintln( "Device already initialized\n" );
 		return;
 	}
+	pinMode( _pin_number, OUTPUT );
+
+	_device_interrupt_flag = false;
 
 	this->_select_me();
 
@@ -465,4 +424,19 @@ void ActionTracer::TracePoint::set_sample_rate( uint8_t new_rate ) {
  */
 bool ActionTracer::TracePoint::is_active() {
 	return _device_initialized;
+}
+
+uint16_t ActionTracer::TracePoint::get_pin_number() const {
+	return _pin_number;
+}
+void ActionTracer::TracePoint::set_pin_number( uint16_t pin ) {
+	_pin_number								 = pin;
+	_data_package.device_identifier_contents = _data_package.device_identifier_contents | pin;
+}
+uint16_t ActionTracer::TracePoint::get_identifier() const {
+	return _identifier;
+}
+void ActionTracer::TracePoint::set_identifier( uint16_t identity ) {
+	_identifier								 = identity;
+	_data_package.device_identifier_contents = _data_package.device_identifier_contents | identity << 8;
 }

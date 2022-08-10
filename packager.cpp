@@ -4,6 +4,7 @@
 #include "debug_printer.h"
 
 #include <cerrno>
+#include <ctime>
 #include <iomanip>
 #include <unistd.h>
 
@@ -148,18 +149,20 @@ void ActionTracer::Packager::send_packet() {
 		_recording_start_time = millis();
 	}
 
-	// This section will get the new time but also calculate how many packets were sent
-	float new_time = ( millis() - _recording_start_time ) / 1000.0;
+	// get current time epoch
+	std::time_t curent_time = std::time( nullptr );
 
-	if( ( new_time - _clocked ) > 1.0 ) {
-		printf( "%d packets sent in the last second. - %.3fs\n", _count - _previous_count, new_time );
-		_previous_count = _count;
-		_clocked		= new_time;
-	}
-	_package[0] = new_time; // Time in seconds
+	// if( ( new_time - _clocked ) > 1.0 ) {
+	// 	printf( "%d packets sent in the last second. - %.3fs\n", _count - _previous_count, new_time );
+	// 	_previous_count = _count;
+	// 	_clocked		= new_time;
+	// }
+	// _package[0] = new_time; // Time in seconds
 
-	_package[1] = _count++;
-	if( ( send_response = send( _client->_action_client_descriptor, _package, _package_size, 0 ) ) == -1 ) {
+	// _package[1] = _count++;
+
+	_net_package.set_packet_number( _count++ );
+	_net_package.time if( ( send_response = send( _client->_action_client_descriptor, _package, _package_size, 0 ) ) == -1 ) {
 		if( send_response == -1 ) {
 			// Client disconnected
 			disconnect();
