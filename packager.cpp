@@ -150,9 +150,6 @@ void ActionTracer::Packager::send_packet() {
 		_recording_start_time = millis();
 	}
 
-	// get current time epoch
-	std::time_t curent_time = std::time( nullptr );
-
 	// if( ( new_time - _clocked ) > 1.0 ) {
 	// 	printf( "%d packets sent in the last second. - %.3fs\n", _count - _previous_count, new_time );
 	// 	_previous_count = _count;
@@ -163,10 +160,14 @@ void ActionTracer::Packager::send_packet() {
 	// _package[1] = _count++;
 
 	_net_package.set_packet_number( _count++ );
+
+	// Set time
 	google::protobuf::Timestamp t;
-	t.set_seconds( time( NULL ) );
+	t.set_seconds( std::time( nullptr ) );
 
 	_net_package.set_allocated_send_time( &t );
+
+	printf( "%s", _net_package.DebugString().c_str() );
 
 	if( ( send_response = send( _client->_action_client_descriptor, _package, _package_size, 0 ) ) == -1 ) {
 		if( send_response == -1 ) {
