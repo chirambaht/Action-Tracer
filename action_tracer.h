@@ -24,7 +24,6 @@ namespace ActionTracer {
 		bool _running = false;
 		bool _paused  = false;
 
-		void	 show_body();
 		uint16_t _get_body_identifier( uint16_t );
 		uint16_t _get_ACT_device_pin( uint16_t );
 
@@ -64,6 +63,8 @@ namespace ActionTracer {
 		uint8_t get_fifo_rate( uint8_t ) const;
 		void	set_sample_rate( uint8_t );
 		uint8_t get_sample_rate() const;
+
+		void	 show_body();
 	};
 
 } // namespace ActionTracer
