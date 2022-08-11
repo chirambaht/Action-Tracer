@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['disconnect_0',['disconnect',['../d0/d7d/classActionTracer_1_1Packager.html#ae195d50fec1c7d7d4ba6642927fe5370',1,'ActionTracer::Packager']]],
-  ['dump_5fvariables_1',['dump_variables',['../d4/d80/classActionTracer_1_1TracePoint.html#a695968278247641ce8ede13d7a446a0f',1,'ActionTracer::TracePoint']]],
-  ['dump_5fvars_2',['dump_vars',['../d0/d7d/classActionTracer_1_1Packager.html#a6fc0f6a6c07d5d20f23555404ee4ab35',1,'ActionTracer::Packager']]]
+  ['close_5fsocket_0',['close_socket',['../d0/d7d/classActionTracer_1_1Packager.html#a8314b90c13f85f1d888cfe16bb98df8d',1,'ActionTracer::Packager']]],
+  ['collection_20and_20modeling_1',['Collection and Modeling',['../d0/d30/md_README.html',1,'']]]
 ];

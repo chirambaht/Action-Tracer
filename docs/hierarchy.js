@@ -1,6 +1,8 @@
 var hierarchy =
 [
+    [ "ActionTracer::ActionDataNetworkPackage::_Internal", "d8/d66/classActionTracer_1_1ActionDataNetworkPackage_1_1__Internal.html", null ],
     [ "ActionTracer::ActionClient", "df/db4/structActionTracer_1_1ActionClient.html", null ],
+    [ "ActionTracer::ActionDataNetworkPackageDefaultTypeInternal", "dc/de1/structActionTracer_1_1ActionDataNetworkPackageDefaultTypeInternal.html", null ],
     [ "ActionTracer::ActionDataPackage", "dd/d23/structActionTracer_1_1ActionDataPackage.html", null ],
     [ "ActionTracer::ActionTracer", "dd/d11/classActionTracer_1_1ActionTracer.html", null ],
     [ "cxxopts::values::parser_tool::ArguDesc", "d8/df8/structcxxopts_1_1values_1_1parser__tool_1_1ArguDesc.html", null ],
@@ -38,6 +40,9 @@ var hierarchy =
     [ "I2Cdev", "d7/da8/classI2Cdev.html", null ],
     [ "cxxopts::values::parser_tool::IntegerDesc", "d4/dcb/structcxxopts_1_1values_1_1parser__tool_1_1IntegerDesc.html", null ],
     [ "cxxopts::KeyValue", "d2/dd0/classcxxopts_1_1KeyValue.html", null ],
+    [ "PROTOBUF_NAMESPACE_ID::Message", null, [
+      [ "ActionTracer::ActionDataNetworkPackage", "d9/dba/classActionTracer_1_1ActionDataNetworkPackage.html", null ]
+    ] ],
     [ "MPU6050", "d3/d21/classMPU6050.html", null ],
     [ "cxxopts::Option", "df/d87/structcxxopts_1_1Option.html", null ],
     [ "cxxopts::OptionAdder", "d8/d72/classcxxopts_1_1OptionAdder.html", null ],
@@ -51,6 +56,7 @@ var hierarchy =
     [ "cxxopts::values::detail::SignedCheck< T, B >", "d7/db7/structcxxopts_1_1values_1_1detail_1_1SignedCheck.html", null ],
     [ "cxxopts::values::detail::SignedCheck< T, false >", "d4/d0b/structcxxopts_1_1values_1_1detail_1_1SignedCheck_3_01T_00_01false_01_4.html", null ],
     [ "cxxopts::values::detail::SignedCheck< T, true >", "d5/d51/structcxxopts_1_1values_1_1detail_1_1SignedCheck_3_01T_00_01true_01_4.html", null ],
+    [ "TableStruct_action_5fdefinitions_2eproto", "dc/d51/structTableStruct__action__5fdefinitions__2eproto.html", null ],
     [ "ActionTracer::TracePoint", "d4/d80/classActionTracer_1_1TracePoint.html", null ],
     [ "cxxopts::values::type_is_container< T >", "de/d59/structcxxopts_1_1values_1_1type__is__container.html", null ],
     [ "cxxopts::values::type_is_container< std::vector< T > >", "d6/d9a/structcxxopts_1_1values_1_1type__is__container_3_01std_1_1vector_3_01T_01_4_01_4.html", null ],

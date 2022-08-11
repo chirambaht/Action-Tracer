@@ -124,6 +124,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>close_all_sockets</b>
 <tr class="memitem:a6fc0f6a6c07d5d20f23555404ee4ab35"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d7d/classActionTracer_1_1Packager.html#a6fc0f6a6c07d5d20f23555404ee4ab35">dump_vars</a> (void)</td></tr>
 <tr class="memdesc:a6fc0f6a6c07d5d20f23555404ee4ab35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints out all the variables in the packager including the last collected packet to be sent.  <a href="../../d0/d7d/classActionTracer_1_1Packager.html#a6fc0f6a6c07d5d20f23555404ee4ab35">More...</a><br /></td></tr>
 <tr class="separator:a6fc0f6a6c07d5d20f23555404ee4ab35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee0ee00ea67c11f2a32c941a9c97fa79"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d7d/classActionTracer_1_1Packager.html#aee0ee00ea67c11f2a32c941a9c97fa79">load_packet</a> (<a class="el" href="../../dd/d23/structActionTracer_1_1ActionDataPackage.html">ActionDataPackage</a> *)</td></tr>
+<tr class="separator:aee0ee00ea67c11f2a32c941a9c97fa79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9882db0e69905ee03ab4f8a6fed84328"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d7d/classActionTracer_1_1Packager.html#a9882db0e69905ee03ab4f8a6fed84328">load_packet</a> (float *, int8_t, uint8_t)</td></tr>
 <tr class="separator:a9882db0e69905ee03ab4f8a6fed84328"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a65e71d10f91f24979e318c20341abb19"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d7d/classActionTracer_1_1Packager.html#a65e71d10f91f24979e318c20341abb19">set_server_descriptor</a> (int)</td></tr>
@@ -343,8 +345,35 @@ __int8_t&#160;</td><td class="memItemRight" valign="bottom"><b>send_response</b>
 
 </div>
 </div>
+<a id="aee0ee00ea67c11f2a32c941a9c97fa79" name="aee0ee00ea67c11f2a32c941a9c97fa79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee0ee00ea67c11f2a32c941a9c97fa79">&#9670;&nbsp;</a></span>load_packet() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ActionTracer::Packager::load_packet </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../dd/d23/structActionTracer_1_1ActionDataPackage.html">ActionDataPackage</a> *&#160;</td>
+          <td class="paramname"><em>device_packet</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >This is used to add data to a package that is going to be sent. It takes an array of floats. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>A reference to an array of floats </td></tr>
+    <tr><td class="paramname">device_number.</td><td>Device to work with. Starts from 1 and will place data in the correct position in the package. </td></tr>
+    <tr><td class="paramname">length</td><td>number of floats in array to convert. Defaults to 20 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of elements that have been packed. </dd></dl>
+
+</div>
+</div>
 <a id="a9882db0e69905ee03ab4f8a6fed84328" name="a9882db0e69905ee03ab4f8a6fed84328"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9882db0e69905ee03ab4f8a6fed84328">&#9670;&nbsp;</a></span>load_packet()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a9882db0e69905ee03ab4f8a6fed84328">&#9670;&nbsp;</a></span>load_packet() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

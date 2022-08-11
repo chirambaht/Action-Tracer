@@ -2,6 +2,8 @@ var annotated_dup =
 [
     [ "ActionTracer", "d6/d18/namespaceActionTracer.html", [
       [ "ActionClient", "df/db4/structActionTracer_1_1ActionClient.html", "df/db4/structActionTracer_1_1ActionClient" ],
+      [ "ActionDataNetworkPackage", "d9/dba/classActionTracer_1_1ActionDataNetworkPackage.html", "d9/dba/classActionTracer_1_1ActionDataNetworkPackage" ],
+      [ "ActionDataNetworkPackageDefaultTypeInternal", "dc/de1/structActionTracer_1_1ActionDataNetworkPackageDefaultTypeInternal.html", null ],
       [ "ActionDataPackage", "dd/d23/structActionTracer_1_1ActionDataPackage.html", null ],
       [ "ActionTracer", "dd/d11/classActionTracer_1_1ActionTracer.html", "dd/d11/classActionTracer_1_1ActionTracer" ],
       [ "Packager", "d0/d7d/classActionTracer_1_1Packager.html", "d0/d7d/classActionTracer_1_1Packager" ],
@@ -53,6 +55,7 @@ var annotated_dup =
     [ "I2Cdev", "d7/da8/classI2Cdev.html", "d7/da8/classI2Cdev" ],
     [ "MPU6050", "d3/d21/classMPU6050.html", "d3/d21/classMPU6050" ],
     [ "Quaternion", "d1/df1/classQuaternion.html", null ],
+    [ "TableStruct_action_5fdefinitions_2eproto", "dc/d51/structTableStruct__action__5fdefinitions__2eproto.html", null ],
     [ "VectorFloat", "d1/d3b/classVectorFloat.html", null ],
     [ "VectorInt16", "d5/d29/classVectorInt16.html", null ],
     [ "wiringPiNodeStruct", "d1/d24/structwiringPiNodeStruct.html", null ]

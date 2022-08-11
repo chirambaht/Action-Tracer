@@ -9,6 +9,7 @@ var classActionTracer_1_1TracePoint =
     [ "is_active", "d4/d80/classActionTracer_1_1TracePoint.html#a8fe9049961f1fc295010e74a223d9d9b", null ],
     [ "print_last_data_packet", "d4/d80/classActionTracer_1_1TracePoint.html#a387436a85382c515de148427c9d6c936", null ],
     [ "read_data", "d4/d80/classActionTracer_1_1TracePoint.html#a3aca29d140e1c44d8c3fd546978c883c", null ],
+    [ "read_data_action", "d4/d80/classActionTracer_1_1TracePoint.html#aa6b3d2c1ac0c2f4546233132611f9a9f", null ],
     [ "set_calibrate", "d4/d80/classActionTracer_1_1TracePoint.html#a4ff2e4c5bc16d3a90ec90f8acf2b5398", null ],
     [ "set_sample_rate", "d4/d80/classActionTracer_1_1TracePoint.html#a5cb209718afd4f0b93ebee76327e43d0", null ],
     [ "turn_off", "d4/d80/classActionTracer_1_1TracePoint.html#abf4f2ca798b42d7c4963fc85a85abcd6", null ]

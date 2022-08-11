@@ -1,6 +1,7 @@
 var files_dup =
 [
     [ "act_definitions.h", "d0/d26/act__definitions_8h_source.html", null ],
+    [ "action_definitions.pb.h", "dd/dd7/action__definitions_8pb_8h_source.html", null ],
     [ "action_pi.hpp", "d5/d60/action__pi_8hpp_source.html", null ],
     [ "action_tracer.h", "d1/da4/action__tracer_8h_source.html", null ],
     [ "calibrator.hpp", "d5/dce/calibrator_8hpp_source.html", null ],

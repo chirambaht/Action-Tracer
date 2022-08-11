@@ -9,6 +9,7 @@ var classActionTracer_1_1Packager =
     [ "get_client_descriptor", "d0/d7d/classActionTracer_1_1Packager.html#adb238c630f18817c49bd740428a4589d", null ],
     [ "get_ready", "d0/d7d/classActionTracer_1_1Packager.html#a30551dc575c8cf7d0fa15d7aa9cd90ab", null ],
     [ "get_server_descriptor", "d0/d7d/classActionTracer_1_1Packager.html#a61e0e3b13313579732fe879e1df43098", null ],
+    [ "load_packet", "d0/d7d/classActionTracer_1_1Packager.html#aee0ee00ea67c11f2a32c941a9c97fa79", null ],
     [ "load_packet", "d0/d7d/classActionTracer_1_1Packager.html#a9882db0e69905ee03ab4f8a6fed84328", null ],
     [ "send_packet", "d0/d7d/classActionTracer_1_1Packager.html#a05ac1950885ae14ee7c2db3eb6b20a70", null ],
     [ "set_client_descriptor", "d0/d7d/classActionTracer_1_1Packager.html#a798ebd8e159ee64a10922be6bd2c7f7b", null ],
