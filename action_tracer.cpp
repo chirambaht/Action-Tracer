@@ -47,6 +47,9 @@ void *ActionTracer::ActionTracer::data_sending_thread() {
  *
  */
 ActionTracer::ActionTracer::ActionTracer() {
+	for (int i = 0; i < MAX_ACT_DEVICES; i++){
+		_devices_in_use[i] = new TracePoint();
+	}
 }
 
 // Overload the copy constructor
@@ -405,3 +408,4 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_device, uint16_
 
 	return true;
 }
+

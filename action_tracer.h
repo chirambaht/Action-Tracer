@@ -10,7 +10,7 @@
 namespace ActionTracer {
 	class ActionTracer {
 	  private:
-		TracePoint *_devices_in_use[MAX_ACT_DEVICES] = { new TracePoint() };
+		TracePoint *_devices_in_use[MAX_ACT_DEVICES] ;
 		Packager	 *_communicator;
 
 		std::vector<TracePoint *> _devices_waiting_for_use;
@@ -56,6 +56,9 @@ namespace ActionTracer {
 		void device_status();
 
 		void set_server_details();
+
+		void hello();
+
 
 		void set_packet_data();
 
