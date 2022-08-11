@@ -385,6 +385,7 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_device, uint16_
 	for( auto &dev : _devices_waiting_for_use ) {
 		body_part_codes.push_back( dev->get_identifier() );
 		device_codes.push_back( dev->get_pin_number() );
+		printf("Code: %d, Device %d\n",dev->get_identifier(), dev->get_pin_number() );
 	}
 
 	std::sort( body_part_codes.begin(), body_part_codes.end() );
@@ -405,7 +406,6 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_device, uint16_
 			return false;
 		}
 	}
-
 	return true;
 }
 
