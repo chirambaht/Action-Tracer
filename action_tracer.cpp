@@ -28,6 +28,7 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
 			_communicator->send_packet();
 		}
 	}
+	return;
 }
 
 /**
@@ -35,7 +36,7 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
  *
  * @return void*
  */
-void *ActionTracer::ActionTracer::data_collection_thread() {
+void *ActionTracer::ActionTracer::data_sending_thread() {
 	while( _paused == false ) {
 	}
 }
@@ -53,7 +54,7 @@ ActionTracer::ActionTracer::ActionTracer() {
  *
  * @param other
  */
-ActionTracer::ActionTracer::ActionTracer( const ActionTracer &other ) {}
+// ActionTracer::ActionTracer::ActionTracer( const ActionTracer &other ) {}
 
 // Overload the move constructor
 /**
@@ -61,7 +62,7 @@ ActionTracer::ActionTracer::ActionTracer( const ActionTracer &other ) {}
  *
  * @param other
  */
-ActionTracer::ActionTracer::ActionTracer( ActionTracer &&other ) {}
+// ActionTracer::ActionTracer::ActionTracer( ActionTracer &&other ) {}
 
 // Overload the copy assignment operator
 /**
@@ -70,7 +71,7 @@ ActionTracer::ActionTracer::ActionTracer( ActionTracer &&other ) {}
  * @param other
  * @return ActionTracer&
  */
-ActionTracer::ActionTracer &ActionTracer::ActionTracer::operator=( const ActionTracer &other ) {}
+// ActionTracer::ActionTracer &ActionTracer::ActionTracer::operator=( const ActionTracer &other ) {}
 
 /**
  * @brief Construct a new Action Tracer:: Action Tracer:: Action Tracer object
@@ -78,7 +79,7 @@ ActionTracer::ActionTracer &ActionTracer::ActionTracer::operator=( const ActionT
  * @param other
  * @return ActionTracer&
  */
-ActionTracer::ActionTracer &ActionTracer::ActionTracer::operator=( ActionTracer &&other ) {}
+// ActionTracer::ActionTracer &ActionTracer::ActionTracer::operator=( ActionTracer &&other ) {}
 
 /**
  * @brief Destroy the Action Tracer:: Action Tracer:: Action Tracer object
@@ -286,7 +287,7 @@ uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t body_part_co
 		return ACT_BODY_LEFT_HIP;
 	} else {
 		throw std::invalid_argument( "Received a body part identifer that is not defined." );
-		return;
+		return 0xFFFF;
 	}
 }
 
@@ -349,7 +350,7 @@ uint16_t ActionTracer::ActionTracer::_get_ACT_device_pin( uint16_t ACT_device ) 
 		return ACT_DEVICE_12_WIRING_PI_PIN;
 	} else {
 		throw std::invalid_argument( "Received an ACT device identifier that is not defined." );
-		return;
+		return 0xFFFF;
 	}
 }
 

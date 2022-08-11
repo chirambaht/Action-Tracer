@@ -35,10 +35,10 @@ namespace ActionTracer {
 		~ActionTracer();
 
 		// add copy, move, and assignment constructors
-		ActionTracer( const ActionTracer &other );
-		ActionTracer( ActionTracer &&other );
-		ActionTracer &operator=( const ActionTracer &other );
-		ActionTracer &operator=( ActionTracer &&other );
+		// ActionTracer( const ActionTracer &other );
+		// ActionTracer( ActionTracer &&other );
+		// ActionTracer &operator=( const ActionTracer &other );
+		// ActionTracer &operator=( ActionTracer &&other );
 
 		void start();
 		void stop();
