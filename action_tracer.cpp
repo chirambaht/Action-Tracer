@@ -184,8 +184,8 @@ void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_
 	temp_device->set_pin_number( _get_ACT_device_pin( ACT_device ) );
 
 	// Set the device's identifier
-	temp_device->set_identifier( _get_body_identifier( body_part ) );
-
+	temp_device->set_identifier(  body_part  );
+	
 	// Add device to the list of devices waiting to be initialized.
 	_devices_waiting_for_use.push_back( temp_device );
 }
