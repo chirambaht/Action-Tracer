@@ -28,7 +28,7 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
 			_communicator->send_packet();
 		}
 	}
-	return;
+	return nullptr;
 }
 
 /**
@@ -39,6 +39,7 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
 void *ActionTracer::ActionTracer::data_sending_thread() {
 	while( _paused == false ) {
 	}
+	return nullptr;
 }
 
 /**
