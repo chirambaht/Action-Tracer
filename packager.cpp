@@ -5,6 +5,7 @@
 
 #include <cerrno>
 #include <ctime>
+#include <google/protobuf/timestamp.pb.h>
 #include <iomanip>
 #include <unistd.h>
 
@@ -162,7 +163,12 @@ void ActionTracer::Packager::send_packet() {
 	// _package[1] = _count++;
 
 	_net_package.set_packet_number( _count++ );
-	_net_package.time if( ( send_response = send( _client->_action_client_descriptor, _package, _package_size, 0 ) ) == -1 ) {
+	google::protobuf::Timestamp t;
+	t.set_seconds( time( NULL ) );
+
+	_net_package.set_allocated_send_time( &t );
+
+	if( ( send_response = send( _client->_action_client_descriptor, _package, _package_size, 0 ) ) == -1 ) {
 		if( send_response == -1 ) {
 			// Client disconnected
 			disconnect();
@@ -172,7 +178,7 @@ void ActionTracer::Packager::send_packet() {
 		return;
 	}
 
-	_package[2] = 0;
+	// _package[2] = 0;
 }
 
 /**
