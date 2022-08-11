@@ -172,6 +172,7 @@ void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
  */
 void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_part ) {
 	// Add a new Tracerpoint device to the list of devices in use after validating mapping
+	printf( "Checking %d mapped to %d\n", ACT_device, body_part );
 	_validate_mapping( ACT_device, body_part );
 	// Create Tracerpoint
 	TracePoint *temp_device = new TracePoint();

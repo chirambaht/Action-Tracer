@@ -77,20 +77,19 @@ int main( int argc, char const *argv[] ) {
 	options.add_options()( "f,file", "Define variables using a file. If a file is given, all other given parameters will be overwritten.", cxxopts::value<std::string>()->default_value( "" ) );
 	options.add_options()( "h,help", "Print usage" );
 	options.add_options()( "t,tracepoints", "Number of body devices being used on the body", cxxopts::value<int>()->default_value( "0" ) );
-}
 #else
 
 #endif
 
-// TODO: Run a new setup method that accounts for debug, custom tps, files and
-printf( "Running basic setup routine\n" );
-setup();
+	// TODO: Run a new setup method that accounts for debug, custom tps, files and
+	printf( "Running basic setup routine\n" );
+	setup();
 
-printf( "\nSetup Complete! Running now\n\n" );
-while( 1 ) {
-	loop();
-}
+	printf( "\nSetup Complete! Running now\n\n" );
+	while( 1 ) {
+		loop();
+	}
 
-printf( "For some reason, this has run: main" );
-return 0;
+	printf( "For some reason, this has run: main" );
+	return 0;
 }
