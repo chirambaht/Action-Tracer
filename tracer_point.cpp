@@ -23,7 +23,10 @@ using namespace ActionTracer;
  * @brief Construct a new defult Action Tracer::Trace Point::Trace Point object
  * @constructor
  */
-ActionTracer::TracePoint::TracePoint() {}
+ActionTracer::TracePoint::TracePoint() {
+	set_identifier( 0 );
+	set_pin_number( 0 );
+}
 
 /**
  * @brief Construct a new Action Tracer:: TracePoint::Trace Point object.

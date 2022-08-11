@@ -5,7 +5,7 @@
 
 #include <cstdint>
 
-#define MAX_ACT_DEVICES				   13
+#define MAX_ACT_DEVICES				   17
 #define SINGLE_ACT_DEVICE_PACKAGE_SIZE ( MAXIMUM_COLLECTED_DATA_POINTS * sizeof( float ) )
 #define DATA_PACKAGE_SIZE			   ( MAX_ACT_DEVICES * SINGLE_ACT_DEVICE_PACKAGE_SIZE )
 
