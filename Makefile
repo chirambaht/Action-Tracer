@@ -24,7 +24,7 @@ RATE = 2
 #   12 -->   10 
 #   13 -->   10 
 
-HDRS = helper_3dmath.h I2Cdev.h MPU6050.h action_pi.hpp packager.h calibrator.hpp tracer_point.h cxxopts.hpp actionTracer.h action_definitions.pb.h main.h 
+HDRS = helper_3dmath.h I2Cdev.h MPU6050.h action_pi.hpp packager.h calibrator.hpp tracer_point.h cxxopts.hpp action_tracer.h action_definitions.pb.h main.h 
 OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o main.o 
 
 EXE = collector
