@@ -24,8 +24,8 @@ namespace ActionTracer {
 	class TracePoint {
 	  private:
 		MPU6050 *_device;
-		uint16_t _identifier = 0xFFFF;
-		uint8_t	 _pin_number = 0xFF;
+		uint16_t _identifier = 0;
+		uint8_t	 _pin_number = 0;
 
 		uint8_t _device_status = 0;
 		int16_t _offsets[6]	   = { 0 }; // ACC x y z GYRO x y z

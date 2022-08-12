@@ -24,8 +24,8 @@ using namespace ActionTracer;
  * @constructor
  */
 ActionTracer::TracePoint::TracePoint() {
-	set_identifier( 0xFFFF );
-	set_pin_number( 0xFF );
+	set_identifier( 0 );
+	set_pin_number( 0 );
 }
 
 /**
