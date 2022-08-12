@@ -55,6 +55,7 @@ void ActionTracer::TracePoint::_initialize() {
 		debugPrintln( "Device already initialized\n" );
 		return;
 	}
+
 	pinMode( _pin_number, OUTPUT );
 
 	_device_interrupt_flag = false;
