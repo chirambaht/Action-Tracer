@@ -179,9 +179,10 @@ void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_
 	_validate_mapping( ACT_device, body_part );
 	// Create Tracerpoint
 	TracePoint *temp_device = new TracePoint();
-
+	uint8_t		temp_pin	= _get_ACT_device_pin( ACT_device );
+	printf( "Device %d is pin %d\n", ACT_device, temp_pin );
 	// Set the device's pin number
-	temp_device->set_pin_number( _get_ACT_device_pin( ACT_device ) );
+	temp_device->set_pin_number( temp_pin );
 
 	// Set the device's identifier
 	temp_device->set_identifier( body_part );
