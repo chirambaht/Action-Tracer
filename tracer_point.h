@@ -27,19 +27,20 @@ namespace ActionTracer {
 		uint16_t _identifier = 0xFFFF;
 		uint8_t	 _pin_number = 0xFF;
 
-		uint8_t _device_status;
-		int16_t _offsets[6] = { 0 }; // ACC x y z GYRO x y z
+		uint8_t _device_status = 0;
+		int16_t _offsets[6]	   = { 0 }; // ACC x y z GYRO x y z
 
-		bool _dmp_ready;
-		bool _device_interrupt_flag;
-		bool _calibrate = true;
+		bool _dmp_ready				= false;
+		bool _device_interrupt_flag = false;
+		bool _calibrate				= true;
+		bool _device_initialized	= false;
 
 		uint8_t _device_interrupt_status;
 
 		uint8_t	 _fifo_buffer[MPU6050_FIFO_BUFFER_SIZE] = { 0 };
-		uint8_t	 _packet_size;
-		uint16_t _fifo_count;
-		uint8_t	 _fifo_rate = 3;
+		uint8_t	 _packet_size							= 0;
+		uint16_t _fifo_count							= 0;
+		uint8_t	 _fifo_rate								= 3;
 
 		Quaternion	_quaternion_packet;
 		VectorInt16 _acceleration_packet;
@@ -57,8 +58,6 @@ namespace ActionTracer {
 		float _yaw_pitch_roll_packet[YAW_PITCH_ROLL_DATA_POINT_SIZE]	= { 0 };
 
 		ActionDataPackage _data_package;
-
-		bool _device_initialized = false;
 
 		void _deselect_me();
 		void _initialize();

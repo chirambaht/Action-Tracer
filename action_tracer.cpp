@@ -301,7 +301,7 @@ uint8_t ActionTracer::ActionTracer::_get_ACT_device_pin( uint16_t ACT_device ) {
 		return ACT_DEVICE_12_WIRING_PI_PIN;
 	} else {
 		throw std::invalid_argument( "Received an ACT device identifier that is not defined." );
-		return 0xFFFF;
+		return 0xFF;
 	}
 }
 
