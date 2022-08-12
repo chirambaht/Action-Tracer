@@ -188,7 +188,8 @@ void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_
 
 	// Add device to the list of devices waiting to be initialized.
 	_devices_waiting_for_use.push_back( temp_device );
-	printf( "Mapped %d to %d address %p", _get_ACT_device_pin( ACT_device ), body_part, _devices_waiting_for_use.back() ); // Print the address of the device
+	printf( "Vars from %p: \n", _devices_waiting_for_use.back() ); // Print the address of the device
+	_devices_waiting_for_use.back()->dump_variables();
 }
 
 void ActionTracer::ActionTracer::set_fifo_rate( uint8_t device, uint8_t ) {
