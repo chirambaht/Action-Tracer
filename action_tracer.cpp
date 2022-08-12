@@ -166,6 +166,8 @@ void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
 		}
 		device->initialize( device->get_pin_number(), device->get_identifier() );
 	}
+
+	this->show_body();
 }
 
 /**
