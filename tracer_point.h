@@ -67,7 +67,7 @@ namespace ActionTracer {
 
 	  public:
 		// I dont know what this is but I love you
-		TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_number );
+		TracePoint( uint16_t identifier, uint8_t wiring_Pi_pin_number );
 		TracePoint();
 
 		~TracePoint();

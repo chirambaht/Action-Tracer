@@ -272,31 +272,31 @@ uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t body_part_co
  * @throws INVALID_ARGUMENT When the body part code is not valid.
  */
 uint8_t ActionTracer::ActionTracer::_get_ACT_device_pin( uint16_t ACT_device ) {
-	if( ACT_0 ) {
+	if( ACT_device == ACT_0 ) {
 		return ACT_DEVICE_0_WIRING_PI_PIN;
-	} else if( ACT_1 ) {
+	} else if( ACT_device == ACT_1 ) {
 		return ACT_DEVICE_1_WIRING_PI_PIN;
-	} else if( ACT_2 ) {
+	} else if( ACT_device == ACT_2 ) {
 		return ACT_DEVICE_2_WIRING_PI_PIN;
-	} else if( ACT_3 ) {
+	} else if( ACT_device == ACT_3 ) {
 		return ACT_DEVICE_3_WIRING_PI_PIN;
-	} else if( ACT_4 ) {
+	} else if( ACT_device == ACT_4 ) {
 		return ACT_DEVICE_4_WIRING_PI_PIN;
-	} else if( ACT_5 ) {
+	} else if( ACT_device == ACT_5 ) {
 		return ACT_DEVICE_5_WIRING_PI_PIN;
-	} else if( ACT_6 ) {
+	} else if( ACT_device == ACT_6 ) {
 		return ACT_DEVICE_6_WIRING_PI_PIN;
-	} else if( ACT_7 ) {
+	} else if( ACT_device == ACT_7 ) {
 		return ACT_DEVICE_7_WIRING_PI_PIN;
-	} else if( ACT_8 ) {
+	} else if( ACT_device == ACT_8 ) {
 		return ACT_DEVICE_8_WIRING_PI_PIN;
-	} else if( ACT_9 ) {
+	} else if( ACT_device == ACT_9 ) {
 		return ACT_DEVICE_9_WIRING_PI_PIN;
-	} else if( ACT_10 ) {
+	} else if( ACT_device == ACT_10 ) {
 		return ACT_DEVICE_10_WIRING_PI_PIN;
-	} else if( ACT_11 ) {
+	} else if( ACT_device == ACT_11 ) {
 		return ACT_DEVICE_11_WIRING_PI_PIN;
-	} else if( ACT_12 ) {
+	} else if( ACT_device == ACT_12 ) {
 		return ACT_DEVICE_12_WIRING_PI_PIN;
 	} else {
 		throw std::invalid_argument( "Received an ACT device identifier that is not defined." );

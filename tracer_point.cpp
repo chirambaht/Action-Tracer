@@ -34,7 +34,7 @@ ActionTracer::TracePoint::TracePoint() {
  * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
  * @constructor
  */
-ActionTracer::TracePoint::TracePoint( uint8_t identifier, uint8_t wiring_Pi_pin_number ) {
+ActionTracer::TracePoint::TracePoint( uint16_t identifier, uint8_t wiring_Pi_pin_number ) {
 	set_identifier( identifier );
 	set_pin_number( wiring_Pi_pin_number );
 
