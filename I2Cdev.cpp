@@ -49,7 +49,8 @@ THE SOFTWARE.
 #include "I2Cdev.h"
 
 #include "debug_printer.h"
-// #include <errno.h>
+
+#include <errno.h>
 #include <fcntl.h>
 #include <linux/i2c-dev.h>
 // #include <stdint.h>
