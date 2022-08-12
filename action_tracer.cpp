@@ -114,6 +114,7 @@ void ActionTracer::ActionTracer::stop() {
 
 	// Set the running flag to false
 	_running = false;
+	_turn_off_all_devices();
 }
 
 /**
@@ -354,4 +355,10 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t b
 	}
 
 	return true;
+}
+
+bool ActionTracer::ActionTracer::_turn_off_all_devices() {
+	for( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
+		_devices_in_use[i]->turn_off();
+	}
 }

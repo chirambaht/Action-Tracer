@@ -55,7 +55,7 @@ void setup() {
 
 void exit_handler( int s ) {
 	printf( "\nTurning off all devices...\n" );
-
+	main_dev->stop();
 	exit( 1 );
 }
 

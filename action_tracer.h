@@ -26,6 +26,7 @@ namespace ActionTracer {
 
 		uint16_t _get_body_identifier( uint16_t );
 		uint8_t	 _get_ACT_device_pin( uint16_t );
+		bool	 _turn_off_all_devices();
 
 		bool _validate_mapping( uint16_t, uint16_t );
 
