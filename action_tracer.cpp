@@ -325,18 +325,31 @@ void ActionTracer::ActionTracer::show_body() {
 }
 
 bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t body_part ) {
-	for( auto device : _devices_in_use ) {
-		printf( "Comparing %i to %i\n", device->get_pin_number(), ACT_pin );
-		if( device->get_pin_number() == ACT_pin ) {
-			throw std::invalid_argument( "Bad mapping! This ACT device is already in use." );
-			return false;
-		}
+	std::vector<uint16_t> body_part_codes;
+	std::vector<uint16_t> device_codes;
+	for( auto &dev : _devices_waiting_for_use ) {
+		body_part_codes.push_back( dev->get_identifier() );
+		device_codes.push_back( dev->get_pin_number() );
+	}
 
-		printf( "Comparing %i to %i\n", device->get_identifier(), body_part );
-		if( device->get_identifier() == body_part ) {
-			throw std::invalid_argument( "Bad mapping! This part has already been assigned a device!" );
+	std::sort( body_part_codes.begin(), body_part_codes.end() );
+	std::sort( device_codes.begin(), device_codes.end() );
+
+	// Check if there are duplicate body part codes and return false if there are.
+	for( auto i = body_part_codes.begin(); i != body_part_codes.end(); ++i ) {
+		if( std::find( i + 1, body_part_codes.end(), *i ) != body_part_codes.end() ) {
+			throw std::invalid_argument( "Bad mapping! This body part is already defined." );
 			return false;
 		}
 	}
+
+	// Check if there are duplicate body part codes and return false if there are.
+	for( auto i = device_codes.begin(); i != device_codes.end(); ++i ) {
+		if( std::find( i + 1, device_codes.end(), *i ) != device_codes.end() ) {
+			throw std::invalid_argument( "Bad mapping! This ACT device is already in use." );
+			return false;
+		}
+	}
+
 	return true;
 }
