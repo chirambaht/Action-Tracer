@@ -30,7 +30,7 @@ ActionTracer::TracePoint::TracePoint() {
 
 /**
  * @brief Construct a new Action Tracer:: TracePoint::Trace Point object.
- * @param name Name given to the device
+ * @param identifier Identifier given to the device
  * @param wiring_Pi_pin_number Slave select pin on Raspberry pi according to WiringPi.
  * @constructor
  */
@@ -62,12 +62,12 @@ void ActionTracer::TracePoint::_initialize() {
 
 	this->_select_me();
 
-	debugPrintln( "Initializing the device as is needed. Name = %s\n", name.c_str() );
+	debugPrintln( "Initializing the device as is needed. Identifier = %d\n", _identifier );
 	_device->initialize();
 
 	// TODO: At this stage an interrupt pin is initialised
 
-	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _identifier );
+	debugPrint( _device->testConnection() ? "%d connection successful\n" : "%d connection failed\n", _identifier );
 
 	// DMP Initialization
 
