@@ -42,6 +42,7 @@ ActionTracer::TracePoint::TracePoint( uint16_t identifier, uint8_t wiring_Pi_pin
 }
 
 void ActionTracer::TracePoint::initialize( uint8_t pin_number, uint8_t _identifier ) {
+	printf( "Initialising device %d on pin %d\n", _identifier, _pin_number );
 	set_pin_number( pin_number );
 	set_identifier( _identifier );
 
