@@ -5,6 +5,12 @@
 #include <pthread.h>
 #include <stdexcept>
 
+#ifdef ON_PI
+	#include <wiringPi.h>
+#else
+	#include "wiringPi.h"
+#endif
+
 const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN, ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
 
 /**
@@ -359,6 +365,7 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t b
 
 bool ActionTracer::ActionTracer::_turn_off_all_devices() {
 	for( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
-		_devices_in_use[i]->turn_off();
+		digitalWrite( ALL_ACT_DEVICE_PINS[i], LOW );
 	}
+	return true;
 }
