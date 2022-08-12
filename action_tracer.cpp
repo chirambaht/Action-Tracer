@@ -228,69 +228,37 @@ uint8_t ActionTracer::ActionTracer::get_sample_rate() const {
 uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t body_part_code ) {
 	if( body_part_code == ACT_BODY_WAIST ) {
 		return ACT_BODY_WAIST;
-	} else
-
-		if( body_part_code == ACT_BODY_RIGHT_BICEP ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_BICEP ) {
 		return ACT_BODY_RIGHT_BICEP;
-	} else
-
-		if( body_part_code == ACT_BODY_RIGHT_FOREARM ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_FOREARM ) {
 		return ACT_BODY_RIGHT_FOREARM;
-	} else
-
-		if( body_part_code == ACT_BODY_RIGHT_HAND ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_HAND ) {
 		return ACT_BODY_RIGHT_HAND;
-	} else
-
-		if( body_part_code == ACT_BODY_LEFT_BICEP ) {
+	} else if( body_part_code == ACT_BODY_LEFT_BICEP ) {
 		return ACT_BODY_LEFT_BICEP;
-	} else
-
-		if( body_part_code == ACT_BODY_LEFT_FOREARM ) {
+	} else if( body_part_code == ACT_BODY_LEFT_FOREARM ) {
 		return ACT_BODY_LEFT_FOREARM;
-	} else
-
-		if( body_part_code == ACT_BODY_LEFT_HAND ) {
+	} else if( body_part_code == ACT_BODY_LEFT_HAND ) {
 		return ACT_BODY_LEFT_HAND;
-	} else
-
-		if( body_part_code == ACT_BODY_CHEST ) {
+	} else if( body_part_code == ACT_BODY_CHEST ) {
 		return ACT_BODY_CHEST;
-	} else
-
-		if( body_part_code == ACT_BODY_HEAD ) {
+	} else if( body_part_code == ACT_BODY_HEAD ) {
 		return ACT_BODY_HEAD;
-	} else
-
-		if( body_part_code == ACT_BODY_RIGHT_THIGH ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_THIGH ) {
 		return ACT_BODY_RIGHT_THIGH;
-	} else
-
-		if( body_part_code == ACT_BODY_RIGHT_KNEE ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_KNEE ) {
 		return ACT_BODY_RIGHT_KNEE;
-	} else
-
-		if( body_part_code == ACT_BODY_RIGHT_FOOT ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_FOOT ) {
 		return ACT_BODY_RIGHT_FOOT;
-	} else
-
-		if( body_part_code == ACT_BODY_LEFT_THIGH ) {
+	} else if( body_part_code == ACT_BODY_LEFT_THIGH ) {
 		return ACT_BODY_LEFT_THIGH;
-	} else
-
-		if( body_part_code == ACT_BODY_LEFT_KNEE ) {
+	} else if( body_part_code == ACT_BODY_LEFT_KNEE ) {
 		return ACT_BODY_LEFT_KNEE;
-	} else
-
-		if( body_part_code == ACT_BODY_LEFT_FOOT ) {
+	} else if( body_part_code == ACT_BODY_LEFT_FOOT ) {
 		return ACT_BODY_LEFT_FOOT;
-	} else
-
-		if( body_part_code == ACT_BODY_RIGHT_HIP ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_HIP ) {
 		return ACT_BODY_RIGHT_HIP;
-	} else
-
-		if( body_part_code == ACT_BODY_LEFT_HIP ) {
+	} else if( body_part_code == ACT_BODY_LEFT_HIP ) {
 		return ACT_BODY_LEFT_HIP;
 	} else {
 		throw std::invalid_argument( "Received a body part identifer that is not defined." );
@@ -307,53 +275,29 @@ uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t body_part_co
 uint16_t ActionTracer::ActionTracer::_get_ACT_device_pin( uint16_t ACT_device ) {
 	if( ACT_0 ) {
 		return ACT_DEVICE_0_WIRING_PI_PIN;
-	} else
-
-		if( ACT_1 ) {
+	} else if( ACT_1 ) {
 		return ACT_DEVICE_1_WIRING_PI_PIN;
-	} else
-
-		if( ACT_2 ) {
+	} else if( ACT_2 ) {
 		return ACT_DEVICE_2_WIRING_PI_PIN;
-	} else
-
-		if( ACT_3 ) {
+	} else if( ACT_3 ) {
 		return ACT_DEVICE_3_WIRING_PI_PIN;
-	} else
-
-		if( ACT_4 ) {
+	} else if( ACT_4 ) {
 		return ACT_DEVICE_4_WIRING_PI_PIN;
-	} else
-
-		if( ACT_5 ) {
+	} else if( ACT_5 ) {
 		return ACT_DEVICE_5_WIRING_PI_PIN;
-	} else
-
-		if( ACT_6 ) {
+	} else if( ACT_6 ) {
 		return ACT_DEVICE_6_WIRING_PI_PIN;
-	} else
-
-		if( ACT_7 ) {
+	} else if( ACT_7 ) {
 		return ACT_DEVICE_7_WIRING_PI_PIN;
-	} else
-
-		if( ACT_8 ) {
+	} else if( ACT_8 ) {
 		return ACT_DEVICE_8_WIRING_PI_PIN;
-	} else
-
-		if( ACT_9 ) {
+	} else if( ACT_9 ) {
 		return ACT_DEVICE_9_WIRING_PI_PIN;
-	} else
-
-		if( ACT_10 ) {
+	} else if( ACT_10 ) {
 		return ACT_DEVICE_10_WIRING_PI_PIN;
-	} else
-
-		if( ACT_11 ) {
+	} else if( ACT_11 ) {
 		return ACT_DEVICE_11_WIRING_PI_PIN;
-	} else
-
-		if( ACT_12 ) {
+	} else if( ACT_12 ) {
 		return ACT_DEVICE_12_WIRING_PI_PIN;
 	} else {
 		throw std::invalid_argument( "Received an ACT device identifier that is not defined." );
