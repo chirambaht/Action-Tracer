@@ -25,7 +25,7 @@ using namespace ActionTracer;
  */
 ActionTracer::TracePoint::TracePoint() {
 	set_identifier( 0xFFFF );
-	set_pin_number( 0xFFFF );
+	set_pin_number( 0xFF );
 }
 
 /**
@@ -432,13 +432,16 @@ bool ActionTracer::TracePoint::is_active() {
 uint16_t ActionTracer::TracePoint::get_pin_number() const {
 	return _pin_number;
 }
-void ActionTracer::TracePoint::set_pin_number( uint16_t pin ) {
+
+void ActionTracer::TracePoint::set_pin_number( uint8_t pin ) {
 	_pin_number								 = pin;
 	_data_package.device_identifier_contents = _data_package.device_identifier_contents | pin;
 }
+
 uint16_t ActionTracer::TracePoint::get_identifier() const {
 	return _identifier;
 }
+
 void ActionTracer::TracePoint::set_identifier( uint16_t identity ) {
 	_identifier								 = identity;
 	_data_package.device_identifier_contents = _data_package.device_identifier_contents | identity << 8;

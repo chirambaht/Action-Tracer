@@ -272,7 +272,7 @@ uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t body_part_co
  * @return Identifier for the device
  * @throws INVALID_ARGUMENT When the body part code is not valid.
  */
-uint16_t ActionTracer::ActionTracer::_get_ACT_device_pin( uint16_t ACT_device ) {
+uint8_t ActionTracer::ActionTracer::_get_ACT_device_pin( uint16_t ACT_device ) {
 	if( ACT_0 ) {
 		return ACT_DEVICE_0_WIRING_PI_PIN;
 	} else if( ACT_1 ) {

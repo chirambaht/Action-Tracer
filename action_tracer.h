@@ -10,7 +10,7 @@
 namespace ActionTracer {
 	class ActionTracer {
 	  private:
-		TracePoint *_devices_in_use[MAX_ACT_DEVICES] ;
+		TracePoint *_devices_in_use[MAX_ACT_DEVICES];
 		Packager	 *_communicator;
 
 		std::vector<TracePoint *> _devices_waiting_for_use;
@@ -25,7 +25,7 @@ namespace ActionTracer {
 		bool _paused  = false;
 
 		uint16_t _get_body_identifier( uint16_t );
-		uint16_t _get_ACT_device_pin( uint16_t );
+		uint8_t	 _get_ACT_device_pin( uint16_t );
 
 		bool _validate_mapping( uint16_t, uint16_t );
 
@@ -59,7 +59,6 @@ namespace ActionTracer {
 
 		void hello();
 
-
 		void set_packet_data();
 
 		void	set_fifo_rate( uint8_t, uint8_t );
@@ -67,7 +66,7 @@ namespace ActionTracer {
 		void	set_sample_rate( uint8_t );
 		uint8_t get_sample_rate() const;
 
-		void	 show_body();
+		void show_body();
 	};
 
 } // namespace ActionTracer

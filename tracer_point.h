@@ -25,7 +25,7 @@ namespace ActionTracer {
 	  private:
 		MPU6050 *_device;
 		uint16_t _identifier = 0xFFFF;
-		uint8_t	 _pin_number = 0xFFFF;
+		uint8_t	 _pin_number = 0xFF;
 
 		uint8_t _device_status;
 		int16_t _offsets[6] = { 0 }; // ACC x y z GYRO x y z
@@ -92,7 +92,7 @@ namespace ActionTracer {
 		uint8_t			   identify();
 
 		uint16_t get_pin_number() const;
-		void	 set_pin_number( uint16_t );
+		void	 set_pin_number( uint8_t );
 		uint16_t get_identifier() const;
 		void	 set_identifier( uint16_t );
 
