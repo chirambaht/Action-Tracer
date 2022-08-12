@@ -67,7 +67,7 @@ void ActionTracer::TracePoint::_initialize() {
 
 	// TODO: At this stage an interrupt pin is initialised
 
-	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _device_name.c_str() );
+	debugPrint( _device->testConnection() ? "%s connection successful\n" : "%s connection failed\n", _idenitfier );
 
 	// DMP Initialization
 
@@ -194,7 +194,7 @@ void ActionTracer::TracePoint::print_last_data_packet() {
  */
 void ActionTracer::TracePoint::get_data() {
 	if( !_dmp_ready ) {
-		debugPrint( "%s: DMP not initialised\n", _device_name.c_str() );
+		debugPrint( "%d: DMP not initialised\n", _idenitfier );
 		this->_deselect_me();
 		return;
 	}
@@ -205,7 +205,7 @@ void ActionTracer::TracePoint::get_data() {
 
 	// does the FIFO have data in it?
 	if( ( _device_interrupt_status & 0x02 ) < 1 ) {
-		debugPrintln( "%s: Interrupt not raised\n", _device_name.c_str() );
+		debugPrintln( "%d: Interrupt not raised\n", _idenitfier );
 		this->_deselect_me();
 		return;
 	}
@@ -213,7 +213,7 @@ void ActionTracer::TracePoint::get_data() {
 	_fifo_count = _device->getFIFOCount();
 
 	if( _fifo_count < _packet_size ) {
-		debugPrintln( "%s: MPU interrupt not ready or not enough elements in FIFO\n", _device_name.c_str() );
+		debugPrintln( "%d: MPU interrupt not ready or not enough elements in FIFO\n", _idenitfier );
 		this->_deselect_me();
 		return;
 	}
@@ -222,7 +222,7 @@ void ActionTracer::TracePoint::get_data() {
 		// reset so we can continue cleanly
 		_device->resetFIFO();
 
-		debugPrint( "%s: FIFO overflow!\n", _device_name.c_str() );
+		debugPrint( "%d: FIFO overflow!\n", _idenitfier );
 		this->_deselect_me();
 		return;
 	}
