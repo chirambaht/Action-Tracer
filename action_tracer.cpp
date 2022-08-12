@@ -47,7 +47,7 @@ void *ActionTracer::ActionTracer::data_sending_thread() {
  *
  */
 ActionTracer::ActionTracer::ActionTracer() {
-	for (int i = 0; i < MAX_ACT_DEVICES; i++){
+	for( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
 		_devices_in_use[i] = new TracePoint();
 	}
 }
@@ -184,10 +184,11 @@ void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_
 	temp_device->set_pin_number( _get_ACT_device_pin( ACT_device ) );
 
 	// Set the device's identifier
-	temp_device->set_identifier(  body_part  );
-	
+	temp_device->set_identifier( body_part );
+
 	// Add device to the list of devices waiting to be initialized.
 	_devices_waiting_for_use.push_back( temp_device );
+	printf( "Mapped %d to %d address %p", _get_ACT_device_pin( ACT_device ), body_part, _devices_waiting_for_use.back() ); // Print the address of the device
 }
 
 void ActionTracer::ActionTracer::set_fifo_rate( uint8_t device, uint8_t ) {
@@ -385,7 +386,7 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_device, uint16_
 	for( auto &dev : _devices_waiting_for_use ) {
 		body_part_codes.push_back( dev->get_identifier() );
 		device_codes.push_back( dev->get_pin_number() );
-		printf("Code: %d, Device %d\n",dev->get_identifier(), dev->get_pin_number() );
+		printf( "Code: %d, Device %d\n", dev->get_identifier(), dev->get_pin_number() );
 	}
 
 	std::sort( body_part_codes.begin(), body_part_codes.end() );
@@ -408,4 +409,3 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_device, uint16_
 	}
 	return true;
 }
-
