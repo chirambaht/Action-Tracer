@@ -181,7 +181,6 @@ void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_
 	// Add a new Tracerpoint device to the list of devices in use after validating mapping
 	_validate_mapping( temp_pin, body_part );
 
-	printf( "Device %d is pin %d\n", ACT_device, temp_pin );
 	// Set the device's pin number
 	temp_device->set_pin_number( temp_pin );
 
@@ -190,8 +189,6 @@ void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_
 
 	// Add device to the list of devices waiting to be initialized.
 	_devices_waiting_for_use.push_back( temp_device );
-	printf( "Vars from %p: \n", _devices_waiting_for_use.back() ); // Print the address of the device
-	_devices_waiting_for_use.back()->dump_variables();
 }
 
 void ActionTracer::ActionTracer::set_fifo_rate( uint8_t device, uint8_t ) {
@@ -329,10 +326,13 @@ void ActionTracer::ActionTracer::show_body() {
 
 bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t body_part ) {
 	for( auto device : _devices_in_use ) {
+		printf( "Comparing %i to %i\n", device->get_pin_number(), ACT_pin );
 		if( device->get_pin_number() == ACT_pin ) {
 			throw std::invalid_argument( "Bad mapping! This ACT device is already in use." );
 			return false;
 		}
+
+		printf( "Comparing %i to %i\n", device->get_identifier(), body_part );
 		if( device->get_identifier() == body_part ) {
 			throw std::invalid_argument( "Bad mapping! This part has already been assigned a device!" );
 			return false;
