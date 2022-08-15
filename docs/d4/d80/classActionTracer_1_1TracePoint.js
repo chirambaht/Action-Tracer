@@ -1,16 +1,26 @@
 var classActionTracer_1_1TracePoint =
 [
-    [ "TracePoint", "d4/d80/classActionTracer_1_1TracePoint.html#a0c0b7ce6cfff4ecf09b584de3c7624f6", null ],
+    [ "TracePoint", "d4/d80/classActionTracer_1_1TracePoint.html#a3284eca0c58ee600eeac42f7da9caf97", null ],
     [ "TracePoint", "d4/d80/classActionTracer_1_1TracePoint.html#a92df6b39e14e59a0248741e207b4e28a", null ],
+    [ "~TracePoint", "d4/d80/classActionTracer_1_1TracePoint.html#a0983cf00ad6585731453778764ab4dbc", null ],
+    [ "calibrate", "d4/d80/classActionTracer_1_1TracePoint.html#a83b32502b0eba49379c19738e6808c47", null ],
     [ "dump_variables", "d4/d80/classActionTracer_1_1TracePoint.html#a695968278247641ce8ede13d7a446a0f", null ],
     [ "get_data", "d4/d80/classActionTracer_1_1TracePoint.html#a99187ff53af4b52faeddf5f3df6e19cd", null ],
     [ "get_data_packet_size", "d4/d80/classActionTracer_1_1TracePoint.html#a7d6b79a1253511a6a30529dd9a2ebf77", null ],
+    [ "get_device", "d4/d80/classActionTracer_1_1TracePoint.html#a9de845d148ce61bb8c086629f2dec185", null ],
+    [ "get_identifier", "d4/d80/classActionTracer_1_1TracePoint.html#a5edc0f6ccb793f03d083d781fe6273d1", null ],
+    [ "get_pin_number", "d4/d80/classActionTracer_1_1TracePoint.html#a88e274f8d48c04188cfe5b2d9c2c2a5b", null ],
+    [ "get_sample_rate", "d4/d80/classActionTracer_1_1TracePoint.html#a4c2bd7d41ef774a9939c31b0aec9994c", null ],
     [ "identify", "d4/d80/classActionTracer_1_1TracePoint.html#a17a51791fed51e0b325c702a27dcd27e", null ],
+    [ "initialize", "d4/d80/classActionTracer_1_1TracePoint.html#a7b5faba044574edea95813b8e2171197", null ],
     [ "is_active", "d4/d80/classActionTracer_1_1TracePoint.html#a8fe9049961f1fc295010e74a223d9d9b", null ],
     [ "print_last_data_packet", "d4/d80/classActionTracer_1_1TracePoint.html#a387436a85382c515de148427c9d6c936", null ],
     [ "read_data", "d4/d80/classActionTracer_1_1TracePoint.html#a3aca29d140e1c44d8c3fd546978c883c", null ],
     [ "read_data_action", "d4/d80/classActionTracer_1_1TracePoint.html#aa6b3d2c1ac0c2f4546233132611f9a9f", null ],
     [ "set_calibrate", "d4/d80/classActionTracer_1_1TracePoint.html#a4ff2e4c5bc16d3a90ec90f8acf2b5398", null ],
+    [ "set_identifier", "d4/d80/classActionTracer_1_1TracePoint.html#aa14d292e942f364e7c21bb0c9b310235", null ],
+    [ "set_pin_number", "d4/d80/classActionTracer_1_1TracePoint.html#a659063e6fef63e320ae74f0d597eddf3", null ],
     [ "set_sample_rate", "d4/d80/classActionTracer_1_1TracePoint.html#a5cb209718afd4f0b93ebee76327e43d0", null ],
+    [ "tracepoint_isr", "d4/d80/classActionTracer_1_1TracePoint.html#a8717a9fcf05ece8c45fb1ad1cc5a4ed0", null ],
     [ "turn_off", "d4/d80/classActionTracer_1_1TracePoint.html#abf4f2ca798b42d7c4963fc85a85abcd6", null ]
 ];

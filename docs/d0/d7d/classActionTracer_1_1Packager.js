@@ -9,12 +9,10 @@ var classActionTracer_1_1Packager =
     [ "get_client_descriptor", "d0/d7d/classActionTracer_1_1Packager.html#adb238c630f18817c49bd740428a4589d", null ],
     [ "get_ready", "d0/d7d/classActionTracer_1_1Packager.html#a30551dc575c8cf7d0fa15d7aa9cd90ab", null ],
     [ "get_server_descriptor", "d0/d7d/classActionTracer_1_1Packager.html#a61e0e3b13313579732fe879e1df43098", null ],
+    [ "initialize", "d0/d7d/classActionTracer_1_1Packager.html#a07f4a14caa0a18112146a65bca86e8c3", null ],
     [ "load_packet", "d0/d7d/classActionTracer_1_1Packager.html#aee0ee00ea67c11f2a32c941a9c97fa79", null ],
-    [ "load_packet", "d0/d7d/classActionTracer_1_1Packager.html#a9882db0e69905ee03ab4f8a6fed84328", null ],
     [ "send_packet", "d0/d7d/classActionTracer_1_1Packager.html#a05ac1950885ae14ee7c2db3eb6b20a70", null ],
     [ "set_client_descriptor", "d0/d7d/classActionTracer_1_1Packager.html#a798ebd8e159ee64a10922be6bd2c7f7b", null ],
     [ "set_ready", "d0/d7d/classActionTracer_1_1Packager.html#af56d85e0ba3b4ce886bdd3e778672ad9", null ],
-    [ "set_server_descriptor", "d0/d7d/classActionTracer_1_1Packager.html#a65e71d10f91f24979e318c20341abb19", null ],
-    [ "socket_setup", "d0/d7d/classActionTracer_1_1Packager.html#aded875c71bd68a547381de57cc2ecc91", null ],
-    [ "wait_for_connection", "d0/d7d/classActionTracer_1_1Packager.html#aeb4c32328e1533821069682e23bdb4f6", null ]
+    [ "set_server_descriptor", "d0/d7d/classActionTracer_1_1Packager.html#a65e71d10f91f24979e318c20341abb19", null ]
 ];
