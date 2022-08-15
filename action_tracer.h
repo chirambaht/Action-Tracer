@@ -51,21 +51,21 @@ namespace ActionTracer {
 		void resume();
 		void reset();
 
-		void status();
+		// void status();
 
 		void initialize( int8_t );
-		void close();
+		// void close();
 
-		void map_device( uint16_t );
+		// void map_device( uint16_t );
 		void map_device( uint16_t, uint16_t );
 		void unmap_device();
 		void device_status();
 
-		void set_server_details();
+		// void set_server_details();
 
-		void hello();
+		// void hello();
 
-		void set_packet_data();
+		// void set_packet_data();
 
 		void	set_fifo_rate( uint8_t, uint8_t );
 		uint8_t get_fifo_rate( uint8_t ) const;

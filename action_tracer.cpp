@@ -132,8 +132,8 @@ void ActionTracer::ActionTracer::stop() {
 	_turn_off_all_devices();
 
 	// Stop threads
-	pthread_join( _data_collection_thread, nullptr );
-	pthread_join( _data_sending_thread, nullptr );
+	pthread_join( _data_collection, nullptr );
+	pthread_join( _data_sending, nullptr );
 	_communicator->disconnect();
 	_data_ready = false;
 }
