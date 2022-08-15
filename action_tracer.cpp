@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cstdio>
-#include <pthread.h>
 #include <stdexcept>
 
 #ifdef ON_PI
@@ -19,21 +18,22 @@ const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_P
  * @return void*
  */
 void *ActionTracer::ActionTracer::data_collection_thread() {
-	while( _running != false ) {
-		for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
-			if( _devices_in_use[i]->is_active() ) {
-				_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
+	while( 1 ) {
+		while( _running != false && _data_ready == false ) {
+			for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
+				if( _devices_in_use[i]->is_active() ) {
+					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
+				}
+				if( !_paused && _communicator->get_ready() ) {
+					// If ready to send data, load the data package into the communicator.
+					_communicator->load_packet( _data_package_action[i] );
+				}
 			}
-			if( !_paused && _communicator->get_ready() ) {
-				// If ready to send data, load the data package into the communicator.
-				_communicator->load_packet( _data_package_action[i] );
-			}
-		}
-		// Send data to clients
-		if( !_paused && _communicator->get_ready() ) {
-			_communicator->send_packet();
+			// Send data to clients
+			_data_ready = true;
 		}
 	}
+
 	return nullptr;
 }
 
@@ -43,8 +43,15 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
  * @return void*
  */
 void *ActionTracer::ActionTracer::data_sending_thread() {
-	while( _paused == false ) {
+	// First connect to clients via the packager
+	_communicator->initialize();
+
+	while( 1 ) {
+		if( !_paused && _communicator->get_ready() && _data_ready ) {
+			_communicator->send_packet();
+		}
 	}
+
 	return nullptr;
 }
 
@@ -106,6 +113,7 @@ void ActionTracer::ActionTracer::start() {
 	// This will confirm that the server or listener is ready to receive data and will start sending data packets.
 	// Set the running flag to true
 	_running = true;
+	_paused	 = false;
 }
 
 /**
@@ -115,11 +123,19 @@ void ActionTracer::ActionTracer::start() {
 void ActionTracer::ActionTracer::stop() {
 	// This will stop the Action Device from collecting data and closing all the connections
 	// First pause the device, then do everything else that the pause does not do
-	pause();
+	if( !_paused ) {
+		pause();
+	}
 
 	// Set the running flag to false
 	_running = false;
 	_turn_off_all_devices();
+
+	// Stop threads
+	pthread_join( _data_collection_thread, nullptr );
+	pthread_join( _data_sending_thread, nullptr );
+	_communicator->disconnect();
+	_data_ready = false;
 }
 
 /**
@@ -128,11 +144,8 @@ void ActionTracer::ActionTracer::stop() {
  */
 void ActionTracer::ActionTracer::pause() {
 	// Temporarily pause packet sending. Do not close receivers
-
-	// Send pause signal message
-
-	// Set the _ flag to true
-	_paused = false;
+	_paused		= true;
+	_data_ready = false;
 }
 
 /**
@@ -141,6 +154,7 @@ void ActionTracer::ActionTracer::pause() {
  */
 void ActionTracer::ActionTracer::resume() {
 	// Continue sending data to clients.
+	_paused = false;
 	// Start by sending receive message
 }
 
@@ -154,8 +168,11 @@ void ActionTracer::ActionTracer::reset() {
 		// Stop the device
 		stop();
 	}
+	this->show_body(); // Removable for testing purposes
 
-	// Continue resetting the device
+	// Start threads
+	pthread_create( &_data_collection, nullptr, &ActionTracer::ActionTracer::data_collection_thread, this );
+	pthread_create( &_data_sending, nullptr, &ActionTracer::ActionTracer::data_sending_thread, this );
 }
 
 /**
@@ -173,11 +190,11 @@ void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
 		device->initialize( device->get_pin_number(), device->get_identifier() );
 	}
 
-	this->show_body();
+	this->show_body(); // Removable for testing purposes
 
-	// Start and detach the data collection thread
-	pthread_create( &_data_collection_thread, nullptr, &ActionTracer::ActionTracer::data_collection_thread, this );
-	pthread_detach( _data_collection_thread );
+	// Start threads
+	pthread_create( &_data_collection, nullptr, &ActionTracer::ActionTracer::data_collection_thread, this );
+	pthread_create( &_data_sending, nullptr, &ActionTracer::ActionTracer::data_sending_thread, this );
 }
 
 /**

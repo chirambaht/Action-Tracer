@@ -5,24 +5,29 @@
 #include "packager.h"
 #include "tracer_point.h"
 
+#include <pthread.h>
 #include <vector>
 
 namespace ActionTracer {
 	class ActionTracer {
 	  private:
 		TracePoint *_devices_in_use[MAX_ACT_DEVICES];
-		Packager	 *_communicator;
+		Packager *	_communicator;
 
 		std::vector<TracePoint *> _devices_waiting_for_use;
 		uint16_t				  _act_sample_rate;
-		float					*_data_package[DATA_PACKAGE_SIZE];
-		ActionDataPackage		  *_data_package_action[MAX_ACT_DEVICES] = { new ActionDataPackage() };
+		float *					  _data_package[DATA_PACKAGE_SIZE];
+		ActionDataPackage *		  _data_package_action[MAX_ACT_DEVICES] = { new ActionDataPackage() };
+
+		pthread_t _data_collection;
+		pthread_t _data_sending;
 
 		void *data_collection_thread();
 		void *data_sending_thread();
 
-		bool _running = false;
-		bool _paused  = false;
+		bool _running	 = false;
+		bool _paused	 = true;
+		bool _data_ready = false;
 
 		uint16_t _get_body_identifier( uint16_t );
 		uint8_t	 _get_ACT_device_pin( uint16_t );
