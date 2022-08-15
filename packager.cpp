@@ -105,6 +105,14 @@ uint8_t ActionTracer::Packager::_wait_for_connection() {
 }
 
 /**
+ * @brief Inits a packager instance and only continues if a client is connected to the server.
+ */
+void ActionTracer::Packager::initialize() {
+	_socket_setup();
+	_wait_for_connection();
+}
+
+/**
  * @brief Disconnect a client from the server given its socket descriptor
  * @throws INVALID_ARGUMENT if the client is not connected to the server
  */

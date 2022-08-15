@@ -48,7 +48,7 @@ namespace ActionTracer {
 		~Packager();
 
 		void send_packet( void );
-
+		void initialize();
 		void disconnect();
 
 		void close_socket( int );
