@@ -29,7 +29,6 @@ ActionTracer::Packager::Packager( int port ) {
 
 /**
  * @brief Construct a new Action Tracer:: Packager:: Packager object
- * @param port Destination UDP Port to send data to
  * @constructor
  */
 ActionTracer::Packager::Packager() {
@@ -42,7 +41,8 @@ ActionTracer::Packager::Packager() {
  * @constructor
  */
 ActionTracer::Packager::~Packager() {
-	delete _client;
+	if( _client != nullptr )
+		delete _client;
 }
 
 /**
@@ -50,11 +50,7 @@ ActionTracer::Packager::~Packager() {
  *
  * @return int socket descriptor of the socket
  */
-
-int ActionTracer::Packager::socket_setup() {
-	_timeout.tv_sec	 = 0;
-	_timeout.tv_usec = 500; // 0.5ms
-
+int ActionTracer::Packager::_socket_setup() {
 	if( ( _server_descriptor = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 ) {
 		printf( "socket failed" );
 		exit( EXIT_FAILURE );
@@ -89,7 +85,7 @@ int ActionTracer::Packager::socket_setup() {
  *	@throws INVALID_ARGUMENT If this Packager instance is still connected to a client.
  * @return Nothing
  */
-uint8_t ActionTracer::Packager::wait_for_connection() {
+uint8_t ActionTracer::Packager::_wait_for_connection() {
 	if( _client != nullptr ) {
 		throw std::invalid_argument( "A is already connected to this Packager." );
 		return _client->_action_client_descriptor;
@@ -97,6 +93,7 @@ uint8_t ActionTracer::Packager::wait_for_connection() {
 
 	ActionClient *temp_client			   = new ActionClient;
 	temp_client->_action_client_descriptor = accept( _server_descriptor, ( sockaddr * ) &temp_client->_action_client_address, &temp_client->_action_client_address_len ); // Blocking call waiting for new connection
+
 	if( temp_client->_action_client_descriptor < 0 ) {
 		printf( "accept failed" );
 		exit( EXIT_FAILURE );
@@ -125,16 +122,6 @@ void ActionTracer::Packager::disconnect() {
 }
 
 /**
- * @brief Converts a given float value to a integer to 3 decimal places.
- *
- * @param value float to be converted to integer
- * @return 16 bit integer of the inital value
- */
-__int16_t ActionTracer::Packager::_float_to_int( float value ) {
-	return static_cast<__int32_t>( value * FLOAT_SCALING_FACTOR );
-}
-
-/**
  * This is used to send the stored data packet to a given socket described by a socket descriptor
  * @return Nothing
  * @throws INVALID_ARGUMENT If there is no device connected to the system's network.
@@ -143,11 +130,6 @@ void ActionTracer::Packager::send_packet() {
 	// If no socket descriptor is given, use the last device to be added to the network
 	if( _client == nullptr ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
-	}
-	// Send some data
-
-	if( _count == 0 ) {
-		_recording_start_time = millis();
 	}
 
 	_net_package.set_packet_number( _count++ );
@@ -158,9 +140,7 @@ void ActionTracer::Packager::send_packet() {
 
 	_net_package.set_allocated_send_time( &t );
 
-	printf( "%s", _net_package.DebugString().c_str() );
-	;
-	if( ( send_response = send ( _client->_action_client_descriptor, _net_package.SerializeAsString().c_str(), _net_package.ByteSize(), 0 ) ) == -1 ) {
+	if( ( send_response = send( _client->_action_client_descriptor, _net_package.SerializeAsString().c_str(), _net_package.ByteSize(), 0 ) ) == -1 ) {
 		if( send_response == -1 ) {
 			// Client disconnected
 			disconnect();
@@ -169,8 +149,6 @@ void ActionTracer::Packager::send_packet() {
 		}
 		return;
 	}
-
-	// _package[2] = 0;
 }
 
 /**
@@ -192,32 +170,6 @@ int ActionTracer::Packager::load_packet( ActionDataPackage *device_packet ) {
 }
 
 /**
- * This is used to add data to a package that is going to be sent. It takes an array of floats.
- * @param data A reference to an array of floats
- * @param device_number. Device to work with. Starts from 1 and will place data in the correct position in the package.
- * @param length number of floats in array to convert. Defaults to 20
- * @return Number of elements that have been packed.
- */
-int ActionTracer::Packager::load_packet( float *data, int8_t device_number = -1, uint8_t length = 20 ) {
-	if( device_number <= 0 ) {
-		_package_pointer = ( _package[2] * length ) + PACKAGE_DATA_START;
-	} else {
-		_package_pointer = ( ( device_number - 1 ) * length ) + PACKAGE_DATA_START;
-	}
-
-	_packed = 0; // Reset _packed
-
-	for( int i = 0; i < length; i++ ) {
-		_package[_package_pointer++] = data[i];
-		_packed++;
-	}
-
-	_package[2] += 1; // Increase the number of device added
-
-	return _packed;
-}
-
-/**
  * @brief Closes the a given socket given a descriptor
  * @param descriptor An open socket descriptor
  * @returns Nothing
@@ -232,16 +184,12 @@ void ActionTracer::Packager::close_socket( int closing_descriptor ) {
  * @returns Nothing
  */
 void ActionTracer::Packager::dump_vars( void ) {
-	printf( "\n\nSize of package is %d\n", sizeof( _package ) );
+	printf( "\n\nSize of package is %d\n", sizeof( _net_package.ByteSize() ) );
 	printf( "Packed: %d\n", _packed );
 	printf( "Package pointer: %d\n", _package_pointer );
 	printf( "Count: %d\n", _count );
 
-	printf( "Package: [ %f", _package[0] );
-	for( size_t i = 1; i < PACKAGE_LENGTH; i++ ) {
-		printf( ", %f", _package[i] );
-	}
-	printf( "]\n" );
+	printf( "%s", _net_package.DebugString().c_str() );
 
 	printf( "Descriptor: %d\n", _server_descriptor );
 	printf( "Port: %d\n", _port );
