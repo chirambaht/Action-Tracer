@@ -54,3 +54,4 @@ assist_runners/__pycache__/action_filters.cpython-310.pyc
 *.zip
 action_definitions.pb*
 action_definitions_pb*
+Code/Collection/.vscode/c_cpp_properties.json

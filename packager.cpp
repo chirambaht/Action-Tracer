@@ -150,15 +150,6 @@ void ActionTracer::Packager::send_packet() {
 		_recording_start_time = millis();
 	}
 
-	// if( ( new_time - _clocked ) > 1.0 ) {
-	// 	printf( "%d packets sent in the last second. - %.3fs\n", _count - _previous_count, new_time );
-	// 	_previous_count = _count;
-	// 	_clocked		= new_time;
-	// }
-	// _package[0] = new_time; // Time in seconds
-
-	// _package[1] = _count++;
-
 	_net_package.set_packet_number( _count++ );
 
 	// Set time
@@ -168,8 +159,8 @@ void ActionTracer::Packager::send_packet() {
 	_net_package.set_allocated_send_time( &t );
 
 	printf( "%s", _net_package.DebugString().c_str() );
-
-	if( ( send_response = send( _client->_action_client_descriptor, _package, _package_size, 0 ) ) == -1 ) {
+	;
+	if( ( send_response = send ( _client->_action_client_descriptor, _net_package.SerializeAsString().c_str(), _net_package.ByteSize(), 0 ) ) == -1 ) {
 		if( send_response == -1 ) {
 			// Client disconnected
 			disconnect();
