@@ -30,7 +30,7 @@ OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o
 EXE = collector
 ACTISH = actish
 
-CXXFLAGS = -Wall -DON_PI -g -DMPU6050_DMP_FIFO_RATE_DIVISOR=$(RATE) -std=c++11 -DSINGLE_ACT_0 -DDEBUG
+CXXFLAGS = -Wall -DON_PI -g -DMPU6050_DMP_FIFO_RATE_DIVISOR=$(RATE) -std=c++11 -DDEBUG 
 
 LOCAL_IP = $(shell ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | awk '{print $1}')
 LOCAL_PORT = 5000
@@ -40,7 +40,7 @@ LOCAL_PORT = 5000
 
 collector: $(OBJS)
 	@ echo "Compiled data collection program"
-	@ $(CXX) -o $(EXE) $^ -l wiringPi -lm -lpthread -lprotobuf
+	@ $(CXX) -o $(EXE) $^ -lwiringPi -lpthread -lprotobuf
 	@ echo "Program made!"
 	
 clean:
