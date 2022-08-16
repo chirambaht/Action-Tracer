@@ -12,18 +12,18 @@ namespace ActionTracer {
 	class ActionTracer {
 	  private:
 		TracePoint *_devices_in_use[MAX_ACT_DEVICES];
-		Packager *	_communicator;
+		Packager	 *_communicator;
 
 		std::vector<TracePoint *> _devices_waiting_for_use;
 		uint16_t				  _act_sample_rate;
-		float *					  _data_package[DATA_PACKAGE_SIZE];
-		ActionDataPackage *		  _data_package_action[MAX_ACT_DEVICES] = { new ActionDataPackage() };
+		float					*_data_package[DATA_PACKAGE_SIZE];
+		ActionDataPackage		  *_data_package_action[MAX_ACT_DEVICES] = { new ActionDataPackage() };
 
 		pthread_t _data_collection;
 		pthread_t _data_sending;
 
-		void *data_collection_thread();
-		void *data_sending_thread();
+		void *data_collection_thread( void * );
+		void *data_sending_thread( void * );
 
 		bool _running	 = false;
 		bool _paused	 = true;

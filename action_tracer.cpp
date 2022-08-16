@@ -11,13 +11,18 @@
 #endif
 
 const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN, ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
+void		 *_data_collection_thread( void *arg );
+
+void *_data_collection_thread( ActionTracer::ActionTracer *arg ) {
+	args->data_collection_thread();
+}
 
 /**
  * @brief The main method that runs the I2C communication with the action devices and collects the data.
  *
  * @return void*
  */
-void *ActionTracer::ActionTracer::data_collection_thread() {
+void *ActionTracer::ActionTracer::data_collection_thread( void *arg ) {
 	while( 1 ) {
 		while( _running != false && _data_ready == false ) {
 			for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
@@ -34,7 +39,7 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
 		}
 	}
 
-	return nullptr;
+	pthread_exit( NULL );
 }
 
 /**
@@ -42,7 +47,7 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
  *
  * @return void*
  */
-void *ActionTracer::ActionTracer::data_sending_thread() {
+void *ActionTracer::ActionTracer::data_sending_thread( void *arg ) {
 	// First connect to clients via the packager
 	_communicator->initialize();
 
@@ -52,7 +57,7 @@ void *ActionTracer::ActionTracer::data_sending_thread() {
 		}
 	}
 
-	return nullptr;
+	pthread_exit( NULL );
 }
 
 /**
@@ -171,8 +176,8 @@ void ActionTracer::ActionTracer::reset() {
 	this->show_body(); // Removable for testing purposes
 
 	// Start threads
-	pthread_create( &_data_collection, nullptr, &ActionTracer::ActionTracer::data_collection_thread, this );
-	pthread_create( &_data_sending, nullptr, &ActionTracer::ActionTracer::data_sending_thread, this );
+	pthread_create( &_data_collection, nullptr, &_data_collection_thread, nullptr );
+	pthread_create( &_data_sending, nullptr, &_data_sending_thread, NULL );
 }
 
 /**
@@ -193,8 +198,8 @@ void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
 	this->show_body(); // Removable for testing purposes
 
 	// Start threads
-	pthread_create( &_data_collection, nullptr, &ActionTracer::ActionTracer::data_collection_thread, this );
-	pthread_create( &_data_sending, nullptr, &ActionTracer::ActionTracer::data_sending_thread, this );
+	pthread_create( &_data_collection, nullptr, &data_collection_thread, NULL );
+	pthread_create( &_data_sending, nullptr, &data_sending_thread, NULL );
 }
 
 /**
