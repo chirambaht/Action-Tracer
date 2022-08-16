@@ -148,7 +148,7 @@ void ActionTracer::Packager::send_packet() {
 
 	_net_package.set_allocated_send_time( &t );
 
-	if( ( send_response = send( _client->_action_client_descriptor, _net_package.SerializeAsString().c_str(), _net_package.ByteSize(), 0 ) ) == -1 ) {
+	if( ( send_response = send( _client->_action_client_descriptor, _net_package.SerializeAsString().c_str(), _net_package.ByteSizeLong(), 0 ) ) == -1 ) {
 		if( send_response == -1 ) {
 			// Client disconnected
 			disconnect();
@@ -192,7 +192,7 @@ void ActionTracer::Packager::close_socket( int closing_descriptor ) {
  * @returns Nothing
  */
 void ActionTracer::Packager::dump_vars( void ) {
-	printf( "\n\nSize of package is %d\n", sizeof( _net_package.ByteSize() ) );
+	printf( "\n\nSize of package is %d\n", sizeof( _net_package.ByteSizeLong() ) );
 	printf( "Packed: %d\n", _packed );
 	printf( "Package pointer: %d\n", _package_pointer );
 	printf( "Count: %d\n", _count );
