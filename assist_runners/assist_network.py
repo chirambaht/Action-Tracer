@@ -16,17 +16,19 @@ np.set_printoptions( suppress=True )  # prevent numpy exponential
 DEFAULT_WINDOW_SIZE = 100
 
 col = [ "Time", "Count" ]
-for f in range( 3 ):
+for f in range( 1 ):
     for k in [
             "Quat W", "Quat X", "Quat Y", "Quat Z", "Accel X (g)", "Accel Y (g)", "Accel Z (g)", "Gyro X (dps)",
             "Gyro Y (dps)", "Gyro Z (dps)", "Yaw", "Pitch", "Roll", "X", "Y", "Z", "Grav X", "Grav Y", "Grav Z", "Temp"
     ]:
-        col.append( k + " " + str( f + 1 ) )
+        col.append( k )
 
 first_received_packet_number = 0
 given_packet_count = 1
 total_run_time = 0
 csv_document_buffer = []
+csv_document_buffer_2 = []
+csv_document_buffer_3 = []
 
 filter_buffer = np.zeros( ( DEFAULT_WINDOW_SIZE, len( col ) - 2 ) )
 
@@ -150,10 +152,12 @@ while ( True ):
                 continue
 
             given_packet_count = int( h_data[ 1 ] )
+            # cut down to first 20 elements of sens_data
+            # csv_document_buffer_2.append(
+            #     h_data[ : 2 ].tolist() +
+            #     np.round( run_filter( sens_data[ : 20 ], "median" ), 4 ).tolist() )  # reprocess the data
 
-            filtered_data = run_filter( sens_data )  # reprocess the data
-
-            csv_document_buffer.append( h_data[ : 2 ].tolist() + np.round( sens_data, 4 ).tolist() )
+            csv_document_buffer.append( h_data[ : 2 ].tolist() + np.round( sens_data, 4 ).tolist()[ : 20 ] )
 
         print( "Last log to %s.act" % ( current_time ) )
 
@@ -167,10 +171,10 @@ while ( True ):
         )
         df = pd.DataFrame( csv_document_buffer, columns=col )
         df.to_csv( f"{current_time}.csv", index=False )
-        df = pd.DataFrame( csv_document_buffer_2, columns=col )
-        df.to_csv( f"{current_time}_2.csv", index=False )
-        df = pd.DataFrame( csv_document_buffer_3, columns=col )
-        df.to_csv( f"{current_time}_3.csv", index=False )
+        # df = pd.DataFrame( csv_document_buffer_2, columns=col )
+        # df.to_csv( f"{current_time}_filtered.csv", index=False )
+        # df = pd.DataFrame( csv_document_buffer_3, columns=col )
+        # df.to_csv( f"{current_time}_3.csv", index=False )
         s.close()
         break
     except Exception as e:

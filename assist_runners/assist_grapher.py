@@ -67,8 +67,8 @@ all_files.sort()
 print( "Available files:" )
 for i in range( len( all_files ) ):
     print( f"{i+1}. {all_files[i]}" )
-# file_number = int( input( "Select file to open: " ) )
-file_number = 5
+file_number = int( input( "Select file to open: " ) )
+# file_number = 5
 file_name = all_files[ file_number - 1 ]
 
 # open file in pandas and convert to numpy array and take the first C columns
@@ -90,15 +90,15 @@ x_axis = data[ :, 0 ]
 for i in range( C ):
     if i > 2:
         colled_data.append( data[ :, i ] )
-    else:
-        colled_data.append( data[ :, i ] - data[ :, i - 1 ] )
+    # else:
+    #     colled_data.append( data[ :, i ] - data[ :, i - 1 ] )
 
 for i in range( len( colled_data ) ):
     nam = df.columns[ i ]
     dat = colled_data[ i ]
     act_fig.get_single_figure( dat, x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_o" )
     act_fig.get_single_figure(
-        act.mean_median_comp( dat, 80, 0.2 ), x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_comp" )
-    act_fig.get_single_figure( act.mean_filter( dat, 80 ), x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_mean" )
+        act.mean_median_comp( dat, 100, 0.2 ), x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_comp" )
+    act_fig.get_single_figure( act.mean_filter( dat, 100 ), x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_mean" )
     act_fig.get_single_figure(
-        act.median_filter_main( dat, 80 ), x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_median" )
+        act.median_filter( dat, 100 ), x_axis, nam, nam, "Time (s)", save=f"graphs/{nam}_median" )
