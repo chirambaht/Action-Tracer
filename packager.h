@@ -2,68 +2,109 @@
 
 #include <arpa/inet.h> //inet_addr
 #include <cstdio>
+#include <vector>
 
-namespace ActionTracer {
+namespace ActionTracer::Communication {
 
-	typedef struct ActionClient {
-		sockaddr_in	 _action_client_address;
-		unsigned int _action_client_address_len = sizeof( sockaddr_in );
-		int			 _action_client_descriptor	= 0;
-
-		/**
-		 * @brief Print out the socket Address, Port and Descriptor
-		 *
-		 * @param index The index of the device.
-		 */
-		void print_info( int index = -1 ) {
-			printf( "%d. Address: %s:%d, Descriptor: %d\n", index, inet_ntoa( _action_client_address.sin_addr ), ntohs( _action_client_address.sin_port ), _action_client_descriptor );
-		}
-	} ActionClient;
-
-	class Packager {
+	class ActionServer {
 	  private:
+		socklen_t _address_len = sizeof( sockaddr_in );
+		int		  _descriptor  = 0;
+		uint16_t  _port		   = 0;
+
+		std::vector<ActionServerClient> _clients;
+
+		void set_descriptor( const uint8_t descriptor );
+		void set_port( uint8_t port );
+
+	  public:
+		sockaddr_in address;
+
+		ActionServer();
+		ActionServer( sockaddr_in, uint16_t );
+		~ActionServer();
+
+		uint8_t send_packet( const ActionDataNetworkPackage &package );
+		uint8_t send_packet( const ActionDataNetworkPackage &package, const ActionServerClient &client );
+
+		uint8_t	 get_descriptor() const;
+		uint16_t get_address_length() const;
+
+		void	  disconnect_client( ActionServerClient &client );
+		socklen_t get_socket_address_length() const;
+		uint8_t	  get_clients_connected() const;
+		uint8_t	  connect_client( ActionServerClient *client );
+
+		void dump_vars();
+	};
+
+	class ActionServerClient {
+	  private:
+		sockaddr_in _address;
+
+		uint8_t _descriptor = 0;
+
+	  public:
+		socklen_t	_address_len = sizeof( sockaddr_in );
+		sockaddr_in address;
+		ActionServerClient();
+
+		ActionServerClient( sockaddr_in, uint8_t );
+
+		// ActionServerClient( ActionServerClient const & );			 // Copy constructor
+		// ActionServerClient &operator=( ActionServerClient const & ); // Copy assignment operator
+		// ActionServerClient( ActionServerClient && );				 // Move constructor
+		// ActionServerClient &operator=( ActionServerClient && );		 // Move assignment operator
+
+		~ActionServerClient();
+
+		void dump_vars();
+
+		uint8_t	  get_descriptor() const;
+		socklen_t get_socket_address_length() const;
+
+		void set_descriptor( const int descriptor );
+
+		uint16_t send_packet( const ActionDataNetworkPackage &packet );
+
+		void initialize();
+
+		void disconnect();
+	};
+
+	class Supervisor {
+	  private:
+		ActionServer _server;
+
 		ActionDataNetworkPackage _net_package;
-		sockaddr_in				 _server_address;
-		unsigned int			 _server_address_len = sizeof( sockaddr_in );
-		int						 _server_descriptor	 = 0;
 
-		__uint8_t _packed		   = 0;
-		__uint8_t _package_pointer = PACKAGE_DATA_START;
+		__uint8_t _packed = 0;
 
-		ActionClient *_client;
-		__uint32_t	  _port	 = DEFAULT_PORT;
-		__uint16_t	  _count = 0;
+		ActionServerClient _client;
+
+		__uint16_t _count = 0;
 
 		__int8_t send_response;
 
-		bool			   _ready = false;
-		struct sockaddr_in _server;
+		bool _ready = false;
 
 		uint8_t _wait_for_connection();
 		int		_socket_setup( void );
 
 	  public:
-		Packager();
-		Packager( int );
-		~Packager();
+		Supervisor();
+		~Supervisor();
 
 		void send_packet( void );
 		void initialize();
-		void disconnect();
 
 		void close_socket( int );
 		void dump_vars( void );
 
 		int load_packet( ActionDataPackage * );
 
-		void	set_server_descriptor( int );
-		uint8_t get_server_descriptor() const;
-
-		void	set_client_descriptor( int );
-		uint8_t get_client_descriptor() const;
-
 		void set_ready( bool );
 		bool get_ready() const;
 	};
 
-} // namespace ActionTracer
+} // namespace ActionTracer::Communication

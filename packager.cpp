@@ -17,6 +17,14 @@
 
 using namespace ActionTracer;
 
+void ActionTracer::ActionServer::dump_vars() {
+	printf( "Client\nAddress: %s:%d, Descriptor: %d\n", inet_ntoa( _address.sin_addr ), ntohs( _address.sin_port ), _descriptor );
+}
+
+void ActionTracer::ActionServerClient::dump_vars() {
+	printf( "Server\nAddress: %s:%d, Descriptor: %d\n", inet_ntoa( _address.sin_addr ), ntohs( _address.sin_port ), _descriptor );
+}
+
 /**
  * @brief Construct a new Action Tracer:: Packager:: Packager object
  * @param port Destination UDP Port to send data to
@@ -41,7 +49,7 @@ ActionTracer::Packager::Packager() {
  * @constructor
  */
 ActionTracer::Packager::~Packager() {
-	if( _client != nullptr )
+	if ( _client != nullptr )
 		delete _client;
 }
 
@@ -51,15 +59,16 @@ ActionTracer::Packager::~Packager() {
  * @return int socket descriptor of the socket
  */
 int ActionTracer::Packager::_socket_setup() {
-	if( ( _server_descriptor = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 ) {
+	if ( ( _server_descriptor = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 ) {
 		printf( "socket failed" );
 		exit( EXIT_FAILURE );
 	}
 	debugPrint( "TCP socket created with descriptor: %d\n", _server_descriptor );
 	int _opt = 1;
 
-	// This helps in manipulating options for the socket referred by the socket descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as: “address already in use”.
-	if( setsockopt( _server_descriptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
+	// This helps in manipulating options for the socket referred by the socket descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as:
+	// “address already in use”.
+	if ( setsockopt( _server_descriptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
 		printf( "setsockopt" );
 		exit( EXIT_FAILURE );
 	}
@@ -68,11 +77,11 @@ int ActionTracer::Packager::_socket_setup() {
 	_server.sin_family		= AF_INET;
 	_server.sin_port		= htons( _port ); // My open port
 
-	if( bind( _server_descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
+	if ( bind( _server_descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
 		printf( "bind failed" );
 		exit( EXIT_FAILURE );
 	}
-	if( listen( _server_descriptor, ( MAX_CLIENTS / 2 ) ) < 0 ) {
+	if ( listen( _server_descriptor, ( MAX_CLIENTS / 2 ) ) < 0 ) {
 		printf( "Error when trying to listen for connection" );
 		exit( EXIT_FAILURE );
 	}
@@ -85,29 +94,24 @@ int ActionTracer::Packager::_socket_setup() {
  *	@throws INVALID_ARGUMENT If this Packager instance is still connected to a client.
  * @return Nothing
  */
-uint8_t ActionTracer::Packager::_wait_for_connection() {
-	if( _client != nullptr ) {
-		throw std::invalid_argument( "A is already connected to this Packager." );
-		return _client->_action_client_descriptor;
-	}
+uint8_t ActionTracer::Communication::Supervisor::_wait_for_connection() {
+	ActionServerClient *temp_client = new ActionServerClient();
+	temp_client->set_descriptor( accept( _server.get_descriptor(), ( sockaddr * ) &temp_client->address, &temp_client->_address_len ) ); // Blocking call waiting for new connection
 
-	ActionClient *temp_client			   = new ActionClient;
-	temp_client->_action_client_descriptor = accept( _server_descriptor, ( sockaddr * ) &temp_client->_action_client_address, &temp_client->_action_client_address_len ); // Blocking call waiting for new connection
-
-	if( temp_client->_action_client_descriptor < 0 ) {
+	if ( temp_client->get_descriptor() < 0 ) {
 		printf( "accept failed" );
 		exit( EXIT_FAILURE );
 	} else {
-		_client = temp_client;
+		_server.connect_client( temp_client );
 	}
 	set_ready( true );
-	return temp_client->_action_client_descriptor;
+	return temp_client->get_descriptor();
 }
 
 /**
  * @brief Inits a packager instance and only continues if a client is connected to the server.
  */
-void ActionTracer::Packager::initialize() {
+void ActionTracer::Communication::Supervisor::initialize() {
 	_socket_setup();
 	_wait_for_connection();
 }
@@ -117,7 +121,7 @@ void ActionTracer::Packager::initialize() {
  * @throws INVALID_ARGUMENT if the client is not connected to the server
  */
 void ActionTracer::Packager::disconnect() {
-	if( _client == nullptr ) {
+	if ( _client == nullptr ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
 		return;
 	}
@@ -136,7 +140,7 @@ void ActionTracer::Packager::disconnect() {
  */
 void ActionTracer::Packager::send_packet() {
 	// If no socket descriptor is given, use the last device to be added to the network
-	if( _client == nullptr ) {
+	if ( _client == nullptr ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
 	}
 
@@ -148,8 +152,8 @@ void ActionTracer::Packager::send_packet() {
 
 	_net_package.set_allocated_send_time( &t );
 
-	if( ( send_response = send( _client->_action_client_descriptor, _net_package.SerializeAsString().c_str(), _net_package.ByteSizeLong(), 0 ) ) == -1 ) {
-		if( send_response == -1 ) {
+	if ( ( send_response = send( _client->_action_client_descriptor, _net_package.SerializeAsString().c_str(), _net_package.ByteSizeLong(), 0 ) ) == -1 ) {
+		if ( send_response == -1 ) {
 			// Client disconnected
 			disconnect();
 		} else {
@@ -170,7 +174,7 @@ int ActionTracer::Packager::load_packet( ActionDataPackage *device_packet ) {
 	_packed = 0;
 	_net_package.set_device_identifier_contents( device_packet->device_identifier_contents );
 	_packed++;
-	for( int i = 0; i < DATA_ELEMENTS; i++ ) {
+	for ( int i = 0; i < DATA_ELEMENTS; i++ ) {
 		_net_package.add_data( device_packet->data[i] );
 		_packed++;
 	}
@@ -202,7 +206,7 @@ void ActionTracer::Packager::dump_vars( void ) {
 	printf( "Descriptor: %d\n", _server_descriptor );
 	printf( "Port: %d\n", _port );
 
-	if( _client != nullptr ) {
+	if ( _client != nullptr ) {
 		_client->print_info();
 	} else {
 		printf( "No client connected at the moment\n" );
@@ -233,7 +237,7 @@ uint8_t ActionTracer::Packager::get_server_descriptor() const {
  * @throws INVALID_ARGUMENT Thrown if no client is connected to the system's network.
  */
 void ActionTracer::Packager::set_client_descriptor( int client_descriptor ) {
-	if( _client == nullptr ) {
+	if ( _client == nullptr ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
 		return;
 	} else {
@@ -247,7 +251,7 @@ void ActionTracer::Packager::set_client_descriptor( int client_descriptor ) {
  * @throws INVALID_ARGUMENT Thrown if no client is connected to the system's network.
  */
 uint8_t ActionTracer::Packager::get_client_descriptor() const {
-	if( _client == nullptr ) {
+	if ( _client == nullptr ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
 		return 0;
 	} else {
