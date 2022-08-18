@@ -222,6 +222,15 @@ bool ActionTracer::Communication::Supervisor::get_ready() const {
 	return _ready;
 }
 
+ActionTracer::Communication::ActionServer::ActionServer() {
+}
+
+ActionTracer::Communication::ActionServer::ActionServer( sockaddr_in my_address, uint16_t port ) : address( my_address ), _port( port ) {
+}
+
+ActionTracer::Communication::ActionServer::~ActionServer() {
+}
+
 /**
  * @brief Sets the port to send data to
  * @param address IPV4 address to send data from on an Action Device
@@ -232,6 +241,23 @@ void ActionTracer::Communication::ActionServer::set_details( in_addr_t address, 
 	_server_details.sin_addr.s_addr = address;
 	_server_details.sin_family		= AF_INET;
 	_server_details.sin_port		= htons( port );
+}
+
+/**
+ * @brief Sets the network address into of the device
+ * @param status The status to set the device to
+ * @returns Nothing
+ */
+void ActionTracer::Communication::ActionServer::set_address( const sockaddr_in my_address ) {
+	address = my_address;
+}
+
+/**
+ * @brief Obtains the network address of the device
+ * @returns _ready The ready status of the device
+ */
+sockaddr_in ActionTracer::Communication::ActionServer::get_address() const {
+	return address;
 }
 
 /**

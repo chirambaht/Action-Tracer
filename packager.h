@@ -29,19 +29,27 @@ namespace ActionTracer::Communication {
 		uint8_t send_packet( const ActionDataNetworkPackage &package );
 		uint8_t send_packet( const ActionDataNetworkPackage &package, const ActionServerClient &client );
 
-		uint8_t	 get_descriptor() const;
+		uint8_t connect_client( ActionServerClient *client );
+		void	disconnect_client( ActionServerClient &client );
+		void	disconnect_all_clients();
+
 		uint16_t get_address_length() const;
 
-		void			   disconnect_client( ActionServerClient &client );
-		void			   disconnect_all_clients();
-		socklen_t		   get_socket_address_length() const;
-		uint8_t			   get_clients_connected() const;
-		uint16_t		   get_port() const;
+		socklen_t get_socket_address_length() const;
+
+		uint8_t get_clients_connected() const;
+
+		uint16_t get_port() const;
+		void	 set_port( const uint16_t port );
+
+		uint8_t get_descriptor() const;
+		void	set_descriptor( const int descriptor );
+
 		struct sockaddr_in get_details() const;
-		void			   set_descriptor( const int descriptor );
-		void			   set_port( const uint16_t port );
 		void			   set_details( in_addr_t, uint16_t );
-		uint8_t			   connect_client( ActionServerClient *client );
+
+		sockaddr_in get_address() const;
+		void		set_address( const sockaddr_in );
 
 		void dump_vars();
 	};
