@@ -1,6 +1,9 @@
+#ifndef PACKAGER_H
+#define PACKAGER_H
 #include "act_definitions.h"
 
 #include <arpa/inet.h> //inet_addr
+#include <cstdint>
 #include <cstdio>
 #include <vector>
 
@@ -8,14 +11,13 @@ namespace ActionTracer::Communication {
 
 	class ActionServer {
 	  private:
-		socklen_t _address_len = sizeof( sockaddr_in );
-		int		  _descriptor  = 0;
-		uint16_t  _port		   = 0;
+		socklen_t		   _address_len = sizeof( sockaddr_in );
+		struct sockaddr_in _server_details;
+
+		int		 _descriptor = 0;
+		uint16_t _port		 = 0;
 
 		std::vector<ActionServerClient> _clients;
-
-		void set_descriptor( const uint8_t descriptor );
-		void set_port( uint8_t port );
 
 	  public:
 		sockaddr_in address;
@@ -30,10 +32,15 @@ namespace ActionTracer::Communication {
 		uint8_t	 get_descriptor() const;
 		uint16_t get_address_length() const;
 
-		void	  disconnect_client( ActionServerClient &client );
-		socklen_t get_socket_address_length() const;
-		uint8_t	  get_clients_connected() const;
-		uint8_t	  connect_client( ActionServerClient *client );
+		void			   disconnect_client( ActionServerClient &client );
+		socklen_t		   get_socket_address_length() const;
+		uint8_t			   get_clients_connected() const;
+		uint16_t		   get_port() const;
+		struct sockaddr_in get_details() const;
+		void			   set_descriptor( const int descriptor );
+		void			   set_port( const uint16_t port );
+		void			   set_details( in_addr_t, uint16_t );
+		uint8_t			   connect_client( ActionServerClient *client );
 
 		void dump_vars();
 	};
@@ -93,6 +100,7 @@ namespace ActionTracer::Communication {
 
 	  public:
 		Supervisor();
+		Supervisor( __uint16_t );
 		~Supervisor();
 
 		void send_packet( void );
@@ -105,6 +113,10 @@ namespace ActionTracer::Communication {
 
 		void set_ready( bool );
 		bool get_ready() const;
+
+		void	   set_server_port( __uint16_t );
+		__uint16_t get_server_port() const;
 	};
 
 } // namespace ActionTracer::Communication
+#endif

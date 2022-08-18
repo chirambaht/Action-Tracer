@@ -1,4 +1,3 @@
-
 #include "packager.h"
 
 #include "debug_printer.h"
@@ -15,42 +14,44 @@
 	#include "wiringPi.h"
 #endif
 
-using namespace ActionTracer;
+using namespace ActionTracer::Communication;
 
-void ActionTracer::ActionServer::dump_vars() {
-	printf( "Client\nAddress: %s:%d, Descriptor: %d\n", inet_ntoa( _address.sin_addr ), ntohs( _address.sin_port ), _descriptor );
+void ActionTracer::Communication::ActionServer::dump_vars() {
+	printf( "Client\nAddress: %s:%d, Descriptor: %d\n", inet_ntoa( address.sin_addr ), ntohs( address.sin_port ), _descriptor );
 }
 
-void ActionTracer::ActionServerClient::dump_vars() {
-	printf( "Server\nAddress: %s:%d, Descriptor: %d\n", inet_ntoa( _address.sin_addr ), ntohs( _address.sin_port ), _descriptor );
+void ActionTracer::Communication::ActionServerClient::dump_vars() {
+	printf( "Server\nAddress: %s:%d, Descriptor: %d\n", inet_ntoa( address.sin_addr ), ntohs( address.sin_port ), _descriptor );
 }
 
 /**
- * @brief Construct a new Action Tracer:: Packager:: Packager object
+ * @brief Construct a new Action Tracer:: Supervisor:: Supervisor object
  * @param port Destination UDP Port to send data to
  * @constructor
  */
-ActionTracer::Packager::Packager( int port ) {
-	_port  = port;
-	_count = 0;
+ActionTracer::Communication::Supervisor( uint16_t port ) {
+	set_server_port( port );
 }
 
 /**
- * @brief Construct a new Action Tracer:: Packager:: Packager object
+ * @brief Construct a new Action Tracer:: Supervisor:: Supervisor object
  * @constructor
  */
-ActionTracer::Packager::Packager() {
-	_port  = 9022;
-	_count = 0;
+ActionTracer::Communication::Supervisor() {
+	_port = 9022;
 }
 
 /**
- * @brief Construct a new Action Tracer:: Packager:: Packager object
+ * @brief Construct a new Action Tracer:: Supervisor:: Supervisor object
  * @constructor
  */
-ActionTracer::Packager::~Packager() {
-	if ( _client != nullptr )
-		delete _client;
+ActionTracer::Communication::~Supervisor() {
+}
+
+void ActionTracer::Communication::ActionServer::set_details( in_addr_t address, uint16_t port ) {
+	_server_details.sin_addr.s_addr = address;
+	_server_details.sin_family		= AF_INET;
+	_server_details.sin_port		= htons( port );
 }
 
 /**
@@ -58,43 +59,51 @@ ActionTracer::Packager::~Packager() {
  *
  * @return int socket descriptor of the socket
  */
-int ActionTracer::Packager::_socket_setup() {
-	if ( ( _server_descriptor = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 ) {
+int ActionTracer::Communication::Supervisor::_socket_setup() {
+	_server.set_descriptor( socket( AF_INET, SOCK_STREAM, 0 ) );
+	if ( _server.get_descriptor() < 0 ) {
 		printf( "socket failed" );
 		exit( EXIT_FAILURE );
 	}
-	debugPrint( "TCP socket created with descriptor: %d\n", _server_descriptor );
+
+	debugPrint( "TCP socket created with descriptor: %d\n", _server.get_descriptor() );
+
 	int _opt = 1;
 
 	// This helps in manipulating options for the socket referred by the socket descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as:
 	// “address already in use”.
-	if ( setsockopt( _server_descriptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
+	if ( setsockopt( _server.get_descriptor(), SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
 		printf( "setsockopt" );
 		exit( EXIT_FAILURE );
 	}
 
-	_server.sin_addr.s_addr = INADDR_ANY;
-	_server.sin_family		= AF_INET;
-	_server.sin_port		= htons( _port ); // My open port
+	_server.set_details( INADDR_ANY, _server.get_port() );
 
-	if ( bind( _server_descriptor, ( struct sockaddr * ) &_server, sizeof( _server ) ) < 0 ) {
+	if ( bind( _server.get_descriptor(), ( struct sockaddr * ) &_server.get_details(), sizeof( _server.get_details() ) ) < 0 ) {
 		printf( "bind failed" );
 		exit( EXIT_FAILURE );
 	}
-	if ( listen( _server_descriptor, ( MAX_CLIENTS / 2 ) ) < 0 ) {
+	if ( listen( _server.get_descriptor(), ( MAX_CLIENTS / 2 ) ) < 0 ) {
 		printf( "Error when trying to listen for connection" );
 		exit( EXIT_FAILURE );
 	}
 
-	return _server_descriptor;
+	return _server.get_descriptor();
 }
 
 /**
- * @brief Manages the TCP server by adding clients to packagers network. It accepts a client and obtains the ncessary information to create a recepient.
- *	@throws INVALID_ARGUMENT If this Packager instance is still connected to a client.
+ * @brief Manages the TCP server by adding clients to Supervisors network. It accepts a client and obtains the ncessary information to create a recepient.
+ *	@throws INVALID_ARGUMENT If this Supervisor instance is still connected to a client.
  * @return Nothing
  */
 uint8_t ActionTracer::Communication::Supervisor::_wait_for_connection() {
+	// Check if everything else is ready
+	if ( _server.get_descriptor() < 0 ) {
+		printf( "Server not ready" );
+		std::__throw_invalid_argument( "Server not ready for use, please run _socket_setup() first" );
+		return -1;
+	}
+
 	ActionServerClient *temp_client = new ActionServerClient();
 	temp_client->set_descriptor( accept( _server.get_descriptor(), ( sockaddr * ) &temp_client->address, &temp_client->_address_len ) ); // Blocking call waiting for new connection
 
@@ -109,7 +118,7 @@ uint8_t ActionTracer::Communication::Supervisor::_wait_for_connection() {
 }
 
 /**
- * @brief Inits a packager instance and only continues if a client is connected to the server.
+ * @brief Inits a Supervisor instance and only continues if a client is connected to the server.
  */
 void ActionTracer::Communication::Supervisor::initialize() {
 	_socket_setup();
@@ -120,7 +129,7 @@ void ActionTracer::Communication::Supervisor::initialize() {
  * @brief Disconnect a client from the server given its socket descriptor
  * @throws INVALID_ARGUMENT if the client is not connected to the server
  */
-void ActionTracer::Packager::disconnect() {
+void ActionTracer::Communication::disconnect() {
 	if ( _client == nullptr ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
 		return;
@@ -138,7 +147,7 @@ void ActionTracer::Packager::disconnect() {
  * @return Nothing
  * @throws INVALID_ARGUMENT If there is no device connected to the system's network.
  */
-void ActionTracer::Packager::send_packet() {
+void ActionTracer::Communication::send_packet() {
 	// If no socket descriptor is given, use the last device to be added to the network
 	if ( _client == nullptr ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
@@ -170,7 +179,7 @@ void ActionTracer::Packager::send_packet() {
  * @param length number of floats in array to convert. Defaults to 20
  * @return Number of elements that have been packed.
  */
-int ActionTracer::Packager::load_packet( ActionDataPackage *device_packet ) {
+int ActionTracer::Communication::load_packet( ActionDataPackage *device_packet ) {
 	_packed = 0;
 	_net_package.set_device_identifier_contents( device_packet->device_identifier_contents );
 	_packed++;
@@ -186,16 +195,16 @@ int ActionTracer::Packager::load_packet( ActionDataPackage *device_packet ) {
  * @param descriptor An open socket descriptor
  * @returns Nothing
  */
-void ActionTracer::Packager::close_socket( int closing_descriptor ) {
+void ActionTracer::Communication::close_socket( int closing_descriptor ) {
 	debugPrint( "Closing socket with descriptor %d\n", _server_descriptor );
 	close( _server_descriptor );
 }
 
 /**
- * @brief Prints out all the variables in the packager including the last collected packet to be sent.
+ * @brief Prints out all the variables in the Supervisor including the last collected packet to be sent.
  * @returns Nothing
  */
-void ActionTracer::Packager::dump_vars( void ) {
+void ActionTracer::Communication::dump_vars( void ) {
 	printf( "\n\nSize of package is %d\n", sizeof( _net_package.ByteSizeLong() ) );
 	printf( "Packed: %d\n", _packed );
 	printf( "Package pointer: %d\n", _package_pointer );
@@ -218,7 +227,7 @@ void ActionTracer::Packager::dump_vars( void ) {
  * @param server_descriptor An open socket descriptor for the server
  * @returns Nothing
  */
-void ActionTracer::Packager::set_server_descriptor( int server_descriptor ) {
+void ActionTracer::Communication::set_server_descriptor( int server_descriptor ) {
 	_server_descriptor = server_descriptor;
 }
 
@@ -226,7 +235,7 @@ void ActionTracer::Packager::set_server_descriptor( int server_descriptor ) {
  * @brief Obtains the server descriptor
  * @returns _server_descriptor The server descriptor
  */
-uint8_t ActionTracer::Packager::get_server_descriptor() const {
+uint8_t ActionTracer::Communication::get_server_descriptor() const {
 	return _server_descriptor;
 }
 
@@ -236,7 +245,7 @@ uint8_t ActionTracer::Packager::get_server_descriptor() const {
  * @returns Nothing
  * @throws INVALID_ARGUMENT Thrown if no client is connected to the system's network.
  */
-void ActionTracer::Packager::set_client_descriptor( int client_descriptor ) {
+void ActionTracer::Communication::set_client_descriptor( int client_descriptor ) {
 	if ( _client == nullptr ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
 		return;
@@ -250,7 +259,7 @@ void ActionTracer::Packager::set_client_descriptor( int client_descriptor ) {
  * @returns _client_descriptor The client descriptor if it is connected to the system's network.
  * @throws INVALID_ARGUMENT Thrown if no client is connected to the system's network.
  */
-uint8_t ActionTracer::Packager::get_client_descriptor() const {
+uint8_t ActionTracer::Communication::get_client_descriptor() const {
 	if ( _client == nullptr ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
 		return 0;
@@ -264,7 +273,7 @@ uint8_t ActionTracer::Packager::get_client_descriptor() const {
  * @param status The status to set the device to
  * @returns Nothing
  */
-void ActionTracer::Packager::set_ready( bool status ) {
+void ActionTracer::Communication::set_ready( bool status ) {
 	_ready = status;
 }
 
@@ -272,6 +281,6 @@ void ActionTracer::Packager::set_ready( bool status ) {
  * @brief Obtains the ready status of the device
  * @returns _ready The ready status of the device
  */
-bool ActionTracer::Packager::get_ready() const {
+bool ActionTracer::Communication::get_ready() const {
 	return _ready;
 }
