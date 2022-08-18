@@ -250,18 +250,6 @@ ActionTracer::Communication::ActionServer::~ActionServer() {
 }
 
 /**
- * @brief Sets the details of the device to send data from
- * @param address IPV4 address to send data from on an Action Device
- * @param port Local machine port to send data to
- * @returns Nothing
- */
-void ActionTracer::Communication::ActionServer::set_details( in_addr_t address, uint16_t port ) {
-	_server_details.sin_addr.s_addr = address;
-	_server_details.sin_family		= AF_INET;
-	_server_details.sin_port		= htons( port );
-}
-
-/**
  * @brief Gets the number of bytes in the address
  * @returns socklen_t address size
  */
@@ -283,6 +271,18 @@ size_t ActionTracer::Communication::ActionServer::get_clients_connected() const 
  */
 struct sockaddr_in ActionTracer::Communication::ActionServer::get_details() const {
 	return _server_details;
+}
+
+/**
+ * @brief Sets the details of the device to send data from
+ * @param address IPV4 address to send data from on an Action Device
+ * @param port Local machine port to send data to
+ * @returns Nothing
+ */
+void ActionTracer::Communication::ActionServer::set_details( in_addr_t address, uint16_t port ) {
+	_server_details.sin_addr.s_addr = address;
+	_server_details.sin_family		= AF_INET;
+	_server_details.sin_port		= htons( port );
 }
 
 /**
@@ -319,16 +319,45 @@ void ActionTracer::Communication::ActionServer::set_port( const uint16_t port ) 
 	_port = port;
 }
 
+/**
+ * @brief Gets the descriptor of the server
+ * @returns int The descriptor of the server
+ */
+uint8_t ActionTracer::Communication::ActionServer::get_descriptor() const {
+	return _descriptor;
+}
+
+/**
+ * @brief Sets the descriptor of the server
+ * @param descriptor The descriptor of the server
+ * @returns Nothing
+ */
+void ActionTracer::Communication::ActionServer::set_descriptor( const int descriptor ) {
+	_descriptor = descriptor;
+}
+
+/**
+ * @brief Adds a client to the list of clients connected to the server
+ * @param ActionServerClient The client to add to the list
+ * @returns size_t Number of clients connected to the server
+ */
 uint8_t ActionTracer::Communication::ActionServer::connect_client( ActionServerClient *client ) {
 	_clients.push_back( *client );
 	return _clients.size();
 }
 
+/**
+ * @brief Disconnect a single client from the server
+ * @param ActionServerClient client to disconnect
+ */
 void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerClient *client ) {
 	close( client->get_descriptor() );
 	_clients.erase( std::find( _clients.begin(), _clients.end(), *client ) );
 }
 
+/**
+ * @brief Disconnect all clients from the server
+ */
 void ActionTracer::Communication::ActionServer::disconnect_all_clients() {
 	while ( !_clients.empty() ) {
 		disconnect_client( &_clients.front() );
@@ -344,9 +373,103 @@ void ActionTracer::Communication::ActionServer::dump_vars() {
 }
 
 /**
- * @brief Prints out all the variables in a client including the last packet to be sent.
+ * @brief Send a packet to all clients connected to the server
+ * @param package A pointer to the data packet to send
+ */
+uint16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package ) {
+	for ( auto client : _clients ) {
+		client.send_packet( package );
+	}
+}
+
+/**
+ * @brief Send a packet to a client connected to the server
+ * @param package A pointer to the data packet to send
+ */
+uint16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package, ActionServerClient *client ) {
+	client->send_packet( package );
+	return 1;
+}
+
+/**
+ * @brief Construct a new Action Tracer:: Communication:: Action Server:: Action Server Client object
+ *
+ */
+ActionTracer::Communication::ActionServerClient::ActionServerClient() {
+}
+
+/**
+ * @brief Construct a new Action Tracer:: Communication:: Action Server:: Action Server Client object
+ * @param client_address address to bind to
+ * @param descriptor The descriptor to keep track of the client
+ */
+ActionTracer::Communication::ActionServerClient::ActionServerClient( sockaddr_in client_address, uint8_t descriptor ) : address( client_address ), _descriptor( descriptor ) {
+}
+
+/**
+ * @brief Destroy a Action Tracer:: Communication:: Action Server Client:: Action Server Client object
+ */
+ActionTracer::Communication::ActionServerClient::~ActionServerClient() {
+}
+
+/**
+ * @brief Gets the socket addess length of the client
+ * @returns int The socket addess length of the client
+ */
+socklen_t ActionTracer::Communication::ActionServerClient::get_socket_address_length() const {
+	return _address_len;
+}
+
+/**
+ * @brief Gets the descriptor of the client
+ * @returns int The descriptor of the client
+ */
+uint8_t ActionTracer::Communication::ActionServerClient::get_descriptor() const {
+	return _descriptor;
+}
+
+/**
+ * @brief Sets the descriptor of the client
+ * @param descriptor The descriptor of the client
+ * @returns Nothing
+ */
+void ActionTracer::Communication::ActionServerClient::set_descriptor( const int descriptor ) {
+	_descriptor = descriptor;
+}
+
+/**
+ * @brief Send a packet to the client via socket
+ * @returns packet pointer to the packet to send
+ */
+uint16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDataNetworkPackage *packet ) {
+	if ( !packet->IsInitialized() ) {
+		throw std::invalid_argument( "Packet is not ready to be sent" );
+	}
+
+	if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
+		if ( send_response == -1 ) {
+			// Client disconnected
+			disconnect();
+		} else {
+			perror( "Error" );
+		}
+		return;
+	}
+}
+
+/**
+ * @brief Disconnects the client from the server
+ * @returns Nothing
+ */
+void ActionTracer::Communication::ActionServerClient::disconnect() {
+	close( get_descriptor() );
+}
+
+/**
+ * @brief Prints out all the variables in a client.
  * @returns Nothing
  */
 void ActionTracer::Communication::ActionServerClient::dump_vars() {
-	printf( "Server\nAddress: %s:%d, Descriptor: %d\n", inet_ntoa( address.sin_addr ), ntohs( address.sin_port ), _descriptor );
+	printf( "\nAction Server Client - %s:%d\n", inet_ntoa( address.sin_addr ), ntohs( address.sin_port ) );
+	printf( "Descriptor: %d\n", _descriptor );
 }

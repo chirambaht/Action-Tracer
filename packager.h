@@ -26,8 +26,8 @@ namespace ActionTracer::Communication {
 		ActionServer( sockaddr_in, uint16_t );
 		~ActionServer();
 
-		uint8_t send_packet( const ActionDataNetworkPackage *package );
-		uint8_t send_packet( const ActionDataNetworkPackage *package, const ActionServerClient *client );
+		uint16_t send_packet( ActionDataNetworkPackage *package );
+		uint16_t send_packet( ActionDataNetworkPackage *package, ActionServerClient *client );
 
 		uint8_t connect_client( ActionServerClient *client );
 		void	disconnect_client( ActionServerClient *client );
@@ -54,13 +54,13 @@ namespace ActionTracer::Communication {
 
 	class ActionServerClient {
 	  private:
-		sockaddr_in _address;
-
-		uint8_t _descriptor = 0;
+		int		send_response = 0;
+		uint8_t _descriptor	  = 0;
 
 	  public:
 		socklen_t	_address_len = sizeof( sockaddr_in );
 		sockaddr_in address;
+
 		ActionServerClient();
 
 		ActionServerClient( sockaddr_in, uint8_t );
@@ -79,9 +79,7 @@ namespace ActionTracer::Communication {
 
 		void set_descriptor( const int descriptor );
 
-		uint16_t send_packet( const ActionDataNetworkPackage &packet );
-
-		void initialize();
+		uint16_t send_packet( ActionDataNetworkPackage *packet );
 
 		void disconnect();
 	};
@@ -97,8 +95,6 @@ namespace ActionTracer::Communication {
 		ActionServerClient _client;
 
 		uint16_t _count = 0;
-
-		int8_t send_response;
 
 		bool _ready = false;
 
