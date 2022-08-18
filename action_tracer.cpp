@@ -1,6 +1,7 @@
 #include "action_tracer.h"
 
 #include <algorithm>
+#include <boost/thread.hpp>
 #include <cstdio>
 #include <stdexcept>
 
@@ -11,7 +12,7 @@
 #endif
 
 const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN, ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
-void		 *_data_collection_thread( void *arg );
+void *		  _data_collection_thread( void *arg );
 
 void *_data_collection_thread( ActionTracer::ActionTracer *arg ) {
 	args->data_collection_thread();

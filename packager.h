@@ -9,49 +9,6 @@
 
 namespace ActionTracer::Communication {
 
-	class ActionServer {
-	  private:
-		socklen_t		   _address_len = sizeof( sockaddr_in );
-		struct sockaddr_in _server_details;
-
-		uint8_t	 _descriptor = 0;
-		uint16_t _port		 = 0;
-
-		std::vector<ActionServerClient> _clients;
-
-	  public:
-		sockaddr_in address;
-
-		ActionServer();
-		ActionServer( sockaddr_in, uint16_t );
-		~ActionServer();
-
-		uint16_t send_packet( ActionDataNetworkPackage *package );
-		uint16_t send_packet( ActionDataNetworkPackage *package, ActionServerClient *client );
-
-		uint8_t connect_client( ActionServerClient *client );
-		void	disconnect_client( ActionServerClient *client );
-		void	disconnect_all_clients();
-
-		socklen_t get_socket_address_length() const;
-
-		size_t get_clients_connected() const;
-
-		uint16_t get_port() const;
-		void	 set_port( const uint16_t );
-
-		uint8_t get_descriptor() const;
-		void	set_descriptor( const int );
-
-		struct sockaddr_in get_details() const;
-		void			   set_details( in_addr_t, uint16_t );
-
-		sockaddr_in get_address() const;
-		void		set_address( const sockaddr_in );
-
-		void dump_vars();
-	};
-
 	class ActionServerClient {
 	  private:
 		int		send_response = 0;
@@ -84,6 +41,49 @@ namespace ActionTracer::Communication {
 		void disconnect();
 	};
 
+	class ActionServer {
+	  private:
+		socklen_t _address_len = sizeof( sockaddr_in );
+
+		uint8_t	 _descriptor = 0;
+		uint16_t _port		 = 0;
+
+		std::vector<ActionServerClient> _clients;
+
+	  public:
+		struct sockaddr_in _server_details;
+		sockaddr_in		   address;
+
+		ActionServer();
+		ActionServer( sockaddr_in, uint16_t );
+		~ActionServer();
+
+		uint16_t send_packet( ActionDataNetworkPackage *package );
+		uint16_t send_packet( ActionDataNetworkPackage *package, ActionServerClient *client );
+
+		uint8_t connect_client( ActionServerClient *client );
+		void	disconnect_client( ActionServerClient *client );
+		void	disconnect_all_clients();
+
+		socklen_t get_socket_address_length() const;
+
+		size_t get_clients_connected() const;
+
+		uint16_t get_port() const;
+		void	 set_port( const uint16_t );
+
+		uint8_t get_descriptor() const;
+		void	set_descriptor( const int );
+
+		struct sockaddr_in get_details() const;
+		void			   set_details( in_addr_t, uint16_t );
+
+		sockaddr_in get_address() const;
+		void		set_address( const sockaddr_in );
+
+		void dump_vars();
+	};
+
 	class Supervisor {
 	  private:
 		ActionServer _server;
@@ -107,7 +107,7 @@ namespace ActionTracer::Communication {
 		~Supervisor();
 
 		void send_packet( void );
-		int	 send_packet( ActionDataPackage	*);
+		int	 send_packet( ActionDataPackage * );
 		void initialize();
 
 		void close_socket( uint8_t );

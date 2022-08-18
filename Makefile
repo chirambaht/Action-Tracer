@@ -1,5 +1,5 @@
 all: proto collector
-
+test: test_compile test_run
 RATE = 2
 # MPU6050_DMP_FIFO_RATE_DIVISOR values and their linked rate
 # 	n  --> Rate (Hz)
@@ -66,3 +66,10 @@ proto:
 	@ protoc -I=. --cpp_out=. ./action_definitions.proto
 	@ protoc -I=. --python_out=. ./action_definitions.proto
 	@ echo "Proto header files compiled"
+
+test_compile:
+	g++ -Wall -g -o test_program action_definitions.pb.cc packager.cpp test.cpp -lpthread -lprotobuf
+
+test_run:
+	@ echo "Running program now"
+	@ ./test_program
