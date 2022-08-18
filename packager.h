@@ -14,7 +14,7 @@ namespace ActionTracer::Communication {
 		socklen_t		   _address_len = sizeof( sockaddr_in );
 		struct sockaddr_in _server_details;
 
-		int		 _descriptor = 0;
+		uint8_t	 _descriptor = 0;
 		uint16_t _port		 = 0;
 
 		std::vector<ActionServerClient> _clients;
@@ -33,6 +33,7 @@ namespace ActionTracer::Communication {
 		uint16_t get_address_length() const;
 
 		void			   disconnect_client( ActionServerClient &client );
+		void			   disconnect_all_clients();
 		socklen_t		   get_socket_address_length() const;
 		uint8_t			   get_clients_connected() const;
 		uint16_t		   get_port() const;
@@ -89,7 +90,7 @@ namespace ActionTracer::Communication {
 
 		ActionServerClient _client;
 
-		__uint16_t _count = 0;
+		uint16_t _count = 0;
 
 		__int8_t send_response;
 
@@ -100,22 +101,25 @@ namespace ActionTracer::Communication {
 
 	  public:
 		Supervisor();
-		Supervisor( __uint16_t );
+		Supervisor( uint16_t );
 		~Supervisor();
 
 		void send_packet( void );
+		int	 send_packet( ActionDataPackage	*);
 		void initialize();
 
-		void close_socket( int );
+		void close_socket( uint8_t );
 		void dump_vars( void );
 
 		int load_packet( ActionDataPackage * );
 
+		void disconnect();
+
 		void set_ready( bool );
 		bool get_ready() const;
 
-		void	   set_server_port( __uint16_t );
-		__uint16_t get_server_port() const;
+		void	 set_server_port( uint16_t );
+		uint16_t get_server_port() const;
 	};
 
 } // namespace ActionTracer::Communication

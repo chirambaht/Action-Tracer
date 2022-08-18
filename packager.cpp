@@ -29,7 +29,7 @@ void ActionTracer::Communication::ActionServerClient::dump_vars() {
  * @param port Destination UDP Port to send data to
  * @constructor
  */
-ActionTracer::Communication::Supervisor( uint16_t port ) {
+ActionTracer::Communication::Supervisor::Supervisor( uint16_t port ) {
 	set_server_port( port );
 }
 
@@ -37,15 +37,15 @@ ActionTracer::Communication::Supervisor( uint16_t port ) {
  * @brief Construct a new Action Tracer:: Supervisor:: Supervisor object
  * @constructor
  */
-ActionTracer::Communication::Supervisor() {
-	_port = 9022;
+ActionTracer::Communication::Supervisor::Supervisor() {
+	set_server_port( 9022 );
 }
 
 /**
  * @brief Construct a new Action Tracer:: Supervisor:: Supervisor object
  * @constructor
  */
-ActionTracer::Communication::~Supervisor() {
+ActionTracer::Communication::Supervisor::~Supervisor() {
 }
 
 void ActionTracer::Communication::ActionServer::set_details( in_addr_t address, uint16_t port ) {
@@ -129,17 +129,27 @@ void ActionTracer::Communication::Supervisor::initialize() {
  * @brief Disconnect a client from the server given its socket descriptor
  * @throws INVALID_ARGUMENT if the client is not connected to the server
  */
-void ActionTracer::Communication::disconnect() {
-	if ( _client == nullptr ) {
-		throw std::invalid_argument( "No device is connected to the system's network." );
+void ActionTracer::Communication::Supervisor::disconnect() {
+	if ( _server.get_descriptor() < 0 ) {
+		printf( "Server not ready" );
+		std::__throw_invalid_argument( "Server not ready for use, I can not disconnect when I haven't connected!" );
 		return;
 	}
 
-	close_socket( _client->_action_client_descriptor );
-	delete _client;
-	printf( "Client with address %s has been diconnected.\n", inet_ntoa( _client->_action_client_address.sin_addr ) );
+	_server.disconnect_all_clients();
+
+	close_socket( _server.get_descriptor() );
 	set_ready( false );
-	return;
+}
+
+/**
+ * This is used to send the stored data packet to all clients connected. This will first load the data packet into a buffer and then send it to all clients.
+ * @return Nothing
+ * @throws INVALID_ARGUMENT If there is no device connected to the system's network.
+ */
+int ActionTracer::Communication::Supervisor::send_packet( ActionDataPackage *device_packet ) {
+	load_packet( device_packet );
+	send_packet();
 }
 
 /**
@@ -147,9 +157,9 @@ void ActionTracer::Communication::disconnect() {
  * @return Nothing
  * @throws INVALID_ARGUMENT If there is no device connected to the system's network.
  */
-void ActionTracer::Communication::send_packet() {
+void ActionTracer::Communication::Supervisor::send_packet() {
 	// If no socket descriptor is given, use the last device to be added to the network
-	if ( _client == nullptr ) {
+	if ( !get_ready() ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
 	}
 
@@ -161,15 +171,7 @@ void ActionTracer::Communication::send_packet() {
 
 	_net_package.set_allocated_send_time( &t );
 
-	if ( ( send_response = send( _client->_action_client_descriptor, _net_package.SerializeAsString().c_str(), _net_package.ByteSizeLong(), 0 ) ) == -1 ) {
-		if ( send_response == -1 ) {
-			// Client disconnected
-			disconnect();
-		} else {
-			perror( "Error" );
-		}
-		return;
-	}
+	_server.send_packet( _net_package );
 }
 
 /**
@@ -179,7 +181,7 @@ void ActionTracer::Communication::send_packet() {
  * @param length number of floats in array to convert. Defaults to 20
  * @return Number of elements that have been packed.
  */
-int ActionTracer::Communication::load_packet( ActionDataPackage *device_packet ) {
+int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *device_packet ) {
 	_packed = 0;
 	_net_package.set_device_identifier_contents( device_packet->device_identifier_contents );
 	_packed++;
@@ -195,77 +197,26 @@ int ActionTracer::Communication::load_packet( ActionDataPackage *device_packet )
  * @param descriptor An open socket descriptor
  * @returns Nothing
  */
-void ActionTracer::Communication::close_socket( int closing_descriptor ) {
-	debugPrint( "Closing socket with descriptor %d\n", _server_descriptor );
-	close( _server_descriptor );
+void ActionTracer::Communication::Supervisor::close_socket( uint8_t closing_descriptor ) {
+	debugPrint( "Closing socket with descriptor %d\n", _server.get_descriptor() );
+	close( _server.get_descriptor() );
 }
 
 /**
  * @brief Prints out all the variables in the Supervisor including the last collected packet to be sent.
  * @returns Nothing
  */
-void ActionTracer::Communication::dump_vars( void ) {
+void ActionTracer::Communication::Supervisor::dump_vars( void ) {
 	printf( "\n\nSize of package is %d\n", sizeof( _net_package.ByteSizeLong() ) );
 	printf( "Packed: %d\n", _packed );
-	printf( "Package pointer: %d\n", _package_pointer );
 	printf( "Count: %d\n", _count );
 
 	printf( "%s", _net_package.DebugString().c_str() );
 
-	printf( "Descriptor: %d\n", _server_descriptor );
-	printf( "Port: %d\n", _port );
+	printf( "Descriptor: %d\n", _client.get_descriptor() );
+	printf( "Port: %d\n", _server.get_port() );
 
-	if ( _client != nullptr ) {
-		_client->print_info();
-	} else {
-		printf( "No client connected at the moment\n" );
-	}
-}
-
-/**
- * @brief Sets the server descriptor to a given value
- * @param server_descriptor An open socket descriptor for the server
- * @returns Nothing
- */
-void ActionTracer::Communication::set_server_descriptor( int server_descriptor ) {
-	_server_descriptor = server_descriptor;
-}
-
-/**
- * @brief Obtains the server descriptor
- * @returns _server_descriptor The server descriptor
- */
-uint8_t ActionTracer::Communication::get_server_descriptor() const {
-	return _server_descriptor;
-}
-
-/**
- * @brief Sets the client descriptor to a given value
- * @param client_descriptor An open socket descriptor for the client
- * @returns Nothing
- * @throws INVALID_ARGUMENT Thrown if no client is connected to the system's network.
- */
-void ActionTracer::Communication::set_client_descriptor( int client_descriptor ) {
-	if ( _client == nullptr ) {
-		throw std::invalid_argument( "No device is connected to the system's network." );
-		return;
-	} else {
-		_client->_action_client_descriptor = client_descriptor;
-	}
-}
-
-/**
- * @brief Obtains the client descriptor
- * @returns _client_descriptor The client descriptor if it is connected to the system's network.
- * @throws INVALID_ARGUMENT Thrown if no client is connected to the system's network.
- */
-uint8_t ActionTracer::Communication::get_client_descriptor() const {
-	if ( _client == nullptr ) {
-		throw std::invalid_argument( "No device is connected to the system's network." );
-		return 0;
-	} else {
-		return _client->_action_client_descriptor;
-	}
+	_server.dump_vars();
 }
 
 /**
@@ -273,7 +224,7 @@ uint8_t ActionTracer::Communication::get_client_descriptor() const {
  * @param status The status to set the device to
  * @returns Nothing
  */
-void ActionTracer::Communication::set_ready( bool status ) {
+void ActionTracer::Communication::Supervisor::set_ready( bool status ) {
 	_ready = status;
 }
 
@@ -281,6 +232,6 @@ void ActionTracer::Communication::set_ready( bool status ) {
  * @brief Obtains the ready status of the device
  * @returns _ready The ready status of the device
  */
-bool ActionTracer::Communication::get_ready() const {
+bool ActionTracer::Communication::Supervisor::get_ready() const {
 	return _ready;
 }
