@@ -157,7 +157,11 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 
 	_net_package.set_allocated_send_time( &t );
 
-	_server.send_packet( _net_package );
+	if ( !_net_package.IsInitialized() ) {
+		throw std::invalid_argument( "Packet is not ready to be sent" );
+	}
+
+	_server.send_packet( &_net_package );
 }
 
 /**
@@ -169,6 +173,8 @@ void ActionTracer::Communication::Supervisor::send_packet() {
  */
 int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *device_packet ) {
 	_packed = 0;
+	_net_package.Clear();
+
 	_net_package.set_device_identifier_contents( device_packet->device_identifier_contents );
 	_packed++;
 	for ( int i = 0; i < DATA_ELEMENTS; i++ ) {
@@ -222,17 +228,29 @@ bool ActionTracer::Communication::Supervisor::get_ready() const {
 	return _ready;
 }
 
+/**
+ * @brief Construct a new Action Tracer:: Communication:: Action Server:: Action Server object
+ *
+ */
 ActionTracer::Communication::ActionServer::ActionServer() {
 }
 
+/**
+ * @brief Construct a new Action Tracer:: Communication:: Action Server:: Action Server object
+ * @param my_address address to bind to
+ * @param port The port to listen on
+ */
 ActionTracer::Communication::ActionServer::ActionServer( sockaddr_in my_address, uint16_t port ) : address( my_address ), _port( port ) {
 }
 
+/**
+ * @brief Destroy a Action Tracer:: Communication:: Action Server:: Action Server object
+ */
 ActionTracer::Communication::ActionServer::~ActionServer() {
 }
 
 /**
- * @brief Sets the port to send data to
+ * @brief Sets the details of the device to send data from
  * @param address IPV4 address to send data from on an Action Device
  * @param port Local machine port to send data to
  * @returns Nothing
@@ -241,6 +259,30 @@ void ActionTracer::Communication::ActionServer::set_details( in_addr_t address, 
 	_server_details.sin_addr.s_addr = address;
 	_server_details.sin_family		= AF_INET;
 	_server_details.sin_port		= htons( port );
+}
+
+/**
+ * @brief Gets the number of bytes in the address
+ * @returns socklen_t address size
+ */
+socklen_t ActionTracer::Communication::ActionServer::get_socket_address_length() const {
+	return _address_len;
+}
+
+/**
+ * @brief Gets the details of the device to send data from. The port will be obtained separately.
+ * @returns sockaddr_in The details of the device to send data from
+ */
+size_t ActionTracer::Communication::ActionServer::get_clients_connected() const {
+	return _clients.size();
+}
+
+/**
+ * @brief Gets the details of the device to send data from. The port will be obtained separately.
+ * @returns sockaddr_in The details of the device to send data from
+ */
+struct sockaddr_in ActionTracer::Communication::ActionServer::get_details() const {
+	return _server_details;
 }
 
 /**
@@ -258,6 +300,39 @@ void ActionTracer::Communication::ActionServer::set_address( const sockaddr_in m
  */
 sockaddr_in ActionTracer::Communication::ActionServer::get_address() const {
 	return address;
+}
+
+/**
+ * @brief Gets the port of the device
+ * @returns uint16_t The port of the device
+ */
+uint16_t ActionTracer::Communication::ActionServer::get_port() const {
+	return _port;
+}
+
+/**
+ * @brief Sets the port of the device
+ * @param port The status to set the device to
+ * @returns Nothing
+ */
+void ActionTracer::Communication::ActionServer::set_port( const uint16_t port ) {
+	_port = port;
+}
+
+uint8_t ActionTracer::Communication::ActionServer::connect_client( ActionServerClient *client ) {
+	_clients.push_back( *client );
+	return _clients.size();
+}
+
+void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerClient *client ) {
+	close( client->get_descriptor() );
+	_clients.erase( std::find( _clients.begin(), _clients.end(), *client ) );
+}
+
+void ActionTracer::Communication::ActionServer::disconnect_all_clients() {
+	while ( !_clients.empty() ) {
+		disconnect_client( &_clients.front() );
+	}
 }
 
 /**
