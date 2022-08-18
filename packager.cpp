@@ -16,10 +16,18 @@
 
 using namespace ActionTracer::Communication;
 
+/**
+ * @brief Prints out all the variables in the server including the last packet to be sent.
+ * @returns Nothing
+ */
 void ActionTracer::Communication::ActionServer::dump_vars() {
 	printf( "Client\nAddress: %s:%d, Descriptor: %d\n", inet_ntoa( address.sin_addr ), ntohs( address.sin_port ), _descriptor );
 }
 
+/**
+ * @brief Prints out all the variables in a client including the last packet to be sent.
+ * @returns Nothing
+ */
 void ActionTracer::Communication::ActionServerClient::dump_vars() {
 	printf( "Server\nAddress: %s:%d, Descriptor: %d\n", inet_ntoa( address.sin_addr ), ntohs( address.sin_port ), _descriptor );
 }
@@ -48,6 +56,12 @@ ActionTracer::Communication::Supervisor::Supervisor() {
 ActionTracer::Communication::Supervisor::~Supervisor() {
 }
 
+/**
+ * @brief Sets the port to send data to
+ * @param address IPV4 address to send data from on an Action Device
+ * @param port Local machine port to send data to
+ * @returns Nothing
+ */
 void ActionTracer::Communication::ActionServer::set_details( in_addr_t address, uint16_t port ) {
 	_server_details.sin_addr.s_addr = address;
 	_server_details.sin_family		= AF_INET;

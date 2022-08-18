@@ -86,13 +86,13 @@ namespace ActionTracer::Communication {
 
 		ActionDataNetworkPackage _net_package;
 
-		__uint8_t _packed = 0;
+		uint8_t _packed = 0;
 
 		ActionServerClient _client;
 
 		uint16_t _count = 0;
 
-		__int8_t send_response;
+		int8_t send_response;
 
 		bool _ready = false;
 
