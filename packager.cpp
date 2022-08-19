@@ -5,6 +5,7 @@
 #include <cerrno>
 #include <ctime>
 #include <google/protobuf/timestamp.pb.h>
+#include <google/protobuf/util/time_util.h>
 #include <iomanip>
 #include <unistd.h>
 
@@ -47,7 +48,7 @@ ActionTracer::Communication::Supervisor::~Supervisor() {
  */
 int ActionTracer::Communication::Supervisor::_socket_setup() {
 	_server.set_descriptor( socket( AF_INET, SOCK_STREAM, 0 ) );
-	if( _server.get_descriptor() < 0 ) {
+	if ( _server.get_descriptor() < 0 ) {
 		printf( "socket failed" );
 		exit( EXIT_FAILURE );
 	}
@@ -58,18 +59,18 @@ int ActionTracer::Communication::Supervisor::_socket_setup() {
 
 	// This helps in manipulating options for the socket referred by the socket descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as:
 	// “address already in use”.
-	if( setsockopt( _server.get_descriptor(), SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
+	if ( setsockopt( _server.get_descriptor(), SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
 		printf( "setsockopt" );
 		exit( EXIT_FAILURE );
 	}
 
 	_server.set_details( INADDR_ANY, _server.get_port() );
 
-	if( bind( _server.get_descriptor(), ( struct sockaddr * ) &_server._server_details, sizeof( _server.get_details() ) ) < 0 ) {
+	if ( bind( _server.get_descriptor(), ( struct sockaddr * ) &_server._server_details, sizeof( _server.get_details() ) ) < 0 ) {
 		printf( "bind failed" );
 		exit( EXIT_FAILURE );
 	}
-	if( listen( _server.get_descriptor(), ( MAX_CLIENTS / 2 ) ) < 0 ) {
+	if ( listen( _server.get_descriptor(), ( MAX_CLIENTS / 2 ) ) < 0 ) {
 		printf( "Error when trying to listen for connection" );
 		exit( EXIT_FAILURE );
 	}
@@ -84,19 +85,18 @@ int ActionTracer::Communication::Supervisor::_socket_setup() {
  */
 uint8_t ActionTracer::Communication::Supervisor::_wait_for_connection() {
 	// Check if everything else is ready
-	if( _server.get_descriptor() < 0 ) {
+	if ( _server.get_descriptor() < 0 ) {
 		printf( "Server not ready" );
 		std::__throw_invalid_argument( "Server not ready for use, please run _socket_setup() first" );
 		return -1;
 	}
 
 	// Show connection IP
-	printf( "Waiting for connection on %s:%d\n", inet_ntoa( _server.get_details().sin_addr ), ntohs( _server.get_details().sin_port ) );
-	dump_vars();
+	debugPrint( "Waiting for connection..." );
 	ActionServerClient *temp_client = new ActionServerClient();
 	temp_client->set_descriptor( accept( _server.get_descriptor(), ( sockaddr * ) &temp_client->address, &temp_client->_address_len ) ); // Blocking call waiting for new connection
 
-	if( temp_client->get_descriptor() < 0 ) {
+	if ( temp_client->get_descriptor() < 0 ) {
 		printf( "accept failed" );
 		exit( EXIT_FAILURE );
 	} else {
@@ -119,7 +119,7 @@ void ActionTracer::Communication::Supervisor::initialize() {
  * @throws INVALID_ARGUMENT if the client is not connected to the server
  */
 void ActionTracer::Communication::Supervisor::disconnect() {
-	if( _server.get_descriptor() < 0 ) {
+	if ( _server.get_descriptor() < 0 ) {
 		printf( "Server not ready" );
 		std::__throw_invalid_argument( "Server not ready for use, I can not disconnect when I haven't connected!" );
 		return;
@@ -149,22 +149,27 @@ int ActionTracer::Communication::Supervisor::send_packet( ActionDataPackage *dev
  */
 void ActionTracer::Communication::Supervisor::send_packet() {
 	// If no socket descriptor is given, use the last device to be added to the network
-	if( !get_ready() ) {
+	if ( !get_ready() ) {
 		throw std::invalid_argument( "No device is connected to the system's network." );
 	}
 
 	_net_package.set_packet_number( _count++ );
 
-	// Set time
-	google::protobuf::Timestamp t;
-	t.set_seconds( std::time( nullptr ) );
+	auto		   timestamp = new google::protobuf::Timestamp{};
+	struct timeval tv;
+	gettimeofday( &tv, NULL );
 
-	_net_package.set_allocated_send_time( &t );
+	// timestamp->set_seconds( time(NULL) );
+	timestamp->set_seconds( tv.tv_sec );
+	timestamp->set_nanos( tv.tv_usec * 1000 );
+	_net_package.set_allocated_send_time( timestamp );
 
-	if( !_net_package.IsInitialized() ) {
+	if ( !_net_package.IsInitialized() ) {
 		throw std::invalid_argument( "Packet is not ready to be sent" );
 	}
 
+	// Packet size
+	printf( "Packet size to be sent: %ld\n", sizeof( _net_package.SerializeAsString() ) );
 	_server.send_packet( &_net_package );
 }
 
@@ -181,10 +186,12 @@ int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *dev
 
 	_net_package.set_device_identifier_contents( device_packet->device_identifier_contents );
 	_packed++;
-	for( int i = 0; i < DATA_ELEMENTS; i++ ) {
+	for ( int i = 0; i < DATA_ELEMENTS; i++ ) {
 		_net_package.add_data( device_packet->data[i] );
 		_packed++;
 	}
+
+	printf( "Size of packet: %ld\n", _net_package.ByteSizeLong() );
 	return _packed;
 }
 
@@ -221,11 +228,11 @@ uint16_t ActionTracer::Communication::Supervisor::get_server_port() const {
  * @returns Nothing
  */
 void ActionTracer::Communication::Supervisor::dump_vars( void ) {
-	printf( "\n\nSize of package is %ld\n", sizeof( _net_package.ByteSizeLong() ) );
+	printf( "\n\nSize of package is %ldb\n", sizeof( _net_package.ByteSizeLong() ) );
 	printf( "Packed: %d\n", _packed );
 	printf( "Count: %d\n", _count );
 
-	printf( "%s", _net_package.DebugString().c_str() );
+	printf( "%s", _net_package.ShortDebugString().c_str() );
 
 	printf( "Descriptor: %d\n", _client.get_descriptor() );
 	printf( "Port: %d\n", _server.get_port() );
@@ -262,7 +269,7 @@ ActionTracer::Communication::ActionServer::ActionServer() {
  * @param my_address address to bind to
  * @param port The port to listen on
  */
-ActionTracer::Communication::ActionServer::ActionServer( sockaddr_in my_address, uint16_t port ) : address( my_address ), _port( port ) {
+ActionTracer::Communication::ActionServer::ActionServer( sockaddr_in my_address, uint16_t port ) : _port( port ), address( my_address ) {
 }
 
 /**
@@ -374,16 +381,15 @@ uint8_t ActionTracer::Communication::ActionServer::connect_client( ActionServerC
  */
 void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerClient *client ) {
 	close( client->get_descriptor() );
-	// _clients.erase( std::find( _clients.begin(), _clients.end(), *client ) ); Need to redo this specific method
+
+	// need to remove from vector
 }
 
 /**
  * @brief Disconnect all clients from the server
  */
 void ActionTracer::Communication::ActionServer::disconnect_all_clients() {
-	while( !_clients.empty() ) {
-		disconnect_client( &_clients.front() );
-	}
+	_clients.clear();
 }
 
 /**
@@ -394,7 +400,9 @@ void ActionTracer::Communication::ActionServer::dump_vars() {
 	printf( "\nAction Server - %s:%d\n", inet_ntoa( address.sin_addr ), ntohs( address.sin_port ) );
 	printf( "Descriptor: %d\n", _descriptor );
 
-	for( auto client : _clients ) {
+	printf( "Clients: %ld\n", _clients.size() );
+
+	for ( auto client : _clients ) {
 		client.dump_vars();
 	}
 }
@@ -404,10 +412,13 @@ void ActionTracer::Communication::ActionServer::dump_vars() {
  * @param package A pointer to the data packet to send
  */
 uint16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package ) {
-	for( auto client : _clients ) {
+	if ( _clients.size() == 0 ) {
+		return 0;
+	}
+	for ( auto client : _clients ) {
 		client.send_packet( package );
 	}
-	return package->ByteSize();
+	return package->ByteSizeLong();
 }
 
 /**
@@ -431,7 +442,7 @@ ActionTracer::Communication::ActionServerClient::ActionServerClient() {
  * @param client_address address to bind to
  * @param descriptor The descriptor to keep track of the client
  */
-ActionTracer::Communication::ActionServerClient::ActionServerClient( sockaddr_in client_address, uint8_t descriptor ) : address( client_address ), _descriptor( descriptor ) {
+ActionTracer::Communication::ActionServerClient::ActionServerClient( sockaddr_in client_address, uint8_t descriptor ) : _descriptor( descriptor ), address( client_address ) {
 }
 
 /**
@@ -470,12 +481,12 @@ void ActionTracer::Communication::ActionServerClient::set_descriptor( const int 
  * @returns packet pointer to the packet to send
  */
 uint16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDataNetworkPackage *packet ) {
-	if( !packet->IsInitialized() ) {
+	if ( !packet->IsInitialized() ) {
 		throw std::invalid_argument( "Packet is not ready to be sent" );
 	}
 
-	if( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
-		if( send_response == -1 ) {
+	if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
+		if ( send_response == -1 ) {
 			// Client disconnected
 			disconnect();
 		} else {

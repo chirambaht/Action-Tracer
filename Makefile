@@ -1,5 +1,5 @@
 all: proto collector
-test: test_compile test_run
+test: proto test_compile
 RATE = 2
 # MPU6050_DMP_FIFO_RATE_DIVISOR values and their linked rate
 # 	n  --> Rate (Hz)
@@ -63,6 +63,7 @@ documentation:
 	@ doxygen docs/Doxyfile
 
 proto:
+	@ rm -f action_definitions.pb.h action_definitions.pb.cc action_definitions_pb2.py
 	@ protoc -I=. --cpp_out=. ./action_definitions.proto
 	@ protoc -I=. --python_out=. ./action_definitions.proto
 	@ echo "Proto header files compiled"
