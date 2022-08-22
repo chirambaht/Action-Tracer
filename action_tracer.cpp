@@ -21,7 +21,7 @@ void		 *_data_collection_thread( void *arg );
  *
  * @return void*
  */
-void *ActionTracer::ActionTracer::data_collection_thread( void *arg ) {
+void *ActionTracer::ActionTracer::data_collection_thread() {
 	while ( 1 ) {
 		while ( _running != false && _data_ready == false ) {
 			for ( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
@@ -111,6 +111,7 @@ void ActionTracer::ActionTracer::start() {
 	// Set the running flag to true
 	_running = true;
 	_paused	 = false;
+	data_collection_thread();
 }
 
 /**

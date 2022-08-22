@@ -19,7 +19,7 @@ namespace ActionTracer {
 		float					*_data_package[DATA_PACKAGE_SIZE];
 		ActionDataPackage		  *_data_package_action[MAX_ACT_DEVICES] = { new ActionDataPackage() };
 
-		void *data_collection_thread( void * );
+		void *data_collection_thread();
 		void *data_sending_thread( void * );
 
 		bool _running	 = false;
