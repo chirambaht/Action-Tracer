@@ -116,7 +116,18 @@ uint8_t ActionTracer::Communication::Supervisor::_wait_for_connection() {
  */
 void ActionTracer::Communication::Supervisor::initialize() {
 	_socket_setup();
-	_wait_for_connection();
+	// _wait_for_connection();
+}
+
+/**
+ * @brief Inits a Supervisor instance and only continues if a client is connected to the server.
+ */
+void ActionTracer::Communication::Supervisor::initialize( bool run_server ) {
+	if ( run_server ) {
+		_wait_for_connection();
+	} else {
+		_socket_setup();
+	}
 }
 
 /**

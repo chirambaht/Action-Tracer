@@ -111,6 +111,7 @@ namespace ActionTracer::Communication {
 		void send_packet( void );
 		int	 send_packet( ActionDataPackage	*);
 		void initialize();
+		void initialize( bool );
 
 		void close_socket( uint8_t );
 		void dump_vars( void );

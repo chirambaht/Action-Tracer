@@ -177,8 +177,11 @@ void ActionTracer::ActionTracer::reset() {
 void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
 	_supervisor = new Communication::Supervisor();
 
-	_supervisor->initialize();
+	_supervisor->initialize( false );
+
 	printf( "Action Server is now running: " );
+
+	_turn_off_all_devices();
 
 	for ( auto &device : _devices_waiting_for_use ) {
 		if ( device == nullptr ) {
