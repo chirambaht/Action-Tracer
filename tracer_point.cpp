@@ -53,10 +53,11 @@ void ActionTracer::TracePoint::_initialize() {
 	_device_interrupt_flag = false;
 
 	this->_select_me();
-
-	debugPrintln( "Initializing the device as is needed. Identifier = %d\n", _identifier );
+	_device = new MPU6050( 0x69 );
 
 	debugPrint( _device->testConnection() ? "%d connection successful\n" : "%d connection failed\n", _identifier );
+
+	debugPrintln( "Initializing the device as is needed. Identifier = %d\n", _identifier );
 
 	_device->initialize();
 
