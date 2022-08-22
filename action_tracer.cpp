@@ -26,8 +26,8 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
 			for ( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 				if ( _devices_in_use[i]->is_active() ) {
 					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
+					_supervisor->send_packet( _data_package_action[i] ); // Immidiately send the data to all clients
 				}
-				_supervisor->send_packet( _data_package_action[i] ); // Immidiately send the data to all clients
 			}
 			// Send data to clients
 			_data_ready = true;
@@ -194,6 +194,9 @@ void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
 			continue;
 		}
 		device->initialize( device->get_pin_number(), device->get_identifier() );
+
+		// Add the devices to the list of devices in use in correct spot
+		_devices_in_use[_get_body_identifier( device->get_identifier() )] = device;
 	}
 
 	this->show_body(); // Removable for testing purposes
@@ -261,39 +264,39 @@ uint8_t ActionTracer::ActionTracer::get_sample_rate() const {
  */
 uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t body_part_code ) {
 	if ( body_part_code == ACT_BODY_WAIST ) {
-		return ACT_BODY_WAIST;
+		return 0;
 	} else if ( body_part_code == ACT_BODY_RIGHT_BICEP ) {
-		return ACT_BODY_RIGHT_BICEP;
+		return 1;
 	} else if ( body_part_code == ACT_BODY_RIGHT_FOREARM ) {
-		return ACT_BODY_RIGHT_FOREARM;
+		return 2;
 	} else if ( body_part_code == ACT_BODY_RIGHT_HAND ) {
-		return ACT_BODY_RIGHT_HAND;
+		return 3;
 	} else if ( body_part_code == ACT_BODY_LEFT_BICEP ) {
-		return ACT_BODY_LEFT_BICEP;
+		return 4;
 	} else if ( body_part_code == ACT_BODY_LEFT_FOREARM ) {
-		return ACT_BODY_LEFT_FOREARM;
+		return 5;
 	} else if ( body_part_code == ACT_BODY_LEFT_HAND ) {
-		return ACT_BODY_LEFT_HAND;
+		return 6;
 	} else if ( body_part_code == ACT_BODY_CHEST ) {
-		return ACT_BODY_CHEST;
+		return 7;
 	} else if ( body_part_code == ACT_BODY_HEAD ) {
-		return ACT_BODY_HEAD;
+		return 8;
 	} else if ( body_part_code == ACT_BODY_RIGHT_THIGH ) {
-		return ACT_BODY_RIGHT_THIGH;
+		return 9;
 	} else if ( body_part_code == ACT_BODY_RIGHT_KNEE ) {
-		return ACT_BODY_RIGHT_KNEE;
+		return 10;
 	} else if ( body_part_code == ACT_BODY_RIGHT_FOOT ) {
-		return ACT_BODY_RIGHT_FOOT;
+		return 11;
 	} else if ( body_part_code == ACT_BODY_LEFT_THIGH ) {
-		return ACT_BODY_LEFT_THIGH;
+		return 12;
 	} else if ( body_part_code == ACT_BODY_LEFT_KNEE ) {
-		return ACT_BODY_LEFT_KNEE;
+		return 13;
 	} else if ( body_part_code == ACT_BODY_LEFT_FOOT ) {
-		return ACT_BODY_LEFT_FOOT;
+		return 14;
 	} else if ( body_part_code == ACT_BODY_RIGHT_HIP ) {
-		return ACT_BODY_RIGHT_HIP;
+		return 15;
 	} else if ( body_part_code == ACT_BODY_LEFT_HIP ) {
-		return ACT_BODY_LEFT_HIP;
+		return 16;
 	} else {
 		throw std::invalid_argument( "Received a body part identifer that is not defined." );
 		return 0xFFFF;
