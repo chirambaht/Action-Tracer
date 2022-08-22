@@ -9,14 +9,6 @@
 	#include "wiringPi.h"
 #endif
 
-// Select the data you want out of the senser here. Only select one.
-#define GET_WHOLE_DATA
-// #define GET_DATA_QUATERNION
-// #define GET_DATA_EULER
-// #define GET_DATA_GYROSCOPE
-// #define GET_DATA_ACCELEROMETER
-// #define GET_DATA_YAWPITCHROLL
-
 using namespace ActionTracer;
 
 /**
@@ -154,34 +146,6 @@ void ActionTracer::TracePoint::turn_off() {
 }
 
 /**
- * @brief Prints the last data packet received if debug mode is on.
- * @return Nothing
- *
- */
-void ActionTracer::TracePoint::print_last_data_packet() {
-#ifdef GET_DATA_QUATERNION
-	debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2],
-		_quaternion_float_packet[3] );
-#endif
-
-#ifdef GET_DATA_EULER
-	debugPrint( "Output data type: Euler\nLast packet was: %5f, %5f, %5f\n", _euler_packet[0], _euler_packet[1], _euler_packet[2] );
-#endif
-
-#ifdef GET_DATA_ACCELEROMETER
-	debugPrint( "Output data type: Accelerometer\nLast packet was: %5f, %5f, %5f\n", _acceleration_float_packet[0], _acceleration_float_packet[1], _acceleration_float_packet[2] );
-#endif
-
-#ifdef GET_DATA_GYROSCOPE
-	debugPrint( "Output data type: Gyroscope\nLast packet was: %5f, %5f, %5f\n", _gyroscope_float_packet[0], _gyroscope_float_packet[1], _gyroscope_float_packet[2] );
-#endif
-
-#ifdef GET_DATA_YAWPITCHROLL
-	debugPrint( "Output data type: Yaw, Pitch and Roll\nLast packet was: %5f, %5f, %5f\n", _yaw_pitch_roll_packet[0], _yaw_pitch_roll_packet[1], _yaw_pitch_roll_packet[2] );
-#endif
-}
-
-/**
  * @brief Obtain the data from the sensor. Collects the FIFO packet and extracts the needed data.
  * 	   ================================================================================================
  *	 | Default MotionApps v2.0 42-byte FIFO packet structure:                                           |
@@ -241,7 +205,6 @@ void ActionTracer::TracePoint::get_data() {
 	 |  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41                          |
 	 * ================================================================================================ */
 
-#ifdef GET_WHOLE_DATA
 	// First get dmpQuaternion data as it is pivotal to all work
 	_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
 
@@ -289,42 +252,7 @@ void ActionTracer::TracePoint::get_data() {
 	_data_package.data[18] = _gravity_packet.z; // Max Value:
 
 	_data_package.data[19] = _temperature_packet; // Max Value:
-#endif
 
-#ifdef GET_DATA_QUATERNION
-	_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-	_quaternion_float_packet[0] = _quaternion_packet.w;
-	_quaternion_float_packet[1] = _quaternion_packet.x;
-	_quaternion_float_packet[2] = _quaternion_packet.y;
-	_quaternion_float_packet[3] = _quaternion_packet.z;
-#endif
-
-#ifdef GET_DATA_EULER
-	_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-	_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
-#endif
-
-#ifdef GET_DATA_ACCELEROMETER
-	_device->dmpGetAccel( &_acceleration_packet, _fifo_buffer );
-
-	_acceleration_float_packet[0] = _acceleration_packet.x;
-	_acceleration_float_packet[1] = _acceleration_packet.y;
-	_acceleration_float_packet[2] = _acceleration_packet.z;
-#endif
-
-#ifdef GET_DATA_GYROSCOPE
-	_device->dmpGetGyro( &_gyroscope_packet, _fifo_buffer );
-
-	_gyroscope_float_packet[0] = _gyroscope_packet.x;
-	_gyroscope_float_packet[1] = _gyroscope_packet.y;
-	_gyroscope_float_packet[2] = _gyroscope_packet.z;
-#endif
-
-#ifdef GET_DATA_YAWPITCHROLL
-	_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
-	_device->dmpGetGravity( &_gravity_packet, &_quaternion_packet );
-	_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet[0], &_quaternion_packet, &_gravity_packet );
-#endif
 	this->_deselect_me();
 }
 
@@ -350,24 +278,7 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
 		this->get_data();
 	}
 
-#ifdef GET_WHOLE_DATA
 	return _complete_float_packet;
-#endif
-#ifdef GET_DATA_QUATERNION
-	return _quaternion_float_packet;
-#endif
-#ifdef GET_DATA_EULER
-	return _euler_packet;
-#endif
-#ifdef GET_DATA_ACCELEROMETER
-	return _acceleration_float_packet;
-#endif
-#ifdef GET_DATA_GYROSCOPE
-	return _gyroscope_float_packet;
-#endif
-#ifdef GET_DATA_YAWPITCHROLL
-	return _yaw_pitch_roll_packet;
-#endif
 }
 
 /**
@@ -391,24 +302,7 @@ void ActionTracer::TracePoint::set_calibrate( bool in_value ) {
  * @return size of float array being returned
  */
 uint8_t ActionTracer::TracePoint::get_data_packet_size() {
-#ifdef GET_WHOLE_DATA
 	return 19;
-#endif
-#ifdef GET_DATA_QUATERNION
-	return 4;
-#endif
-#ifdef GET_DATA_EULER
-	return 3;
-#endif
-#ifdef GET_DATA_GYROSCOPE
-	return 3;
-#endif
-#ifdef GET_DATA_ACCELEROMETER
-	return 3;
-#endif
-#ifdef GET_DATA_YAWPITCHROLL
-	return 3;
-#endif
 }
 
 /**
