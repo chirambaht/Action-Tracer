@@ -11,12 +11,10 @@
 	#include "wiringPi.h"
 #endif
 
-const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN, ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
-void *		  _data_collection_thread( void *arg );
-
-void *_data_collection_thread( ActionTracer::ActionTracer *arg ) {
-	args->data_collection_thread();
-}
+const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN,
+	ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN,
+	ACT_DEVICE_12_WIRING_PI_PIN };
+void		 *_data_collection_thread( void *arg );
 
 /**
  * @brief The main method that runs the I2C communication with the action devices and collects the data.
@@ -24,23 +22,18 @@ void *_data_collection_thread( ActionTracer::ActionTracer *arg ) {
  * @return void*
  */
 void *ActionTracer::ActionTracer::data_collection_thread( void *arg ) {
-	while( 1 ) {
-		while( _running != false && _data_ready == false ) {
-			for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
-				if( _devices_in_use[i]->is_active() ) {
+	while ( 1 ) {
+		while ( _running != false && _data_ready == false ) {
+			for ( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
+				if ( _devices_in_use[i]->is_active() ) {
 					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
 				}
-				if( !_paused && _communicator->get_ready() ) {
-					// If ready to send data, load the data package into the communicator.
-					_communicator->load_packet( _data_package_action[i] );
-				}
+				_supervisor->send_packet( _data_package_action[i] ); // Immidiately send the data to all clients
 			}
 			// Send data to clients
 			_data_ready = true;
 		}
 	}
-
-	pthread_exit( NULL );
 }
 
 /**
@@ -50,15 +43,13 @@ void *ActionTracer::ActionTracer::data_collection_thread( void *arg ) {
  */
 void *ActionTracer::ActionTracer::data_sending_thread( void *arg ) {
 	// First connect to clients via the packager
-	_communicator->initialize();
+	_supervisor->initialize();
 
-	while( 1 ) {
-		if( !_paused && _communicator->get_ready() && _data_ready ) {
-			_communicator->send_packet();
+	while ( 1 ) {
+		if ( !_paused && _supervisor->get_ready() && _data_ready ) {
+			_supervisor->send_packet();
 		}
 	}
-
-	pthread_exit( NULL );
 }
 
 /**
@@ -66,7 +57,7 @@ void *ActionTracer::ActionTracer::data_sending_thread( void *arg ) {
  *
  */
 ActionTracer::ActionTracer::ActionTracer() {
-	for( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
+	for ( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
 		_devices_in_use[i] = new TracePoint();
 	}
 }
@@ -129,7 +120,7 @@ void ActionTracer::ActionTracer::start() {
 void ActionTracer::ActionTracer::stop() {
 	// This will stop the Action Device from collecting data and closing all the connections
 	// First pause the device, then do everything else that the pause does not do
-	if( !_paused ) {
+	if ( !_paused ) {
 		pause();
 	}
 
@@ -137,10 +128,7 @@ void ActionTracer::ActionTracer::stop() {
 	_running = false;
 	_turn_off_all_devices();
 
-	// Stop threads
-	pthread_join( _data_collection, nullptr );
-	pthread_join( _data_sending, nullptr );
-	_communicator->disconnect();
+	_supervisor->disconnect();
 	_data_ready = false;
 }
 
@@ -170,27 +158,26 @@ void ActionTracer::ActionTracer::resume() {
  */
 void ActionTracer::ActionTracer::reset() {
 	// Check if the device is running
-	if( _running ) {
+	if ( _running ) {
 		// Stop the device
 		stop();
 	}
 	this->show_body(); // Removable for testing purposes
 
 	// Start threads
-	pthread_create( &_data_collection, nullptr, &_data_collection_thread, nullptr );
-	pthread_create( &_data_sending, nullptr, &_data_sending_thread, NULL );
 }
 
 /**
- * @brief Initialise the sensors being used for the program. This will take time depending on how many devices are being initialized. It will go through each device that has been mapped and intialises it.
+ * @brief Initialise the sensors being used for the program. This will take time depending on how many devices are being initialized. It will go through each device that has been mapped and intialises
+ * it.
  * @param device_map
  * @returns Nothing
  * @throws BAD_MAPPING When the divece has not correctly been mapped.
  * @throws INVALID_SAMPLE_RATE The device has been passed an incorrcet sample rate.
  */
 void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
-	for( auto &device : _devices_waiting_for_use ) {
-		if( device == nullptr ) {
+	for ( auto &device : _devices_waiting_for_use ) {
+		if ( device == nullptr ) {
 			continue;
 		}
 		device->initialize( device->get_pin_number(), device->get_identifier() );
@@ -199,8 +186,6 @@ void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
 	this->show_body(); // Removable for testing purposes
 
 	// Start threads
-	pthread_create( &_data_collection, nullptr, &data_collection_thread, NULL );
-	pthread_create( &_data_sending, nullptr, &data_sending_thread, NULL );
 }
 
 /**
@@ -242,7 +227,7 @@ void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate )
 
 {
 	// For each deviece in use in_devices_in_use, set the sample rate to the given sample rate.
-	for( auto &device : _devices_in_use ) {
+	for ( auto &device : _devices_in_use ) {
 		device->set_sample_rate( 2 );
 	}
 }
@@ -262,39 +247,39 @@ uint8_t ActionTracer::ActionTracer::get_sample_rate() const {
  * @throws INVALID_ARGUMENT When the body part code is not valid.
  */
 uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t body_part_code ) {
-	if( body_part_code == ACT_BODY_WAIST ) {
+	if ( body_part_code == ACT_BODY_WAIST ) {
 		return ACT_BODY_WAIST;
-	} else if( body_part_code == ACT_BODY_RIGHT_BICEP ) {
+	} else if ( body_part_code == ACT_BODY_RIGHT_BICEP ) {
 		return ACT_BODY_RIGHT_BICEP;
-	} else if( body_part_code == ACT_BODY_RIGHT_FOREARM ) {
+	} else if ( body_part_code == ACT_BODY_RIGHT_FOREARM ) {
 		return ACT_BODY_RIGHT_FOREARM;
-	} else if( body_part_code == ACT_BODY_RIGHT_HAND ) {
+	} else if ( body_part_code == ACT_BODY_RIGHT_HAND ) {
 		return ACT_BODY_RIGHT_HAND;
-	} else if( body_part_code == ACT_BODY_LEFT_BICEP ) {
+	} else if ( body_part_code == ACT_BODY_LEFT_BICEP ) {
 		return ACT_BODY_LEFT_BICEP;
-	} else if( body_part_code == ACT_BODY_LEFT_FOREARM ) {
+	} else if ( body_part_code == ACT_BODY_LEFT_FOREARM ) {
 		return ACT_BODY_LEFT_FOREARM;
-	} else if( body_part_code == ACT_BODY_LEFT_HAND ) {
+	} else if ( body_part_code == ACT_BODY_LEFT_HAND ) {
 		return ACT_BODY_LEFT_HAND;
-	} else if( body_part_code == ACT_BODY_CHEST ) {
+	} else if ( body_part_code == ACT_BODY_CHEST ) {
 		return ACT_BODY_CHEST;
-	} else if( body_part_code == ACT_BODY_HEAD ) {
+	} else if ( body_part_code == ACT_BODY_HEAD ) {
 		return ACT_BODY_HEAD;
-	} else if( body_part_code == ACT_BODY_RIGHT_THIGH ) {
+	} else if ( body_part_code == ACT_BODY_RIGHT_THIGH ) {
 		return ACT_BODY_RIGHT_THIGH;
-	} else if( body_part_code == ACT_BODY_RIGHT_KNEE ) {
+	} else if ( body_part_code == ACT_BODY_RIGHT_KNEE ) {
 		return ACT_BODY_RIGHT_KNEE;
-	} else if( body_part_code == ACT_BODY_RIGHT_FOOT ) {
+	} else if ( body_part_code == ACT_BODY_RIGHT_FOOT ) {
 		return ACT_BODY_RIGHT_FOOT;
-	} else if( body_part_code == ACT_BODY_LEFT_THIGH ) {
+	} else if ( body_part_code == ACT_BODY_LEFT_THIGH ) {
 		return ACT_BODY_LEFT_THIGH;
-	} else if( body_part_code == ACT_BODY_LEFT_KNEE ) {
+	} else if ( body_part_code == ACT_BODY_LEFT_KNEE ) {
 		return ACT_BODY_LEFT_KNEE;
-	} else if( body_part_code == ACT_BODY_LEFT_FOOT ) {
+	} else if ( body_part_code == ACT_BODY_LEFT_FOOT ) {
 		return ACT_BODY_LEFT_FOOT;
-	} else if( body_part_code == ACT_BODY_RIGHT_HIP ) {
+	} else if ( body_part_code == ACT_BODY_RIGHT_HIP ) {
 		return ACT_BODY_RIGHT_HIP;
-	} else if( body_part_code == ACT_BODY_LEFT_HIP ) {
+	} else if ( body_part_code == ACT_BODY_LEFT_HIP ) {
 		return ACT_BODY_LEFT_HIP;
 	} else {
 		throw std::invalid_argument( "Received a body part identifer that is not defined." );
@@ -309,31 +294,31 @@ uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t body_part_co
  * @throws INVALID_ARGUMENT When the body part code is not valid.
  */
 uint8_t ActionTracer::ActionTracer::_get_ACT_device_pin( uint16_t ACT_device ) {
-	if( ACT_device == ACT_0 ) {
+	if ( ACT_device == ACT_0 ) {
 		return ACT_DEVICE_0_WIRING_PI_PIN;
-	} else if( ACT_device == ACT_1 ) {
+	} else if ( ACT_device == ACT_1 ) {
 		return ACT_DEVICE_1_WIRING_PI_PIN;
-	} else if( ACT_device == ACT_2 ) {
+	} else if ( ACT_device == ACT_2 ) {
 		return ACT_DEVICE_2_WIRING_PI_PIN;
-	} else if( ACT_device == ACT_3 ) {
+	} else if ( ACT_device == ACT_3 ) {
 		return ACT_DEVICE_3_WIRING_PI_PIN;
-	} else if( ACT_device == ACT_4 ) {
+	} else if ( ACT_device == ACT_4 ) {
 		return ACT_DEVICE_4_WIRING_PI_PIN;
-	} else if( ACT_device == ACT_5 ) {
+	} else if ( ACT_device == ACT_5 ) {
 		return ACT_DEVICE_5_WIRING_PI_PIN;
-	} else if( ACT_device == ACT_6 ) {
+	} else if ( ACT_device == ACT_6 ) {
 		return ACT_DEVICE_6_WIRING_PI_PIN;
-	} else if( ACT_device == ACT_7 ) {
+	} else if ( ACT_device == ACT_7 ) {
 		return ACT_DEVICE_7_WIRING_PI_PIN;
-	} else if( ACT_device == ACT_8 ) {
+	} else if ( ACT_device == ACT_8 ) {
 		return ACT_DEVICE_8_WIRING_PI_PIN;
-	} else if( ACT_device == ACT_9 ) {
+	} else if ( ACT_device == ACT_9 ) {
 		return ACT_DEVICE_9_WIRING_PI_PIN;
-	} else if( ACT_device == ACT_10 ) {
+	} else if ( ACT_device == ACT_10 ) {
 		return ACT_DEVICE_10_WIRING_PI_PIN;
-	} else if( ACT_device == ACT_11 ) {
+	} else if ( ACT_device == ACT_11 ) {
 		return ACT_DEVICE_11_WIRING_PI_PIN;
-	} else if( ACT_device == ACT_12 ) {
+	} else if ( ACT_device == ACT_12 ) {
 		return ACT_DEVICE_12_WIRING_PI_PIN;
 	} else {
 		throw std::invalid_argument( "Received an ACT device identifier that is not defined." );
@@ -364,7 +349,7 @@ void ActionTracer::ActionTracer::show_body() {
 bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t body_part ) {
 	std::vector<uint16_t> body_part_codes;
 	std::vector<uint16_t> device_codes;
-	for( auto &dev : _devices_waiting_for_use ) {
+	for ( auto &dev : _devices_waiting_for_use ) {
 		body_part_codes.push_back( dev->get_identifier() );
 		device_codes.push_back( dev->get_pin_number() );
 	}
@@ -373,16 +358,16 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t b
 	std::sort( device_codes.begin(), device_codes.end() );
 
 	// Check if there are duplicate body part codes and return false if there are.
-	for( auto i = body_part_codes.begin(); i != body_part_codes.end(); ++i ) {
-		if( std::find( i + 1, body_part_codes.end(), *i ) != body_part_codes.end() ) {
+	for ( auto i = body_part_codes.begin(); i != body_part_codes.end(); ++i ) {
+		if ( std::find( i + 1, body_part_codes.end(), *i ) != body_part_codes.end() ) {
 			throw std::invalid_argument( "Bad mapping! This body part is already defined." );
 			return false;
 		}
 	}
 
 	// Check if there are duplicate body part codes and return false if there are.
-	for( auto i = device_codes.begin(); i != device_codes.end(); ++i ) {
-		if( std::find( i + 1, device_codes.end(), *i ) != device_codes.end() ) {
+	for ( auto i = device_codes.begin(); i != device_codes.end(); ++i ) {
+		if ( std::find( i + 1, device_codes.end(), *i ) != device_codes.end() ) {
 			throw std::invalid_argument( "Bad mapping! This ACT device is already in use." );
 			return false;
 		}
@@ -392,9 +377,11 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t b
 }
 
 bool ActionTracer::ActionTracer::_turn_off_all_devices() {
-	uint8_t ALL_ACT_DEVICE_PINS[MAX_ACT_DEVICES] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN, ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
+	uint8_t ALL_ACT_DEVICE_PINS[MAX_ACT_DEVICES] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN,
+		ACT_DEVICE_5_WIRING_PI_PIN, ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN,
+		ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
 
-	for( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
+	for ( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
 		digitalWrite( ALL_ACT_DEVICE_PINS[i], LOW );
 	}
 	return true;

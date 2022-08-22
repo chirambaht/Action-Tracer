@@ -41,6 +41,11 @@ ActionTracer::Communication::Supervisor::Supervisor() {
 ActionTracer::Communication::Supervisor::~Supervisor() {
 }
 
+// Overload () operator
+void ActionTracer::Communication::Supervisor::operator()( uint16_t port, ActionTracer::ActionDataPackage *package_location ) {
+	printf( "Die overloader" );
+}
+
 /**
  * @brief Setup device as TCP server
  *
@@ -127,7 +132,7 @@ void ActionTracer::Communication::Supervisor::disconnect() {
 
 	_server.disconnect_all_clients();
 
-	close_socket( _server.get_descriptor() );
+	// close_socket( _server.get_descriptor() );
 	set_ready( false );
 }
 

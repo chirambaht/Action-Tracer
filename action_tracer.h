@@ -5,22 +5,19 @@
 #include "packager.h"
 #include "tracer_point.h"
 
-#include <pthread.h>
+#include <thread>
 #include <vector>
 
 namespace ActionTracer {
 	class ActionTracer {
 	  private:
-		TracePoint *_devices_in_use[MAX_ACT_DEVICES];
-		Packager	 *_communicator;
+		TracePoint				   *_devices_in_use[MAX_ACT_DEVICES];
+		Communication::Supervisor *_supervisor;
 
 		std::vector<TracePoint *> _devices_waiting_for_use;
 		uint16_t				  _act_sample_rate;
 		float					*_data_package[DATA_PACKAGE_SIZE];
 		ActionDataPackage		  *_data_package_action[MAX_ACT_DEVICES] = { new ActionDataPackage() };
-
-		pthread_t _data_collection;
-		pthread_t _data_sending;
 
 		void *data_collection_thread( void * );
 		void *data_sending_thread( void * );
@@ -34,6 +31,9 @@ namespace ActionTracer {
 		bool	 _turn_off_all_devices();
 
 		bool _validate_mapping( uint16_t, uint16_t );
+
+		// std::thread _data_collection( Supervisor(), 9022 );
+		// std::thread _data_sending( _data_sending_thread );
 
 	  public:
 		ActionTracer( /* args */ );
