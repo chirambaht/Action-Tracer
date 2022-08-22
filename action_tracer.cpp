@@ -1,7 +1,6 @@
 #include "action_tracer.h"
 
 #include <algorithm>
-#include <boost/thread.hpp>
 #include <cstdio>
 #include <stdexcept>
 

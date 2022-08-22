@@ -232,7 +232,7 @@ uint16_t ActionTracer::Communication::Supervisor::get_server_port() const {
  * @returns Nothing
  */
 void ActionTracer::Communication::Supervisor::dump_vars( void ) {
-	printf( "\n\nSize of package is %ldb\n", sizeof( _net_package.ByteSizeLong() ) );
+	printf( "\n\nSize of package is %db\n", sizeof( _net_package.ByteSizeLong() ) );
 	printf( "Packed: %d\n", _packed );
 	printf( "Count: %d\n", _count );
 
@@ -408,7 +408,7 @@ void ActionTracer::Communication::ActionServer::dump_vars() {
 	printf( "\nAction Server - %s:%d\n", inet_ntoa( address.sin_addr ), ntohs( address.sin_port ) );
 	printf( "Descriptor: %d\n", _descriptor );
 
-	printf( "Clients: %ld\n", _clients.size() );
+	printf( "Clients: %d\n", _clients.size() );
 
 	for ( auto client : _clients ) {
 		client.dump_vars();
