@@ -51,7 +51,7 @@ void ActionTracer::TracePoint::initialize( uint8_t pin_number, uint8_t _identifi
 
 void ActionTracer::TracePoint::_initialize() {
 	// Check if device has already been initialized
-	if( _device_initialized ) {
+	if ( _device_initialized ) {
 		debugPrintln( "Device already initialized\n" );
 		return;
 	}
@@ -63,11 +63,12 @@ void ActionTracer::TracePoint::_initialize() {
 	this->_select_me();
 
 	debugPrintln( "Initializing the device as is needed. Identifier = %d\n", _identifier );
+
+	debugPrint( _device->testConnection() ? "%d connection successful\n" : "%d connection failed\n", _identifier );
+
 	_device->initialize();
 
 	// TODO: At this stage an interrupt pin is initialised
-
-	debugPrint( _device->testConnection() ? "%d connection successful\n" : "%d connection failed\n", _identifier );
 
 	// DMP Initialization
 
@@ -76,7 +77,7 @@ void ActionTracer::TracePoint::_initialize() {
 
 	_set_device_offsets();
 
-	if( _device_status == 0 ) {
+	if ( _device_status == 0 ) {
 		debugPrint( "Enabling DMP..." );
 		_device->setDMPEnabled( true );
 
@@ -135,7 +136,7 @@ void ActionTracer::TracePoint::_deselect_me() {
  */
 uint8_t ActionTracer::TracePoint::identify() {
 	// Blink device led
-	for( size_t i = 0; i < 5; i++ ) {
+	for ( size_t i = 0; i < 5; i++ ) {
 		_select_me();
 		delay( 250 );
 		_deselect_me();
@@ -159,7 +160,8 @@ void ActionTracer::TracePoint::turn_off() {
  */
 void ActionTracer::TracePoint::print_last_data_packet() {
 #ifdef GET_DATA_QUATERNION
-	debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2], _quaternion_float_packet[3] );
+	debugPrint( "Output data type: Quaternion\nLast packet was: %5f, %5f, %5f, %5f\n", _quaternion_float_packet[0], _quaternion_float_packet[1], _quaternion_float_packet[2],
+		_quaternion_float_packet[3] );
 #endif
 
 #ifdef GET_DATA_EULER
@@ -193,7 +195,7 @@ void ActionTracer::TracePoint::print_last_data_packet() {
  * @return  Nothing
  */
 void ActionTracer::TracePoint::get_data() {
-	if( !_dmp_ready ) {
+	if ( !_dmp_ready ) {
 		debugPrint( "%d: DMP not initialised\n", _identifier );
 		this->_deselect_me();
 		return;
@@ -204,7 +206,7 @@ void ActionTracer::TracePoint::get_data() {
 	_device_interrupt_status = _device->getIntStatus();
 
 	// does the FIFO have data in it?
-	if( ( _device_interrupt_status & 0x02 ) < 1 ) {
+	if ( ( _device_interrupt_status & 0x02 ) < 1 ) {
 		debugPrintln( "%d: Interrupt not raised\n", _identifier );
 		this->_deselect_me();
 		return;
@@ -212,13 +214,13 @@ void ActionTracer::TracePoint::get_data() {
 
 	_fifo_count = _device->getFIFOCount();
 
-	if( _fifo_count < _packet_size ) {
+	if ( _fifo_count < _packet_size ) {
 		debugPrintln( "%d: MPU interrupt not ready or not enough elements in FIFO\n", _identifier );
 		this->_deselect_me();
 		return;
 	}
 
-	if( _fifo_count == 1024 ) {
+	if ( _fifo_count == 1024 ) {
 		// reset so we can continue cleanly
 		_device->resetFIFO();
 
@@ -332,7 +334,7 @@ void ActionTracer::TracePoint::get_data() {
  * @return Pointer to a float array with the data packet
  */
 ActionDataPackage *ActionTracer::TracePoint::read_data_action( int read_first = 0 ) {
-	if( read_first ) {
+	if ( read_first ) {
 		this->get_data();
 	}
 	return &_data_package;
@@ -344,7 +346,7 @@ ActionDataPackage *ActionTracer::TracePoint::read_data_action( int read_first = 
  * @return Pointer to a float array with the data packet
  */
 float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
-	if( read_first ) {
+	if ( read_first ) {
 		this->get_data();
 	}
 
@@ -415,7 +417,7 @@ uint8_t ActionTracer::TracePoint::get_data_packet_size() {
  * @throws DEVICE_INITIALIZED if the device has been initialised yet meaning it can not be alterd
  */
 void ActionTracer::TracePoint::set_sample_rate( uint8_t new_rate ) {
-	if( _device_initialized ) {
+	if ( _device_initialized ) {
 		// stderr( "Device is already initialized. Cannot change sample rate." );
 		throw _device_initialized;
 	}
