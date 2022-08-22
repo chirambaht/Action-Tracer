@@ -42,7 +42,6 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
  */
 void *ActionTracer::ActionTracer::data_sending_thread( void *arg ) {
 	// First connect to clients via the packager
-	_supervisor->initialize();
 
 	while ( 1 ) {
 		if ( !_paused && _supervisor->get_ready() && _data_ready ) {
@@ -176,6 +175,9 @@ void ActionTracer::ActionTracer::reset() {
  * @throws INVALID_SAMPLE_RATE The device has been passed an incorrcet sample rate.
  */
 void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
+	_supervisor->initialize();
+	printf( "Action Server is now running: " );
+
 	for ( auto &device : _devices_waiting_for_use ) {
 		if ( device == nullptr ) {
 			continue;

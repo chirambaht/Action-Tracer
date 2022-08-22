@@ -87,7 +87,7 @@ int main( int argc, char const *argv[] ) {
 	setup();
 
 	printf( "\nSetup Complete! Running now\n\n" );
-	while( 1 ) {
+	while ( 1 ) {
 		loop();
 	}
 
