@@ -109,6 +109,12 @@ void ActionTracer::ActionTracer::start() {
 	// Set the running flag to true
 	_running = true;
 	_paused	 = false;
+
+	if ( !_supervisor->get_ready() ) {
+		printf( "Waiting for a client to connect...\n" );
+		_supervisor->initialize( true );
+	}
+
 	data_collection_thread();
 }
 

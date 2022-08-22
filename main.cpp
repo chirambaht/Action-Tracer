@@ -41,7 +41,7 @@ void setup() {
 
 	sigaction( SIGINT, &sigIntHandler, NULL );
 	main_dev->show_body();
-	// main_dev->map_device( ACT_0, ACT_BODY_WAIST );
+	main_dev->map_device( ACT_0, ACT_BODY_WAIST );
 	main_dev->map_device( ACT_1, ACT_BODY_LEFT_BICEP );
 	main_dev->map_device( ACT_2, ACT_BODY_LEFT_FOREARM );
 	main_dev->map_device( ACT_3, ACT_BODY_LEFT_HAND );
