@@ -175,6 +175,8 @@ void ActionTracer::ActionTracer::reset() {
  * @throws INVALID_SAMPLE_RATE The device has been passed an incorrcet sample rate.
  */
 void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
+	_supervisor = new Communication::Supervisor();
+
 	_supervisor->initialize();
 	printf( "Action Server is now running: " );
 
