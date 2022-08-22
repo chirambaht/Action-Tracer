@@ -30,7 +30,7 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
 				}
 			}
 			// Send data to clients
-			_data_ready = true;
+			// _data_ready = true;
 		}
 	}
 }
