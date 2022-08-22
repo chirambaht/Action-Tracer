@@ -39,6 +39,7 @@ namespace ActionTracer::Communication {
 		uint16_t send_packet( ActionDataNetworkPackage *packet );
 
 		void disconnect();
+		void send_disconnect_notification();
 	};
 
 	class ActionServer {
@@ -107,7 +108,7 @@ namespace ActionTracer::Communication {
 		~Supervisor();
 
 		void send_packet( void );
-		int	 send_packet( ActionDataPackage * );
+		int	 send_packet( ActionDataPackage	*);
 		void initialize();
 
 		void close_socket( uint8_t );

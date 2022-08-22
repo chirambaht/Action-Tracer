@@ -153,7 +153,7 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 		throw std::invalid_argument( "No device is connected to the system's network." );
 	}
 
-	_net_package.set_packet_number( _count++ );
+	_net_package.set_packet_number( ++_count );
 
 	auto		   timestamp = new google::protobuf::Timestamp{};
 	struct timeval tv;
@@ -169,7 +169,7 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 	}
 
 	// Packet size
-	printf( "Packet size to be sent: %ld\n", sizeof( _net_package.SerializeAsString() ) );
+	// printf( "Packet size to be sent: %ld\n", sizeof( _net_package.SerializeAsString() ) );
 	_server.send_packet( &_net_package );
 }
 
@@ -191,7 +191,6 @@ int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *dev
 		_packed++;
 	}
 
-	printf( "Size of packet: %ld\n", _net_package.ByteSizeLong() );
 	return _packed;
 }
 
@@ -380,6 +379,7 @@ uint8_t ActionTracer::Communication::ActionServer::connect_client( ActionServerC
  * @param ActionServerClient client to disconnect
  */
 void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerClient *client ) {
+	client->send_disconnect_notification();
 	close( client->get_descriptor() );
 
 	// need to remove from vector
@@ -389,6 +389,9 @@ void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerC
  * @brief Disconnect all clients from the server
  */
 void ActionTracer::Communication::ActionServer::disconnect_all_clients() {
+	for ( auto client : _clients ) {
+		client.disconnect();
+	}
 	_clients.clear();
 }
 
@@ -501,7 +504,19 @@ uint16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDat
  * @returns Nothing
  */
 void ActionTracer::Communication::ActionServerClient::disconnect() {
+	send_disconnect_notification();
 	close( get_descriptor() );
+}
+
+/**
+ * @brief Sends the disconnect notification to the client. This notification is a standard message with identifier and packet number set to 0 and as no data.
+ * @returns Nothing
+ */
+void ActionTracer::Communication::ActionServerClient::send_disconnect_notification() {
+	ActionDataNetworkPackage disconnect_packet = ActionDataNetworkPackage();
+	disconnect_packet.set_device_identifier_contents( 0 );
+	disconnect_packet.set_packet_number( 0 );
+	send_packet( &disconnect_packet );
 }
 
 /**
