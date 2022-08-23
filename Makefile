@@ -66,6 +66,7 @@ proto:
 	@ rm -f action_definitions.pb.h action_definitions.pb.cc action_definitions_pb2.py
 	@ protoc -I=. --cpp_out=. ./action_definitions.proto
 	@ protoc -I=. --python_out=. ./action_definitions.proto
+	@ protoc -I=. --csharp_out=. ./action_definitions.proto
 	@ echo "Proto header files compiled"
 
 test_compile:
