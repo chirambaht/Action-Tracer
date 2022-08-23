@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <stdexcept>
+#include <unistd.h>
 
 #ifdef ON_PI
 	#include <wiringPi.h>
