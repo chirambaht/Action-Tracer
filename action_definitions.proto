@@ -6,11 +6,13 @@ package ActionTracer;
 
 message ActionDataNetworkPackage {
     
-
-    uint32 device_identifier_contents = 1;
+    google.protobuf.Timestamp send_time = 3;
     uint32 packet_number = 2;
 
-    google.protobuf.Timestamp send_time = 3;
-
-    repeated float data = 4;
+    message ActionDeviceData{
+        uint32 device_identifier_contents = 1;
+        repeated float data = 4;
+    } 
+    
+    repeated ActionDeviceData device_data = 5;
 }

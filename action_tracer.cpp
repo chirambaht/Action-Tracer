@@ -26,9 +26,13 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
 			for ( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 				if ( _devices_in_use[i]->is_active() ) {
 					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
-					_supervisor->send_packet( _data_package_action[i] ); // Immidiately send the data to all clients
+					_supervisor->load_packet( _data_package_action[i] ); // Immidiately send the data to all clients
 				}
 			}
+
+			_supervisor->send_packet(); // Send the data to all clients
+			// wait for 1 ms
+			usleep( 1000 );
 			// Send data to clients
 			// _data_ready = true;
 		}

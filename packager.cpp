@@ -187,6 +187,9 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 	// Packet size
 	// printf( "Packet size to be sent: %ld\n", sizeof( _net_package.SerializeAsString() ) );
 	_server.send_packet( &_net_package );
+
+	// Reset the packet
+	_net_package.Clear();
 }
 
 /**
@@ -198,12 +201,14 @@ void ActionTracer::Communication::Supervisor::send_packet() {
  */
 int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *device_packet ) {
 	_packed = 0;
-	_net_package.Clear();
 
-	_net_package.set_device_identifier_contents( device_packet->device_identifier_contents );
+	ActionDataNetworkPackage_ActionDeviceData *device_data = _net_package.add_device_data();
+	device_data->set_device_identifier_contents( device_packet->device_identifier_contents );
+
 	_packed++;
+
 	for ( int i = 0; i < DATA_ELEMENTS; i++ ) {
-		_net_package.add_data( device_packet->data[i] );
+		device_data->add_data( device_packet->data[i] );
 		_packed++;
 	}
 
@@ -437,6 +442,7 @@ uint16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwo
 	for ( auto client : _clients ) {
 		client.send_packet( package );
 	}
+
 	return package->ByteSizeLong();
 }
 
@@ -525,12 +531,11 @@ void ActionTracer::Communication::ActionServerClient::disconnect() {
 }
 
 /**
- * @brief Sends the disconnect notification to the client. This notification is a standard message with identifier and packet number set to 0 and as no data.
+ * @brief Sends the disconnect notification to the client. This notification is a standard message with no and packet number set to 0 and as no data.
  * @returns Nothing
  */
 void ActionTracer::Communication::ActionServerClient::send_disconnect_notification() {
 	ActionDataNetworkPackage disconnect_packet = ActionDataNetworkPackage();
-	disconnect_packet.set_device_identifier_contents( 0 );
 	disconnect_packet.set_packet_number( 0 );
 	send_packet( &disconnect_packet );
 }
