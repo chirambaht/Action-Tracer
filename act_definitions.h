@@ -90,7 +90,7 @@
 
 namespace ActionTracer {
 	typedef struct ActionDataPackage {
-		// [ 24-bit identifier | 8-bit contents ]
+		// [ 32-bit identifier ]
 		__uint32_t device_identifier_contents = 0;
 
 		float data[DATA_ELEMENTS];

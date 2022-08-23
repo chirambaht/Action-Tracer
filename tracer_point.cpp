@@ -343,5 +343,5 @@ uint16_t ActionTracer::TracePoint::get_identifier() const {
 
 void ActionTracer::TracePoint::set_identifier( uint16_t identity ) {
 	_identifier								 = identity;
-	_data_package.device_identifier_contents = _data_package.device_identifier_contents | identity << 8;
+	_data_package.device_identifier_contents = _identifier;
 }
