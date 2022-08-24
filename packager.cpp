@@ -175,14 +175,13 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 	timestamp->set_nanos( tv.tv_usec * 1000 );
 	_net_package.set_allocated_send_time( timestamp );
 
-	if ( ( _count % 11 ) == 0 || _count == 1 ) {
-		printf( "Sending packet number %d\n", _count );
-	}
-
 	if ( !_net_package.IsInitialized() ) {
 		throw std::invalid_argument( "Packet is not ready to be sent" );
 	}
-
+	
+	if ( ( _count % 11 ) == 0 || _count == 1 ) {
+		printf( "Sending packet number %d\n", _count );
+	}
 	// Packet size
 	// printf( "Packet size to be sent: %ld\n", sizeof( _net_package.SerializeAsString() ) );
 	_server.send_packet( &_net_package );
