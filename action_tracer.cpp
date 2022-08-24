@@ -21,7 +21,7 @@ void ActionTracer::ActionTracer::data_transmission_thread( Communication::Superv
 		printf( "Waiting for a client to connect...\n" );
 		new_super->initialize( true );
 	}
-
+	printf( "Action Server is now running" );
 	while ( true ) {
 		if ( *data_in ) {
 			new_super->send_packet();
@@ -207,10 +207,10 @@ void ActionTracer::ActionTracer::initialize() {
 	_supervisor = new Communication::Supervisor();
 
 	_supervisor->initialize( false );
-	bool		 *ptr_rdy = &_data_ready;
-	std::thread data_transmission( &ActionTracer::data_transmission_thread, this, _supervisor, ptr_rdy );
+	bool *ptr_rdy = &_data_ready;
 
-	printf( "Action Server is now running: " );
+	std::thread data_transmission( &ActionTracer::data_transmission_thread, this, _supervisor, ptr_rdy );
+	data_transmission.detach();
 
 	_turn_off_all_devices();
 
