@@ -22,8 +22,14 @@ void ActionTracer::ActionTracer::data_transmission_thread( Communication::Superv
 		new_super->initialize( true );
 	}
 	printf( "Action Server is now running" );
+	int packet_count = 0;
 	while ( true ) {
 		if ( *data_in ) {
+			if ( packet_count % 50 == 0 ) {
+				printf( "Sent a packet\n" );
+			}
+
+			packet_count++;
 			new_super->send_packet();
 			*data_in = !*data_in;
 		}
