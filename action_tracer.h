@@ -9,6 +9,7 @@
 #include <vector>
 
 namespace ActionTracer {
+
 	class ActionTracer {
 	  private:
 		TracePoint				   *_devices_in_use[MAX_ACT_DEVICES];
@@ -33,6 +34,8 @@ namespace ActionTracer {
 
 		bool _validate_mapping( uint16_t, uint16_t );
 
+		void data_transmission_thread( Communication::Supervisor *, bool * );
+
 		// std::thread _data_collection( Supervisor(), 9022 );
 		// std::thread _data_sending( _data_sending_thread );
 
@@ -54,6 +57,7 @@ namespace ActionTracer {
 
 		// void status();
 
+		void initialize();
 		void initialize( int8_t );
 		// void close();
 

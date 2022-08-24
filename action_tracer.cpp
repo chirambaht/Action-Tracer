@@ -16,6 +16,20 @@ const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_P
 	ACT_DEVICE_12_WIRING_PI_PIN };
 void		 *_data_collection_thread( void *arg );
 
+void ActionTracer::ActionTracer::data_transmission_thread( Communication::Supervisor *new_super, bool *data_in ) {
+	if ( !new_super->get_ready() ) {
+		printf( "Waiting for a client to connect...\n" );
+		new_super->initialize( true );
+	}
+
+	while ( true ) {
+		if ( *data_in ) {
+			new_super->send_packet();
+			*data_in = !*data_in;
+		}
+	}
+}
+
 /**
  * @brief The main method that runs the I2C communication with the action devices and collects the data.
  *
@@ -23,19 +37,28 @@ void		 *_data_collection_thread( void *arg );
  */
 void *ActionTracer::ActionTracer::data_collection_thread() {
 	while ( 1 ) {
-		while ( _running != false && _data_ready == false ) {
+		while ( _running != false ) {
 			for ( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 				if ( _devices_in_use[i]->is_active() ) {
 					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
-					_supervisor->load_packet( _data_package_action[i] ); // Immidiately send the data to all clients
 				}
 			}
 
-			_supervisor->send_packet(); // Send the data to all clients
+			// _supervisor->send_packet(); // Send the data to all clients
 			// wait for 1 ms
 			usleep( 1000 );
 			// Send data to clients
-			// _data_ready = true;
+			_data_ready = true;
+
+			// When the data has been sent, the new packet can be loaded and sent
+			if ( _data_ready == false ) {
+				for ( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
+					if ( _devices_in_use[i]->is_active() ) {
+						_supervisor->load_packet( _data_package_action[i] ); // Immidiately send the data to all clients
+					}
+				}
+				_supervisor->send_packet();
+			}
 		}
 	}
 }
@@ -115,11 +138,6 @@ void ActionTracer::ActionTracer::start() {
 	_running = true;
 	_paused	 = false;
 
-	if ( !_supervisor->get_ready() ) {
-		printf( "Waiting for a client to connect...\n" );
-		_supervisor->initialize( true );
-	}
-
 	data_collection_thread();
 }
 
@@ -185,10 +203,12 @@ void ActionTracer::ActionTracer::reset() {
  * @throws BAD_MAPPING When the divece has not correctly been mapped.
  * @throws INVALID_SAMPLE_RATE The device has been passed an incorrcet sample rate.
  */
-void ActionTracer::ActionTracer::initialize( int8_t sample_rate = 1 ) {
+void ActionTracer::ActionTracer::initialize() {
 	_supervisor = new Communication::Supervisor();
 
 	_supervisor->initialize( false );
+
+	std::thread data_transmission( data_transmission_thread, _supervisor, &_data_ready );
 
 	printf( "Action Server is now running: " );
 
