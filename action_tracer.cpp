@@ -207,8 +207,8 @@ void ActionTracer::ActionTracer::initialize() {
 	_supervisor = new Communication::Supervisor();
 
 	_supervisor->initialize( false );
-
-	std::thread data_transmission( data_transmission_thread, _supervisor, &_data_ready );
+	bool		 *ptr_rdy = &_data_ready;
+	std::thread data_transmission( &ActionTracer::data_transmission_thread, this, _supervisor, ptr_rdy );
 
 	printf( "Action Server is now running: " );
 
