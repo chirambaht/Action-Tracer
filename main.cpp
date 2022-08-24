@@ -65,6 +65,9 @@ void exit_handler( int s ) {
  * @return Nothing
  */
 void loop() {
+	while ( 1 ) {
+		/* code */
+	}
 }
 
 /**
