@@ -41,11 +41,6 @@ ActionTracer::Communication::Supervisor::Supervisor() {
 ActionTracer::Communication::Supervisor::~Supervisor() {
 }
 
-// Overload () operator
-void ActionTracer::Communication::Supervisor::operator()( uint16_t port, ActionTracer::ActionDataPackage *package_location ) {
-	printf( "Die overloader" );
-}
-
 /**
  * @brief Setup device as TCP server
  *
@@ -179,6 +174,10 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 	timestamp->set_seconds( tv.tv_sec );
 	timestamp->set_nanos( tv.tv_usec * 1000 );
 	_net_package.set_allocated_send_time( timestamp );
+
+	if ( ( _count % 11 ) == 0 || _count == 1 ) {
+		printf( "Sending packet number %d\n", _count );
+	}
 
 	if ( !_net_package.IsInitialized() ) {
 		throw std::invalid_argument( "Packet is not ready to be sent" );

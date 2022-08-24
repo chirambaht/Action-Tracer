@@ -106,7 +106,6 @@ namespace ActionTracer::Communication {
 		Supervisor();
 		Supervisor( uint16_t );
 		~Supervisor();
-		void operator()( uint16_t, ActionTracer::ActionDataPackage * );
 
 		void send_packet( void );
 		int	 send_packet( ActionDataPackage	*);
