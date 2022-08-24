@@ -48,7 +48,7 @@ void setup() {
 	main_dev->show_body();
 	main_dev->set_sample_rate( 2 );
 	printf( "All set to go \n" );
-	main_dev->initialize( 2 );
+	main_dev->initialize();
 	main_dev->show_body();
 	printf( "Initialised\n" );
 	main_dev->start();
