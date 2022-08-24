@@ -90,10 +90,11 @@ namespace ActionTracer {
 		uint8_t			   get_data_packet_size();
 		uint8_t			   identify();
 
-		uint16_t get_pin_number() const;
-		void	 set_pin_number( uint8_t );
-		uint16_t get_identifier() const;
-		void	 set_identifier( uint16_t );
+		uint16_t	get_pin_number() const;
+		char const *get_pin_number_as_string() const;
+		void		set_pin_number( uint8_t );
+		uint16_t	get_identifier() const;
+		void		set_identifier( uint16_t );
 
 		bool is_active();
 	};
