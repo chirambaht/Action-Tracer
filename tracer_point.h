@@ -5,6 +5,7 @@
 #include "act_definitions.h"
 
 #include <cstdint>
+#include <string>
 
 #define MAXIMUM_COLLECTED_DATA_POINTS ( 20 )
 
@@ -91,7 +92,7 @@ namespace ActionTracer {
 		uint8_t			   identify();
 
 		uint16_t	get_pin_number() const;
-		char const *get_pin_number_as_string() const;
+		std::string get_pin_number_as_string() const;
 		void		set_pin_number( uint8_t );
 		uint16_t	get_identifier() const;
 		void		set_identifier( uint16_t );

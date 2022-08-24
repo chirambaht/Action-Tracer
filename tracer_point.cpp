@@ -8,7 +8,6 @@
 #else
 	#include "wiringPi.h"
 #endif
-#include <string>
 
 using namespace ActionTracer;
 
@@ -333,11 +332,12 @@ uint16_t ActionTracer::TracePoint::get_pin_number() const {
 	return _pin_number;
 }
 
-char const *ActionTracer::TracePoint::get_pin_number_as_string() const {
+std::string ActionTracer::TracePoint::get_pin_number_as_string() const {
 	if ( _device_initialized ) {
 		return "  ";
 	}
-	return std::to_string( _pin_number ).c_str();
+
+	return std::to_string( _pin_number );
 }
 
 void ActionTracer::TracePoint::set_pin_number( uint8_t pin ) {
