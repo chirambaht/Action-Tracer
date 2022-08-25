@@ -179,9 +179,6 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 		throw std::invalid_argument( "Packet is not ready to be sent" );
 	}
 
-	if ( ( _count % 11 ) == 0 || _count == 1 ) {
-		printf( "Sending packet number %d\n", _count );
-	}
 	// Packet size
 	// printf( "Packet size to be sent: %ld\n", sizeof( _net_package.SerializeAsString() ) );
 	_server.send_packet( &_net_package );
@@ -509,7 +506,6 @@ uint16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDat
 	if ( !packet->IsInitialized() ) {
 		throw std::invalid_argument( "Packet is not ready to be sent" );
 	}
-	printf( "%s\n", packet->DebugString().c_str() );
 
 	if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
 		if ( send_response == -1 ) {
