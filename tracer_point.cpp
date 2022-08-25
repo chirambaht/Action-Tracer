@@ -333,7 +333,7 @@ uint16_t ActionTracer::TracePoint::get_pin_number() const {
 }
 
 std::string ActionTracer::TracePoint::get_pin_number_as_string() const {
-	if ( _device_initialized ) {
+	if ( !_device_initialized ) {
 		return "";
 	}
 
