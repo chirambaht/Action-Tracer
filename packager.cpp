@@ -200,7 +200,9 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *device_packet ) {
 	_packed = 0;
 
-	ActionDataNetworkPackage::ActionDeviceData *device_data = _net_package.add_device_data();
+	// ActionDataNetworkPackage_ActionDeviceData  *device_data		= new ActionDataNetworkPackage_ActionDeviceData();
+
+	ActionDataNetworkPackage_ActionDeviceData *device_data = _net_package.add_device_data();
 	device_data->set_device_identifier_contents( device_packet->device_identifier_contents );
 
 	_packed++;
@@ -209,6 +211,8 @@ int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *dev
 		device_data->add_data( device_packet->data[i] );
 		_packed++;
 	}
+
+	printf( "%d - Debug string: %s\n", _count, _net_package.DebugString().c_str() );
 
 	return _packed;
 }
