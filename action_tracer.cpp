@@ -51,11 +51,8 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
 				}
 			}
 
-			// _supervisor->send_packet(); // Send the data to all clients
 			// wait for 1 ms
-			usleep( 1000 );
-			// Send data to clients
-			_data_ready = true;
+			// usleep( 1000 );
 
 			// When the data has been sent, the new packet can be loaded and sent
 			if ( _data_ready == false ) {
@@ -65,6 +62,7 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
 					}
 				}
 				_supervisor->send_packet();
+				_data_ready = true;
 			}
 		}
 	}
