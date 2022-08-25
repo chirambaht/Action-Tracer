@@ -178,7 +178,7 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 	if ( !_net_package.IsInitialized() ) {
 		throw std::invalid_argument( "Packet is not ready to be sent" );
 	}
-	
+
 	if ( ( _count % 11 ) == 0 || _count == 1 ) {
 		printf( "Sending packet number %d\n", _count );
 	}
@@ -200,7 +200,7 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *device_packet ) {
 	_packed = 0;
 
-	ActionDataNetworkPackage_ActionDeviceData *device_data = _net_package.add_device_data();
+	ActionDataNetworkPackage::ActionDeviceData *device_data = _net_package.add_device_data();
 	device_data->set_device_identifier_contents( device_packet->device_identifier_contents );
 
 	_packed++;
