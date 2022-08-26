@@ -332,12 +332,39 @@ uint16_t ActionTracer::TracePoint::get_pin_number() const {
 	return _pin_number;
 }
 
-std::string ActionTracer::TracePoint::get_pin_number_as_string() const {
+std::string ActionTracer::TracePoint::get_act_pin_number_as_string() const {
 	if ( !_device_initialized ) {
 		return "";
 	}
 
-	return std::to_string( _pin_number );
+	if ( _pin_number == ACT_DEVICE_0_WIRING_PI_PIN ) {
+		return "0";
+	} else if ( _pin_number == ACT_DEVICE_1_WIRING_PI_PIN ) {
+		return "1";
+	} else if ( _pin_number == ACT_DEVICE_2_WIRING_PI_PIN ) {
+		return "2";
+	} else if ( _pin_number == ACT_DEVICE_3_WIRING_PI_PIN ) {
+		return "3";
+	} else if ( _pin_number == ACT_DEVICE_4_WIRING_PI_PIN ) {
+		return "4";
+	} else if ( _pin_number == ACT_DEVICE_5_WIRING_PI_PIN ) {
+		return "5";
+	} else if ( _pin_number == ACT_DEVICE_6_WIRING_PI_PIN ) {
+		return "6";
+	} else if ( _pin_number == ACT_DEVICE_7_WIRING_PI_PIN ) {
+		return "7";
+	} else if ( _pin_number == ACT_DEVICE_8_WIRING_PI_PIN ) {
+		return "8";
+	} else if ( _pin_number == ACT_DEVICE_9_WIRING_PI_PIN ) {
+		return "9";
+	} else if ( _pin_number == ACT_DEVICE_10_WIRING_PI_PIN ) {
+		return "10";
+	} else if ( _pin_number == ACT_DEVICE_11_WIRING_PI_PIN ) {
+		return "11";
+	} else if ( _pin_number == ACT_DEVICE_12_WIRING_PI_PIN ) {
+		return "12";
+	}
+	return "";
 }
 
 void ActionTracer::TracePoint::set_pin_number( uint8_t pin ) {

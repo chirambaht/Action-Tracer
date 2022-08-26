@@ -370,23 +370,24 @@ uint8_t ActionTracer::ActionTracer::_get_ACT_device_pin( uint16_t ACT_device ) {
 
 void ActionTracer::ActionTracer::show_body() {
 	// Show the body being used and which ACT_DEVICE_# is connected
-
+	printf( "Find below the ACT device connections. This is in reference to the Action Tracer Pi Hat Board\n\n" );
 	printf( "  R             +---+                L  \n" );
-	printf( "  R             | %-2s|                L  \n", _devices_in_use[8]->get_pin_number_as_string().c_str() );
+	printf( "  R             | %-2s|                L  \n", _devices_in_use[8]->get_act_pin_number_as_string().c_str() );
 	printf( "  R             +- -+                L  \n" );
-	printf( "  R            +--%-2s-+               L  \n", _devices_in_use[7]->get_pin_number_as_string().c_str() );
-	printf( "  R         %2s/  | |  \\%-2s            L  \n", _devices_in_use[1]->get_pin_number_as_string().c_str(), _devices_in_use[4]->get_pin_number_as_string().c_str() );
-	printf( "  R          +   | |   +-%2s-+%2s<     L  \n", _devices_in_use[5]->get_pin_number_as_string().c_str(), _devices_in_use[6]->get_pin_number_as_string().c_str() );
-	printf( "  R       %2s/    |%1s|                 L  \n", _devices_in_use[2]->get_pin_number_as_string().c_str(), _devices_in_use[0]->get_pin_number_as_string().c_str() ); // 0 is the center;
-	printf( "  R    >%2s-+  %2s/   \\%-2s              L  \n", _devices_in_use[3]->get_pin_number_as_string().c_str(), _devices_in_use[15]->get_pin_number_as_string().c_str(),
-		_devices_in_use[16]->get_pin_number_as_string().c_str() );
+	printf( "  R            +--%-2s-+               L  \n", _devices_in_use[7]->get_act_pin_number_as_string().c_str() );
+	printf( "  R         %2s/  | |  \\%-2s            L  \n", _devices_in_use[1]->get_act_pin_number_as_string().c_str(), _devices_in_use[4]->get_act_pin_number_as_string().c_str() );
+	printf( "  R          +   | |   +-%2s-+%2s<     L  \n", _devices_in_use[5]->get_act_pin_number_as_string().c_str(), _devices_in_use[6]->get_act_pin_number_as_string().c_str() );
+	printf( "  R       %2s/    |%1s|                 L  \n", _devices_in_use[2]->get_act_pin_number_as_string().c_str(),
+		_devices_in_use[0]->get_act_pin_number_as_string().c_str() ); // 0 is the center;
+	printf( "  R    >%2s-+  %2s/   \\%-2s              L  \n", _devices_in_use[3]->get_act_pin_number_as_string().c_str(), _devices_in_use[15]->get_act_pin_number_as_string().c_str(),
+		_devices_in_use[16]->get_act_pin_number_as_string().c_str() );
 	printf( "  R             |   |                L  \n" );
-	printf( "  R            %2s   %-2s               L  \n", _devices_in_use[9]->get_pin_number_as_string().c_str(), _devices_in_use[12]->get_pin_number_as_string().c_str() );
+	printf( "  R            %2s   %-2s               L  \n", _devices_in_use[9]->get_act_pin_number_as_string().c_str(), _devices_in_use[12]->get_act_pin_number_as_string().c_str() );
 	printf( "  R             +   +                L  \n" );
-	printf( "  R            %2s   %-2s               L  \n", _devices_in_use[10]->get_pin_number_as_string().c_str(), _devices_in_use[13]->get_pin_number_as_string().c_str() );
+	printf( "  R            %2s   %-2s               L  \n", _devices_in_use[10]->get_act_pin_number_as_string().c_str(), _devices_in_use[13]->get_act_pin_number_as_string().c_str() );
 	printf( "  R             |   |                L  \n" );
 	printf( "  R             +   +                L  \n" );
-	printf( "  R          %2s/     \\%-2s             L  \n", _devices_in_use[11]->get_pin_number_as_string().c_str(), _devices_in_use[14]->get_pin_number_as_string().c_str() );
+	printf( "  R          %2s/     \\%-2s             L  \n\n", _devices_in_use[11]->get_act_pin_number_as_string().c_str(), _devices_in_use[14]->get_act_pin_number_as_string().c_str() );
 }
 
 bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t body_part ) {
