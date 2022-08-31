@@ -1,5 +1,5 @@
 syntax = "proto3";
-
+option csharp_namespace = "Google.Protobuf.ActionTracer";
 import "google/protobuf/timestamp.proto";
 
 package ActionTracer;

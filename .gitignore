@@ -60,3 +60,5 @@ Code/Collection/.vscode/c_cpp_properties.json
 data.txt
 test_program
 data/*
+*.cs
+ActionDefinitions.cs
