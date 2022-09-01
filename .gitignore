@@ -62,4 +62,3 @@ test_program
 data/*
 *.cs
 ActionDefinitions.cs
-blender.py
