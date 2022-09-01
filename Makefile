@@ -67,7 +67,7 @@ proto:
 	@ protoc -I=. --cpp_out=. ./action_definitions.proto
 	@ protoc -I=. --python_out=. ./action_definitions.proto
 	@ protoc -I=. --csharp_out=. ./action_definitions.proto
-	@ cp /home/chrhum001/Documents/Masters/Action-Tracer/ActionDefinitions.cs /home/chrhum001/Documents/Masters/ActionFigure/Assets/Scripts/
+	# @ cp /home/chrhum001/Documents/Masters/Action-Tracer/ActionDefinitions.cs /home/chrhum001/Documents/Masters/ActionFigure/Assets/Scripts/
 	@ echo "Proto header files compiled"
 
 test_compile:
