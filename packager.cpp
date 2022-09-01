@@ -434,12 +434,17 @@ void ActionTracer::Communication::ActionServer::dump_vars() {
  * @brief Send a packet to all clients connected to the server
  * @param package A pointer to the data packet to send
  */
-uint16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package ) {
+int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package ) {
 	if ( _clients.size() == 0 ) {
 		return 0;
 	}
+
 	for ( auto client : _clients ) {
-		client.send_packet( package );
+		int res = client.send_packet( package );
+		if ( res == -1 ) {
+			disconnect_all_clients();
+			break;
+		}
 	}
 
 	return package->ByteSizeLong();
@@ -449,9 +454,8 @@ uint16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwo
  * @brief Send a packet to a client connected to the server
  * @param package A pointer to the data packet to send
  */
-uint16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package, ActionServerClient *client ) {
-	client->send_packet( package );
-	return 1;
+int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package, ActionServerClient *client ) {
+	return client->send_packet( package );
 }
 
 /**
@@ -504,7 +508,7 @@ void ActionTracer::Communication::ActionServerClient::set_descriptor( const int 
  * @brief Send a packet to the client via socket
  * @returns packet pointer to the packet to send
  */
-uint16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDataNetworkPackage *packet ) {
+int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDataNetworkPackage *packet ) {
 	if ( !packet->IsInitialized() ) {
 		// throw std::invalid_argument( "Packet is not ready to be sent" );
 		return;
@@ -513,7 +517,8 @@ uint16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDat
 	if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
 		if ( send_response == -1 ) {
 			// Client disconnected
-			disconnect();
+			client_disconnected();
+			return -1;
 		} else {
 			perror( "Error" );
 		}
@@ -522,7 +527,15 @@ uint16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDat
 }
 
 /**
- * @brief Disconnects the client from the server
+ * @brief Disconnects the client from the server without notification
+ * @returns Nothing
+ */
+void ActionTracer::Communication::ActionServerClient::client_disconnected() {
+	close( get_descriptor() );
+}
+
+/**
+ * @brief Disconnects the client from the server with notification
  * @returns Nothing
  */
 void ActionTracer::Communication::ActionServerClient::disconnect() {

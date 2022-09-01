@@ -36,8 +36,9 @@ namespace ActionTracer::Communication {
 
 		void set_descriptor( const int descriptor );
 
-		uint16_t send_packet( ActionDataNetworkPackage *packet );
+		int16_t send_packet( ActionDataNetworkPackage *packet );
 
+		void client_disconnected();
 		void disconnect();
 		void send_disconnect_notification();
 	};
@@ -59,8 +60,8 @@ namespace ActionTracer::Communication {
 		ActionServer( sockaddr_in, uint16_t );
 		~ActionServer();
 
-		uint16_t send_packet( ActionDataNetworkPackage *package );
-		uint16_t send_packet( ActionDataNetworkPackage *package, ActionServerClient *client );
+		int16_t send_packet( ActionDataNetworkPackage *package );
+		int16_t send_packet( ActionDataNetworkPackage *package, ActionServerClient *client );
 
 		uint8_t connect_client( ActionServerClient *client );
 		void	disconnect_client( ActionServerClient *client );
