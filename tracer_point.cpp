@@ -287,6 +287,10 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
  * @return Nothing
  */
 void ActionTracer::TracePoint::_set_device_offsets() {
+	if ( !calibrate ) {
+		return;
+	}
+
 	_calibrate_device( _device, 250 ); // Callibrate the device with the given number of samples
 }
 
