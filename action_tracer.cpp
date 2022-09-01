@@ -225,8 +225,6 @@ void ActionTracer::ActionTracer::initialize() {
 		_devices_in_use[_get_body_identifier( device->get_identifier() )] = device;
 	}
 
-	this->show_body(); // Removable for testing purposes
-
 	// Start threads
 }
 
@@ -268,9 +266,7 @@ uint8_t ActionTracer::ActionTracer::get_fifo_rate( uint8_t device ) const {
  *  @param sample_rate The sample rate to set all devices to.
  * @return Nothing
  */
-void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate )
-
-{
+void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate ) {
 	// For each deviece in use in_devices_in_use, set the sample rate to the given sample rate.
 	for ( auto &device : _devices_in_use ) {
 		device->set_sample_rate( 2 );
@@ -382,7 +378,7 @@ void ActionTracer::ActionTracer::show_body() {
 	printf( "  R          +   | |   +-%2s-+%2s<     L  \n", _devices_in_use[5]->get_act_pin_number_as_string().c_str(), _devices_in_use[6]->get_act_pin_number_as_string().c_str() );
 	printf( "  R       %2s/    |%1s|                 L  \n", _devices_in_use[2]->get_act_pin_number_as_string().c_str(),
 		_devices_in_use[0]->get_act_pin_number_as_string().c_str() ); // 0 is the center;
-	printf( "  R    >%2s-+  %2s/   \\%-2s              L  \n", _devices_in_use[3]->get_act_pin_number_as_string().c_str(), _devices_in_use[15]->get_act_pin_number_as_string().c_str(),
+	printf( "  R     >%2s+  %2s/   \\%-2s              L  \n", _devices_in_use[3]->get_act_pin_number_as_string().c_str(), _devices_in_use[15]->get_act_pin_number_as_string().c_str(),
 		_devices_in_use[16]->get_act_pin_number_as_string().c_str() );
 	printf( "  R             |   |                L  \n" );
 	printf( "  R            %2s   %-2s               L  \n", _devices_in_use[9]->get_act_pin_number_as_string().c_str(), _devices_in_use[12]->get_act_pin_number_as_string().c_str() );

@@ -87,7 +87,7 @@ uint8_t ActionTracer::Communication::Supervisor::_wait_for_connection() {
 	// Check if everything else is ready
 	if ( _server.get_descriptor() < 0 ) {
 		printf( "Server not ready" );
-		std::__throw_invalid_argument( "Server not ready for use, please run _socket_setup() first" );
+		// std::__throw_invalid_argument( "Server not ready for use, please run _socket_setup() first" );
 		return -1;
 	}
 
@@ -132,7 +132,7 @@ void ActionTracer::Communication::Supervisor::initialize( bool run_server ) {
 void ActionTracer::Communication::Supervisor::disconnect() {
 	if ( _server.get_descriptor() < 0 ) {
 		printf( "Server not ready" );
-		std::__throw_invalid_argument( "Server not ready for use, I can not disconnect when I haven't connected!" );
+		// std::__throw_invalid_argument( "Server not ready for use, I can not disconnect when I haven't connected!" );
 		return;
 	}
 
@@ -161,7 +161,8 @@ int ActionTracer::Communication::Supervisor::send_packet( ActionDataPackage *dev
 void ActionTracer::Communication::Supervisor::send_packet() {
 	// If no socket descriptor is given, use the last device to be added to the network
 	if ( !get_ready() ) {
-		throw std::invalid_argument( "No device is connected to the system's network." );
+		// throw std::invalid_argument( "No device is connected to the system's network." );
+		return;
 	}
 
 	_net_package.set_packet_number( ++_count );
@@ -176,7 +177,8 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 	_net_package.set_allocated_send_time( timestamp );
 
 	if ( !_net_package.IsInitialized() ) {
-		throw std::invalid_argument( "Packet is not ready to be sent" );
+		// throw std::invalid_argument( "Packet is not ready to be sent" );
+		return;
 	}
 
 	// Packet size
@@ -504,7 +506,8 @@ void ActionTracer::Communication::ActionServerClient::set_descriptor( const int 
  */
 uint16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDataNetworkPackage *packet ) {
 	if ( !packet->IsInitialized() ) {
-		throw std::invalid_argument( "Packet is not ready to be sent" );
+		// throw std::invalid_argument( "Packet is not ready to be sent" );
+		return;
 	}
 
 	if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
