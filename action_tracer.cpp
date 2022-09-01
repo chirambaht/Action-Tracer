@@ -34,7 +34,9 @@ void ActionTracer::ActionTracer::data_transmission_thread( Communication::Superv
 
 void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in ) {
 	while ( true ) {
-		new_super->initialize( true );
+		if ( new_super->get_ready() ) {
+			new_super->initialize( true );
+		}
 	}
 }
 
@@ -216,9 +218,9 @@ void ActionTracer::ActionTracer::initialize() {
 	bool *ptr_rdy = &_data_ready;
 
 	std::thread data_transmission( &ActionTracer::data_transmission_thread, this, _supervisor, ptr_rdy );
-	std::thread client_handler( &ActionTracer::_client_manager_thread, this, _supervisor, ptr_rdy );
+	// std::thread client_handler( &ActionTracer::_client_manager_thread, this, _supervisor, ptr_rdy );
 	data_transmission.detach();
-	client_handler.detach();
+	// client_handler.detach();
 
 	_turn_off_all_devices();
 
