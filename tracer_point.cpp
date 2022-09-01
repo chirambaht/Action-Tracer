@@ -287,7 +287,7 @@ float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
  * @return Nothing
  */
 void ActionTracer::TracePoint::_set_device_offsets() {
-	if ( !calibrate ) {
+	if ( !_calibrate ) {
 		return;
 	}
 
