@@ -35,6 +35,7 @@ namespace ActionTracer {
 		bool _validate_mapping( uint16_t, uint16_t );
 
 		void data_transmission_thread( Communication::Supervisor *, bool * );
+		void _client_manager_thread( Communication::Supervisor *, bool * );
 
 		// std::thread _data_collection( Supervisor(), 9022 );
 		// std::thread _data_sending( _data_sending_thread );

@@ -92,7 +92,7 @@ uint8_t ActionTracer::Communication::Supervisor::_wait_for_connection() {
 	}
 
 	// Show connection IP
-	debugPrint( "Waiting for connection..." );
+	debugPrint( "Waiting for new connection...\n" );
 	ActionServerClient *temp_client = new ActionServerClient();
 	temp_client->set_descriptor( accept( _server.get_descriptor(), ( sockaddr * ) &temp_client->address, &temp_client->_address_len ) ); // Blocking call waiting for new connection
 

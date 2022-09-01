@@ -15,7 +15,6 @@
 const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN,
 	ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN,
 	ACT_DEVICE_12_WIRING_PI_PIN };
-void		 *_data_collection_thread( void *arg );
 
 void ActionTracer::ActionTracer::data_transmission_thread( Communication::Supervisor *new_super, bool *data_in ) {
 	if ( !new_super->get_ready() ) {
@@ -30,6 +29,12 @@ void ActionTracer::ActionTracer::data_transmission_thread( Communication::Superv
 			new_super->send_packet();
 			*data_in = !*data_in;
 		}
+	}
+}
+
+void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in ) {
+	while ( true ) {
+		new_super->initialize( true );
 	}
 }
 
@@ -211,7 +216,9 @@ void ActionTracer::ActionTracer::initialize() {
 	bool *ptr_rdy = &_data_ready;
 
 	std::thread data_transmission( &ActionTracer::data_transmission_thread, this, _supervisor, ptr_rdy );
+	std::thread client_handler( &ActionTracer::_client_manager_thread, this, _supervisor, ptr_rdy );
 	data_transmission.detach();
+	client_handler.detach();
 
 	_turn_off_all_devices();
 
@@ -392,6 +399,7 @@ void ActionTracer::ActionTracer::show_body() {
 bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t body_part ) {
 	std::vector<uint16_t> body_part_codes;
 	std::vector<uint16_t> device_codes;
+
 	for ( auto &dev : _devices_waiting_for_use ) {
 		body_part_codes.push_back( dev->get_identifier() );
 		device_codes.push_back( dev->get_pin_number() );
