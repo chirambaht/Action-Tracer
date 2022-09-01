@@ -511,7 +511,7 @@ void ActionTracer::Communication::ActionServerClient::set_descriptor( const int 
 int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDataNetworkPackage *packet ) {
 	if ( !packet->IsInitialized() ) {
 		// throw std::invalid_argument( "Packet is not ready to be sent" );
-		return;
+		return 0;
 	}
 
 	if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
