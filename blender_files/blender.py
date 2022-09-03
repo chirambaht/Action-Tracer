@@ -56,7 +56,7 @@ def receive_data( objects ):
     DATA_POINT_COUNT = 3 # Euler Angle
     # DATA_POINT_COUNT = 4 # Quaternion
 
-    FILTER_BUFFER_SIZE = 1
+    FILTER_BUFFER_SIZE = 5
 
     global ACT
 
@@ -92,7 +92,7 @@ def receive_data( objects ):
     fillies = []
     filliesmir = []
     for i in range(3):
-        fillies.append( FIL.Filter( "mean", DATA_POINT_COUNT, FILTER_BUFFER_SIZE ) )
+        fillies.append( FIL.Filter( "median", DATA_POINT_COUNT, FILTER_BUFFER_SIZE ) )
         filliesmir.append( FIL.Filter( "mean", DATA_POINT_COUNT, FILTER_BUFFER_SIZE ) )
 
     # send data
@@ -124,12 +124,21 @@ def receive_data( objects ):
             packets.append( t ) # Use euler 
         
         # modified
-        packets[1] = diff(packets[0], packets[1])
-        packets[2] = diff(packets[1], packets[2])
+        packetsMod = packets
 
+        # Corrections
+        packets[0][0] = packets[0][0] * -1
+        packets[1][0] = packets[1][0] * -1
+        packets[2][0] = packets[2][0] * -1
+        packets[2][1] = packets[2][1] * -1
+        
+        packets[2] = diff(packets[2], packets[1])
+        packets[1] = diff(packets[1], packets[0])
+        
+        
         for i in range(3):
             rots[i].rotation_euler = packets[i]
-            rotsmir[i].rotation_euler = packets[i]
+            rotsmir[i].rotation_euler = packetsMod[i]
 
         bpy.ops.wm.redraw_timer( type='DRAW_WIN_SWAP', iterations=1 )
 
