@@ -36,6 +36,8 @@ namespace ActionTracer {
 		bool _calibrate				= true;
 		bool _device_initialized	= false;
 
+		uint8_t _calibration_samples = 250;
+
 		uint8_t _device_interrupt_status;
 
 		uint8_t	 _fifo_buffer[MPU6050_FIFO_BUFFER_SIZE] = { 0 };
@@ -76,6 +78,7 @@ namespace ActionTracer {
 		void dump_variables();
 		void get_data();
 		void print_last_data_packet();
+		void set_calibrate( bool, uint8_t );
 		void set_calibrate( bool );
 		void tracepoint_isr();
 		void turn_off();

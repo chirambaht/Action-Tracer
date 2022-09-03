@@ -257,7 +257,7 @@ void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_
 	temp_device->set_identifier( body_part );
 
 	// We will temporarily disable calibration to speed up this process
-	temp_device->set_calibrate( false );
+	temp_device->set_calibrate( true, 100 );
 
 	// Add device to the list of devices waiting to be initialized.
 	_devices_waiting_for_use.push_back( temp_device );

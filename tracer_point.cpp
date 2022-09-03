@@ -291,7 +291,7 @@ void ActionTracer::TracePoint::_set_device_offsets() {
 		return;
 	}
 
-	_calibrate_device( _device, 250 ); // Callibrate the device with the given number of samples
+	_calibrate_device( _device, _calibration_samples ); // Callibrate the device with the given number of samples
 }
 
 /**
@@ -300,6 +300,15 @@ void ActionTracer::TracePoint::_set_device_offsets() {
  */
 void ActionTracer::TracePoint::set_calibrate( bool in_value ) {
 	_calibrate = in_value;
+}
+
+/**
+ * @brief Sets the _calibrate value.
+ * @return None
+ */
+void ActionTracer::TracePoint::set_calibrate( bool in_value, uint8_t calibration_samples = 250 ) {
+	_calibrate			 = in_value;
+	_calibration_samples = calibration_samples;
 }
 
 /**
