@@ -3,6 +3,7 @@ import math
 import os
 import socket
 from datetime import datetime
+import time
 #create websocket client
 s = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
 
@@ -55,7 +56,8 @@ def Update3DViewPorts():
 def receive_data( objects ):
     DATA_POINT_COUNT = 3 # Euler Angle
     # DATA_POINT_COUNT = 4 # Quaternion
-
+    TARGET_FRAME_RATE = 24
+    TIME_PER_FRAME = int(1000 / TARGET_FRAME_RATE )# ms
     FILTER_BUFFER_SIZE = 5
 
     global ACT
@@ -95,6 +97,11 @@ def receive_data( objects ):
         fillies.append( FIL.Filter( "median", DATA_POINT_COUNT, FILTER_BUFFER_SIZE ) )
         filliesmir.append( FIL.Filter( "mean", DATA_POINT_COUNT, FILTER_BUFFER_SIZE ) )
 
+    start_time = 0
+    current_time = 0
+    last_packet_send_time = 0
+
+
     # send data
     while ( True ):
 
@@ -103,6 +110,7 @@ def receive_data( objects ):
 
         try:
             data_packet.ParseFromString( recevied_data )
+            
         except:
             print( "Error while parsing data" )
             continue
@@ -115,6 +123,13 @@ def receive_data( objects ):
         if ( len( data_packet.device_data ) < 1 ):
             continue
         
+        if start_time == 0:
+            start_time = int(round(time.time() * 1000))
+       
+        current_time = int(round(time.time() * 1000)) - start_time
+        if (current_time - last_packet_send_time) < TIME_PER_FRAME:
+            continue
+
         packets = []
 
         for i in range(len(rots)):
@@ -140,12 +155,18 @@ def receive_data( objects ):
             rots[i].rotation_euler = packets[i]
             rotsmir[i].rotation_euler = packetsMod[i]
 
-        bpy.ops.wm.redraw_timer( type='DRAW_WIN_SWAP', iterations=1 )
+            # Record the animation
+            rots[i].keyframe_insert(data_path="rotation_euler", frame=frame_count)
+            rotsmir[i].keyframe_insert(data_path="rotation_euler", frame=frame_count)
+        frame_count += 1
+        last_packet_send_time = current_time
+        # bpy.ops.wm.redraw_timer( type='DRAW_WIN_SWAP', iterations=1 )
+        
 
         #        blender_object.keyframe_insert(data_path="rotation_quaternion", frame=frame_count)
 
         #        blender_object.rotation_euler = pack[13:16]
-        #        blender_object.keyframe_insert(data_path="rotation_euler", frame=frame_count)
+        
 
 
 def main():
