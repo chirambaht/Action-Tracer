@@ -139,28 +139,30 @@ def receive_data( objects ):
             packets.append( t ) # Use euler 
         
         # modified
+        
+        packets[2] = diff(packets[2], packets[1])
+        packets[1] = diff(packets[1], packets[0])
         packetsMod = packets
-
         # Corrections
         packets[0][0] = packets[0][0] * -1
         packets[1][0] = packets[1][0] * -1
         packets[2][0] = packets[2][0] * -1
         packets[2][1] = packets[2][1] * -1
         
-        packets[2] = diff(packets[2], packets[1])
-        packets[1] = diff(packets[1], packets[0])
         
+        # Mirror Corrections
+        packetsMod[0][2] = packetsMod[0][2] * -1
         
         for i in range(3):
             rots[i].rotation_euler = packets[i]
             rotsmir[i].rotation_euler = packetsMod[i]
 
             # Record the animation
-            rots[i].keyframe_insert(data_path="rotation_euler", frame=frame_count)
-            rotsmir[i].keyframe_insert(data_path="rotation_euler", frame=frame_count)
+#            rots[i].keyframe_insert(data_path="rotation_euler", frame=frame_count)
+#            rotsmir[i].keyframe_insert(data_path="rotation_euler", frame=frame_count)
         frame_count += 1
         last_packet_send_time = current_time
-        # bpy.ops.wm.redraw_timer( type='DRAW_WIN_SWAP', iterations=1 )
+        bpy.ops.wm.redraw_timer( type='DRAW_WIN_SWAP', iterations=1 )
         
 
         #        blender_object.keyframe_insert(data_path="rotation_quaternion", frame=frame_count)
