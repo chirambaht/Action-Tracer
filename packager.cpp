@@ -399,7 +399,7 @@ uint8_t ActionTracer::Communication::ActionServer::connect_client( ActionServerC
  * @brief Disconnect a single client from the server
  * @param ActionServerClient client to disconnect
  */
-void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerClient *client ) {
+void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerClient *client, bool notify = true ) {
 	client->send_disconnect_notification();
 	close( client->get_descriptor() );
 
@@ -449,7 +449,7 @@ int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwor
 	for ( auto client : _clients ) {
 		int res = client.send_packet( package );
 		if ( res == -1 ) {
-			disconnect_client( &client );
+			disconnect_client( &client, false );
 			break;
 		}
 	}

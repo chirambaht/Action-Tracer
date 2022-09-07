@@ -27,7 +27,7 @@ void ActionTracer::ActionTracer::data_transmission_thread( Communication::Superv
 		if ( *data_in ) {
 			packet_count++;
 			new_super->send_packet();
-			*data_in = !*data_in;
+			*data_in = false;
 		}
 	}
 }
@@ -35,6 +35,7 @@ void ActionTracer::ActionTracer::data_transmission_thread( Communication::Superv
 void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in ) {
 	while ( true ) {
 		if ( new_super->get_ready() ) {
+			printf( "Waiting for another client to connect...\n" );
 			new_super->initialize( true );
 		}
 	}
@@ -64,7 +65,7 @@ void *ActionTracer::ActionTracer::data_collection_thread() {
 						_supervisor->load_packet( _data_package_action[i] ); // Immidiately send the data to all clients
 					}
 				}
-				_supervisor->send_packet();
+				// _supervisor->send_packet();
 				_data_ready = true;
 			}
 		}
