@@ -522,19 +522,19 @@ void ActionTracer::Communication::ActionServerClient::set_descriptor( const int 
 int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDataNetworkPackage *packet ) {
 	if ( !packet->IsInitialized() ) {
 		// throw std::invalid_argument( "Packet is not ready to be sent" );
+		return 0;
+	}
 
-		return 0;
-	}
+	// First, we'll try the quicker send but if there is an issue, we will investigate more but doing an longer process send
 	if ( !packet->SerializeToFileDescriptor( _descriptor ) ) {
-		return 0;
-	}
-	if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
-		if ( send_response == -1 ) {
-			// Client disconnected
-			printf( "Client with descriptor %d disconnected\n", get_descriptor() );
-			return -1;
-		} else {
-			perror( "Error" );
+		if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
+			if ( send_response == -1 ) {
+				// Client disconnected
+				printf( "Client with descriptor %d disconnected\n", get_descriptor() );
+				return -1;
+			} else {
+				perror( "Error" );
+			}
 		}
 	}
 	return send_response;
@@ -557,8 +557,6 @@ void ActionTracer::Communication::ActionServerClient::send_disconnect_notificati
 	ActionDataNetworkPackage disconnect_packet = ActionDataNetworkPackage();
 	disconnect_packet.set_packet_number( 0 );
 	disconnect_packet.SerializeToFileDescriptor( _descriptor );
-	// send( _descriptor, disconnect_packet.SerializeAsString().c_str(), disconnect_packet.ByteSizeLong(), 0 );
-	send_packet( &disconnect_packet );
 }
 
 /**
