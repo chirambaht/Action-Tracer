@@ -63,7 +63,7 @@ namespace ActionTracer::Communication {
 		int16_t send_packet( ActionDataNetworkPackage *package, ActionServerClient *client );
 
 		uint8_t connect_client( ActionServerClient *client );
-		void	disconnect_client( ActionServerClient *client, bool notify = true );
+		void	disconnect_client( ActionServerClient *client, bool notify );
 		void	disconnect_all_clients();
 
 		socklen_t get_socket_address_length() const;
