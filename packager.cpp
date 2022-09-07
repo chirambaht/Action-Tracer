@@ -406,6 +406,7 @@ void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerC
 	// Erase client from vector
 	auto it = std::find( _clients.begin(), _clients.end(), *client );
 	if ( it != _clients.end() ) {
+		printf( "Disconnecting client %d\n", client->get_descriptor() );
 		_clients.erase( it );
 	}
 }
@@ -416,6 +417,7 @@ void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerC
 void ActionTracer::Communication::ActionServer::disconnect_all_clients() {
 	for ( auto client : _clients ) {
 		client.disconnect();
+		close( client.get_descriptor() );
 	}
 	_clients.clear();
 }
@@ -526,7 +528,7 @@ int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionData
 	if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
 		if ( send_response == -1 ) {
 			// Client disconnected
-			client_disconnected();
+			printf( "Client with descriptor %d disconnected\n", get_descriptor() );
 			return -1;
 		} else {
 			perror( "Error" );
@@ -536,20 +538,11 @@ int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionData
 }
 
 /**
- * @brief Disconnects the client from the server without notification
- * @returns Nothing
- */
-void ActionTracer::Communication::ActionServerClient::client_disconnected() {
-	close( get_descriptor() );
-}
-
-/**
  * @brief Disconnects the client from the server with notification
  * @returns Nothing
  */
 void ActionTracer::Communication::ActionServerClient::disconnect() {
 	send_disconnect_notification();
-	close( get_descriptor() );
 }
 
 /**

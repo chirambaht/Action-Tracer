@@ -38,7 +38,6 @@ namespace ActionTracer::Communication {
 
 		int16_t send_packet( ActionDataNetworkPackage *packet );
 
-		void client_disconnected();
 		void disconnect();
 		void send_disconnect_notification();
 	};
