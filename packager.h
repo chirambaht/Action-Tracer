@@ -21,7 +21,7 @@ namespace ActionTracer::Communication {
 		ActionServerClient();
 
 		ActionServerClient( sockaddr_in, uint8_t );
-
+		bool operator==( const ActionServerClient );
 		// ActionServerClient( ActionServerClient const & );			 // Copy constructor
 		// ActionServerClient &operator=( ActionServerClient const & ); // Copy assignment operator
 		// ActionServerClient( ActionServerClient && );				 // Move constructor

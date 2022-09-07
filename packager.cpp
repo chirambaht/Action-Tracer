@@ -2,6 +2,7 @@
 
 #include "debug_printer.h"
 
+#include <algorithm>
 #include <cerrno>
 #include <ctime>
 #include <google/protobuf/timestamp.pb.h>
@@ -402,7 +403,11 @@ void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerC
 	client->send_disconnect_notification();
 	close( client->get_descriptor() );
 
-	// need to remove from vector
+	// Erase client from vector
+	auto it = std::find( _clients.begin(), _clients.end(), *client );
+	if ( it != _clients.end() ) {
+		_clients.erase( it );
+	}
 }
 
 /**
@@ -442,7 +447,7 @@ int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwor
 	for ( auto client : _clients ) {
 		int res = client.send_packet( package );
 		if ( res == -1 ) {
-			disconnect_all_clients();
+			disconnect_client( &client );
 			break;
 		}
 	}
@@ -477,6 +482,10 @@ ActionTracer::Communication::ActionServerClient::ActionServerClient( sockaddr_in
  * @brief Destroy a Action Tracer:: Communication:: Action Server Client:: Action Server Client object
  */
 ActionTracer::Communication::ActionServerClient::~ActionServerClient() {
+}
+
+bool ActionTracer::Communication::ActionServerClient::operator==( const ActionServerClient other ) {
+	return _descriptor == other.get_descriptor();
 }
 
 /**
@@ -548,6 +557,7 @@ void ActionTracer::Communication::ActionServerClient::disconnect() {
  * @returns Nothing
  */
 void ActionTracer::Communication::ActionServerClient::send_disconnect_notification() {
+	printf( "Notify client of disconnect" );
 	ActionDataNetworkPackage disconnect_packet = ActionDataNetworkPackage();
 	disconnect_packet.set_packet_number( 0 );
 	send_packet( &disconnect_packet );
