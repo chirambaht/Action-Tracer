@@ -17,6 +17,7 @@ const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_P
 	ACT_DEVICE_12_WIRING_PI_PIN };
 
 void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Supervisor *new_super, bool *data_in ) {
+	printf( "Data transmission thread started\n" );
 	while ( true ) {
 		if ( *data_in ) {
 			new_super->send_packet();
@@ -26,6 +27,7 @@ void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Super
 }
 
 void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in ) {
+	printf( "Client manager thread started\n" );
 	while ( true ) {
 		if ( new_super->get_ready() ) {
 			printf( "Ready for a client to connect...\n" );
@@ -40,6 +42,8 @@ void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervis
  * @return void*
  */
 void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervisor *new_super, bool *run_status, bool *data_in ) {
+	printf( "Data collection thread started\n" );
+
 	while ( 1 ) {
 		while ( *run_status ) {
 			for ( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
@@ -202,7 +206,7 @@ void ActionTracer::ActionTracer::initialize() {
 
 	_thread_data_collection	  = std::thread( &ActionTracer::_data_collection_thread, this, _supervisor, &_running, &_data_ready );
 	_thread_data_transmission = std::thread( &ActionTracer::_data_transmission_thread, this, _supervisor, &_data_ready );
-	_thread_client_manager	  = std::thread( &ActionTracer::_client_manager_thread, this, _supervisor );
+	_thread_client_manager	  = std::thread( &ActionTracer::_client_manager_thread, this, _supervisor, &_data_ready );
 
 	_thread_data_transmission.detach();
 	_thread_data_collection.detach();
