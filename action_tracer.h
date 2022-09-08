@@ -20,9 +20,6 @@ namespace ActionTracer {
 		float					*_data_package[DATA_PACKAGE_SIZE];
 		ActionDataPackage		  *_data_package_action[MAX_ACT_DEVICES] = { new ActionDataPackage() };
 
-		void *data_collection_thread();
-		void *data_sending_thread( void * );
-
 		bool _running	 = false;
 		bool _paused	 = true;
 		bool _data_ready = false;
@@ -34,11 +31,11 @@ namespace ActionTracer {
 
 		bool _validate_mapping( uint16_t, uint16_t );
 
-		void data_transmission_thread( Communication::Supervisor *, bool * );
+		void _data_transmission_thread( Communication::Supervisor *, bool * );
 		void _client_manager_thread( Communication::Supervisor *, bool * );
+		void _data_collection_thread( Communication::Supervisor *, bool *, bool * );
 
-		// std::thread _data_collection( Supervisor(), 9022 );
-		// std::thread _data_sending( _data_sending_thread );
+		std::thread _thread_data_transmission, _thread_client_manager, _thread_data_collection;
 
 	  public:
 		ActionTracer( /* args */ );

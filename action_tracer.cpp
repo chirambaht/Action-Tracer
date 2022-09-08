@@ -16,16 +16,9 @@ const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_P
 	ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN,
 	ACT_DEVICE_12_WIRING_PI_PIN };
 
-void ActionTracer::ActionTracer::data_transmission_thread( Communication::Supervisor *new_super, bool *data_in ) {
-	if ( !new_super->get_ready() ) {
-		printf( "Waiting for a client to connect...\n" );
-		new_super->initialize( true );
-	}
-	printf( "Action Server is now running" );
-	int packet_count = 0;
+void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Supervisor *new_super, bool *data_in ) {
 	while ( true ) {
 		if ( *data_in ) {
-			packet_count++;
 			new_super->send_packet();
 			*data_in = false;
 		}
@@ -35,7 +28,7 @@ void ActionTracer::ActionTracer::data_transmission_thread( Communication::Superv
 void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in ) {
 	while ( true ) {
 		if ( new_super->get_ready() ) {
-			printf( "Waiting for another client to connect...\n" );
+			printf( "Ready for a client to connect...\n" );
 			new_super->initialize( true );
 		}
 	}
@@ -46,43 +39,24 @@ void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervis
  *
  * @return void*
  */
-void *ActionTracer::ActionTracer::data_collection_thread() {
+void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervisor *new_super, bool *run_status, bool *data_in ) {
 	while ( 1 ) {
-		while ( _running != false ) {
+		while ( *run_status ) {
 			for ( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 				if ( _devices_in_use[i]->is_active() ) {
 					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
 				}
 			}
 
-			// wait for 1 ms
-			// usleep( 1000 );
-
-			// When the data has been sent, the new packet can be loaded and sent
-			if ( _data_ready == false ) {
+			if ( *data_in == false ) {
 				for ( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 					if ( _devices_in_use[i]->is_active() ) {
-						_supervisor->load_packet( _data_package_action[i] ); // Immidiately send the data to all clients
+						new_super->load_packet( _data_package_action[i] ); // Immidiately send the data to all clients
 					}
 				}
-				// _supervisor->send_packet();
-				_data_ready = true;
+
+				*data_in = true;
 			}
-		}
-	}
-}
-
-/**
- * @brief The main method that runs the data transmission to a server or client.
- *
- * @return void*
- */
-void *ActionTracer::ActionTracer::data_sending_thread( void *arg ) {
-	// First connect to clients via the packager
-
-	while ( 1 ) {
-		if ( !_paused && _supervisor->get_ready() && _data_ready ) {
-			_supervisor->send_packet();
 		}
 	}
 }
@@ -146,8 +120,6 @@ void ActionTracer::ActionTracer::start() {
 	// Set the running flag to true
 	_running = true;
 	_paused	 = false;
-
-	data_collection_thread();
 }
 
 /**
@@ -214,14 +186,7 @@ void ActionTracer::ActionTracer::reset() {
  */
 void ActionTracer::ActionTracer::initialize() {
 	_supervisor = new Communication::Supervisor();
-
 	_supervisor->initialize( false );
-	bool *ptr_rdy = &_data_ready;
-
-	std::thread data_transmission( &ActionTracer::data_transmission_thread, this, _supervisor, ptr_rdy );
-	// std::thread client_handler( &ActionTracer::_client_manager_thread, this, _supervisor, ptr_rdy );
-	data_transmission.detach();
-	// client_handler.detach();
 
 	_turn_off_all_devices();
 
@@ -235,7 +200,13 @@ void ActionTracer::ActionTracer::initialize() {
 		_devices_in_use[_get_body_identifier( device->get_identifier() )] = device;
 	}
 
-	// Start threads
+	_thread_data_collection	  = std::thread( &ActionTracer::_data_collection_thread, this, _supervisor, &_running, &_data_ready );
+	_thread_data_transmission = std::thread( &ActionTracer::_data_transmission_thread, this, _supervisor, &_data_ready );
+	_thread_client_manager	  = std::thread( &ActionTracer::_client_manager_thread, this, _supervisor );
+
+	_thread_data_transmission.detach();
+	_thread_data_collection.detach();
+	_thread_client_manager.detach();
 }
 
 /**
