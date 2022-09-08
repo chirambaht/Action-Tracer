@@ -402,15 +402,20 @@ uint8_t ActionTracer::Communication::ActionServer::connect_client( ActionServerC
  * @param ActionServerClient client to disconnect
  */
 void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerClient *client, bool notify = true ) {
-	client->send_disconnect_notification();
+	if ( notify ) {
+		client->send_disconnect_notification();
+	}
+
 	close( client->get_descriptor() );
 
 	// Erase client from vector
+	printf( "Size of vector: %d\n", _clients.size() );
 	auto it = std::find( _clients.begin(), _clients.end(), *client );
 	if ( it != _clients.end() ) {
 		printf( "Disconnecting client %d\n", client->get_descriptor() );
 		_clients.erase( it );
 	}
+	printf( "Size of vector: %d\n", _clients.size() );
 }
 
 /**
@@ -547,6 +552,7 @@ int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionData
  * @returns Nothing
  */
 void ActionTracer::Communication::ActionServerClient::disconnect() {
+	printf( "Disconnecting client, descriptor: %d", this->get_descriptor() );
 	send_disconnect_notification();
 }
 
@@ -555,7 +561,7 @@ void ActionTracer::Communication::ActionServerClient::disconnect() {
  * @returns Nothing
  */
 void ActionTracer::Communication::ActionServerClient::send_disconnect_notification() {
-	printf( "Notify client of disconnect" );
+	printf( "Notify client with descriptor %d of disconnect\n", this->get_descriptor() );
 	ActionDataNetworkPackage disconnect_packet = ActionDataNetworkPackage();
 	disconnect_packet.set_packet_number( 0 );
 	disconnect_packet.SerializeToFileDescriptor( _descriptor );
