@@ -192,6 +192,11 @@ void ActionTracer::ActionTracer::initialize() {
 	_supervisor = new Communication::Supervisor();
 	_supervisor->initialize( false );
 
+	_thread_data_transmission = std::thread( &ActionTracer::_data_transmission_thread, this, _supervisor, &_data_ready );
+	_thread_client_manager	  = std::thread( &ActionTracer::_client_manager_thread, this, _supervisor, &_data_ready );
+	_thread_data_transmission.detach();
+	_thread_client_manager.detach();
+
 	_turn_off_all_devices();
 
 	for ( auto &device : _devices_waiting_for_use ) {
@@ -204,13 +209,8 @@ void ActionTracer::ActionTracer::initialize() {
 		_devices_in_use[_get_body_identifier( device->get_identifier() )] = device;
 	}
 
-	_thread_data_collection	  = std::thread( &ActionTracer::_data_collection_thread, this, _supervisor, &_running, &_data_ready );
-	_thread_data_transmission = std::thread( &ActionTracer::_data_transmission_thread, this, _supervisor, &_data_ready );
-	_thread_client_manager	  = std::thread( &ActionTracer::_client_manager_thread, this, _supervisor, &_data_ready );
-
-	_thread_data_transmission.detach();
+	_thread_data_collection = std::thread( &ActionTracer::_data_collection_thread, this, _supervisor, &_running, &_data_ready );
 	_thread_data_collection.detach();
-	_thread_client_manager.detach();
 }
 
 /**

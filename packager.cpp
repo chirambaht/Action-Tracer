@@ -103,7 +103,8 @@ uint8_t ActionTracer::Communication::Supervisor::_wait_for_connection() {
 	} else {
 		_server.connect_client( temp_client );
 	}
-	set_ready( true );
+
+	printf( "New client connected with address: %s:%d", inet_ntoa( temp_client->address.sin_addr ), ntohs( temp_client->address.sin_port ) );
 	return temp_client->get_descriptor();
 }
 
@@ -123,6 +124,7 @@ void ActionTracer::Communication::Supervisor::initialize( bool run_server ) {
 		_wait_for_connection();
 	} else {
 		_socket_setup();
+		set_ready( true );
 	}
 }
 
