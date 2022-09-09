@@ -54,7 +54,7 @@ int ActionTracer::Communication::Supervisor::_socket_setup() {
 		exit( EXIT_FAILURE );
 	}
 
-	debugPrint( "TCP socket created with descriptor: %d\n", _server.get_descriptor() );
+	printf( "Server TCP socket created with descriptor: %d\n", _server.get_descriptor() );
 
 	int _opt = 1;
 
@@ -104,7 +104,8 @@ uint8_t ActionTracer::Communication::Supervisor::_wait_for_connection() {
 		_server.connect_client( temp_client );
 	}
 
-	printf( "New client connected with address: %s:%d", inet_ntoa( temp_client->address.sin_addr ), ntohs( temp_client->address.sin_port ) );
+	printf( "New client connected with address: %s:%d and assigned descriptor %d\n", inet_ntoa( temp_client->address.sin_addr ), ntohs( temp_client->address.sin_port ),
+		temp_client->get_descriptor() );
 	return temp_client->get_descriptor();
 }
 
@@ -552,7 +553,7 @@ int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionData
  * @returns Nothing
  */
 void ActionTracer::Communication::ActionServerClient::disconnect() {
-	printf( "Disconnecting client, descriptor: %d", this->get_descriptor() );
+	printf( "As a client, I am being disconnected with descriptor: %d\n", this->get_descriptor() );
 	send_disconnect_notification();
 }
 
