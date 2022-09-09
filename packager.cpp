@@ -532,18 +532,24 @@ int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionData
 	}
 
 	// First, we'll try the quicker send but if there is an issue, we will investigate more but doing an longer process send
-	if ( !packet->SerializeToFileDescriptor( _descriptor ) ) {
-		printf( "Bad send\n" );
-		if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
-			if ( send_response == -1 ) {
-				// Client disconnected
-				printf( "Client with descriptor %d is not responding, so I shall disconnect\n", get_descriptor() );
-				return -1;
-			} else {
-				perror( "Error" );
+	try {
+		if ( !packet->SerializeToFileDescriptor( _descriptor ) ) {
+			printf( "Bad send\n" );
+			if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
+				if ( send_response == -1 ) {
+					// Client disconnected
+					printf( "Client with descriptor %d is not responding, so I shall disconnect\n", get_descriptor() );
+					return -1;
+				} else {
+					perror( "Error" );
+				}
 			}
 		}
+	} catch ( const std::exception &e ) {
+		printf( "Send response: %d\n", send_response );
+		printf( "Error: %s\n", e.what() );
 	}
+
 	return send_response;
 }
 
