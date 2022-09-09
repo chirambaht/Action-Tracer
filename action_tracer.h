@@ -31,11 +31,12 @@ namespace ActionTracer {
 
 		bool _validate_mapping( uint16_t, uint16_t );
 
-		void _data_transmission_thread( Communication::Supervisor *, bool * );
-		void _client_manager_thread( Communication::Supervisor *, bool * );
-		void _data_collection_thread( Communication::Supervisor *, bool *, bool * );
+		void _data_transmission_thread( Communication::Supervisor *, bool *, bool * );
+		void _client_manager_thread( Communication::Supervisor *, bool *, bool * );
+		void _data_collection_thread( Communication::Supervisor *, bool *, bool *, bool * );
 
 		std::thread _thread_data_transmission, _thread_client_manager, _thread_data_collection;
+		bool		_thread_running_data_transmission = false, _thread_running_client_manager = false, _thread_running_data_collection = false;
 
 	  public:
 		ActionTracer( /* args */ );

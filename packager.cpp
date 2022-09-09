@@ -410,13 +410,13 @@ void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerC
 	close( client->get_descriptor() );
 
 	// Erase client from vector
-	printf( "Size of vector: %d\n", _clients.size() );
 	auto it = std::find( _clients.begin(), _clients.end(), *client );
 	if ( it != _clients.end() ) {
 		printf( "Disconnecting client %d\n", client->get_descriptor() );
 		_clients.erase( it );
 	}
-	printf( "Size of vector: %d\n", _clients.size() );
+
+	printf( "There are %d clients connected\n", _clients.size() );
 }
 
 /**
@@ -426,7 +426,6 @@ void ActionTracer::Communication::ActionServer::disconnect_all_clients() {
 	for ( ActionServerClient client : _clients ) {
 		disconnect_client( &client, true );
 	}
-	_clients.clear();
 }
 
 /**

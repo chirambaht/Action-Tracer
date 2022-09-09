@@ -16,9 +16,9 @@ const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_P
 	ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN,
 	ACT_DEVICE_12_WIRING_PI_PIN };
 
-void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Supervisor *new_super, bool *data_in ) {
+void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Supervisor *new_super, bool *data_in, bool *thread_run ) {
 	printf( "Data transmission thread started\n" );
-	while ( true ) {
+	while ( *thread_run ) {
 		if ( *data_in ) {
 			new_super->send_packet();
 			*data_in = false;
@@ -26,9 +26,9 @@ void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Super
 	}
 }
 
-void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in ) {
+void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in, bool *thread_run ) {
 	printf( "Client manager thread started\n" );
-	while ( true ) {
+	while ( *thread_run ) {
 		if ( new_super->get_ready() ) {
 			printf( "Ready for a client to connect...\n" );
 			new_super->initialize( true );
@@ -41,10 +41,10 @@ void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervis
  *
  * @return void*
  */
-void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervisor *new_super, bool *run_status, bool *data_in ) {
+void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervisor *new_super, bool *run_status, bool *data_in, bool *thread_run ) {
 	printf( "Data collection thread started\n" );
 
-	while ( 1 ) {
+	while ( *thread_run ) {
 		while ( *run_status ) {
 			for ( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 				if ( _devices_in_use[i]->is_active() ) {
@@ -142,6 +142,17 @@ void ActionTracer::ActionTracer::stop() {
 	_turn_off_all_devices();
 
 	_supervisor->disconnect();
+
+	// Stop the threads
+	_thread_running_client_manager	  = false;
+	_thread_running_data_collection	  = false;
+	_thread_running_data_transmission = false;
+
+	// Join the threads
+	_thread_client_manager.join();
+	_thread_data_collection.join();
+	_thread_data_transmission.join();
+
 	_data_ready = false;
 }
 
@@ -192,10 +203,12 @@ void ActionTracer::ActionTracer::initialize() {
 	_supervisor = new Communication::Supervisor();
 	_supervisor->initialize( false );
 
-	_thread_data_transmission = std::thread( &ActionTracer::_data_transmission_thread, this, _supervisor, &_data_ready );
-	_thread_client_manager	  = std::thread( &ActionTracer::_client_manager_thread, this, _supervisor, &_data_ready );
-	_thread_data_transmission.detach();
-	_thread_client_manager.detach();
+	_thread_running_client_manager	  = true;
+	_thread_running_data_collection	  = true;
+	_thread_running_data_transmission = true;
+
+	_thread_data_transmission = std::thread( &ActionTracer::_data_transmission_thread, this, _supervisor, &_data_ready, &_thread_running_data_transmission );
+	_thread_client_manager	  = std::thread( &ActionTracer::_client_manager_thread, this, _supervisor, &_data_ready, &_thread_running_client_manager );
 
 	_turn_off_all_devices();
 
@@ -209,8 +222,7 @@ void ActionTracer::ActionTracer::initialize() {
 		_devices_in_use[_get_body_identifier( device->get_identifier() )] = device;
 	}
 
-	_thread_data_collection = std::thread( &ActionTracer::_data_collection_thread, this, _supervisor, &_running, &_data_ready );
-	_thread_data_collection.detach();
+	_thread_data_collection = std::thread( &ActionTracer::_data_collection_thread, this, _supervisor, &_running, &_data_ready, &_thread_running_data_collection );
 }
 
 /**
