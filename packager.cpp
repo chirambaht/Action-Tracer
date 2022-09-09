@@ -224,7 +224,7 @@ int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *dev
  * @returns Nothing
  */
 void ActionTracer::Communication::Supervisor::close_socket( uint8_t closing_descriptor ) {
-	debugPrint( "Closing socket with descriptor %d\n", _server.get_descriptor() );
+	printf( "Closing server socket with descriptor %d\n", _server.get_descriptor() );
 	close( _server.get_descriptor() );
 }
 
@@ -423,9 +423,8 @@ void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerC
  * @brief Disconnect all clients from the server
  */
 void ActionTracer::Communication::ActionServer::disconnect_all_clients() {
-	for ( auto client : _clients ) {
-		client.disconnect();
-		close( client.get_descriptor() );
+	for ( ActionServerClient client : _clients ) {
+		disconnect_client( &client, true );
 	}
 	_clients.clear();
 }
@@ -535,10 +534,11 @@ int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionData
 
 	// First, we'll try the quicker send but if there is an issue, we will investigate more but doing an longer process send
 	if ( !packet->SerializeToFileDescriptor( _descriptor ) ) {
+		printf( "Bad send\n" );
 		if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
 			if ( send_response == -1 ) {
 				// Client disconnected
-				printf( "Client with descriptor %d disconnected\n", get_descriptor() );
+				printf( "Client with descriptor %d is not responding, so I shall disconnect\n", get_descriptor() );
 				return -1;
 			} else {
 				perror( "Error" );
@@ -553,8 +553,8 @@ int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionData
  * @returns Nothing
  */
 void ActionTracer::Communication::ActionServerClient::disconnect() {
-	printf( "As a client, I am being disconnected with descriptor: %d\n", this->get_descriptor() );
 	send_disconnect_notification();
+	printf( "As a client, I am being disconnected with descriptor: %d\n", this->get_descriptor() );
 }
 
 /**
