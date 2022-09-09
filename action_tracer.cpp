@@ -24,6 +24,7 @@ void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Super
 			*data_in = false;
 		}
 	}
+	printf( "Data transmission thread stopped\n" );
 }
 
 void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in, bool *thread_run ) {
@@ -34,6 +35,7 @@ void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervis
 			new_super->initialize( true );
 		}
 	}
+	printf( "Client manager thread stopped\n" );
 }
 
 /**
@@ -63,6 +65,8 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 			}
 		}
 	}
+
+	printf( "Data collection thread stopped\n" );
 }
 
 /**

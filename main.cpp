@@ -52,6 +52,13 @@ void setup() {
 	main_dev->show_body();
 	printf( "Initialised\n" );
 	main_dev->start();
+	printf( "Started and will run for 10 seconds\n" );
+	// wait for 10 seconds
+	delay( 10000 );
+
+	main_dev->stop();
+	printf( "Stopped and done!\n" );
+	exit( 1 );
 }
 
 void exit_handler( int s ) {
