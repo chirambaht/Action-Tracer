@@ -534,6 +534,10 @@ int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionData
 	// First, we'll try the quicker send but if there is an issue, we will investigate more but doing an longer process send
 	try {
 		if ( !packet->SerializeToFileDescriptor( _descriptor ) ) {
+			if ( errno == EPIPE ) {
+				printf( "Bad send but will be fine, handled\n" );
+				return -1;
+			}
 			printf( "Bad send\n" );
 			if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
 				if ( send_response == -1 ) {
