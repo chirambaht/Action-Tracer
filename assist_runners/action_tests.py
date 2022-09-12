@@ -35,10 +35,11 @@ def receive_data():
 
     # receive data
     while ( True ):
-        global fname_bin
-        data_packet = ActionDataNetworkPackage()
+        # global fname_bin
 
+        data_packet = ActionDataNetworkPackage()
         recevied_data = s.recv( 65536 )
+
         if start_time == 0:
             start_time = time.time()
         if not recevied_data:
@@ -47,8 +48,10 @@ def receive_data():
         log_to_file( fname_bin, "ab", recevied_data )
 
         try:
+
             data_packet.ParseFromString( recevied_data )
-            data_packet.DebugString()
+            print( data_packet.packet_number )
+            print( data_packet.__str__() )
         except:
             print( "Error while parsing data" )
             bad_packets += 1

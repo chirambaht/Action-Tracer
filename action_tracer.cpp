@@ -145,10 +145,6 @@ void ActionTracer::ActionTracer::stop() {
 		pause();
 	}
 
-	// Set the running flag to false
-	_running = false;
-	_turn_off_all_devices();
-
 	_supervisor->disconnect();
 
 	// Stop the threads
@@ -157,11 +153,14 @@ void ActionTracer::ActionTracer::stop() {
 	_thread_running_data_transmission = false;
 
 	// Join the threads
-	// _thread_client_manager.join();
-	// _thread_data_collection.join();
-	// _thread_data_transmission.join();
+	_thread_client_manager.join();
+	_thread_data_collection.join();
+	_thread_data_transmission.join();
 
-	_data_ready = false;
+	// Set the running flag to false
+	// _running = false;
+
+	_turn_off_all_devices();
 }
 
 /**
