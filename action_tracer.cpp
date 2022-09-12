@@ -19,9 +19,13 @@ const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_P
 void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Supervisor *new_super, bool *data_in, bool *thread_run ) {
 	printf( "Data transmission thread started\n" );
 	while ( *thread_run ) {
-		if ( *data_in ) {
-			new_super->send_packet();
-			*data_in = false;
+		try {
+			if ( *data_in ) {
+				new_super->send_packet();
+				*data_in = false;
+			}
+		} catch ( std::exception &e ) {
+			printf( "Exception in data transmission thread: %s\n Probably the client disconnected\n", e.what() );
 		}
 	}
 	printf( "Data transmission thread stopped\n" );
