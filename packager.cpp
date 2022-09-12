@@ -539,6 +539,7 @@ int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionData
 				return -1;
 			}
 			printf( "Bad send\n" );
+			printf( "Error: %s\n", strerror( errno ) );
 			if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
 				if ( send_response == -1 ) {
 					// Client disconnected

@@ -13,17 +13,19 @@ if ( not os.path.isdir( "test" ) ):
     os.mkdir( "test" )
 
 # get current time as string
-fname_bin = "data/raw_" + datetime.now().strftime( "%m%d%Y-%H%M%S" ) + ".bin"
+fname_bin = "test/raw_" + datetime.now().strftime( "%m%d%Y-%H%M%S" ) + ".bin"
 
-open( fname_bin, "w" ).close()
+open( fname_bin, "wb" ).close()
 
-s.connect( ( '192.168.1.60', 9022 ) )
+s.connect( ( '192.168.1.75', 9022 ) )
 print( "Connected" )
 
-def log_to_file(data_file_name, mode, data):
+
+def log_to_file( data_file_name, mode, data ):
     data_file = open( data_file_name, mode )
     data_file.write( data )
     data_file.close()
+
 
 def receive_data():
     bad_packets = 0
@@ -42,7 +44,7 @@ def receive_data():
         if not recevied_data:
             continue
 
-        log_to_file(fname_bin, "ab", recevied_data)
+        log_to_file( fname_bin, "ab", recevied_data )
 
         try:
             data_packet.ParseFromString( recevied_data )
@@ -51,16 +53,16 @@ def receive_data():
             print( "Error while parsing data" )
             bad_packets += 1
             continue
-        
+
         if ( ( data_packet.packet_number == 0 ) ):
             end_time = time.time()
             print( "I have been told to disconnect, ouch!" )
             print( "Bad packets: ", bad_packets )
             print( "Total packets: ", total_packets )
             print( "Percentage: ", round( ( bad_packets / total_packets ) * 100, 2 ) )
-            print( "Throughput (/s): ", round(total_packets / (end_time - start_time), 2))
+            print( "Throughput (/s): ", round( total_packets / ( end_time - start_time ), 2 ) )
             print( "Good packets: ", good_packets, "=", total_packets - bad_packets )
-            print( "Goodput (/s): ", round(good_packets / (end_time - start_time), 2))
+            print( "Goodput (/s): ", round( good_packets / ( end_time - start_time ), 2 ) )
             return
         total_packets += 1
         if ( len( data_packet.device_data ) < 1 ):
@@ -73,6 +75,6 @@ def receive_data():
             if ( len( device_data.data ) < 30 ):
                 continue
         good_packets += 1
-            
+
 
 receive_data()

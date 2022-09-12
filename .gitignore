@@ -62,3 +62,6 @@ test_program
 data/*
 *.cs
 ActionDefinitions.cs
+assist_runners/action_tests.py
+assist_runners/test/raw_09122022-151433.bin
+assist_runners/test/raw_09122022-151436.bin
