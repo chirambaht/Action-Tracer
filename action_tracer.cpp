@@ -33,10 +33,12 @@ void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Super
 
 void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in, bool *thread_run ) {
 	printf( "Client manager thread started\n" );
+	int connected_clients = 0, prev_connected = 0;
 	while ( *thread_run ) {
 		if ( new_super->get_ready() ) {
 			printf( "Ready for a client to connect...\n" );
 			new_super->initialize( true );
+			connected_clients++;
 		}
 	}
 	printf( "Client manager thread stopped\n" );
