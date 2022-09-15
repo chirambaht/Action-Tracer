@@ -95,6 +95,7 @@ uint8_t ActionTracer::Communication::Supervisor::_wait_for_connection() {
 	// Show connection IP
 	debugPrint( "Waiting for new connection...\n" );
 	ActionServerClient *temp_client = new ActionServerClient();
+
 	temp_client->set_descriptor( accept( _server.get_descriptor(), ( sockaddr * ) &temp_client->address, &temp_client->_address_len ) ); // Blocking call waiting for new connection
 
 	if ( temp_client->get_descriptor() < 0 ) {
@@ -575,7 +576,14 @@ void ActionTracer::Communication::ActionServerClient::send_disconnect_notificati
 	printf( "Notify client with descriptor %d of disconnect\n", this->get_descriptor() );
 	ActionDataNetworkPackage disconnect_packet = ActionDataNetworkPackage();
 	disconnect_packet.set_packet_number( 0 );
-	disconnect_packet.SerializeToFileDescriptor( _descriptor );
+	int ensure_disconnect = 0;
+	while ( ensure_disconnect++ < 5 ) {
+		try {
+			disconnect_packet.SerializeToFileDescriptor( _descriptor );
+		} catch ( const std::exception &e ) {
+			break; // Hopefully the error caught is acknowledging the disconnected client on the clients side
+		}
+	}
 }
 
 /**

@@ -86,7 +86,7 @@
 #endif
 
 #define DEFAULT_PORT 9022
-#define MAX_CLIENTS	 10
+#define MAX_CLIENTS	 1
 
 namespace ActionTracer {
 	typedef struct ActionDataPackage {

@@ -64,3 +64,4 @@ data/*
 ActionDefinitions.cs
 assist_runners/action_tests.py
 assist_runners/test/*
+test/*

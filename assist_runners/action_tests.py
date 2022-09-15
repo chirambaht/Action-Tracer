@@ -51,9 +51,9 @@ def receive_data():
 
             data_packet.ParseFromString( recevied_data )
             print( data_packet.packet_number )
-            print( data_packet.__str__() )
+            # print( data_packet.__str__() )
         except:
-            print( "Error while parsing data" )
+            # print( "Error while parsing data" )
             bad_packets += 1
             continue
 

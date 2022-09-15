@@ -35,8 +35,7 @@ void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervis
 	printf( "Client manager thread started\n" );
 	int connected_clients = 0, prev_connected = 0;
 	while ( *thread_run ) {
-		if ( new_super->get_ready() ) {
-			printf( "Ready for a client to connect...\n" );
+		if ( new_super->get_ready() && connected_clients < MAX_CLIENTS ) {
 			new_super->initialize( true );
 			connected_clients++;
 		}
