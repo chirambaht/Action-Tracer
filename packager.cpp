@@ -577,10 +577,11 @@ void ActionTracer::Communication::ActionServerClient::send_disconnect_notificati
 	ActionDataNetworkPackage disconnect_packet = ActionDataNetworkPackage();
 	disconnect_packet.set_packet_number( 0 );
 	int ensure_disconnect = 0;
-	while ( ensure_disconnect++ < 5 ) {
+	while ( ensure_disconnect++ < 30 ) {
 		try {
 			disconnect_packet.SerializeToFileDescriptor( _descriptor );
 		} catch ( const std::exception &e ) {
+			printf( "Sent %d notifications\n", ensure_disconnect );
 			break; // Hopefully the error caught is acknowledging the disconnected client on the clients side
 		}
 	}

@@ -56,7 +56,7 @@ void setup() {
 	// wait for 10 seconds
 	// delay( 10000 );
 
-	main_dev->stop();
+	// main_dev->stop();
 	printf( "Stopped and done!\n" );
 	exit( 1 );
 }
