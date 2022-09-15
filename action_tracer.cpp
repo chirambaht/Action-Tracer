@@ -145,6 +145,7 @@ void ActionTracer::ActionTracer::stop() {
 	if ( !_paused ) {
 		pause();
 	}
+	_running = false;
 
 	_supervisor->disconnect();
 
@@ -159,7 +160,6 @@ void ActionTracer::ActionTracer::stop() {
 	_thread_data_transmission.join();
 
 	// Set the running flag to false
-	// _running = false;
 
 	_turn_off_all_devices();
 }
