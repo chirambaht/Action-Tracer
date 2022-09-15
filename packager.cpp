@@ -574,14 +574,27 @@ void ActionTracer::Communication::ActionServerClient::disconnect() {
  */
 void ActionTracer::Communication::ActionServerClient::send_disconnect_notification() {
 	printf( "Notify client with descriptor %d of disconnect\n", this->get_descriptor() );
-	ActionDataNetworkPackage disconnect_packet = ActionDataNetworkPackage();
+	ActionDataNetworkPackage				   disconnect_packet = ActionDataNetworkPackage();
+	ActionDataNetworkPackage_ActionDeviceData *device_data		 = disconnect_packet.add_device_data();
+	device_data->set_device_identifier_contents( 0 );
 	disconnect_packet.set_packet_number( 0 );
 	int ensure_disconnect = 0;
+
+	auto		   timestamp = new google::protobuf::Timestamp{};
+	struct timeval tv;
+	gettimeofday( &tv, NULL );
+
+	timestamp->set_seconds( 0 );
+	timestamp->set_nanos( 0 );
+
+	disconnect_packet.set_allocated_send_time( timestamp );
+
 	while ( ensure_disconnect++ < 30 ) {
 		try {
-			disconnect_packet.SerializeToFileDescriptor( _descriptor );
+			// disconnect_packet.SerializeToFileDescriptor( _descriptor );
+			send_packet( &disconnect_packet );
 		} catch ( const std::exception &e ) {
-			printf( "Sent %d notifications\n", ensure_disconnect );
+			printf( "Sent %d notifications and they have been received\n", ensure_disconnect );
 			break; // Hopefully the error caught is acknowledging the disconnected client on the clients side
 		}
 	}
