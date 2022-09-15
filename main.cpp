@@ -57,8 +57,8 @@ void setup() {
 	// delay( 10000 );
 
 	// main_dev->stop();
-	printf( "Stopped and done!\n" );
-	exit( 1 );
+	// printf( "Stopped and done!\n" );
+	// exit( 1 );
 }
 
 void exit_handler( int s ) {
