@@ -215,15 +215,6 @@ void ActionTracer::TracePoint::get_data() {
 	// Get gyroscope data next
 	_device->dmpGetGyro( &_gyroscope_packet, _fifo_buffer );
 
-	// Get gravity data next
-	_device->dmpGetGravity( &_gravity_packet, &_quaternion_packet );
-
-	// Now get the yaw, pitch and roll data
-	_device->dmpGetYawPitchRoll( &_yaw_pitch_roll_packet[0], &_quaternion_packet, &_gravity_packet );
-
-	// Get Euler angles
-	_device->dmpGetEuler( &_euler_packet[0], &_quaternion_packet );
-
 	// Get Temperature
 	_temperature_packet = ( _device->getTemperature() / 340.0 ) + 36.53;
 
@@ -241,18 +232,7 @@ void ActionTracer::TracePoint::get_data() {
 	_data_package.data[8] = ( _gyroscope_packet.y / 16.4 ); // Max Value: 2000
 	_data_package.data[9] = ( _gyroscope_packet.z / 16.4 ); // Max Value: 2000
 
-	_data_package.data[10] = _yaw_pitch_roll_packet[0]; // Max Value:
-	_data_package.data[11] = _yaw_pitch_roll_packet[1]; // Max Value:
-	_data_package.data[12] = _yaw_pitch_roll_packet[2]; // Max Value:
-	_data_package.data[13] = _euler_packet[0];			// Max Value:
-	_data_package.data[14] = _euler_packet[1];			// Max Value:
-	_data_package.data[15] = _euler_packet[2];			// Max Value:
-
-	_data_package.data[16] = _gravity_packet.x; // Max Value:
-	_data_package.data[17] = _gravity_packet.y; // Max Value:
-	_data_package.data[18] = _gravity_packet.z; // Max Value:
-
-	_data_package.data[19] = _temperature_packet; // Max Value:
+	_data_package.data[10] = _temperature_packet; // Max Value: 85
 
 	this->_deselect_me();
 }

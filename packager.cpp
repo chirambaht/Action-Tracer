@@ -206,17 +206,36 @@ int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *dev
 
 	// ActionDataNetworkPackage_ActionDeviceData  *device_data		= new ActionDataNetworkPackage_ActionDeviceData();
 
-	ActionDataNetworkPackage_ActionDeviceData *device_data = _net_package.add_device_data();
+	ActionDataNetworkPackage_ActionDeviceData			  *device_data	= _net_package.add_device_data();
+	ActionDataNetworkPackage_ActionDeviceData_ActionData1 temperature	= ActionDataNetworkPackage_ActionDeviceData_ActionData1();
+	ActionDataNetworkPackage_ActionDeviceData_ActionData3 accelerometer = ActionDataNetworkPackage_ActionDeviceData_ActionData3();
+	ActionDataNetworkPackage_ActionDeviceData_ActionData3 gyroscope		= ActionDataNetworkPackage_ActionDeviceData_ActionData3();
+	ActionDataNetworkPackage_ActionDeviceData_ActionData4 quaternion	= ActionDataNetworkPackage_ActionDeviceData_ActionData4();
 	device_data->set_device_identifier_contents( device_packet->device_identifier_contents );
 
 	_packed++;
 
-	for ( int i = 0; i < DATA_ELEMENTS; i++ ) {
-		device_data->add_data( device_packet->data[i] );
-		_packed++;
-	}
+	temperature.set_x( device_packet->data[10] );
 
-	return _packed;
+	quaternion.set_w( device_packet->data[0] );
+	quaternion.set_x( device_packet->data[1] );
+	quaternion.set_y( device_packet->data[2] );
+	quaternion.set_z( device_packet->data[3] );
+
+	accelerometer.set_x( device_packet->data[4] );
+	accelerometer.set_y( device_packet->data[5] );
+	accelerometer.set_z( device_packet->data[6] );
+
+	gyroscope.set_x( device_packet->data[7] );
+	gyroscope.set_y( device_packet->data[8] );
+	gyroscope.set_z( device_packet->data[9] );
+
+	device_data->set_allocated_accelerometer( &accelerometer );
+	device_data->set_allocated_gyroscope( &gyroscope );
+	device_data->set_allocated_quaternion( &quaternion );
+	device_data->set_allocated_temperature( &temperature );
+
+	return 11;
 }
 
 /**
