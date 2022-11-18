@@ -11,8 +11,31 @@ message ActionDataNetworkPackage {
 
     message ActionDeviceData{
         uint32 device_identifier_contents = 4;
-        repeated float data = 5;
+        
+        message ActionData1{
+            float x = 1;
+        }
+
+        message ActionData3{
+            float x = 1;
+            float y = 2;
+            float z = 3;
+        }
+
+        message ActionData4{
+            float w = 1;
+            float x = 2;
+            float y = 3;
+            float z = 4;
+        }
+
+        ActionData4 quaternion = 5;
+        ActionData3 accelerometer = 6;
+        ActionData3 gyroscope = 7;
+        ActionData1 temperature = 8;
+        repeated ActionData3 extra = 9;
     } 
+
     
     repeated ActionDeviceData device_data = 3;
 }
