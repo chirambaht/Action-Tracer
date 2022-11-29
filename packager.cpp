@@ -5,8 +5,6 @@
 #include <algorithm>
 #include <cerrno>
 #include <ctime>
-#include <google/protobuf/timestamp.pb.h>
-#include <google/protobuf/util/time_util.h>
 #include <iomanip>
 #include <unistd.h>
 
@@ -172,13 +170,13 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 
 	_net_package.set_packet_number( ++_count );
 
-	auto		   timestamp = new google::protobuf::Timestamp{};
+	auto		   timestamp = ActionTimestamp();
 	struct timeval tv;
 	gettimeofday( &tv, NULL );
 
-	// timestamp->set_seconds( time(NULL) );
 	timestamp->set_seconds( tv.tv_sec );
 	timestamp->set_nanos( tv.tv_usec * 1000 );
+
 	_net_package.set_allocated_send_time( timestamp );
 
 	if ( !_net_package.IsInitialized() ) {
@@ -187,7 +185,6 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 	}
 
 	// Packet size
-	// printf( "Packet size to be sent: %ld\n", sizeof( _net_package.SerializeAsString() ) );
 	_server.send_packet( &_net_package );
 
 	// Reset the packet
@@ -206,21 +203,22 @@ int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *dev
 
 	// ActionDataNetworkPackage_ActionDeviceData  *device_data		= new ActionDataNetworkPackage_ActionDeviceData();
 
-	ActionDataNetworkPackage_ActionDeviceData			  *device_data	= _net_package.add_device_data();
-	ActionDataNetworkPackage_ActionDeviceData_ActionData1 temperature	= ActionDataNetworkPackage_ActionDeviceData_ActionData1();
-	ActionDataNetworkPackage_ActionDeviceData_ActionData3 accelerometer = ActionDataNetworkPackage_ActionDeviceData_ActionData3();
-	ActionDataNetworkPackage_ActionDeviceData_ActionData3 gyroscope		= ActionDataNetworkPackage_ActionDeviceData_ActionData3();
-	ActionDataNetworkPackage_ActionDeviceData_ActionData4 quaternion	= ActionDataNetworkPackage_ActionDeviceData_ActionData4();
+	ActionDataNetworkPackage_ActionDeviceData *device_data = _net_package.add_device_data();
+
+	ActionDataNetworkPackage_ActionDeviceData_ActionData3 *accelerometer = device_data->accelerometer;
+	ActionDataNetworkPackage_ActionDeviceData_ActionData3 *gyroscope	 = device_data->gyroscope;
+	ActionDataNetworkPackage_ActionDeviceData_ActionData4 *quaternion	 = device_data->quaternion;
+
 	device_data->set_device_identifier_contents( device_packet->device_identifier_contents );
 
 	_packed++;
 
-	temperature.set_x( device_packet->data[10] );
+	device_data->set_temperature( device_packet->data[10] );
 
-	quaternion.set_w( device_packet->data[0] );
-	quaternion.set_x( device_packet->data[1] );
-	quaternion.set_y( device_packet->data[2] );
-	quaternion.set_z( device_packet->data[3] );
+	quaternion->set_w( device_packet->data[0] );
+	quaternion->set_x( device_packet->data[1] );
+	quaternion->set_y( device_packet->data[2] );
+	quaternion->set_z( device_packet->data[3] );
 
 	accelerometer.set_x( device_packet->data[4] );
 	accelerometer.set_y( device_packet->data[5] );
@@ -229,11 +227,6 @@ int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *dev
 	gyroscope.set_x( device_packet->data[7] );
 	gyroscope.set_y( device_packet->data[8] );
 	gyroscope.set_z( device_packet->data[9] );
-
-	device_data->set_allocated_accelerometer( &accelerometer );
-	device_data->set_allocated_gyroscope( &gyroscope );
-	device_data->set_allocated_quaternion( &quaternion );
-	device_data->set_allocated_temperature( &temperature );
 
 	return 11;
 }
