@@ -4,8 +4,8 @@
 
 #include <algorithm>
 #include <cerrno>
-#include <ctime>
 #include <iomanip>
+#include <sys/time.h>
 #include <unistd.h>
 
 #ifdef ON_PI
@@ -220,13 +220,13 @@ int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *dev
 	quaternion->set_y( device_packet->data[2] );
 	quaternion->set_z( device_packet->data[3] );
 
-	accelerometer.set_x( device_packet->data[4] );
-	accelerometer.set_y( device_packet->data[5] );
-	accelerometer.set_z( device_packet->data[6] );
+	accelerometer->set_x( device_packet->data[4] );
+	accelerometer->set_y( device_packet->data[5] );
+	accelerometer->set_z( device_packet->data[6] );
 
-	gyroscope.set_x( device_packet->data[7] );
-	gyroscope.set_y( device_packet->data[8] );
-	gyroscope.set_z( device_packet->data[9] );
+	gyroscope->set_x( device_packet->data[7] );
+	gyroscope->set_y( device_packet->data[8] );
+	gyroscope->set_z( device_packet->data[9] );
 
 	return 11;
 }
