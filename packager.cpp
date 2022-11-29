@@ -170,7 +170,7 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 
 	_net_package.set_packet_number( ++_count );
 
-	ActionTimestamp *timestamp = ActionTimestamp();
+	ActionTimestamp *timestamp = new ActionTimestamp();
 	struct timeval	 tv;
 	gettimeofday( &tv, NULL );
 
