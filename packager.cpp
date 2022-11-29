@@ -205,9 +205,9 @@ int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *dev
 
 	ActionDataNetworkPackage_ActionDeviceData *device_data = _net_package.add_device_data();
 
-	ActionDataNetworkPackage_ActionDeviceData_ActionData3 *accelerometer = device_data->accelerometer;
-	ActionDataNetworkPackage_ActionDeviceData_ActionData3 *gyroscope	 = device_data->gyroscope;
-	ActionDataNetworkPackage_ActionDeviceData_ActionData4 *quaternion	 = device_data->quaternion;
+	ActionDataNetworkPackage_ActionDeviceData_ActionData3 *accelerometer = new ActionDataNetworkPackage_ActionDeviceData_ActionData3();
+	ActionDataNetworkPackage_ActionDeviceData_ActionData3 *gyroscope	 = new ActionDataNetworkPackage_ActionDeviceData_ActionData3();
+	ActionDataNetworkPackage_ActionDeviceData_ActionData4 *quaternion	 = new ActionDataNetworkPackage_ActionDeviceData_ActionData4();
 
 	device_data->set_device_identifier_contents( device_packet->device_identifier_contents );
 
@@ -227,6 +227,10 @@ int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *dev
 	gyroscope->set_x( device_packet->data[7] );
 	gyroscope->set_y( device_packet->data[8] );
 	gyroscope->set_z( device_packet->data[9] );
+
+	device_data->set_allocated_accelerometer( accelerometer );
+	device_data->set_allocated_gyroscope( gyroscope );
+	device_data->set_allocated_quaternion( quaternion );
 
 	return 11;
 }
@@ -592,7 +596,7 @@ void ActionTracer::Communication::ActionServerClient::send_disconnect_notificati
 	disconnect_packet.set_packet_number( 0 );
 	int ensure_disconnect = 0;
 
-	auto		   timestamp = new google::protobuf::Timestamp{};
+	auto		   timestamp = new ActionTimestamp();
 	struct timeval tv;
 	gettimeofday( &tv, NULL );
 
