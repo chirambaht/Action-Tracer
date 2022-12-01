@@ -297,6 +297,10 @@ bool ActionTracer::Communication::Supervisor::get_ready() const {
 	return _ready;
 }
 
+bool ActionTracer::Communication::Supervisor::get_connected_clients() const {
+	return _server.get_clients_connected();
+}
+
 /**
  * @brief Construct a new Action Tracer:: Communication:: Action Server:: Action Server object
  *

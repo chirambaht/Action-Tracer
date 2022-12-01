@@ -122,6 +122,8 @@ namespace ActionTracer::Communication {
 		void set_ready( bool );
 		bool get_ready() const;
 
+		bool get_connected_clients() const;
+
 		void	 set_server_port( uint16_t );
 		uint16_t get_server_port() const;
 	};

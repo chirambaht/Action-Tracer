@@ -273,8 +273,9 @@ uint8_t ActionTracer::ActionTracer::get_fifo_rate( uint8_t device ) const {
  */
 void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate ) {
 	// For each deviece in use in_devices_in_use, set the sample rate to the given sample rate.
-	for ( auto &device : _devices_in_use ) {
-		device->set_sample_rate( 2 );
+	_act_sample_rate = sample_rate;
+	for ( auto &device : _devices_waiting_for_use ) {
+		device->set_sample_rate( _act_sample_rate );
 	}
 }
 
@@ -434,4 +435,8 @@ bool ActionTracer::ActionTracer::_turn_off_all_devices() {
 		digitalWrite( ALL_ACT_DEVICE_PINS[i], LOW );
 	}
 	return true;
+}
+
+uint8_t ActionTracer::ActionTracer::get_connected_clients() {
+	return _supervisor->get_connected_clients();
 }

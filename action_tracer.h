@@ -16,7 +16,7 @@ namespace ActionTracer {
 		Communication::Supervisor *_supervisor;
 
 		std::vector<TracePoint *> _devices_waiting_for_use;
-		uint16_t				  _act_sample_rate;
+		uint8_t					  _act_sample_rate = 4;
 		float					*_data_package[DATA_PACKAGE_SIZE];
 		ActionDataPackage		  *_data_package_action[MAX_ACT_DEVICES] = { new ActionDataPackage() };
 
@@ -77,6 +77,8 @@ namespace ActionTracer {
 		uint8_t get_sample_rate() const;
 
 		void show_body();
+
+		uint8_t get_connected_clients() const;
 	};
 
 } // namespace ActionTracer
