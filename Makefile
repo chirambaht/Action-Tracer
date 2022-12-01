@@ -1,36 +1,14 @@
 all: proto collector
 test: proto test_compile
-RATE = 2
-# MPU6050_DMP_FIFO_RATE_DIVISOR values and their linked rate
-# 	n  --> Rate (Hz)
-#    0 -->  200 
-#    1 -->  100 
-#    2 -->   66 
-#    3 -->   50 
-#    4 -->   40 
-#    5 -->   33 
-#    6 -->   28 
-#    7 -->   25 
-#    8 -->   22 
-#    9 -->   20 
-#    a -->   18 
-#    b -->   16 
-#    c -->   15 
-#    d -->   14 
-#    e -->   13 
-#    f -->   12 
-#   10 -->   11 
-#   11 -->   11 
-#   12 -->   10 
-#   13 -->   10 
+
 
 HDRS = helper_3dmath.h I2Cdev.h MPU6050.h action_pi.hpp packager.h calibrator.hpp tracer_point.h action_tracer.h action_definitions.pb.h main.h 
-OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o action_tracer.o action_definitions.pb.o main.o 
+OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o packager.o tracer_point.o action_tracer.o action_definitions.pb.o main.o single_action_main.o
 
 EXE = collector
 ACTISH = actish
 
-CXXFLAGS = -Wall -DON_PI -g -DMPU6050_DMP_FIFO_RATE_DIVISOR=$(RATE) -std=c++11 # -DDEBUG 
+CXXFLAGS = -Wall -DON_PI -g -DMPU6050_DMP_FIFO_RATE_DIVISOR=2 -std=c++11 # -DDEBUG 
 
 LOCAL_IP = $(shell ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | awk '{print $1}')
 LOCAL_PORT = 5000
@@ -38,7 +16,12 @@ LOCAL_PORT = 5000
 # protoc -I=. --cpp_out=. ./action_definitions.proto
 @ $(OBJS): $(HDRS)
 
-collector: $(OBJS)
+collector: $(OBJS)  
+	@ echo "Compiled data collection program"
+	@ $(CXX) -o $(EXE) $^ -lwiringPi -lpthread -lprotobuf
+	@ echo "Program made!"
+
+basic_test: $(OBJS) 
 	@ echo "Compiled data collection program"
 	@ $(CXX) -o $(EXE) $^ -lwiringPi -lpthread -lprotobuf
 	@ echo "Program made!"

@@ -437,6 +437,6 @@ bool ActionTracer::ActionTracer::_turn_off_all_devices() {
 	return true;
 }
 
-uint8_t ActionTracer::ActionTracer::get_connected_clients() {
+uint8_t ActionTracer::ActionTracer::get_connected_clients() const {
 	return _supervisor->get_connected_clients();
 }
