@@ -36,7 +36,7 @@ namespace ActionTracer::Communication {
 
 		void set_descriptor( const int descriptor );
 
-		int16_t send_packet( ActionDataNetworkPackage *packet );
+		int16_t send_packet( ActionDataNetworkPackage *packet, ActionCommand command = ActionCommand::DATA );
 
 		void disconnect();
 		void send_disconnect_notification();
@@ -47,7 +47,7 @@ namespace ActionTracer::Communication {
 		socklen_t _address_len = sizeof( sockaddr_in );
 
 		uint8_t	 _descriptor = 0;
-		uint16_t _port		 = 0;
+		uint16_t _port		 = 9022;
 
 		std::vector<ActionServerClient> _clients;
 
@@ -108,7 +108,7 @@ namespace ActionTracer::Communication {
 		~Supervisor();
 
 		void send_packet( void );
-		int	 send_packet( ActionDataPackage	*);
+		int	 send_packet( ActionDataPackage * );
 		void initialize();
 		void initialize( bool );
 
