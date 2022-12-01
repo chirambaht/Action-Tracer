@@ -6,11 +6,6 @@
 #include "action_pi.hpp"
 #include "debug_printer.h"
 
-#ifdef TAKE_ARGUMENTS
-	#include <cxxopts.hpp>
-	#include <string>
-#endif
-
 #include <signal.h>
 #include <stdlib.h>
 
@@ -21,10 +16,6 @@
 #endif
 
 using namespace ActionTracer;
-
-#ifdef TAKE_ARGUMENTS
-cxxopts::Options options( "Action Tracer", "This program runs a given number of MPU6050 IMU's and sends the data packets via UDP." );
-#endif
 
 /**
  * @brief Initialise all the devices in the network. Store them in objects in main.h
@@ -85,14 +76,6 @@ void loop() {
  * @return int
  */
 int main( int argc, char const *argv[] ) {
-#ifdef TAKE_ARGUMENTS
-	options.add_options()( "f,file", "Define variables using a file. If a file is given, all other given parameters will be overwritten.", cxxopts::value<std::string>()->default_value( "" ) );
-	options.add_options()( "h,help", "Print usage" );
-	options.add_options()( "t,tracepoints", "Number of body devices being used on the body", cxxopts::value<int>()->default_value( "0" ) );
-#else
-
-#endif
-
 	// TODO: Run a new setup method that accounts for debug, custom tps, files and
 	printf( "Running basic setup routine\n" );
 	setup();
