@@ -474,7 +474,7 @@ int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwor
 	}
 
 	for( auto client : _clients ) {
-		int res = client.send_packet( package );
+		int res = client.send_packet( package, ActionCommand::DATA );
 		if( res == -1 ) {
 			disconnect_client( &client, false );
 			break;
