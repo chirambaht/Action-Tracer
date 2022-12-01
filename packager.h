@@ -36,7 +36,7 @@ namespace ActionTracer::Communication {
 
 		void set_descriptor( const int descriptor );
 
-		int16_t send_packet( ActionDataNetworkPackage *packet, ActionCommand command = ActionCommand::DATA );
+		int16_t send_packet( ActionDataNetworkPackage *, ActionCommand );
 
 		void disconnect();
 		void send_disconnect_notification();
