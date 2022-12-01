@@ -489,7 +489,7 @@ int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwor
  * @param package A pointer to the data packet to send
  */
 int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package, ActionServerClient *client ) {
-	return client->send_packet( package );
+	return client->send_packet( package, ActionCommand::DATA );
 }
 
 /**
@@ -546,7 +546,7 @@ void ActionTracer::Communication::ActionServerClient::set_descriptor( const int 
  * @brief Send a packet to the client via socket
  * @returns packet pointer to the packet to send
  */
-int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDataNetworkPackage *packet, ActionCommand command = ActionCommand::DATA ) {
+int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDataNetworkPackage *packet, ActionCommand command ) {
 	if( !packet->IsInitialized() ) {
 		// throw std::invalid_argument( "Packet is not ready to be sent" );
 		return 0;
