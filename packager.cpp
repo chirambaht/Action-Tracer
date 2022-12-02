@@ -505,14 +505,14 @@ ActionTracer::ActionMessage *ActionTracer::Communication::ActionServer::read_pac
 
 	if ( _clients.size() == 0 ) {
 		_incoming_message.set_action( ActionCommand::UNKNOWN );
-		return _incoming_message;
+		return &_incoming_message;
 	}
 
 	// We only read packets from the first client
 	ActionServerClient client = _clients[0];
 	_incoming_message		  = *( client.read_packet() );
 
-	return _incoming_message;
+	return &_incoming_message;
 }
 
 /**
