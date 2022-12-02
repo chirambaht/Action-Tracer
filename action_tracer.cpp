@@ -33,7 +33,7 @@ void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Super
 
 void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in, bool *thread_run ) {
 	printf( "Client manager thread started\n" );
-	int connected_clients = 0, prev_connected = 0;
+	int connected_clients = 0;
 	while ( *thread_run ) {
 		if ( new_super->get_ready() && connected_clients < MAX_CLIENTS ) {
 			new_super->initialize( true );
@@ -441,6 +441,6 @@ uint8_t ActionTracer::ActionTracer::get_connected_clients() const {
 	return _supervisor->get_connected_clients();
 }
 
-ActionTracer::Communication::ActionServer *ActionTracer::ActionTracer::get_server()  {
+ActionTracer::Communication::ActionServer::ActionServer *ActionTracer::ActionTracer::get_server() {
 	return _supervisor->get_server();
 }
