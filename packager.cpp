@@ -47,7 +47,7 @@ ActionTracer::Communication::Supervisor::~Supervisor() {
  */
 int ActionTracer::Communication::Supervisor::_socket_setup() {
 	_server.set_descriptor( socket( AF_INET, SOCK_STREAM, 0 ) );
-	if ( _server.get_descriptor() < 0 ) {
+	if( _server.get_descriptor() < 0 ) {
 		printf( "socket failed" );
 		exit( EXIT_FAILURE );
 	}
@@ -58,18 +58,18 @@ int ActionTracer::Communication::Supervisor::_socket_setup() {
 
 	// This helps in manipulating options for the socket referred by the socket descriptor sockfd. This is completely optional, but it helps in reuse of address and port. Prevents error such as:
 	// “address already in use”.
-	if ( setsockopt( _server.get_descriptor(), SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
+	if( setsockopt( _server.get_descriptor(), SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof( _opt ) ) ) {
 		printf( "setsockopt" );
 		exit( EXIT_FAILURE );
 	}
 
 	_server.set_details( INADDR_ANY, _server.get_port() );
 
-	if ( bind( _server.get_descriptor(), ( struct sockaddr * ) &_server._server_details, sizeof( _server.get_details() ) ) < 0 ) {
+	if( bind( _server.get_descriptor(), ( struct sockaddr * ) &_server._server_details, sizeof( _server.get_details() ) ) < 0 ) {
 		printf( "bind failed" );
 		exit( EXIT_FAILURE );
 	}
-	if ( listen( _server.get_descriptor(), ( MAX_CLIENTS / 2 ) ) < 0 ) {
+	if( listen( _server.get_descriptor(), ( MAX_CLIENTS / 2 ) ) < 0 ) {
 		printf( "Error when trying to listen for connection" );
 		exit( EXIT_FAILURE );
 	}
@@ -84,7 +84,7 @@ int ActionTracer::Communication::Supervisor::_socket_setup() {
  */
 uint8_t ActionTracer::Communication::Supervisor::_wait_for_connection() {
 	// Check if everything else is ready
-	if ( _server.get_descriptor() < 0 ) {
+	if( _server.get_descriptor() < 0 ) {
 		printf( "Server not ready" );
 		// std::__throw_invalid_argument( "Server not ready for use, please run _socket_setup() first" );
 		return -1;
@@ -96,7 +96,7 @@ uint8_t ActionTracer::Communication::Supervisor::_wait_for_connection() {
 
 	temp_client->set_descriptor( accept( _server.get_descriptor(), ( sockaddr * ) &temp_client->address, &temp_client->_address_len ) ); // Blocking call waiting for new connection
 
-	if ( temp_client->get_descriptor() < 0 ) {
+	if( temp_client->get_descriptor() < 0 ) {
 		printf( "accept failed" );
 		exit( EXIT_FAILURE );
 	} else {
@@ -120,7 +120,7 @@ void ActionTracer::Communication::Supervisor::initialize() {
  * @brief Inits a Supervisor instance and only continues if a client is connected to the server.
  */
 void ActionTracer::Communication::Supervisor::initialize( bool run_server ) {
-	if ( run_server ) {
+	if( run_server ) {
 		_wait_for_connection();
 	} else {
 		_socket_setup();
@@ -133,7 +133,7 @@ void ActionTracer::Communication::Supervisor::initialize( bool run_server ) {
  * @throws INVALID_ARGUMENT if the client is not connected to the server
  */
 void ActionTracer::Communication::Supervisor::disconnect() {
-	if ( _server.get_descriptor() < 0 ) {
+	if( _server.get_descriptor() < 0 ) {
 		printf( "Server not ready" );
 		// std::__throw_invalid_argument( "Server not ready for use, I can not disconnect when I haven't connected!" );
 		return;
@@ -163,7 +163,7 @@ int ActionTracer::Communication::Supervisor::send_packet( ActionDataPackage *dev
  */
 void ActionTracer::Communication::Supervisor::send_packet() {
 	// If no socket descriptor is given, use the last device to be added to the network
-	if ( !get_ready() ) {
+	if( !get_ready() ) {
 		// throw std::invalid_argument( "No device is connected to the system's network." );
 		return;
 	}
@@ -179,7 +179,7 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 
 	_net_package.set_allocated_send_time( timestamp );
 
-	if ( !_net_package.IsInitialized() ) {
+	if( !_net_package.IsInitialized() ) {
 		// throw std::invalid_argument( "Packet is not ready to be sent" );
 		return;
 	}
@@ -428,7 +428,7 @@ uint8_t ActionTracer::Communication::ActionServer::connect_client( ActionServerC
  * @param ActionServerClient client to disconnect
  */
 void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerClient *client, bool notify = true ) {
-	if ( notify ) {
+	if( notify ) {
 		client->send_disconnect_notification();
 	}
 
@@ -436,7 +436,7 @@ void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerC
 
 	// Erase client from vector
 	auto it = std::find( _clients.begin(), _clients.end(), *client );
-	if ( it != _clients.end() ) {
+	if( it != _clients.end() ) {
 		printf( "Disconnecting client %d\n", client->get_descriptor() );
 		_clients.erase( it );
 	}
@@ -448,7 +448,7 @@ void ActionTracer::Communication::ActionServer::disconnect_client( ActionServerC
  * @brief Disconnect all clients from the server
  */
 void ActionTracer::Communication::ActionServer::disconnect_all_clients() {
-	for ( ActionServerClient client : _clients ) {
+	for( ActionServerClient client : _clients ) {
 		disconnect_client( &client, true );
 	}
 }
@@ -463,7 +463,7 @@ void ActionTracer::Communication::ActionServer::dump_vars() {
 
 	printf( "Clients: %d\n", _clients.size() );
 
-	for ( auto client : _clients ) {
+	for( auto client : _clients ) {
 		client.dump_vars();
 	}
 }
@@ -473,13 +473,13 @@ void ActionTracer::Communication::ActionServer::dump_vars() {
  * @param package A pointer to the data packet to send
  */
 int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package ) {
-	if ( _clients.size() == 0 ) {
+	if( _clients.size() == 0 ) {
 		return 0;
 	}
 
-	for ( auto client : _clients ) {
-		int res = client.send_packet( package );
-		if ( res == -1 ) {
+	for( auto client : _clients ) {
+		int res = client.send_packet( package, ActionCommand::DATA );
+		if( res == -1 ) {
 			disconnect_client( &client, false );
 			break;
 		}
@@ -493,7 +493,7 @@ int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwor
  * @param package A pointer to the data packet to send
  */
 int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package, ActionServerClient *client ) {
-	return client->send_packet( package );
+	return client->send_packet( package, ActionCommand::DATA );
 }
 
 /**
@@ -568,23 +568,27 @@ void ActionTracer::Communication::ActionServerClient::set_descriptor( const int 
  * @brief Send a packet to the client via socket
  * @returns packet pointer to the packet to send
  */
-int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDataNetworkPackage *packet ) {
-	if ( !packet->IsInitialized() ) {
+int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionDataNetworkPackage *packet, ActionCommand command ) {
+	if( !packet->IsInitialized() ) {
 		// throw std::invalid_argument( "Packet is not ready to be sent" );
 		return 0;
 	}
 
+	ActionMessage *message = new ActionMessage();
+	message->set_action( command );
+	message->set_allocated_data( packet );
+
 	// First, we'll try the quicker send but if there is an issue, we will investigate more but doing an longer process send
 	try {
-		if ( !packet->SerializeToFileDescriptor( _descriptor ) ) {
-			if ( errno == EPIPE ) {
+		if( !message->SerializeToFileDescriptor( _descriptor ) ) {
+			if( errno == EPIPE ) {
 				printf( "Bad send but will be fine, handled\n" );
 				return -1;
 			}
 			printf( "Bad send\n" );
 			printf( "Error: %s\n", strerror( errno ) );
-			if ( ( send_response = send( _descriptor, packet->SerializeAsString().c_str(), packet->ByteSizeLong(), 0 ) ) == -1 ) {
-				if ( send_response == -1 ) {
+			if( ( send_response = send( _descriptor, message->SerializeAsString().c_str(), message->ByteSizeLong(), 0 ) ) == -1 ) {
+				if( send_response == -1 ) {
 					// Client disconnected
 					printf( "Client with descriptor %d is not responding, so I shall disconnect\n", get_descriptor() );
 					return -1;
@@ -593,7 +597,7 @@ int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionData
 				}
 			}
 		}
-	} catch ( const std::exception &e ) {
+	} catch( const std::exception &e ) {
 		printf( "Send response: %d\n", send_response );
 		printf( "Error: %s\n", e.what() );
 	}
@@ -631,11 +635,11 @@ void ActionTracer::Communication::ActionServerClient::send_disconnect_notificati
 
 	disconnect_packet.set_allocated_send_time( timestamp );
 
-	while ( ensure_disconnect++ < 30 ) {
+	while( ensure_disconnect++ < 5 ) {
 		try {
 			// disconnect_packet.SerializeToFileDescriptor( _descriptor );
-			send_packet( &disconnect_packet );
-		} catch ( const std::exception &e ) {
+			send_packet( &disconnect_packet, ActionCommand::DISCONNECT );
+		} catch( const std::exception &e ) {
 			printf( "Sent %d notifications and they have been received\n", ensure_disconnect );
 			break; // Hopefully the error caught is acknowledging the disconnected client on the clients side
 		}

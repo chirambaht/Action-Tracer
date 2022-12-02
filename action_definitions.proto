@@ -12,6 +12,7 @@ enum ActionCommand {
   OUTPUT_RATE = 5;
   RESET = 6;
   DATA = 7;
+  DISCONNECT = 8;
 }
 
 enum ActionBodyConnection {
