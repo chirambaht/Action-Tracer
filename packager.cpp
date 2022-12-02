@@ -504,14 +504,15 @@ ActionTracer::ActionMessage *ActionTracer::Communication::ActionServer::read_pac
 	_incoming_message.Clear();
 
 	if ( _clients.size() == 0 ) {
-		return message;
+		_incoming_message.action = ActionCommand::UNKNOWN;
+		return _incoming_message;
 	}
 
 	// We only read packets from the first client
 	ActionServerClient client = _clients[0];
 	_incoming_message		  = *( client.read_packet() );
 
-	return message;
+	return _incoming_message;
 }
 
 /**
