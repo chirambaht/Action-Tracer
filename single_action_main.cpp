@@ -77,7 +77,7 @@ void setup() {
 		if ( incoming->action() == ActionCommand::DISCONNECT ) {
 			printf( "Disconnect command received! Disconnecting" );
 			main_dev->stop();
-			main_dev->disconnect();
+			server->disconnect_all_clients();
 		}
 
 		if ( incoming->action() == ActionCommand::UNKNOWN ) {
@@ -85,8 +85,8 @@ void setup() {
 		}
 
 		if ( incoming->action() == ActionCommand::OUTPUT_RATE ) {
-			printf( "Output rate command received! Setting it to %d Hz", incoming->param );
-			main_dev->set_fifo_rate( incoming->param );
+			printf( "Output rate command received! Setting it to %d Hz", incoming->param() );
+			main_dev->set_fifo_rate( incoming->param() );
 		}
 
 		// if ( server->get_ready() ) {
