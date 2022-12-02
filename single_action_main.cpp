@@ -50,7 +50,8 @@ void setup() {
 
 	ActionTracer::Communication::ActionServer *server = main_dev->get_server();
 	ActionMessage							 *incoming;
-	const google::protobuf::DescriptorPool while ( 1 ) {
+
+	while ( 1 ) {
 		try {
 			incoming = server->read_packet();
 		} catch ( std::exception &e ) {
