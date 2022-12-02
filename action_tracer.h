@@ -78,9 +78,9 @@ namespace ActionTracer {
 
 		void show_body();
 
-		uint8_t get_connected_clients() const;
-	};
+		uint8_t						 get_connected_clients() const;
+		Communication::ActionServer *get_server();
 
-} // namespace ActionTracer
+	} // namespace ActionTracer
 
 #endif // ACTION_TRACER_H
