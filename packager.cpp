@@ -500,7 +500,7 @@ int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwor
  * @brief Read a packet from any client connected to the server
  * @param package A pointer to the message received
  */
-ActionMessage ActionTracer::Communication::ActionServer::read_packet() {
+ActionTracer::ActionMessage *ActionTracer::Communication::ActionServer::read_packet() {
 	_incoming_message.Clear();
 
 	if ( _clients.size() == 0 ) {
@@ -509,7 +509,7 @@ ActionMessage ActionTracer::Communication::ActionServer::read_packet() {
 
 	// We only read packets from the first client
 	ActionServerClient client = _clients[0];
-	int				   res	  = client.read_packet( &_incoming_message );
+	_incoming_message		  = *( client.read_packet() );
 
 	return message;
 }
@@ -659,7 +659,7 @@ void ActionTracer::Communication::ActionServerClient::dump_vars() {
  * @brief Read a packet from the client via socket
  * @returns Nothing
  */
-ActionMessage *ActionTracer::Communication::ActionServerClient::read_packet() {
+ActionTracer::ActionMessage *ActionTracer::Communication::ActionServerClient::read_packet() {
 	// read the packet from the client to _incoming_message
 	_incoming_message.ParseFromFileDescriptor( _descriptor );
 	// return the packet
