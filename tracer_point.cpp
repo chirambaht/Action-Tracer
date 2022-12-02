@@ -66,7 +66,7 @@ void ActionTracer::TracePoint::_initialize() {
 	// DMP Initialization
 
 	debugPrint( "Initalising DMP\n" );
-	_device_status = _device->dmpInitialize();
+	_device_status = _device->dmpInitialize( _fifo_rate );
 
 	_set_device_offsets();
 

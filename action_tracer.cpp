@@ -259,7 +259,14 @@ void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_
 	_devices_waiting_for_use.push_back( temp_device );
 }
 
-void ActionTracer::ActionTracer::set_fifo_rate( uint8_t device, uint8_t ) {
+void ActionTracer::ActionTracer::set_fifo_rate( uint8_t device, uint8_t rate ) {
+	_devices_waiting_for_use[device]->set_fifo_rate( rate );
+}
+
+void ActionTracer::ActionTracer::set_fifo_rate( uint8_t rate ) {
+	for ( auto &device : _devices_waiting_for_use ) {
+		device->set_fifo_rate( rate );
+	}
 }
 
 uint8_t ActionTracer::ActionTracer::get_fifo_rate( uint8_t device ) const {
@@ -274,8 +281,9 @@ uint8_t ActionTracer::ActionTracer::get_fifo_rate( uint8_t device ) const {
 void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate ) {
 	// For each deviece in use in_devices_in_use, set the sample rate to the given sample rate.
 	_act_sample_rate = sample_rate;
+
 	for ( auto &device : _devices_waiting_for_use ) {
-		device->set_sample_rate( _act_sample_rate );
+		device->set_sample_rate( ( 200 / _act_sample_rate ) - 1 );
 	}
 }
 

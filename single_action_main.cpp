@@ -86,7 +86,7 @@ void setup() {
 
 		if ( incoming->action() == ActionCommand::OUTPUT_RATE ) {
 			printf( "Output rate command received! Setting it to %d Hz", incoming->param() );
-			main_dev->set_fifo_rate( incoming->param() );
+			main_dev->set_sample_rate( incoming->param() );
 		}
 
 		// if ( server->get_ready() ) {

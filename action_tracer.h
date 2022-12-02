@@ -71,6 +71,7 @@ namespace ActionTracer {
 
 		// void set_packet_data();
 
+		void	set_fifo_rate( uint8_t );
 		void	set_fifo_rate( uint8_t, uint8_t );
 		uint8_t get_fifo_rate( uint8_t ) const;
 		void	set_sample_rate( uint8_t );
