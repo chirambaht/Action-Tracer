@@ -37,8 +37,6 @@ void setup() {
 
 	printf( "All set to go \n" );
 
-	main_dev->initialize();
-	main_dev->show_body();
 	printf( "Initialised\n" );
 
 	if ( main_dev->get_connected_clients() == 0 ) {
@@ -48,12 +46,64 @@ void setup() {
 		}
 	}
 
-	main_dev->start();
-	printf( "Started and will run for 1 minute\n" );
+	printf( "Connected to client" );
 
-	delay( 60000 );
+	ActionTracer::Communication::ActionServer *server = main_dev->get_server();
+	ActionMessage							 *incoming;
 
-	main_dev->stop();
+	while ( 1 ) {
+		try {
+			incoming = server->read_packet();
+		} catch ( std::exception &e ) {
+			printf( "Error reading packet: %s", e.what() );
+		}
+
+		if ( incoming->action == ActionCommand::MAPPING ) {
+			printf( "Mapping command received! Not yet supported" );
+		}
+
+		if ( incoming->action == ActionCommand::START ) {
+			printf( "Start command received! Starting data collection" );
+			main_dev->initialize();
+			main_dev->show_body();
+			main_dev->start();
+		}
+
+		if ( incoming->action == ActionCommand::STOP ) {
+			printf( "Stop command received! Stopping data collection" );
+			main_dev->stop();
+		}
+
+		if ( incoming->action == ActionCommand::DISCONNECT ) {
+			printf( "Disconnect command received! Disconnecting" );
+			main_dev->stop();
+			main_dev->disconnect();
+		}
+
+		if ( incoming->action == ActionCommand::UNKNOWN ) {
+			printf( "Unknown command. Ignoring" );
+		}
+
+		if ( incoming->action == ActionCommand::OUTPUT_RATE ) {
+			printf( "Output rate command received! Setting it to %d Hz", incoming->param );
+			main_dev->set_fifo_rate( incoming->param );
+		}
+
+		// if ( server->get_ready() ) {
+		// 	incoming = server->get_message();
+		// 	if ( incoming != NULL ) {
+		// 		printf( "Got message from client" );
+		// 	}
+		// }
+	}
+	// server->read_packet();
+
+	// main_dev->start();
+	// printf( "Started and will run for 1 minute\n" );
+
+	// delay( 60000 );
+
+	// main_dev->stop();
 	printf( "Stopped\n" );
 	exit( 0 );
 }

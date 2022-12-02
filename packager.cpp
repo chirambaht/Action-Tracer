@@ -301,6 +301,10 @@ bool ActionTracer::Communication::Supervisor::get_connected_clients() const {
 	return _server.get_clients_connected();
 }
 
+ActionTracer::Communication::ActionServer *ActionTracer::Communication::Supervisor::get_server() const {
+	return &_server;
+}
+
 /**
  * @brief Construct a new Action Tracer:: Communication:: Action Server:: Action Server object
  *
@@ -493,6 +497,24 @@ int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwor
 }
 
 /**
+ * @brief Read a packet from any client connected to the server
+ * @param package A pointer to the message received
+ */
+ActionMessage ActionTracer::Communication::ActionServer::read_packet() {
+	_incoming_message.Clear();
+
+	if ( _clients.size() == 0 ) {
+		return message;
+	}
+
+	// We only read packets from the first client
+	ActionServerClient client = _clients[0];
+	int				   res	  = client.read_packet( &_incoming_message );
+
+	return message;
+}
+
+/**
  * @brief Construct a new Action Tracer:: Communication:: Action Server:: Action Server Client object
  *
  */
@@ -627,4 +649,15 @@ void ActionTracer::Communication::ActionServerClient::send_disconnect_notificati
 void ActionTracer::Communication::ActionServerClient::dump_vars() {
 	printf( "\nAction Server Client - %s:%d\n", inet_ntoa( address.sin_addr ), ntohs( address.sin_port ) );
 	printf( "Descriptor: %d\n", _descriptor );
+}
+
+/**
+ * @brief Read a packet from the client via socket
+ * @returns Nothing
+ */
+ActionMessage *ActionTracer::Communication::ActionServerClient::read_packet() {
+	// read the packet from the client to _incoming_message
+	_incoming_message.ParseFromFileDescriptor( _descriptor );
+	// return the packet
+	return &_incoming_message;
 }
