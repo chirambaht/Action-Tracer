@@ -260,12 +260,12 @@ void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_
 }
 
 void ActionTracer::ActionTracer::set_fifo_rate( uint8_t device, uint8_t rate ) {
-	_devices_waiting_for_use[device]->set_fifo_rate( rate );
+	_devices_waiting_for_use[device]->set_sample_rate( rate );
 }
 
 void ActionTracer::ActionTracer::set_fifo_rate( uint8_t rate ) {
 	for ( auto &device : _devices_waiting_for_use ) {
-		device->set_fifo_rate( rate );
+		device->set_sample_rate( rate );
 	}
 }
 
