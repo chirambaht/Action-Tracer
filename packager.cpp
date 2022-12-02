@@ -504,7 +504,7 @@ ActionTracer::ActionMessage *ActionTracer::Communication::ActionServer::read_pac
 	_incoming_message.Clear();
 
 	if ( _clients.size() == 0 ) {
-		_incoming_message.action = ActionCommand::UNKNOWN;
+		_incoming_message.set_action( ActionCommand::UNKNOWN );
 		return _incoming_message;
 	}
 
