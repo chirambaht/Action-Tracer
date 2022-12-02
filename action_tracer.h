@@ -80,7 +80,7 @@ namespace ActionTracer {
 
 		uint8_t									   get_connected_clients() const;
 		Communication::ActionServer::ActionServer *get_server();
-
-	} // namespace ActionTracer
+	};
+} // namespace ActionTracer
 
 #endif // ACTION_TRACER_H
