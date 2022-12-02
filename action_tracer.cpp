@@ -441,6 +441,6 @@ uint8_t ActionTracer::ActionTracer::get_connected_clients() const {
 	return _supervisor->get_connected_clients();
 }
 
-ActionTracer::Communication::ActionServer::ActionServer *ActionTracer::ActionTracer::get_server() {
+ActionTracer::Communication::ActionServer *ActionTracer::ActionTracer::get_server() {
 	return _supervisor->get_server();
 }

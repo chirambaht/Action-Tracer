@@ -78,8 +78,8 @@ namespace ActionTracer {
 
 		void show_body();
 
-		uint8_t									   get_connected_clients() const;
-		Communication::ActionServer::ActionServer *get_server();
+		uint8_t						 get_connected_clients() const;
+		Communication::ActionServer *get_server();
 	};
 } // namespace ActionTracer
 
