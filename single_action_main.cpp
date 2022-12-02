@@ -36,7 +36,7 @@ void setup() {
 	main_dev->map_device( ACT_0, ACT_BODY_WAIST ); // The device onboard the HAT
 
 	printf( "All set to go \n" );
-
+	main_dev->initialize();
 	printf( "Initialised\n" );
 
 	if ( main_dev->get_connected_clients() == 0 ) {
@@ -64,7 +64,7 @@ void setup() {
 
 		if ( incoming->action() == ActionCommand::START ) {
 			printf( "Start command received! Starting data collection" );
-			main_dev->initialize();
+
 			main_dev->show_body();
 			main_dev->start();
 		}
@@ -88,22 +88,8 @@ void setup() {
 			printf( "Output rate command received! Setting it to %d Hz", incoming->param() );
 			main_dev->set_sample_rate( incoming->param() );
 		}
-
-		// if ( server->get_ready() ) {
-		// 	incoming = server->get_message();
-		// 	if ( incoming != NULL ) {
-		// 		printf( "Got message from client" );
-		// 	}
-		// }
 	}
-	// server->read_packet();
 
-	// main_dev->start();
-	// printf( "Started and will run for 1 minute\n" );
-
-	// delay( 60000 );
-
-	// main_dev->stop();
 	printf( "Stopped\n" );
 	exit( 0 );
 }
