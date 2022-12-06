@@ -14,7 +14,7 @@ namespace ActionTracer {
 	  private:
 		TracePoint				   *_devices_in_use[MAX_ACT_DEVICES];
 		Communication::Supervisor *_supervisor;
-
+		void ( *proc_method )( void * );
 		std::vector<TracePoint *> _devices_waiting_for_use;
 		uint8_t					  _act_sample_rate = 4;
 		float					*_data_package[DATA_PACKAGE_SIZE];
@@ -34,6 +34,7 @@ namespace ActionTracer {
 		void _data_transmission_thread( Communication::Supervisor *, bool *, bool * );
 		void _client_manager_thread( Communication::Supervisor *, bool *, bool * );
 		void _data_collection_thread( Communication::Supervisor *, bool *, bool *, bool * );
+		void _process_data();
 
 		std::thread _thread_data_transmission, _thread_client_manager, _thread_data_collection;
 		bool		_thread_running_data_transmission = false, _thread_running_client_manager = false, _thread_running_data_collection = false;
@@ -70,6 +71,7 @@ namespace ActionTracer {
 		// void hello();
 
 		// void set_packet_data();
+		void set_process_method( void * );
 
 		void	set_fifo_rate( uint8_t );
 		void	set_fifo_rate( uint8_t, uint8_t );

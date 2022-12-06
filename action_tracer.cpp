@@ -452,3 +452,18 @@ uint8_t ActionTracer::ActionTracer::get_connected_clients() const {
 ActionTracer::Communication::ActionServer *ActionTracer::ActionTracer::get_server() {
 	return _supervisor->get_server();
 }
+
+void ActionTracer::ActionTracer::set_process_method( void fptr() ) {
+	proc_method = fptr;
+}
+
+void *ActionTracer::ActionTracer::_process_data() {
+	// This will process data before it is sent to the client.
+
+	// Is proc_method defined?
+	if ( _proc_method == nullptr ) {
+		throw std::invalid_argument( "No processing method defined!" );
+	}
+
+	proc_method();
+}
