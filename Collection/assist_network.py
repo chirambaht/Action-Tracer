@@ -23,6 +23,7 @@ while True:
     if (r%500 == 0 and r != 0):
         end_time = time.time()
         t.append(end_time - start_time)
+        print(f"Received {r} packets")
         
         if r == 2000:
             print("Done")
@@ -55,3 +56,4 @@ for i in t:
 
 av = av/4
 print(f"Average time taken to receive 500 packets: {round(av,5)} ms")
+print(f"Received {r} packets")

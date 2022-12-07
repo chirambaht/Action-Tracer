@@ -147,9 +147,12 @@ void loop() {
   }
 //   communicator->send_to_connected_devices();
 #ifdef ON_PI
+
   piLock(1);
+  1;
   send_ready = true;
   piUnlock(1);
+
 #endif
 }
 
