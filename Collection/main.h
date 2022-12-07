@@ -1,9 +1,9 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#define PORT		9022 // Main UDP data port for the data to be sent through
-#define MAX_SENSORS 20	 // Number of points track on the body.
-#define WAIT_TIME	7	 // Time to before getting next data sample (in ms)
+#define PORT 9022      // Main UDP data port for the data to be sent through
+#define MAX_SENSORS 20 // Number of points track on the body.
+#define WAIT_TIME 0    // Time to before getting next data sample (in ms)
 
 #include "packager.h"
 #include "tracer_point.h"
@@ -16,8 +16,8 @@ Packager *communicator; // The speaker dude
 
 TracePoint *body_sensor[MAX_SENSORS]; // These are the N sensors on the body.
 
-size_t _sensors		   = 0;		// Number of sensors being used
-float  data_package[4] = { 0 }; //
+size_t _sensors = 0;         // Number of sensors being used
+float data_package[4] = {0}; //
 
 bool send_ready = false;
 
@@ -27,7 +27,7 @@ uint8_t data_buffer[512];
 
 void setup();
 void loop();
-void exit_handler( int s );
+void exit_handler(int s);
 
 long loop_start = 0;
 // namespace ActionTracer
