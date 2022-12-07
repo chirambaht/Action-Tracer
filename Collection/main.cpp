@@ -52,7 +52,7 @@ PI_THREAD(network_watcher) {
 PI_THREAD(network_sender) {
   printf("Sending thread starting...\n");
   for (;;) {
-    while (1 || !send_ready) {
+    while (!send_ready) {
       continue;
     }
     piLock(1);
@@ -145,7 +145,7 @@ void loop() {
     }
     communicator->load_packet(data_package, 4);
   }
-  communicator->send_to_connected_devices();
+//   communicator->send_to_connected_devices();
 #ifdef ON_PI
   piLock(1);
   send_ready = true;
