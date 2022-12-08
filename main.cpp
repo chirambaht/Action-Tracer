@@ -23,7 +23,6 @@ using namespace ActionTracer;
  */
 void setup() {
 	wiringPiSetup();
-
 	struct sigaction sigIntHandler;
 
 	sigIntHandler.sa_handler = exit_handler;
@@ -43,13 +42,13 @@ void setup() {
 	main_dev->show_body();
 	printf( "Initialised\n" );
 	main_dev->start();
-	printf( "Started and will run for 10 seconds\n" );
-	// wait for 10 seconds
-	// delay( 10000 );
+	// start timer
 
-	// main_dev->stop();
-	// printf( "Stopped and done!\n" );
-	// exit( 1 );
+	printf( "Started and will run for 1 min\n" );
+	delay( 60000 );
+	main_dev->stop();
+	printf( "Stopped and done!\n" );
+	exit( 1 );
 }
 
 void exit_handler( int s ) {
@@ -63,7 +62,7 @@ void exit_handler( int s ) {
  * @return Nothing
  */
 void loop() {
-	while ( 1 ) {
+	while( 1 ) {
 		/* code */
 	}
 }
@@ -81,7 +80,7 @@ int main( int argc, char const *argv[] ) {
 	setup();
 
 	printf( "\nSetup Complete! Running now\n\n" );
-	while ( 1 ) {
+	while( 1 ) {
 		loop();
 	}
 
