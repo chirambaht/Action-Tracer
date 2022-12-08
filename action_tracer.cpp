@@ -45,7 +45,7 @@ void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Super
 
 		if( busy ) {
 			busy = false;
-			fprintf( fp, "%f, %f, %f", millis(), idle, busy_t );
+			fprintf( fp, "%d, %f, %f", millis(), idle, busy_t );
 		}
 	}
 	fclose( fp );
@@ -103,7 +103,7 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 			busy_t = t_busy.toc_usec();
 			t_idle.tic();
 
-			fprintf( fp, "%f, %f, %f, %s", millis(), idle, busy_t, busy ? "y" : "n" );
+			fprintf( fp, "%d, %f, %f, %s", millis(), idle, busy_t, busy ? "y" : "n" );
 			busy = false;
 		}
 	}
@@ -490,17 +490,17 @@ ActionTracer::Communication::ActionServer *ActionTracer::ActionTracer::get_serve
 	return _supervisor->get_server();
 }
 
-void ActionTracer::ActionTracer::set_process_method( void fptr() ) {
-	proc_method = fptr;
-}
+// void ActionTracer::ActionTracer::set_process_method( void fptr() ) {
+// 	proc_method = fptr;
+// }
 
-void *ActionTracer::ActionTracer::_process_data() {
-	// This will process data before it is sent to the client.
+// void *ActionTracer::ActionTracer::_process_data() {
+// 	// This will process data before it is sent to the client.
 
-	// Is proc_method defined?
-	if( _proc_method == nullptr ) {
-		throw std::invalid_argument( "No processing method defined!" );
-	}
+// 	// Is proc_method defined?
+// 	if( _proc_method == nullptr ) {
+// 		throw std::invalid_argument( "No processing method defined!" );
+// 	}
 
-	proc_method();
-}
+// 	proc_method();
+// }
