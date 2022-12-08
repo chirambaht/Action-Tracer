@@ -21,7 +21,7 @@ const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_P
 void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Supervisor *new_super, bool *data_in, bool *thread_run ) {
 	printf( "Data transmission thread started\n" );
 	FILE *fp = fopen( "transmission_thread_time.csv", "w" );
-	fprintf( fp, "Time (usec), idle (usec), busy (usec)" );
+	fprintf( fp, "Time (usec), idle (usec), busy (usec)\n" );
 	Timer t_idle, t_busy;
 
 	float idle = 0, busy_t = 0;
@@ -45,7 +45,7 @@ void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Super
 
 		if( busy ) {
 			busy = false;
-			fprintf( fp, "%d, %f, %f", millis(), idle, busy_t );
+			fprintf( fp, "%d, %f, %f\n", millis(), idle, busy_t );
 		}
 	}
 	fclose( fp );
@@ -73,7 +73,7 @@ void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervis
 void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervisor *new_super, bool *run_status, bool *data_in, bool *thread_run ) {
 	printf( "Data collection thread started\n" );
 	FILE *fp = fopen( "collection_thread_time.csv", "w" );
-	fprintf( fp, "Time (usec), idle (usec), busy (usec), packet_loaded (1/0)" );
+	fprintf( fp, "Time (usec), idle (usec), busy (usec), packet_loaded (1/0)\n" );
 	Timer t_idle, t_busy;
 
 	float idle = 0, busy_t = 0;
@@ -103,7 +103,7 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 			busy_t = t_busy.toc_usec();
 			t_idle.tic();
 
-			fprintf( fp, "%d, %f, %f, %s", millis(), idle, busy_t, busy ? "y" : "n" );
+			fprintf( fp, "%d, %f, %f, %s\n", millis(), idle, busy_t, busy ? "y" : "n" );
 			busy = false;
 		}
 	}
