@@ -1,5 +1,7 @@
 #include "action_tracer.h"
 
+#include "timer.hpp"
+
 #include <algorithm>
 #include <cstdio>
 #include <stdexcept>
@@ -18,24 +20,44 @@ const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_P
 
 void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Supervisor *new_super, bool *data_in, bool *thread_run ) {
 	printf( "Data transmission thread started\n" );
-	while ( *thread_run ) {
+	FILE *fp = fopen( "transmission_thread_time.csv", "w" );
+	fprintf( fp, "Time (usec), idle (usec), busy (usec)" );
+	Timer t_idle, t_busy;
+
+	float idle = 0, busy_t = 0;
+	bool  busy = false;
+	t_idle.tic();
+	while( *thread_run ) {
 		try {
-			if ( *data_in ) {
+			if( *data_in ) {
+				idle = t_idle.toc_usec();
+				busy = true;
+				t_busy.tic();
+
 				new_super->send_packet();
 				*data_in = false;
+				busy_t	 = t_busy.toc_usec();
+				t_idle.tic();
 			}
-		} catch ( std::exception &e ) {
+		} catch( std::exception &e ) {
 			printf( "Exception in data transmission thread: %s\n Probably the client disconnected\n", e.what() );
 		}
+
+		if( busy ) {
+			busy = false;
+			fprintf( fp, "%f, %f, %f", millis(), idle, busy_t );
+		}
 	}
+	fclose( fp );
 	printf( "Data transmission thread stopped\n" );
 }
 
 void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in, bool *thread_run ) {
 	printf( "Client manager thread started\n" );
+
 	int connected_clients = 0;
-	while ( *thread_run ) {
-		if ( new_super->get_ready() && connected_clients < MAX_CLIENTS ) {
+	while( *thread_run ) {
+		if( new_super->get_ready() && connected_clients < MAX_CLIENTS ) {
 			new_super->initialize( true );
 			connected_clients++;
 		}
@@ -50,27 +72,42 @@ void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervis
  */
 void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervisor *new_super, bool *run_status, bool *data_in, bool *thread_run ) {
 	printf( "Data collection thread started\n" );
+	FILE *fp = fopen( "collection_thread_time.csv", "w" );
+	fprintf( fp, "Time (usec), idle (usec), busy (usec), packet_loaded (1/0)" );
+	Timer t_idle, t_busy;
 
-	while ( *thread_run ) {
-		while ( *run_status ) {
-			for ( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
-				if ( _devices_in_use[i]->is_active() ) {
+	float idle = 0, busy_t = 0;
+	bool  busy = false;
+	t_idle.tic();
+
+	while( *thread_run ) {
+		while( *run_status ) {
+			idle = t_idle.toc_usec();
+			t_busy.tic();
+			for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
+				if( _devices_in_use[i]->is_active() ) {
 					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
 				}
 			}
 
-			if ( *data_in == false ) {
-				for ( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
-					if ( _devices_in_use[i]->is_active() ) {
+			if( *data_in == false ) {
+				busy = true;
+				for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
+					if( _devices_in_use[i]->is_active() ) {
 						new_super->load_packet( _data_package_action[i] ); // Immidiately send the data to all clients
 					}
 				}
 
 				*data_in = true;
 			}
+			busy_t = t_busy.toc_usec();
+			t_idle.tic();
+
+			fprintf( fp, "%f, %f, %f, %s", millis(), idle, busy_t, busy ? "y" : "n" );
+			busy = false;
 		}
 	}
-
+	fclose( fp );
 	printf( "Data collection thread stopped\n" );
 }
 
@@ -79,7 +116,7 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
  *
  */
 ActionTracer::ActionTracer::ActionTracer() {
-	for ( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
+	for( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
 		_devices_in_use[i] = new TracePoint();
 	}
 }
@@ -142,7 +179,7 @@ void ActionTracer::ActionTracer::start() {
 void ActionTracer::ActionTracer::stop() {
 	// This will stop the Action Device from collecting data and closing all the connections
 	// First pause the device, then do everything else that the pause does not do
-	if ( !_paused ) {
+	if( !_paused ) {
 		pause();
 	}
 	_running = false;
@@ -190,7 +227,7 @@ void ActionTracer::ActionTracer::resume() {
  */
 void ActionTracer::ActionTracer::reset() {
 	// Check if the device is running
-	if ( _running ) {
+	if( _running ) {
 		// Stop the device
 		stop();
 	}
@@ -220,8 +257,8 @@ void ActionTracer::ActionTracer::initialize() {
 
 	_turn_off_all_devices();
 
-	for ( auto &device : _devices_waiting_for_use ) {
-		if ( device == nullptr ) {
+	for( auto &device : _devices_waiting_for_use ) {
+		if( device == nullptr ) {
 			continue;
 		}
 		device->initialize( device->get_pin_number(), device->get_identifier() );
@@ -264,7 +301,7 @@ void ActionTracer::ActionTracer::set_fifo_rate( uint8_t device, uint8_t rate ) {
 }
 
 void ActionTracer::ActionTracer::set_fifo_rate( uint8_t rate ) {
-	for ( auto &device : _devices_waiting_for_use ) {
+	for( auto &device : _devices_waiting_for_use ) {
 		device->set_sample_rate( rate );
 	}
 }
@@ -282,7 +319,7 @@ void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate ) {
 	// For each deviece in use in_devices_in_use, set the sample rate to the given sample rate.
 	_act_sample_rate = sample_rate;
 
-	for ( auto &device : _devices_waiting_for_use ) {
+	for( auto &device : _devices_waiting_for_use ) {
 		device->set_sample_rate( ( 200 / _act_sample_rate ) - 1 );
 	}
 }
@@ -302,39 +339,39 @@ uint8_t ActionTracer::ActionTracer::get_sample_rate() const {
  * @throws INVALID_ARGUMENT When the body part code is not valid.
  */
 uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t body_part_code ) {
-	if ( body_part_code == ACT_BODY_WAIST ) {
+	if( body_part_code == ACT_BODY_WAIST ) {
 		return 0;
-	} else if ( body_part_code == ACT_BODY_RIGHT_BICEP ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_BICEP ) {
 		return 1;
-	} else if ( body_part_code == ACT_BODY_RIGHT_FOREARM ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_FOREARM ) {
 		return 2;
-	} else if ( body_part_code == ACT_BODY_RIGHT_HAND ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_HAND ) {
 		return 3;
-	} else if ( body_part_code == ACT_BODY_LEFT_BICEP ) {
+	} else if( body_part_code == ACT_BODY_LEFT_BICEP ) {
 		return 4;
-	} else if ( body_part_code == ACT_BODY_LEFT_FOREARM ) {
+	} else if( body_part_code == ACT_BODY_LEFT_FOREARM ) {
 		return 5;
-	} else if ( body_part_code == ACT_BODY_LEFT_HAND ) {
+	} else if( body_part_code == ACT_BODY_LEFT_HAND ) {
 		return 6;
-	} else if ( body_part_code == ACT_BODY_CHEST ) {
+	} else if( body_part_code == ACT_BODY_CHEST ) {
 		return 7;
-	} else if ( body_part_code == ACT_BODY_HEAD ) {
+	} else if( body_part_code == ACT_BODY_HEAD ) {
 		return 8;
-	} else if ( body_part_code == ACT_BODY_RIGHT_THIGH ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_THIGH ) {
 		return 9;
-	} else if ( body_part_code == ACT_BODY_RIGHT_KNEE ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_KNEE ) {
 		return 10;
-	} else if ( body_part_code == ACT_BODY_RIGHT_FOOT ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_FOOT ) {
 		return 11;
-	} else if ( body_part_code == ACT_BODY_LEFT_THIGH ) {
+	} else if( body_part_code == ACT_BODY_LEFT_THIGH ) {
 		return 12;
-	} else if ( body_part_code == ACT_BODY_LEFT_KNEE ) {
+	} else if( body_part_code == ACT_BODY_LEFT_KNEE ) {
 		return 13;
-	} else if ( body_part_code == ACT_BODY_LEFT_FOOT ) {
+	} else if( body_part_code == ACT_BODY_LEFT_FOOT ) {
 		return 14;
-	} else if ( body_part_code == ACT_BODY_RIGHT_HIP ) {
+	} else if( body_part_code == ACT_BODY_RIGHT_HIP ) {
 		return 15;
-	} else if ( body_part_code == ACT_BODY_LEFT_HIP ) {
+	} else if( body_part_code == ACT_BODY_LEFT_HIP ) {
 		return 16;
 	} else {
 		throw std::invalid_argument( "Received a body part identifer that is not defined." );
@@ -349,31 +386,31 @@ uint16_t ActionTracer::ActionTracer::_get_body_identifier( uint16_t body_part_co
  * @throws INVALID_ARGUMENT When the body part code is not valid.
  */
 uint8_t ActionTracer::ActionTracer::_get_ACT_device_pin( uint16_t ACT_device ) {
-	if ( ACT_device == ACT_0 ) {
+	if( ACT_device == ACT_0 ) {
 		return ACT_DEVICE_0_WIRING_PI_PIN;
-	} else if ( ACT_device == ACT_1 ) {
+	} else if( ACT_device == ACT_1 ) {
 		return ACT_DEVICE_1_WIRING_PI_PIN;
-	} else if ( ACT_device == ACT_2 ) {
+	} else if( ACT_device == ACT_2 ) {
 		return ACT_DEVICE_2_WIRING_PI_PIN;
-	} else if ( ACT_device == ACT_3 ) {
+	} else if( ACT_device == ACT_3 ) {
 		return ACT_DEVICE_3_WIRING_PI_PIN;
-	} else if ( ACT_device == ACT_4 ) {
+	} else if( ACT_device == ACT_4 ) {
 		return ACT_DEVICE_4_WIRING_PI_PIN;
-	} else if ( ACT_device == ACT_5 ) {
+	} else if( ACT_device == ACT_5 ) {
 		return ACT_DEVICE_5_WIRING_PI_PIN;
-	} else if ( ACT_device == ACT_6 ) {
+	} else if( ACT_device == ACT_6 ) {
 		return ACT_DEVICE_6_WIRING_PI_PIN;
-	} else if ( ACT_device == ACT_7 ) {
+	} else if( ACT_device == ACT_7 ) {
 		return ACT_DEVICE_7_WIRING_PI_PIN;
-	} else if ( ACT_device == ACT_8 ) {
+	} else if( ACT_device == ACT_8 ) {
 		return ACT_DEVICE_8_WIRING_PI_PIN;
-	} else if ( ACT_device == ACT_9 ) {
+	} else if( ACT_device == ACT_9 ) {
 		return ACT_DEVICE_9_WIRING_PI_PIN;
-	} else if ( ACT_device == ACT_10 ) {
+	} else if( ACT_device == ACT_10 ) {
 		return ACT_DEVICE_10_WIRING_PI_PIN;
-	} else if ( ACT_device == ACT_11 ) {
+	} else if( ACT_device == ACT_11 ) {
 		return ACT_DEVICE_11_WIRING_PI_PIN;
-	} else if ( ACT_device == ACT_12 ) {
+	} else if( ACT_device == ACT_12 ) {
 		return ACT_DEVICE_12_WIRING_PI_PIN;
 	} else {
 		throw std::invalid_argument( "Received an ACT device identifier that is not defined." );
@@ -407,7 +444,7 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t b
 	std::vector<uint16_t> body_part_codes;
 	std::vector<uint16_t> device_codes;
 
-	for ( auto &dev : _devices_waiting_for_use ) {
+	for( auto &dev : _devices_waiting_for_use ) {
 		body_part_codes.push_back( dev->get_identifier() );
 		device_codes.push_back( dev->get_pin_number() );
 	}
@@ -416,16 +453,16 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t b
 	std::sort( device_codes.begin(), device_codes.end() );
 
 	// Check if there are duplicate body part codes and return false if there are.
-	for ( auto i = body_part_codes.begin(); i != body_part_codes.end(); ++i ) {
-		if ( std::find( i + 1, body_part_codes.end(), *i ) != body_part_codes.end() ) {
+	for( auto i = body_part_codes.begin(); i != body_part_codes.end(); ++i ) {
+		if( std::find( i + 1, body_part_codes.end(), *i ) != body_part_codes.end() ) {
 			throw std::invalid_argument( "Bad mapping! This body part is already defined." );
 			return false;
 		}
 	}
 
 	// Check if there are duplicate body part codes and return false if there are.
-	for ( auto i = device_codes.begin(); i != device_codes.end(); ++i ) {
-		if ( std::find( i + 1, device_codes.end(), *i ) != device_codes.end() ) {
+	for( auto i = device_codes.begin(); i != device_codes.end(); ++i ) {
+		if( std::find( i + 1, device_codes.end(), *i ) != device_codes.end() ) {
 			throw std::invalid_argument( "Bad mapping! This ACT device is already in use." );
 			return false;
 		}
@@ -439,7 +476,7 @@ bool ActionTracer::ActionTracer::_turn_off_all_devices() {
 		ACT_DEVICE_5_WIRING_PI_PIN, ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN,
 		ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
 
-	for ( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
+	for( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
 		digitalWrite( ALL_ACT_DEVICE_PINS[i], LOW );
 	}
 	return true;
@@ -461,7 +498,7 @@ void *ActionTracer::ActionTracer::_process_data() {
 	// This will process data before it is sent to the client.
 
 	// Is proc_method defined?
-	if ( _proc_method == nullptr ) {
+	if( _proc_method == nullptr ) {
 		throw std::invalid_argument( "No processing method defined!" );
 	}
 

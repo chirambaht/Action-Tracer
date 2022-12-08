@@ -5,10 +5,10 @@
 
 #include "action_pi.hpp"
 #include "debug_printer.h"
+#include "timer.hpp"
 
 #include <signal.h>
 #include <stdlib.h>
-
 #ifdef ON_PI
 	#include <wiringPi.h>
 #else
