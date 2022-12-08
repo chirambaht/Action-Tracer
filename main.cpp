@@ -75,7 +75,26 @@ void loop() {
  * @return int
  */
 int main( int argc, char const *argv[] ) {
-	// TODO: Run a new setup method that accounts for debug, custom tps, files and
+	if( argc < 2 ) {
+		printf( "Usage: %s <rate>\n", argv[0] );
+		printf( "Output data rate is calculated as: 200/(rate+1)\n\n" );
+		printf( " Output Rate  |  Rate\n" );
+		printf( "--------------+-------\n" );
+		printf( "     200Hz    |  0\n" );
+		printf( "     100Hz    |  1\n" );
+		printf( "     67Hz     |  2\n" );
+		printf( "     50Hz     |  3\n" );
+		printf( "     40Hz     |  4\n" );
+		printf( "     33Hz     |  5\n" );
+		printf( "     20Hz     |  9\n" );
+		printf( "     10Hz     |  19\n" );
+		printf( "     5Hz      |  39\n" );
+		printf( "     1Hz      |  199\n" );
+
+		return 1;
+	}
+
+	main_dev->set_sample_rate( atoi( argv[1] ) );
 	printf( "Running basic setup routine\n" );
 	setup();
 

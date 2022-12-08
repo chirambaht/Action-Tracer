@@ -320,7 +320,7 @@ void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate ) {
 	_act_sample_rate = sample_rate;
 
 	for( auto &device : _devices_waiting_for_use ) {
-		device->set_sample_rate( ( 200 / _act_sample_rate ) - 1 );
+		device->set_sample_rate( sample_rate );
 	}
 }
 
