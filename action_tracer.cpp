@@ -102,7 +102,7 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 				}
 			}
 
-			if loading {
+			if( loading ) {
 				*data_in = true;
 				loading	 = false;
 				busy_t	 = t_busy.toc_usec();
