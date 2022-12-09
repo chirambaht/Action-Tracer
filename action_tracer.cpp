@@ -95,33 +95,36 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 				if( _devices_in_use[i]->is_active() ) {
 					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
 					// Try loading the data here...
-					// if (*data_in == false){
-					// 	new_super->load_packet( _data_package_action[i] );
-					// 	loading = true;
-					// }
+					if( *data_in == false ) {
+						new_super->load_packet( _data_package_action[i] );
+						loading = true;
+					}
 				}
 			}
 
-			// if loading{
-			// 	*data_in = true;
-			// 	loading = false;
-			//}
-
-			if( *data_in == false ) {
-				for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
-					if( _devices_in_use[i]->is_active() ) {
-						new_super->load_packet( _data_package_action[i] ); // Immidiately send the data to all
-																		   // clients
-					}
-				}
-
+			if loading {
 				*data_in = true;
+				loading	 = false;
 				busy_t	 = t_busy.toc_usec();
 				t_idle.tic();
 				fprintf( fp, "%d, %f, %f\n", millis(), idle, busy_t );
-			} else {
-				continue;
 			}
+
+			// if( *data_in == false ) {
+			// 	for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
+			// 		if( _devices_in_use[i]->is_active() ) {
+			// 			new_super->load_packet( _data_package_action[i] ); // Immidiately send the data to all
+			// 															   // clients
+			// 		}
+			// 	}
+
+			// 	*data_in = true;
+			// 	busy_t	 = t_busy.toc_usec();
+			// 	t_idle.tic();
+			// 	fprintf( fp, "%d, %f, %f\n", millis(), idle, busy_t );
+			// } else {
+			// 	continue;
+			// }
 		}
 	}
 	fclose( fp );
