@@ -14,11 +14,13 @@
 	#include "wiringPi.h"
 #endif
 
-const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN,
-	ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN,
-	ACT_DEVICE_12_WIRING_PI_PIN };
+const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN,
+	ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN, ACT_DEVICE_6_WIRING_PI_PIN,
+	ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN,
+	ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
 
-void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Supervisor *new_super, bool *data_in, bool *thread_run ) {
+void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Supervisor *new_super, bool *data_in,
+	bool *thread_run ) {
 	printf( "Data transmission thread started\n" );
 	FILE *fp = fopen( "transmission_thread_time.csv", "w" );
 	fprintf( fp, "Time (usec), idle (usec), busy (usec)\n" );
@@ -40,7 +42,9 @@ void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Super
 				t_idle.tic();
 			}
 		} catch( std::exception &e ) {
-			printf( "Exception in data transmission thread: %s\n Probably the client disconnected\n", e.what() );
+			printf( "Exception in data transmission thread: %s\n Probably the client "
+					"disconnected\n",
+				e.what() );
 		}
 
 		if( busy ) {
@@ -52,7 +56,8 @@ void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Super
 	printf( "Data transmission thread stopped\n" );
 }
 
-void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in, bool *thread_run ) {
+void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervisor *new_super, bool *data_in,
+	bool *thread_run ) {
 	printf( "Client manager thread started\n" );
 
 	int connected_clients = 0;
@@ -66,18 +71,20 @@ void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervis
 }
 
 /**
- * @brief The main method that runs the I2C communication with the action devices and collects the data.
+ * @brief The main method that runs the I2C communication with the action
+ * devices and collects the data.
  *
  * @return void*
  */
-void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervisor *new_super, bool *run_status, bool *data_in, bool *thread_run ) {
+void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervisor *new_super, bool *run_status,
+	bool *data_in, bool *thread_run ) {
 	printf( "Data collection thread started\n" );
 	FILE *fp = fopen( "collection_thread_time.csv", "w" );
-	fprintf( fp, "Time (usec), idle (usec), busy (usec), packet_loaded (1/0)\n" );
+	fprintf( fp, "Time (usec), idle (usec), busy (usec)\n" );
 	Timer t_idle, t_busy;
+	bool  loading = false;
 
 	float idle = 0, busy_t = 0;
-	bool  busy = false;
 	t_idle.tic();
 
 	while( *thread_run ) {
@@ -87,24 +94,34 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 			for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 				if( _devices_in_use[i]->is_active() ) {
 					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
+					// Try loading the data here...
+					// if (*data_in == false){
+					// 	new_super->load_packet( _data_package_action[i] );
+					// 	loading = true;
+					// }
 				}
 			}
 
+			// if loading{
+			// 	*data_in = true;
+			// 	loading = false;
+			//}
+
 			if( *data_in == false ) {
-				busy = true;
 				for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 					if( _devices_in_use[i]->is_active() ) {
-						new_super->load_packet( _data_package_action[i] ); // Immidiately send the data to all clients
+						new_super->load_packet( _data_package_action[i] ); // Immidiately send the data to all
+																		   // clients
 					}
 				}
 
 				*data_in = true;
+				busy_t	 = t_busy.toc_usec();
+				t_idle.tic();
+				fprintf( fp, "%d, %f, %f\n", millis(), idle, busy_t );
+			} else {
+				continue;
 			}
-			busy_t = t_busy.toc_usec();
-			t_idle.tic();
-
-			fprintf( fp, "%d, %f, %f, %s\n", millis(), idle, busy_t, busy ? "y" : "n" );
-			busy = false;
 		}
 	}
 	fclose( fp );
@@ -144,7 +161,8 @@ ActionTracer::ActionTracer::ActionTracer() {
  * @param other
  * @return ActionTracer&
  */
-// ActionTracer::ActionTracer &ActionTracer::ActionTracer::operator=( const ActionTracer &other ) {}
+// ActionTracer::ActionTracer &ActionTracer::ActionTracer::operator=( const
+// ActionTracer &other ) {}
 
 /**
  * @brief Construct a new Action Tracer:: Action Tracer:: Action Tracer object
@@ -152,33 +170,36 @@ ActionTracer::ActionTracer::ActionTracer() {
  * @param other
  * @return ActionTracer&
  */
-// ActionTracer::ActionTracer &ActionTracer::ActionTracer::operator=( ActionTracer &&other ) {}
+// ActionTracer::ActionTracer &ActionTracer::ActionTracer::operator=(
+// ActionTracer &&other ) {}
 
 /**
  * @brief Destroy the Action Tracer:: Action Tracer:: Action Tracer object
  *
  */
-ActionTracer::ActionTracer::~ActionTracer() {
-}
+ActionTracer::ActionTracer::~ActionTracer() {}
 
 /**
- * @brief Start collecting data from the Action Tracer Device and deliver it to the API and forward it to server if specified.
+ * @brief Start collecting data from the Action Tracer Device and deliver it to
+ * the API and forward it to server if specified.
  *
  */
 void ActionTracer::ActionTracer::start() {
-	// This will confirm that the server or listener is ready to receive data and will start sending data packets.
-	// Set the running flag to true
+	// This will confirm that the server or listener is ready to receive data and
+	// will start sending data packets. Set the running flag to true
 	_running = true;
 	_paused	 = false;
 }
 
 /**
- * @brief Stop collecting data from the Action Tracer Device and stop delivering it to the API and server if specified.
+ * @brief Stop collecting data from the Action Tracer Device and stop delivering
+ * it to the API and server if specified.
  *
  */
 void ActionTracer::ActionTracer::stop() {
-	// This will stop the Action Device from collecting data and closing all the connections
-	// First pause the device, then do everything else that the pause does not do
+	// This will stop the Action Device from collecting data and closing all the
+	// connections First pause the device, then do everything else that the pause
+	// does not do
 	if( !_paused ) {
 		pause();
 	}
@@ -202,7 +223,8 @@ void ActionTracer::ActionTracer::stop() {
 }
 
 /**
- * @brief Pause collecting data from the Action Tracer Device and pause delivering it to the API and server if specified.
+ * @brief Pause collecting data from the Action Tracer Device and pause
+ * delivering it to the API and server if specified.
  *
  */
 void ActionTracer::ActionTracer::pause() {
@@ -212,7 +234,8 @@ void ActionTracer::ActionTracer::pause() {
 }
 
 /**
- * @brief Resume collecting data from the Action Tracer Device and resume delivering it to the API and server if specified.
+ * @brief Resume collecting data from the Action Tracer Device and resume
+ * delivering it to the API and server if specified.
  *
  */
 void ActionTracer::ActionTracer::resume() {
@@ -237,12 +260,14 @@ void ActionTracer::ActionTracer::reset() {
 }
 
 /**
- * @brief Initialise the sensors being used for the program. This will take time depending on how many devices are being initialized. It will go through each device that has been mapped and intialises
- * it.
+ * @brief Initialise the sensors being used for the program. This will take time
+ * depending on how many devices are being initialized. It will go through each
+ * device that has been mapped and intialises it.
  * @param device_map
  * @returns Nothing
  * @throws BAD_MAPPING When the divece has not correctly been mapped.
- * @throws INVALID_SAMPLE_RATE The device has been passed an incorrcet sample rate.
+ * @throws INVALID_SAMPLE_RATE The device has been passed an incorrcet sample
+ * rate.
  */
 void ActionTracer::ActionTracer::initialize() {
 	_supervisor = new Communication::Supervisor();
@@ -252,8 +277,10 @@ void ActionTracer::ActionTracer::initialize() {
 	_thread_running_data_collection	  = true;
 	_thread_running_data_transmission = true;
 
-	_thread_data_transmission = std::thread( &ActionTracer::_data_transmission_thread, this, _supervisor, &_data_ready, &_thread_running_data_transmission );
-	_thread_client_manager	  = std::thread( &ActionTracer::_client_manager_thread, this, _supervisor, &_data_ready, &_thread_running_client_manager );
+	_thread_data_transmission = std::thread( &ActionTracer::_data_transmission_thread, this, _supervisor, &_data_ready,
+		&_thread_running_data_transmission );
+	_thread_client_manager	  = std::thread( &ActionTracer::_client_manager_thread, this, _supervisor, &_data_ready,
+		   &_thread_running_client_manager );
 
 	_turn_off_all_devices();
 
@@ -267,11 +294,14 @@ void ActionTracer::ActionTracer::initialize() {
 		_devices_in_use[_get_body_identifier( device->get_identifier() )] = device;
 	}
 
-	_thread_data_collection = std::thread( &ActionTracer::_data_collection_thread, this, _supervisor, &_running, &_data_ready, &_thread_running_data_collection );
+	_thread_data_collection = std::thread( &ActionTracer::_data_collection_thread, this, _supervisor, &_running,
+		&_data_ready, &_thread_running_data_collection );
 }
 
 /**
- * @brief Map ACT device and set its internal state to the desired state. This state is it's Wiring Pi pin and its identifier. Only takes one device and part at a time.
+ * @brief Map ACT device and set its internal state to the desired state. This
+ * state is it's Wiring Pi pin and its identifier. Only takes one device and
+ * part at a time.
  * @param ACT_device The device to be mapped.
  * @param body_part The body part that the device is being mapped to.
  */
@@ -280,7 +310,8 @@ void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_
 	TracePoint *temp_device = new TracePoint();
 	uint8_t		temp_pin	= _get_ACT_device_pin( ACT_device );
 
-	// Add a new Tracerpoint device to the list of devices in use after validating mapping
+	// Add a new Tracerpoint device to the list of devices in use after validating
+	// mapping
 	_validate_mapping( temp_pin, body_part );
 
 	// Set the device's pin number
@@ -306,9 +337,7 @@ void ActionTracer::ActionTracer::set_fifo_rate( uint8_t rate ) {
 	}
 }
 
-uint8_t ActionTracer::ActionTracer::get_fifo_rate( uint8_t device ) const {
-	return 1;
-}
+uint8_t ActionTracer::ActionTracer::get_fifo_rate( uint8_t device ) const { return 1; }
 
 /**
  * @brief Set the sample rate for all the devices in use to a single given rate.
@@ -316,7 +345,8 @@ uint8_t ActionTracer::ActionTracer::get_fifo_rate( uint8_t device ) const {
  * @return Nothing
  */
 void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate ) {
-	// For each deviece in use in_devices_in_use, set the sample rate to the given sample rate.
+	// For each deviece in use in_devices_in_use, set the sample rate to the given
+	// sample rate.
 	_act_sample_rate = sample_rate;
 
 	for( auto &device : _devices_waiting_for_use ) {
@@ -328,9 +358,7 @@ void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate ) {
  * @brief Get the general device sample rate that is being used by all devices.
  *  @return The sample rate of all devices in use.
  */
-uint8_t ActionTracer::ActionTracer::get_sample_rate() const {
-	return _act_sample_rate;
-}
+uint8_t ActionTracer::ActionTracer::get_sample_rate() const { return _act_sample_rate; }
 
 /**
  * @brief Finds a given body part identifier and returns it.
@@ -420,24 +448,37 @@ uint8_t ActionTracer::ActionTracer::_get_ACT_device_pin( uint16_t ACT_device ) {
 
 void ActionTracer::ActionTracer::show_body() {
 	// Show the body being used and which ACT_DEVICE_# is connected
-	printf( "Find below the ACT device connections. This is in reference to the Action Tracer Pi Hat Board\n\n" );
+	printf( "Find below the ACT device connections. This is in reference to the "
+			"Action Tracer Pi Hat Board\n\n" );
 	printf( "  R             +---+                L  \n" );
-	printf( "  R             | %-2s|                L  \n", _devices_in_use[8]->get_act_pin_number_as_string().c_str() );
+	printf( "  R             | %-2s|                L  \n",
+		_devices_in_use[8]->get_act_pin_number_as_string().c_str() );
 	printf( "  R             +- -+                L  \n" );
-	printf( "  R            +--%-2s-+               L  \n", _devices_in_use[7]->get_act_pin_number_as_string().c_str() );
-	printf( "  R         %2s/  | |  \\%-2s            L  \n", _devices_in_use[1]->get_act_pin_number_as_string().c_str(), _devices_in_use[4]->get_act_pin_number_as_string().c_str() );
-	printf( "  R          +   | |   +-%2s-+%2s<     L  \n", _devices_in_use[5]->get_act_pin_number_as_string().c_str(), _devices_in_use[6]->get_act_pin_number_as_string().c_str() );
+	printf( "  R            +--%-2s-+               L  \n",
+		_devices_in_use[7]->get_act_pin_number_as_string().c_str() );
+	printf( "  R         %2s/  | |  \\%-2s            L  \n",
+		_devices_in_use[1]->get_act_pin_number_as_string().c_str(),
+		_devices_in_use[4]->get_act_pin_number_as_string().c_str() );
+	printf( "  R          +   | |   +-%2s-+%2s<     L  \n", _devices_in_use[5]->get_act_pin_number_as_string().c_str(),
+		_devices_in_use[6]->get_act_pin_number_as_string().c_str() );
 	printf( "  R       %2s/    |%1s|                 L  \n", _devices_in_use[2]->get_act_pin_number_as_string().c_str(),
 		_devices_in_use[0]->get_act_pin_number_as_string().c_str() ); // 0 is the center;
-	printf( "  R     >%2s+  %2s/   \\%-2s              L  \n", _devices_in_use[3]->get_act_pin_number_as_string().c_str(), _devices_in_use[15]->get_act_pin_number_as_string().c_str(),
+	printf( "  R     >%2s+  %2s/   \\%-2s              L  \n",
+		_devices_in_use[3]->get_act_pin_number_as_string().c_str(),
+		_devices_in_use[15]->get_act_pin_number_as_string().c_str(),
 		_devices_in_use[16]->get_act_pin_number_as_string().c_str() );
 	printf( "  R             |   |                L  \n" );
-	printf( "  R            %2s   %-2s               L  \n", _devices_in_use[9]->get_act_pin_number_as_string().c_str(), _devices_in_use[12]->get_act_pin_number_as_string().c_str() );
+	printf( "  R            %2s   %-2s               L  \n", _devices_in_use[9]->get_act_pin_number_as_string().c_str(),
+		_devices_in_use[12]->get_act_pin_number_as_string().c_str() );
 	printf( "  R             +   +                L  \n" );
-	printf( "  R            %2s   %-2s               L  \n", _devices_in_use[10]->get_act_pin_number_as_string().c_str(), _devices_in_use[13]->get_act_pin_number_as_string().c_str() );
+	printf( "  R            %2s   %-2s               L  \n",
+		_devices_in_use[10]->get_act_pin_number_as_string().c_str(),
+		_devices_in_use[13]->get_act_pin_number_as_string().c_str() );
 	printf( "  R             |   |                L  \n" );
 	printf( "  R             +   +                L  \n" );
-	printf( "  R          %2s/     \\%-2s             L  \n\n", _devices_in_use[11]->get_act_pin_number_as_string().c_str(), _devices_in_use[14]->get_act_pin_number_as_string().c_str() );
+	printf( "  R          %2s/     \\%-2s             L  \n\n",
+		_devices_in_use[11]->get_act_pin_number_as_string().c_str(),
+		_devices_in_use[14]->get_act_pin_number_as_string().c_str() );
 }
 
 bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t body_part ) {
@@ -472,9 +513,10 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t b
 }
 
 bool ActionTracer::ActionTracer::_turn_off_all_devices() {
-	uint8_t ALL_ACT_DEVICE_PINS[MAX_ACT_DEVICES] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN, ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN,
-		ACT_DEVICE_5_WIRING_PI_PIN, ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN, ACT_DEVICE_10_WIRING_PI_PIN,
-		ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
+	uint8_t ALL_ACT_DEVICE_PINS[MAX_ACT_DEVICES] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN,
+		ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN,
+		ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN,
+		ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
 
 	for( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
 		digitalWrite( ALL_ACT_DEVICE_PINS[i], LOW );
@@ -482,9 +524,7 @@ bool ActionTracer::ActionTracer::_turn_off_all_devices() {
 	return true;
 }
 
-uint8_t ActionTracer::ActionTracer::get_connected_clients() const {
-	return _supervisor->get_connected_clients();
-}
+uint8_t ActionTracer::ActionTracer::get_connected_clients() const { return _supervisor->get_connected_clients(); }
 
 ActionTracer::Communication::ActionServer *ActionTracer::ActionTracer::get_server() {
 	return _supervisor->get_server();
