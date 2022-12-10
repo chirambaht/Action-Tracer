@@ -169,12 +169,14 @@ void ActionTracer::ActionTracer::start() {
 	// First we need a cue to sync the cameras and let users know when the device is about to start collecting data
 	// This will be a 3 second countdown
 	for( int i = 3; i > 0; i-- ) {
-		_turn_on_all_devices();
-		delay( 500 );
 		_turn_off_all_devices();
+		delay( 500 );
+		_turn_on_all_devices();
 		delay( 500 );
 	}
 
+	delay( 500 ); // Final pause before starting
+	_turn_off_all_devices();
 	_running = true;
 	_paused	 = false;
 }
