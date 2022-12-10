@@ -161,6 +161,20 @@ ActionTracer::ActionTracer::~ActionTracer() {}
 void ActionTracer::ActionTracer::start() {
 	// This will confirm that the server or listener is ready to receive data and
 	// will start sending data packets. Set the running flag to true
+
+	if( _running || !_paused ) {
+		return;
+	}
+
+	// First we need a cue to sync the cameras and let users know when the device is about to start collecting data
+	// This will be a 3 second countdown
+	for( int i = 3; i > 0; i-- ) {
+		_turn_on_all_devices();
+		delay( 500 );
+		_turn_off_all_devices();
+		delay( 500 );
+	}
+
 	_running = true;
 	_paused	 = false;
 }
@@ -494,6 +508,18 @@ bool ActionTracer::ActionTracer::_turn_off_all_devices() {
 
 	for( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
 		digitalWrite( ALL_ACT_DEVICE_PINS[i], LOW );
+	}
+	return true;
+}
+
+bool ActionTracer::ActionTracer::_turn_on_all_devices() {
+	uint8_t ALL_ACT_DEVICE_PINS[MAX_ACT_DEVICES] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN,
+		ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN,
+		ACT_DEVICE_6_WIRING_PI_PIN, ACT_DEVICE_7_WIRING_PI_PIN, ACT_DEVICE_8_WIRING_PI_PIN, ACT_DEVICE_9_WIRING_PI_PIN,
+		ACT_DEVICE_10_WIRING_PI_PIN, ACT_DEVICE_11_WIRING_PI_PIN, ACT_DEVICE_12_WIRING_PI_PIN };
+
+	for( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
+		digitalWrite( ALL_ACT_DEVICE_PINS[i], HIGH );
 	}
 	return true;
 }

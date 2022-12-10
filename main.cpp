@@ -44,6 +44,7 @@ void setup() {
 
 	while( main_dev->get_connected_clients() == 0 ) {
 	}
+
 	main_dev->start();
 	// start timer
 
