@@ -93,7 +93,7 @@ namespace ActionTracer {
 		// [ 32-bit identifier ]
 		__uint32_t device_identifier_contents = 0;
 
-		float data[11]; // Accel (3), Gyro (3), Quaternion(4), Temp (1)
+		float data[11] = { 0 }; // Accel (3), Gyro (3), Quaternion(4), Temp (1)
 	} ActionDataPackage;
 
 } // namespace ActionTracer

@@ -22,37 +22,19 @@ const uint8_t PI_ORDER[13] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_P
 void ActionTracer::ActionTracer::_data_transmission_thread( Communication::Supervisor *new_super, bool *data_in,
 	bool *thread_run ) {
 	printf( "Data transmission thread started\n" );
-	FILE *fp = fopen( "transmission_thread_time.csv", "w" );
-	fprintf( fp, "Time (usec), idle (usec), busy (usec)\n" );
-	Timer t_idle, t_busy;
 
-	float idle = 0, busy_t = 0;
-	bool  busy = false;
-	t_idle.tic();
 	while( *thread_run ) {
 		try {
 			if( *data_in ) {
-				idle = t_idle.toc_usec();
-				busy = true;
-				t_busy.tic();
-
 				new_super->send_packet();
 				*data_in = false;
-				busy_t	 = t_busy.toc_usec();
-				t_idle.tic();
 			}
 		} catch( std::exception &e ) {
 			printf( "Exception in data transmission thread: %s\n Probably the client "
 					"disconnected\n",
 				e.what() );
 		}
-
-		if( busy ) {
-			busy = false;
-			fprintf( fp, "%d, %f, %f\n", millis(), idle, busy_t );
-		}
 	}
-	fclose( fp );
 	printf( "Data transmission thread stopped\n" );
 }
 
@@ -79,18 +61,11 @@ void ActionTracer::ActionTracer::_client_manager_thread( Communication::Supervis
 void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervisor *new_super, bool *run_status,
 	bool *data_in, bool *thread_run ) {
 	printf( "Data collection thread started\n" );
-	FILE *fp = fopen( "collection_thread_time.csv", "w" );
-	fprintf( fp, "Time (usec), idle (usec), busy (usec)\n" );
-	Timer t_idle, t_busy;
-	bool  loading = false;
 
-	float idle = 0, busy_t = 0;
-	t_idle.tic();
+	bool loading = false;
 
 	while( *thread_run ) {
 		while( *run_status ) {
-			idle = t_idle.toc_usec();
-			t_busy.tic();
 			for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 				if( _devices_in_use[i]->is_active() ) {
 					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
@@ -105,9 +80,6 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 			if( loading ) {
 				*data_in = true;
 				loading	 = false;
-				busy_t	 = t_busy.toc_usec();
-				t_idle.tic();
-				fprintf( fp, "%d, %f, %f\n", millis(), idle, busy_t );
 			}
 
 			// if( *data_in == false ) {
@@ -127,7 +99,6 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 			// }
 		}
 	}
-	fclose( fp );
 	printf( "Data collection thread stopped\n" );
 }
 
