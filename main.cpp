@@ -47,11 +47,11 @@ void setup() {
 	main_dev->start();
 	// start timer
 
-	printf( "Started and will run for 1 min\n" );
-	delay( 60000 );
-	main_dev->stop();
-	printf( "Stopped and done!\n" );
-	exit( 1 );
+	// printf( "Started and will run for 1 min\n" );
+	// delay( 60000 );
+	// main_dev->stop();
+	// printf( "Stopped and done!\n" );
+	// exit( 1 );
 }
 
 void exit_handler( int s ) {
@@ -66,7 +66,14 @@ void exit_handler( int s ) {
  */
 void loop() {
 	while( 1 ) {
-		/* code */
+		if main_dev->get_connected_clients() == 0 ) {
+				printf( "No clients connected. Exiting\n" );
+				exit( 1 );
+			}
+
+		( main_dev->get_packet_number() % 1000 == 0 )
+			? printf( "Packet Number: %d, Time: %d\n", main_dev->get_packet_number(), millis() )
+			: 0;
 	}
 }
 

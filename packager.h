@@ -102,7 +102,7 @@ namespace ActionTracer::Communication {
 
 		ActionServerClient _client;
 
-		uint16_t _count = 0;
+		uint32_t _count = 0;
 
 		bool _ready = false;
 
@@ -134,6 +134,8 @@ namespace ActionTracer::Communication {
 
 		void	 set_server_port( uint16_t );
 		uint16_t get_server_port() const;
+
+		uint32_t get_packet_number() const;
 	};
 
 } // namespace ActionTracer::Communication

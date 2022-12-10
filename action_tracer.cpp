@@ -504,6 +504,8 @@ ActionTracer::Communication::ActionServer *ActionTracer::ActionTracer::get_serve
 	return _supervisor->get_server();
 }
 
+uint32_t ActionTracer::ActionTracer::get_packet_number() const { return _supervisor->get_packer_number(); }
+
 // void ActionTracer::ActionTracer::set_process_method( void fptr() ) {
 // 	proc_method = fptr;
 // }

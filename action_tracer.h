@@ -37,7 +37,8 @@ namespace ActionTracer {
 		void _process_data();
 
 		std::thread _thread_data_transmission, _thread_client_manager, _thread_data_collection;
-		bool		_thread_running_data_transmission = false, _thread_running_client_manager = false, _thread_running_data_collection = false;
+		bool		_thread_running_data_transmission = false, _thread_running_client_manager = false,
+			 _thread_running_data_collection = false;
 
 	  public:
 		ActionTracer( /* args */ );
@@ -73,11 +74,12 @@ namespace ActionTracer {
 		// void set_packet_data();
 		void set_process_method( void * );
 
-		void	set_fifo_rate( uint8_t );
-		void	set_fifo_rate( uint8_t, uint8_t );
-		uint8_t get_fifo_rate( uint8_t ) const;
-		void	set_sample_rate( uint8_t );
-		uint8_t get_sample_rate() const;
+		void	 set_fifo_rate( uint8_t );
+		void	 set_fifo_rate( uint8_t, uint8_t );
+		uint8_t	 get_fifo_rate( uint8_t ) const;
+		void	 set_sample_rate( uint8_t );
+		uint8_t	 get_sample_rate() const;
+		uint32_t get_packet_number() const;
 
 		void show_body();
 
