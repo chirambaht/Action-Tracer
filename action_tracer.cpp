@@ -174,9 +174,9 @@ void ActionTracer::ActionTracer::start() {
 		_turn_on_all_devices();
 		delay( 500 );
 	}
-
-	delay( 500 ); // Final pause before starting
 	_turn_off_all_devices();
+	delay( 500 ); // Final pause before starting
+
 	_running = true;
 	_paused	 = false;
 }
