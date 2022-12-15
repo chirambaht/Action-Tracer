@@ -201,8 +201,6 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *device_packet ) {
 	_packed = 0;
 
-	// ActionDataNetworkPackage_ActionDeviceData  *device_data		= new ActionDataNetworkPackage_ActionDeviceData();
-
 	ActionDataNetworkPackage_ActionDeviceData *device_data = _net_package.add_device_data();
 
 	ActionDataNetworkPackage_ActionDeviceData_ActionData3 *accelerometer =
@@ -212,7 +210,7 @@ int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *dev
 	ActionDataNetworkPackage_ActionDeviceData_ActionData4 *quaternion =
 		new ActionDataNetworkPackage_ActionDeviceData_ActionData4();
 
-	device_data->set_device_identifier_contents( device_packet->device_identifier_contents );
+	device_data->set_device_identifier_contents( device_packet->get_device_identifier() );
 
 	_packed++;
 
@@ -467,8 +465,7 @@ int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwor
  * @brief Send a packet to a client connected to the server
  * @param package A pointer to the data packet to send
  */
-int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package,
-	ActionServerClient																   *client ) {
+int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package, ActionServerClient *client ) {
 	return client->send_packet( package, ActionCommand::DATA );
 }
 
