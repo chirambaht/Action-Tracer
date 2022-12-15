@@ -12,13 +12,15 @@ namespace ActionTracer {
 
 	class ActionTracer {
 	  private:
-		TracePoint				   *_devices_in_use[MAX_ACT_DEVICES];
-		Communication::Supervisor *_supervisor;
-		void ( *proc_method )( void * );
+		TracePoint *			  _devices_in_use[MAX_ACT_DEVICES];
 		std::vector<TracePoint *> _devices_waiting_for_use;
-		uint8_t					  _act_sample_rate = 4;
-		float					*_data_package[DATA_PACKAGE_SIZE];
-		ActionDataPackage		  *_data_package_action[MAX_ACT_DEVICES] = { new ActionDataPackage() };
+		float *					  _data_package[DATA_PACKAGE_SIZE];
+
+		ActionDataPackage *_data_package_action[MAX_ACT_DEVICES];
+
+		Communication::Supervisor *_supervisor;
+
+		uint8_t _act_sample_rate = 4;
 
 		bool _running	 = false;
 		bool _paused	 = true;
@@ -86,7 +88,7 @@ namespace ActionTracer {
 
 		uint8_t						 get_connected_clients() const;
 		Communication::ActionServer *get_server();
-	};
+	}; // namespace ActionTracer
 } // namespace ActionTracer
 
 #endif // ACTION_TRACER_H

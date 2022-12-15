@@ -69,8 +69,7 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 			for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 				if( _devices_in_use[i]->is_active() ) {
 					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
-					// Try loading the data here...
-					if( *data_in == false ) {
+=					if( loading || *data_in == false ) {
 						new_super->load_packet( _data_package_action[i] );
 						loading = true;
 					}
@@ -81,22 +80,6 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 				*data_in = true;
 				loading	 = false;
 			}
-
-			// if( *data_in == false ) {
-			// 	for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
-			// 		if( _devices_in_use[i]->is_active() ) {
-			// 			new_super->load_packet( _data_package_action[i] ); // Immidiately send the data to all
-			// 															   // clients
-			// 		}
-			// 	}
-
-			// 	*data_in = true;
-			// 	busy_t	 = t_busy.toc_usec();
-			// 	t_idle.tic();
-			// 	fprintf( fp, "%d, %f, %f\n", millis(), idle, busy_t );
-			// } else {
-			// 	continue;
-			// }
 		}
 	}
 	printf( "Data collection thread stopped\n" );
@@ -108,7 +91,8 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
  */
 ActionTracer::ActionTracer::ActionTracer() {
 	for( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
-		_devices_in_use[i] = new TracePoint();
+		_devices_in_use[i]		= new TracePoint();
+		_data_package_action[i] = new ActionDataPackage();
 	}
 }
 
@@ -175,7 +159,7 @@ void ActionTracer::ActionTracer::start() {
 		delay( 500 );
 	}
 	_turn_off_all_devices();
-	delay( 500 ); // Final pause before starting
+	delay( 1000 ); // Final pause before starting
 
 	_running = true;
 	_paused	 = false;
@@ -267,10 +251,10 @@ void ActionTracer::ActionTracer::initialize() {
 	_thread_running_data_collection	  = true;
 	_thread_running_data_transmission = true;
 
-	_thread_data_transmission = std::thread( &ActionTracer::_data_transmission_thread, this, _supervisor, &_data_ready,
-		&_thread_running_data_transmission );
 	_thread_client_manager	  = std::thread( &ActionTracer::_client_manager_thread, this, _supervisor, &_data_ready,
 		   &_thread_running_client_manager );
+	_thread_data_transmission = std::thread( &ActionTracer::_data_transmission_thread, this, _supervisor, &_data_ready,
+		&_thread_running_data_transmission );
 
 	_turn_off_all_devices();
 
@@ -311,7 +295,7 @@ void ActionTracer::ActionTracer::map_device( uint16_t ACT_device, uint16_t body_
 	temp_device->set_identifier( body_part );
 
 	// We will temporarily disable calibration to speed up this process
-	temp_device->set_calibrate( true, 100 );
+	temp_device->set_calibrate( true, 250 );
 
 	// Add device to the list of devices waiting to be initialized.
 	_devices_waiting_for_use.push_back( temp_device );
@@ -532,19 +516,15 @@ ActionTracer::Communication::ActionServer *ActionTracer::ActionTracer::get_serve
 	return _supervisor->get_server();
 }
 
-uint32_t ActionTracer::ActionTracer::get_packet_number() const { return _supervisor->get_packet_number(); }
+/**
+ * @brief Get the packet number that the supervisor is sending
+ * 
+ * @return uint32_t current packet number being sent
+ */
+uint32_t ActionTracer::ActionTracer::get_packet_number() const {
+	if( _supervisor == nullptr ) {
+		return 0;
+	}
 
-// void ActionTracer::ActionTracer::set_process_method( void fptr() ) {
-// 	proc_method = fptr;
-// }
-
-// void *ActionTracer::ActionTracer::_process_data() {
-// 	// This will process data before it is sent to the client.
-
-// 	// Is proc_method defined?
-// 	if( _proc_method == nullptr ) {
-// 		throw std::invalid_argument( "No processing method defined!" );
-// 	}
-
-// 	proc_method();
-// }
+	return _supervisor->get_packet_number();
+}
