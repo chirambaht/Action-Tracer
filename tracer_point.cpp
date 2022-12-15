@@ -112,6 +112,7 @@ void ActionTracer::TracePoint::dump_variables() {
 	printf( "DMP ready: %d\n", _dmp_ready );
 	printf( "Packet size: %d\n", _packet_size );
 	printf( "Device interrupt flag: %d\n", _device_interrupt_flag );
+	_data_package.dump_variables();
 }
 
 /**
@@ -145,14 +146,6 @@ void ActionTracer::TracePoint::turn_off() { _deselect_me(); }
 /**
  * @brief Obtain the data from the sensor. Collects the FIFO packet and extracts
  *the needed data.
- * 	   ================================================================================================
- *	 | Default MotionApps v2.0 42-byte FIFO packet structure: | | | | [QUAT
- *W][      ][QUAT X][      ][QUAT Y][      ][QUAT Z][      ][GYRO X][ ][GYRO Y][
- *] | |   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17
- *18  19  20  21  22  23  | | | | [GYRO Z][      ][ACC X ][      ][ACC Y ][
- *][ACC Z ][      ][      ]                         | |  24  25  26  27  28  29
- *30  31  32  33  34  35  36  37  38  39  40  41                          |
- *	   ================================================================================================
  * @return  Nothing
  */
 void ActionTracer::TracePoint::get_data() {
@@ -244,21 +237,6 @@ ActionDataPackage *ActionTracer::TracePoint::read_data_action( int read_first = 
 		this->get_data();
 	}
 	return &_data_package;
-}
-
-/**
- * @brief Obtain the data from the sensor. This will return a float array based
- * on the requested data defined in the file.
- * @param read_first Collects data first if set to 1 or true. After this, it
- * will return the data
- * @return Pointer to a float array with the data packet
- */
-float *ActionTracer::TracePoint::read_data( int read_first = 0 ) {
-	if( read_first ) {
-		this->get_data();
-	}
-
-	return _complete_float_packet;
 }
 
 /**
@@ -356,13 +334,12 @@ std::string ActionTracer::TracePoint::get_act_pin_number_as_string() const {
 }
 
 void ActionTracer::TracePoint::set_pin_number( uint8_t pin ) {
-	_pin_number								 = pin;
-	_data_package.device_identifier_contents = _data_package.device_identifier_contents | pin;
+	_pin_number = pin;
 }
 
-uint16_t ActionTracer::TracePoint::get_identifier() const { return _identifier; }
+uint32_t ActionTracer::TracePoint::get_identifier() const { return _identifier; }
 
-void ActionTracer::TracePoint::set_identifier( uint16_t identity ) {
-	_identifier								 = identity;
-	_data_package.device_identifier_contents = _identifier;
+void ActionTracer::TracePoint::set_identifier( uint32_t identity ) {
+	_identifier = identity;
+	_data_package.set_device_identifier( identity );
 }

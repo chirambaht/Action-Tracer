@@ -48,17 +48,11 @@ namespace ActionTracer {
 		Quaternion	_quaternion_packet;
 		VectorInt16 _acceleration_packet;
 		VectorInt16 _gyroscope_packet;
-		VectorFloat _gravity_packet;
-
-		float _complete_float_packet[MAXIMUM_COLLECTED_DATA_POINTS] = { 0 };
+		float		_temperature_packet = 0;
 
 		float _acceleration_float_packet[ACCELEROMETER_DATA_POINT_SIZE] = { 0 };
-		float _euler_packet[EULER_DATA_POINT_SIZE]						= { 0 };
-		float _gravity_float_packet[GRAVITY_DATA_POINT_SIZE]			= { 0 };
 		float _gyroscope_float_packet[GYROSCOPE_DATA_POINT_SIZE]		= { 0 };
 		float _quaternion_float_packet[QUATERNION_DATA_POINT_SIZE]		= { 0 };
-		float _temperature_packet										= { 0 };
-		float _yaw_pitch_roll_packet[YAW_PITCH_ROLL_DATA_POINT_SIZE]	= { 0 };
 
 		ActionDataPackage _data_package;
 
@@ -66,7 +60,6 @@ namespace ActionTracer {
 		void _initialize();
 		void _select_me();
 		void _set_device_offsets();
-		void _set_default_device_offsets();
 
 	  public:
 		// I dont know what this is but I love you
@@ -77,10 +70,8 @@ namespace ActionTracer {
 
 		void dump_variables();
 		void get_data();
-		void print_last_data_packet();
 		void set_calibrate( bool, uint8_t );
 		void set_calibrate( bool );
-		void tracepoint_isr();
 		void turn_off();
 
 		void	set_sample_rate( uint8_t );
@@ -88,7 +79,7 @@ namespace ActionTracer {
 
 		void			   initialize( uint8_t, uint8_t );
 		bool			   calibrate( uint8_t );
-		float			  *read_data( int get_data );
+		float *			   read_data( int get_data );
 		ActionDataPackage *read_data_action( int get_data );
 		MPU6050			   get_device();
 		uint8_t			   get_data_packet_size();
@@ -97,8 +88,8 @@ namespace ActionTracer {
 		uint16_t	get_pin_number() const;
 		std::string get_act_pin_number_as_string() const;
 		void		set_pin_number( uint8_t );
-		uint16_t	get_identifier() const;
-		void		set_identifier( uint16_t );
+		uint32_t	get_identifier() const;
+		void		set_identifier( uint32_t );
 
 		bool is_active();
 	};
