@@ -75,26 +75,40 @@
 	#define PACKAGE_LENGTH	   DATA_ELEMENTS + 3
 	#define PACKAGE_DATA_START 3 // 3 is the number of elements in the header
 
-/*
-	|  HEADER  |           DATA           |
-	|  0 -> 2  |  3 -> DATA_ELEMENTS - 1  |
-
-	HEADER 0: Time
-	HEADER 1: Count
-	HEADER 2: Devices Connected
-*/
 #endif
 
 #define DEFAULT_PORT 9022
 #define MAX_CLIENTS	 1
 
 namespace ActionTracer {
-	typedef struct ActionDataPackage {
+	class ActionDataPackage {
+	  private:
 		// [ 32-bit identifier ]
 		__uint32_t device_identifier_contents = 0;
 
+	  public:
 		float data[11] = { 0 }; // Accel (3), Gyro (3), Quaternion(4), Temp (1)
-	} ActionDataPackage;
+		ActionDataPackage() {}
+		ActionDataPackage( uint32_t id ) { device_identifier_contents = id; }
+		~ActionDataPackage() {}
+
+		void clear() {
+			for( int i = 0; i < 11; i++ ) {
+				data[i] = 0;
+			}
+		}
+
+		void	 set_device_identifier( uint32_t id ) { device_identifier_contents = id; }
+		uint32_t get_device_identifier() const { return device_identifier_contents; }
+
+		void dump_variables() {
+			std::cout << "Device ID: " << device_identifier_contents << std::endl;
+			std::cout << "\tAccel: " << data[0] << ", " << data[1] << ", " << data[2] << std::endl;
+			std::cout << "\tGyro: " << data[3] << ", " << data[4] << ", " << data[5] << std::endl;
+			std::cout << "\tQuaternion: " << data[6] << ", " << data[7] << ", " << data[8] << ", " << data[9] << std::endl;
+			std::cout << "\tTemp: " << data[10] << std::endl;
+		}
+	};
 
 } // namespace ActionTracer
 #endif
