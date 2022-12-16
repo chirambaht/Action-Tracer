@@ -172,15 +172,17 @@ void ActionTracer::TracePoint::get_data() {
 		// reset so we can continue cleanly
 		_device->resetFIFO();
 
-		debugPrint( "%d: FIFO overflow!\n", _identifier );
-		this->_deselect_me();
-		return;
+		// debugPrint( "%d: FIFO overflow!\n", _identifier );
+		// this->_deselect_me();
+		// return;
 	}
 
-	if( _fifo_count < _packet_size ) {
-		debugPrintln( "%d: MPU interrupt not ready or not enough elements inFIFO\n ", _identifier );
-		this->_deselect_me();
-		return;
+	while( _fifo_count < _packet_size ) {
+		// debugPrintln( "%d: MPU interrupt not ready or not enough elements inFIFO\n ", _identifier );
+		// this->_deselect_me();
+		// return;
+
+		_fifo_count = _device->getFIFOCount();
 	}
 
 	_device->getFIFOBytes( _fifo_buffer, _packet_size );
@@ -333,9 +335,7 @@ std::string ActionTracer::TracePoint::get_act_pin_number_as_string() const {
 	return "";
 }
 
-void ActionTracer::TracePoint::set_pin_number( uint8_t pin ) {
-	_pin_number = pin;
-}
+void ActionTracer::TracePoint::set_pin_number( uint8_t pin ) { _pin_number = pin; }
 
 uint32_t ActionTracer::TracePoint::get_identifier() const { return _identifier; }
 
