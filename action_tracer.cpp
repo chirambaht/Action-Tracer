@@ -69,7 +69,7 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 			for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 				if( _devices_in_use[i]->is_active() ) {
 					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
-=					if( loading || *data_in == false ) {
+					if( loading || *data_in == false ) {
 						new_super->load_packet( _data_package_action[i] );
 						loading = true;
 					}
@@ -518,7 +518,7 @@ ActionTracer::Communication::ActionServer *ActionTracer::ActionTracer::get_serve
 
 /**
  * @brief Get the packet number that the supervisor is sending
- * 
+ *
  * @return uint32_t current packet number being sent
  */
 uint32_t ActionTracer::ActionTracer::get_packet_number() const {
