@@ -228,16 +228,97 @@ void ActionTracer::TracePoint::get_data() {
 }
 
 /**
+ * @brief Obtain the data from the sensor. Collects the FIFO packet and extracts
+ *the needed data.
+ * @return  Nothing
+ */
+void ActionTracer::TracePoint::get_data( bool load_data = false ) {
+	if( !_dmp_ready ) {
+		debugPrint( "%d: DMP not initialised\n", _identifier );
+		this->_deselect_me();
+		return;
+	}
+
+	this->_select_me();
+	if( load_data ) {
+		_data_package.data[0] = _quaternion_packet.w; // Max value: 1.0
+		_data_package.data[1] = _quaternion_packet.x; // Max Value: 1.0
+		_data_package.data[2] = _quaternion_packet.y; // Max Value: 1.0
+		_data_package.data[3] = _quaternion_packet.z; // Max Value: 1.0
+
+		_data_package.data[4] = ( _acceleration_packet.x / 16384.0 ); // Max Value: 2
+		_data_package.data[5] = ( _acceleration_packet.y / 16384.0 ); // Max Value: 2
+		_data_package.data[6] = ( _acceleration_packet.z / 16384.0 ); // Max Value: 2
+
+		_data_package.data[7] = ( _gyroscope_packet.x / 16.4 ); // Max Value: 2000
+		_data_package.data[8] = ( _gyroscope_packet.y / 16.4 ); // Max Value: 2000
+		_data_package.data[9] = ( _gyroscope_packet.z / 16.4 ); // Max Value: 2000
+
+		_data_package.data[10] = _temperature_packet; // Max Value: 85}
+	} else {
+		_device_interrupt_status = _device->getIntStatus();
+
+		// does the FIFO have data in it?
+		if( ( _device_interrupt_status & 0x02 ) < 1 ) {
+			debugPrintln( "%d: Interrupt not raised\n", _identifier );
+			this->_deselect_me();
+			return;
+		}
+
+		_fifo_count = _device->getFIFOCount();
+
+		if( _fifo_count >= 1024 ) {
+			// reset so we can continue cleanly
+			_device->resetFIFO();
+
+			// debugPrint( "%d: FIFO overflow!\n", _identifier );
+			// this->_deselect_me();
+			// return;
+		}
+
+		while( _fifo_count < _packet_size ) {
+			// debugPrintln( "%d: MPU interrupt not ready or not enough elements inFIFO\n ", _identifier );
+			// this->_deselect_me();
+			// return;
+
+			_fifo_count = _device->getFIFOCount();
+		}
+
+		_device->getFIFOBytes( _fifo_buffer, _packet_size );
+
+		/* ================================================================================================
+		 * | Default MotionApps v2.0 42-byte FIFO packet structure: | | | | [QUAT W][
+		 ][QUAT X][      ][QUAT Y][      ][QUAT Z][      ][GYRO X][      ][GYRO Y][ ]
+		 | |   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17
+		 18  19  20  21  22  23  | | | | [GYRO Z][      ][ACC X ][      ][ACC Y ][
+		 ][ACC Z ][      ][      ]                         | |  24  25  26  27  28  29
+		 30  31  32  33  34  35  36  37  38  39  40  41                          |
+		 * ================================================================================================ */
+
+		// First get dmpQuaternion data as it is pivotal to all work
+		_device->dmpGetQuaternion( &_quaternion_packet, _fifo_buffer );
+
+		// Get acceleration data next
+		_device->dmpGetAccel( &_acceleration_packet, _fifo_buffer );
+
+		// Get gyroscope data next
+		_device->dmpGetGyro( &_gyroscope_packet, _fifo_buffer );
+
+		// Get Temperature
+		_temperature_packet = ( _device->getTemperature() / 340.0 ) + 36.53;
+	}
+	this->_deselect_me();
+}
+
+/**
  * @brief Obtain the data from the sensor. This will return a float array based
  * on the requested data defined in the file.
  * @param read_first Collects data first if set to 1 or true. After this, it
  * will return the data
  * @return Pointer to a float array with the data packet
  */
-ActionDataPackage *ActionTracer::TracePoint::read_data_action( int read_first = 0 ) {
-	if( read_first ) {
-		this->get_data();
-	}
+ActionDataPackage *ActionTracer::TracePoint::read_data_action( bool load_data = false ) {
+	this->get_data( load_data );
 	return &_data_package;
 }
 

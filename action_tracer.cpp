@@ -68,8 +68,9 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 		while( *run_status ) {
 			for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 				if( _devices_in_use[i]->is_active() ) {
-					_data_package_action[i] = _devices_in_use[i]->read_data_action( 1 );
+					_devices_in_use[i]->read_data_action( false );
 					if( loading || *data_in == false ) {
+						_data_package_action[i] = _devices_in_use[i]->read_data_action( true );
 						new_super->load_packet( _data_package_action[i] );
 						loading = true;
 					}

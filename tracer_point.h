@@ -70,6 +70,7 @@ namespace ActionTracer {
 
 		void dump_variables();
 		void get_data();
+		void get_data( bool );
 		void set_calibrate( bool, uint8_t );
 		void set_calibrate( bool );
 		void turn_off();
@@ -78,9 +79,7 @@ namespace ActionTracer {
 		uint8_t get_sample_rate() const;
 
 		void			   initialize( uint8_t, uint8_t );
-		bool			   calibrate( uint8_t );
-		float *			   read_data( int get_data );
-		ActionDataPackage *read_data_action( int get_data );
+		ActionDataPackage *read_data_action( bool );
 		MPU6050			   get_device();
 		uint8_t			   get_data_packet_size();
 		uint8_t			   identify();
