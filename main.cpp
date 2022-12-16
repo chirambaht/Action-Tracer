@@ -36,7 +36,6 @@ void setup() {
 	main_dev->map_device( ACT_2, ACT_BODY_LEFT_FOREARM );
 	main_dev->map_device( ACT_3, ACT_BODY_LEFT_HAND );
 	main_dev->show_body();
-	main_dev->set_sample_rate( 2 );
 	printf( "All set to go \n" );
 	main_dev->initialize();
 	main_dev->show_body();
@@ -74,6 +73,7 @@ void loop() {
 
 		if( main_dev->get_packet_number() % 1000 == 5 ) {
 			printf( "Packet Number: %d, Time: %d\n", main_dev->get_packet_number(), millis() );
+			delay( 2000 ); // Wait 2 seconds before next check
 		}
 	}
 }

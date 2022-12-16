@@ -66,3 +66,4 @@ assist_runners/action_tests.py
 assist_runners/test/*
 test/*
 assist_runners/rec.py
+assist_runners/qui.py

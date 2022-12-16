@@ -188,7 +188,7 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 	_server.send_packet( &_net_package );
 
 	// Reset the packet
-	_net_package.Clear();
+	// _net_package.Clear();
 }
 
 /**
@@ -465,7 +465,8 @@ int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwor
  * @brief Send a packet to a client connected to the server
  * @param package A pointer to the data packet to send
  */
-int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package, ActionServerClient *client ) {
+int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package,
+	ActionServerClient																   *client ) {
 	return client->send_packet( package, ActionCommand::DATA );
 }
 
