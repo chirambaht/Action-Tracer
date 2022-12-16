@@ -321,10 +321,18 @@ uint8_t ActionTracer::ActionTracer::get_fifo_rate( uint8_t device ) const { retu
 void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate ) {
 	// For each deviece in use in_devices_in_use, set the sample rate to the given
 	// sample rate.
-	_act_sample_rate = sample_rate;
+
+	// We speed it up to guarantee data delivery
+	_act_sample_rate = sample_rate - 1;
+
+	if( _act_sample_rate < 0 ) {
+		_act_sample_rate = 0;
+	} else if( _act_sample_rate > 255 ) {
+		_act_sample_rate = 255;
+	}
 
 	for( auto &device : _devices_waiting_for_use ) {
-		device->set_sample_rate( sample_rate );
+		device->set_sample_rate( _act_sample_rate );
 	}
 }
 

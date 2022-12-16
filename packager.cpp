@@ -188,7 +188,7 @@ void ActionTracer::Communication::Supervisor::send_packet() {
 	_server.send_packet( &_net_package );
 
 	// Reset the packet
-	// _net_package.Clear();
+	_net_package.Clear();
 }
 
 /**
