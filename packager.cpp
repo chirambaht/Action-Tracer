@@ -466,7 +466,7 @@ int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwor
  * @param package A pointer to the data packet to send
  */
 int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package,
-	ActionServerClient																   *client ) {
+	ActionServerClient *																  client ) {
 	return client->send_packet( package, ActionCommand::DATA );
 }
 
@@ -548,9 +548,12 @@ int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionData
 	message->set_action( command );
 	message->set_allocated_data( packet );
 
+	uint32_t message_size = htonl( message->ByteSizeLong() );
+
 	// First, we'll try the quicker send but if there is an issue, we will investigate more but doing an longer process
 	// send
 	try {
+		send_response = send( _descriptor, &message_size, sizeof( message_size ), 0 );
 		if( !message->SerializeToFileDescriptor( _descriptor ) ) {
 			if( errno == EPIPE ) {
 				printf( "Bad send but will be fine, handled\n" );
