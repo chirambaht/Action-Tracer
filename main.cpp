@@ -40,6 +40,7 @@ void setup() {
 	if( wiringPiISR( 27, INT_EDGE_RISING, &swapper ) < 0 ) {
 		printf( "Error setting up DMP interrupt\n" );
 	}
+	main_dev->turn_off_all_devices();
 	struct sigaction sigIntHandler;
 
 	sigIntHandler.sa_handler = exit_handler;
