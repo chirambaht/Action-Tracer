@@ -6,9 +6,10 @@
 #include <cstdint>
 
 ActionTracer::ActionTracer *main_dev	= new ActionTracer::ActionTracer();
-ActionTracer::TracePoint *	interrupter = new ActionTracer::TracePoint( ACT_0, ACT_BODY_WAIST );
+ActionTracer::TracePoint *	interrupter = new ActionTracer::TracePoint();
 
 bool *running;
+bool  go = false;
 
 void setup();
 void loop();
