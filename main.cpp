@@ -32,7 +32,6 @@ void swapper() {
  * @return 0 if success
  */
 void setup() {
-	wiringPiSetup();
 	if( wiringPiISR( 27, INT_EDGE_RISING, &swapper ) < 0 ) {
 		printf( "Error setting up DMP interrupt\n" );
 	}
@@ -121,6 +120,8 @@ int main( int argc, char const *argv[] ) {
 
 		return 1;
 	}
+
+	wiringPiSetup();
 
 	uint8_t chosen_rate = atoi( argv[1] ) + 1;
 
