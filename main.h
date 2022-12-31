@@ -5,8 +5,8 @@
 
 #include <cstdint>
 
-ActionTracer::ActionTracer *main_dev = new ActionTracer::ActionTracer();
-ActionTracer::TracePoint *	interrupter;
+ActionTracer::ActionTracer *main_dev	= new ActionTracer::ActionTracer();
+ActionTracer::TracePoint *	interrupter = new ActionTracer::TracePoint( ACT_0, ACT_BODY_WAIST );
 
 bool *running;
 

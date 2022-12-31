@@ -498,7 +498,7 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t b
 }
 
 bool ActionTracer::ActionTracer::turn_off_all_devices() {
-	_turn_off_all_devices();
+	return _turn_off_all_devices();
 }
 
 bool ActionTracer::ActionTracer::_turn_off_all_devices() {
@@ -514,7 +514,7 @@ bool ActionTracer::ActionTracer::_turn_off_all_devices() {
 }
 
 bool ActionTracer::ActionTracer::turn_on_all_devices() {
-	_turn_on_all_devices();
+	return _turn_on_all_devices();
 }
 
 bool ActionTracer::ActionTracer::_turn_on_all_devices() {
