@@ -18,6 +18,7 @@
 using namespace ActionTracer;
 
 void swapper() {
+	printf( "Interrupt has been run now\n" );
 	if( !go ) {
 		return;
 	}
@@ -29,8 +30,6 @@ void swapper() {
 	if( *running == false ) {
 		*running = true;
 	}
-
-	printf( "Interrupt has been run now\n" );
 }
 
 /**
