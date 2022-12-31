@@ -17,12 +17,25 @@
 
 using namespace ActionTracer;
 
+void swapper() {
+	main_dev->turn_off_all_devices();
+
+	interrupter->read_data_action( false );
+
+	if( *running == false ) {
+		*running = true;
+	}
+}
+
 /**
  * @brief Initialise all the devices in the network. Store them in objects in main.h
  * @return 0 if success
  */
 void setup() {
 	wiringPiSetup();
+	if( wiringPiISR( 27, INT_EDGE_RISING, &swapper ) < 0 ) {
+		printf( "Error setting up DMP interrupt\n" );
+	}
 	struct sigaction sigIntHandler;
 
 	sigIntHandler.sa_handler = exit_handler;
@@ -32,19 +45,26 @@ void setup() {
 	sigaction( SIGINT, &sigIntHandler, NULL );
 	main_dev->show_body();
 	// main_dev->map_device( ACT_0, ACT_BODY_WAIST );
+
+	interrupter = new ActionTracer::TracePoint( ACT_0, ACT_BODY_WAIST );
+
 	main_dev->map_device( ACT_1, ACT_BODY_LEFT_BICEP );
 	main_dev->map_device( ACT_2, ACT_BODY_LEFT_FOREARM );
 	main_dev->map_device( ACT_3, ACT_BODY_LEFT_HAND );
 	main_dev->show_body();
 	printf( "All set to go \n" );
+
 	main_dev->initialize();
 	main_dev->show_body();
 	printf( "Initialised\n" );
+	running = main_dev->get_collection_control();
 
 	while( main_dev->get_connected_clients() == 0 ) {
 	}
 
+	*running = false;
 	main_dev->start();
+
 	// start timer
 
 	// printf( "Started and will run for 1 min\n" );
@@ -105,7 +125,16 @@ int main( int argc, char const *argv[] ) {
 		return 1;
 	}
 
-	main_dev->set_sample_rate( atoi( argv[1] ) );
+	uint8_t chosen_rate = atoi( argv[1] ) + 1;
+
+	if( chosen_rate > 255 ) {
+		chosen_rate = 255;
+	} else if( chosen_rate < 0 ) {
+		chosen_rate = 0;
+	}
+
+	main_dev->set_sample_rate( chosen_rate );
+	interrupter->set_sample_rate( chosen_rate );
 	printf( "Running basic setup routine\n" );
 	setup();
 

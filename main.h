@@ -6,10 +6,15 @@
 #include <cstdint>
 
 ActionTracer::ActionTracer *main_dev = new ActionTracer::ActionTracer();
+ActionTracer::TracePoint *	interrupter;
+
+bool *running;
 
 void setup();
 void loop();
 void exit_handler( int s );
+
+void swapper();
 
 // namespace ActionTracer
 

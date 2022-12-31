@@ -84,7 +84,12 @@ namespace ActionTracer {
 		uint8_t	 get_sample_rate() const;
 		uint32_t get_packet_number() const;
 
+		bool *get_collection_control();
+
 		void show_body();
+
+		bool turn_off_all_devices();
+		bool turn_on_all_devices();
 
 		uint8_t						 get_connected_clients() const;
 		Communication::ActionServer *get_server();
