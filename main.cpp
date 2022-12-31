@@ -29,6 +29,8 @@ void swapper() {
 	if( *running == false ) {
 		*running = true;
 	}
+
+	printf( "Interrupt has been run now\n" );
 }
 
 /**
