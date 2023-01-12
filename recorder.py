@@ -60,18 +60,16 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 
-s.bind((HOST, PORT))
-s.listen()
-conn, addr = s.accept()
+s.connect((HOST, PORT))
 
 print("Connected to %s on port %s" % (str(HOST), str(PORT)))
 
 while(True):
-    data_length = conn.recv(4)
+    data_length = s.recv(4)
     data_length = int.from_bytes(data_length, byteorder='little')
     message = act.ActionMessage()
     
-    data = conn.recv(data_length)
+    data = s.recv(data_length)
     try:
         message.ParseFromString(data)
     except:
