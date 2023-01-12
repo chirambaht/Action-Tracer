@@ -110,5 +110,18 @@ namespace ActionTracer {
 		}
 	};
 
+	class ActionIdentifierPackage {
+	  private:
+		__uint32_t device_identifier_contents = 0;
+
+	  public:
+		ActionIdentifierPackage() {}
+		ActionIdentifierPackage( uint32_t id ) { device_identifier_contents = id; }
+		~ActionIdentifierPackage() {}
+
+		void	 set_device_identifier( uint32_t id ) { device_identifier_contents = id; }
+		uint32_t get_device_identifier() const { return device_identifier_contents; }
+	};
+
 } // namespace ActionTracer
 #endif
