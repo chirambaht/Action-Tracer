@@ -548,7 +548,7 @@ int16_t ActionTracer::Communication::ActionServerClient::send_packet( ActionData
 	message->set_action( command );
 	message->set_allocated_data( packet );
 
-	int32_t message_size = message->ByteSizeLong();
+	uint32_t message_size = message->ByteSizeLong();
 
 	// First, we'll try the quicker send but if there is an issue, we will investigate more but doing an longer process
 	// send
