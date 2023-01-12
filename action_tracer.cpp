@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <functional>
 #include <stdexcept>
 #include <string>
 #include <unistd.h>
@@ -84,6 +85,20 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 		}
 	}
 	printf( "Data collection thread stopped\n" );
+}
+
+void ActionTracer::ActionTracer::_data_collection_ISR( void ) {
+	// First read the interrupt device - this is device 0
+	// Then read the data from the devices
+	for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
+		if( _devices_in_use[i]->is_active() ) {
+			_devices_in_use[i]->read_data_action( false );
+			if( i != 0 ) {
+				_data_package_action[i] = _devices_in_use[i]->read_data_action( true );
+				_supervisor->load_packet( _data_package_action[i] );
+			}
+		}
+	}
 }
 
 /**
@@ -258,6 +273,7 @@ void ActionTracer::ActionTracer::initialize() {
 		&_thread_running_data_transmission );
 
 	_turn_off_all_devices();
+	map_device( ACT_0, ACT_BODY_WAIST );
 
 	for( auto &device : _devices_waiting_for_use ) {
 		if( device == nullptr ) {
@@ -268,6 +284,8 @@ void ActionTracer::ActionTracer::initialize() {
 		// Add the devices to the list of devices in use in correct spot
 		_devices_in_use[_get_body_identifier( device->get_identifier() )] = device;
 	}
+	auto binded = std::bind( &ActionTracer::_data_collection_ISR, this );
+	wiringPiISR( ACT_DEVICE_0_INT_WIRING_PI_PIN, INT_EDGE_RISING, &binded );
 
 	_thread_data_collection = std::thread( &ActionTracer::_data_collection_thread, this, _supervisor, &_running,
 		&_data_ready, &_thread_running_data_collection );
