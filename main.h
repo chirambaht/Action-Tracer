@@ -5,17 +5,11 @@
 
 #include <cstdint>
 
-ActionTracer::ActionTracer *main_dev	= new ActionTracer::ActionTracer();
-ActionTracer::TracePoint *	interrupter = new ActionTracer::TracePoint();
-
-bool *running;
-bool  go = false;
+ActionTracer::ActionTracer *main_dev = new ActionTracer::ActionTracer();
 
 void setup();
 void loop();
 void exit_handler( int s );
-
-void swapper();
 
 // namespace ActionTracer
 

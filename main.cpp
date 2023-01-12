@@ -17,31 +17,15 @@
 
 using namespace ActionTracer;
 
-void swapper() {
-	printf( "Interrupt has been run now\n" );
-	if( !go ) {
-		return;
-	}
-
-	main_dev->turn_off_all_devices();
-
-	interrupter->read_data_action( false );
-
-	if( *running == false ) {
-		*running = true;
-	}
-}
-
 /**
  * @brief Initialise all the devices in the network. Store them in objects in main.h
  * @return 0 if success
  */
 void setup() {
 	wiringPiSetup();
-	if( wiringPiISR( 27, INT_EDGE_RISING, &swapper ) < 0 ) {
-		printf( "Error setting up DMP interrupt\n" );
-	}
+
 	main_dev->turn_off_all_devices();
+
 	struct sigaction sigIntHandler;
 
 	sigIntHandler.sa_handler = exit_handler;
@@ -49,7 +33,6 @@ void setup() {
 	sigIntHandler.sa_flags = 0;
 
 	sigaction( SIGINT, &sigIntHandler, NULL );
-	main_dev->show_body();
 
 	main_dev->map_device( ACT_1, ACT_BODY_LEFT_BICEP );
 	main_dev->map_device( ACT_2, ACT_BODY_LEFT_FOREARM );
@@ -57,23 +40,17 @@ void setup() {
 
 	// main_dev->map_device( ACT_0, ACT_BODY_WAIST );
 
-	interrupter->initialize( ACT_0, ACT_BODY_WAIST );
-
-	main_dev->show_body();
 	printf( "All set to go \n" );
 
 	main_dev->initialize();
+
 	main_dev->show_body();
 	printf( "Initialised\n" );
-
-	running = main_dev->get_collection_control();
 
 	while( main_dev->get_connected_clients() == 0 ) {
 	}
 
-	*running = false;
 	main_dev->start();
-	go = true;
 
 	// start timer
 
@@ -86,7 +63,6 @@ void setup() {
 
 void exit_handler( int s ) {
 	printf( "\nTurning off all devices...\n" );
-	go = false;
 	main_dev->stop();
 	exit( 1 );
 }
@@ -100,11 +76,6 @@ void loop() {
 		if( main_dev->get_connected_clients() == 0 ) {
 			printf( "No clients connected. Exiting\n" );
 			exit( 1 );
-		}
-
-		if( main_dev->get_packet_number() % 1000 == 5 ) {
-			printf( "Packet Number: %d, Time: %d\n", main_dev->get_packet_number(), millis() );
-			delay( 2000 ); // Wait 2 seconds before next check
 		}
 	}
 }
@@ -145,7 +116,7 @@ int main( int argc, char const *argv[] ) {
 	}
 
 	main_dev->set_sample_rate( chosen_rate );
-	interrupter->set_sample_rate( chosen_rate );
+
 	printf( "Running basic setup routine\n" );
 	setup();
 
