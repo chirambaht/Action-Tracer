@@ -6,13 +6,14 @@ session_recording_arr = []
 DEVICES = 0
 HOST = "192.168.101.106"
 PORT = 9022
+DEVICE_ID = []
+ALL_PACKETS = []
 
 file_name = "rec_custom"
 
 def makeCols(n):
-    cols = ["time", "packet"]
-    for i in range(1, 2+n):
-        print(i)
+    cols = ["time(s)", "packet"]
+    for i in range(1, 1+n):
         cols.append("id_" + str(i))
         cols.append("quat_w_" + str(i))
         cols.append("quat_x_" + str(i))
@@ -28,9 +29,37 @@ def makeCols(n):
     
     return cols
 
+def get_array_data(device):
+    data = []
+    data.append(device.device_identifier_contents)
+    data.append(device.quaternion.w)
+    data.append(device.quaternion.x)
+    data.append(device.quaternion.y)
+    data.append(device.quaternion.z)
+    data.append(device.accelerometer.x)
+    data.append(device.accelerometer.y)
+    data.append(device.accelerometer.z)
+    data.append(device.gyroscope.x)
+    data.append(device.gyroscope.y)
+    data.append(device.gyroscope.z)
+    data.append(device.temperature)
+    return data
+
+def get_last_device_packet_with_id(id):
+    global ALL_PACKETS
+    for packet in reversed(ALL_PACKETS):
+        for device in packet.device_data:
+            if device.device_identifier_contents == id:
+                return device
+
 def parseACTMessage(actdnp):
     global session_recording_arr
     global DEVICES
+    global DEVICE_ID
+    global ALL_PACKETS
+
+    ALL_PACKETS.append(actdnp)
+
     row_arr = []
     timestamp = actdnp.send_time
     packet_number  = actdnp.packet_number
@@ -48,27 +77,53 @@ def parseACTMessage(actdnp):
     if len(device_data) > DEVICES:
         DEVICES = len(device_data)
     # device data
+    this_packet = []
     for device in device_data:
-        row_arr.append(device.device_identifier_contents) # id
+        this_packet.append(device.device_identifier_contents)
 
-        row_arr.append(device.quaternion.w) # w
-        row_arr.append(device.quaternion.x) # x
-        row_arr.append(device.quaternion.y) # y
-        row_arr.append(device.quaternion.z) # z
+        if device.device_identifier_contents not in DEVICE_ID:
+            DEVICE_ID.append(device.device_identifier_contents)
+            DEVICE_ID.sort()
+    
+    for i in DEVICE_ID:
+        if i not in this_packet:
+            last_device_packet = get_last_device_packet_with_id(i)
+            row_arr += get_array_data(last_device_packet)
 
-        row_arr.append(device.accelerometer.x) # x
-        row_arr.append(device.accelerometer.y) # y
-        row_arr.append(device.accelerometer.z) # z
-
-        row_arr.append(device.gyroscope.x) # x
-        row_arr.append(device.gyroscope.y) # y
-        row_arr.append(device.gyroscope.z) # z
-
-        row_arr.append(device.temperature) # temperature
+        else:
+            for device in device_data:
+                if device.device_identifier_contents == i:
+                    row_arr += get_array_data(device)
+                    break
     
     session_recording_arr.append(row_arr)
 
-        
+def condition_df(df):
+    pass
+
+def end_methods():
+    global session_recording_arr
+    global DEVICES
+    global file_name
+    
+    temp_df = pd.DataFrame(session_recording_arr)
+
+    temp_df.to_csv("~" + file_name + "temp.csv", index=False, header=False)
+
+    cols = makeCols(DEVICES)
+
+    df = pd.DataFrame(session_recording_arr, columns=cols)
+
+    # correct time column
+    df['time(s)'] = (df['time(s)'] - df['time(s)'][0]).round(5)
+    # round all columns to 5 decimal places
+    df = df.round(5)
+    
+    # fix packet number
+    df['packet'] = df['packet'].astype(int)
+
+    df.to_csv(file_name + ".csv", index=False)
+    
 
 def main():
     global DEVICES
@@ -110,29 +165,18 @@ def main():
             bad_messages += 1
 
     # save file
-    temp_df = pd.DataFrame(session_recording_arr)
-
-    temp_df.to_csv(file_name + "~temp.csv", index=False, header=False)
-
-    cols = makeCols(DEVICES)
-
-    df = pd.DataFrame(session_recording_arr, columns=cols)
-    df.to_csv(file_name + ".csv", index=False)
-
+    s.close()
     print("Good messages: %d" % good_messages)
     print("Bad messages: %d" % bad_messages)
-    s.close()
+    end_methods()
+
+    
 
 if __name__ == "__main__":
     try:
         main()
     except Exception as e:
         if len(session_recording_arr) > 0:
-            temp_df = pd.DataFrame(session_recording_arr)
-
-            temp_df.to_csv("~" + file_name + "temp.csv", index=False, header=False)
-            cols = makeCols(DEVICES)
-            df = pd.DataFrame(session_recording_arr, columns=cols)
-            df.to_csv(file_name + ".csv", index=False)
+            end_methods()
         else:
             print(e)
