@@ -67,3 +67,4 @@ assist_runners/test/*
 test/*
 assist_runners/rec.py
 assist_runners/qui.py
+data_fetcher.py
