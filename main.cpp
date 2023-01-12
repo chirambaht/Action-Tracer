@@ -23,9 +23,6 @@ using namespace ActionTracer;
  */
 void setup() {
 	wiringPiSetup();
-
-	main_dev->turn_off_all_devices();
-
 	struct sigaction sigIntHandler;
 
 	sigIntHandler.sa_handler = exit_handler;
@@ -33,17 +30,14 @@ void setup() {
 	sigIntHandler.sa_flags = 0;
 
 	sigaction( SIGINT, &sigIntHandler, NULL );
-
+	main_dev->show_body();
+	// main_dev->map_device( ACT_0, ACT_BODY_WAIST );
 	main_dev->map_device( ACT_1, ACT_BODY_LEFT_BICEP );
 	main_dev->map_device( ACT_2, ACT_BODY_LEFT_FOREARM );
 	main_dev->map_device( ACT_3, ACT_BODY_LEFT_HAND );
-
-	// main_dev->map_device( ACT_0, ACT_BODY_WAIST );
-
+	main_dev->show_body();
 	printf( "All set to go \n" );
-
 	main_dev->initialize();
-
 	main_dev->show_body();
 	printf( "Initialised\n" );
 
@@ -51,7 +45,6 @@ void setup() {
 	}
 
 	main_dev->start();
-
 	// start timer
 
 	// printf( "Started and will run for 1 min\n" );
@@ -76,6 +69,11 @@ void loop() {
 		if( main_dev->get_connected_clients() == 0 ) {
 			printf( "No clients connected. Exiting\n" );
 			exit( 1 );
+		}
+
+		if( main_dev->get_packet_number() % 1000 == 5 ) {
+			printf( "Packet Number: %d, Time: %d\n", main_dev->get_packet_number(), millis() );
+			delay( 2000 ); // Wait 2 seconds before next check
 		}
 	}
 }
@@ -107,16 +105,7 @@ int main( int argc, char const *argv[] ) {
 		return 1;
 	}
 
-	uint8_t chosen_rate = atoi( argv[1] ) + 1;
-
-	if( chosen_rate > 255 ) {
-		chosen_rate = 255;
-	} else if( chosen_rate < 0 ) {
-		chosen_rate = 0;
-	}
-
-	main_dev->set_sample_rate( chosen_rate );
-
+	main_dev->set_sample_rate( atoi( argv[1] ) );
 	printf( "Running basic setup routine\n" );
 	setup();
 

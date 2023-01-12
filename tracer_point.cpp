@@ -230,17 +230,16 @@ void ActionTracer::TracePoint::get_data() {
 /**
  * @brief Obtain the data from the sensor. Collects the FIFO packet and extracts
  *the needed data.
- * @return  true if operation was successful
+ * @return  Nothing
  */
-bool ActionTracer::TracePoint::get_data( bool load_data = false ) {
+void ActionTracer::TracePoint::get_data( bool load_data = false ) {
 	if( !_dmp_ready ) {
 		debugPrint( "%d: DMP not initialised\n", _identifier );
 		this->_deselect_me();
-		return false;
+		return;
 	}
 
 	this->_select_me();
-
 	if( load_data ) {
 		_data_package.data[0] = _quaternion_packet.w; // Max value: 1.0
 		_data_package.data[1] = _quaternion_packet.x; // Max Value: 1.0
@@ -263,26 +262,26 @@ bool ActionTracer::TracePoint::get_data( bool load_data = false ) {
 		if( ( _device_interrupt_status & 0x02 ) < 1 ) {
 			debugPrintln( "%d: Interrupt not raised\n", _identifier );
 			this->_deselect_me();
-			return false;
+			return;
 		}
 
 		_fifo_count = _device->getFIFOCount();
 
 		if( _fifo_count >= 1024 ) {
 			// reset so we can continue cleanly
-			// _device->resetFIFO();
+			_device->resetFIFO();
 
-			debugPrint( "%d: FIFO overflow!\n", _identifier );
-			this->_deselect_me();
-			return false;
+			// debugPrint( "%d: FIFO overflow!\n", _identifier );
+			// this->_deselect_me();
+			// return;
 		}
 
-		if( _fifo_count < _packet_size ) {
-			debugPrintln( "%d: MPU interrupt not ready or not enough elements inFIFO\n ", _identifier );
-			this->_deselect_me();
-			return false;
+		while( _fifo_count < _packet_size ) {
+			// debugPrintln( "%d: MPU interrupt not ready or not enough elements inFIFO\n ", _identifier );
+			// this->_deselect_me();
+			// return;
 
-			// _fifo_count = _device->getFIFOCount();
+			_fifo_count = _device->getFIFOCount();
 		}
 
 		_device->getFIFOBytes( _fifo_buffer, _packet_size );
@@ -309,7 +308,6 @@ bool ActionTracer::TracePoint::get_data( bool load_data = false ) {
 		_temperature_packet = ( _device->getTemperature() / 340.0 ) + 36.53;
 	}
 	this->_deselect_me();
-	return true;
 }
 
 /**

@@ -70,7 +70,7 @@ namespace ActionTracer {
 
 		void dump_variables();
 		void get_data();
-		bool get_data( bool );
+		void get_data( bool );
 		void set_calibrate( bool, uint8_t );
 		void set_calibrate( bool );
 		void turn_off();

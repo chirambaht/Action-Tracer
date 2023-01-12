@@ -65,7 +65,7 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 	bool loading = false;
 
 	while( *thread_run ) {
-		if( *run_status ) {
+		while( *run_status ) {
 			for( uint8_t i = 0; i < MAX_ACT_DEVICES; i++ ) {
 				if( _devices_in_use[i]->is_active() ) {
 					_devices_in_use[i]->read_data_action( false );
@@ -81,8 +81,6 @@ void ActionTracer::ActionTracer::_data_collection_thread( Communication::Supervi
 				*data_in = true;
 				loading	 = false;
 			}
-
-			*run_status = false;
 		}
 	}
 	printf( "Data collection thread stopped\n" );
@@ -326,6 +324,7 @@ void ActionTracer::ActionTracer::set_sample_rate( uint8_t sample_rate ) {
 	// sample rate.
 
 	// We speed it up to guarantee data delivery
+	_act_sample_rate = sample_rate - 1;
 
 	if( _act_sample_rate < 0 ) {
 		_act_sample_rate = 0;
@@ -496,8 +495,6 @@ bool ActionTracer::ActionTracer::_validate_mapping( uint16_t ACT_pin, uint16_t b
 	return true;
 }
 
-bool ActionTracer::ActionTracer::turn_off_all_devices() { return _turn_off_all_devices(); }
-
 bool ActionTracer::ActionTracer::_turn_off_all_devices() {
 	uint8_t ALL_ACT_DEVICE_PINS[MAX_ACT_DEVICES] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN,
 		ACT_DEVICE_2_WIRING_PI_PIN, ACT_DEVICE_3_WIRING_PI_PIN, ACT_DEVICE_4_WIRING_PI_PIN, ACT_DEVICE_5_WIRING_PI_PIN,
@@ -509,8 +506,6 @@ bool ActionTracer::ActionTracer::_turn_off_all_devices() {
 	}
 	return true;
 }
-
-bool ActionTracer::ActionTracer::turn_on_all_devices() { return _turn_on_all_devices(); }
 
 bool ActionTracer::ActionTracer::_turn_on_all_devices() {
 	uint8_t ALL_ACT_DEVICE_PINS[MAX_ACT_DEVICES] = { ACT_DEVICE_0_WIRING_PI_PIN, ACT_DEVICE_1_WIRING_PI_PIN,
@@ -542,5 +537,3 @@ uint32_t ActionTracer::ActionTracer::get_packet_number() const {
 
 	return _supervisor->get_packet_number();
 }
-
-bool *ActionTracer::ActionTracer::get_collection_control() { return &_running; }
