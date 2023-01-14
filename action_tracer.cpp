@@ -160,7 +160,8 @@ void ActionTracer::ActionTracer::start() {
 		delay( 500 );
 	}
 	_turn_off_all_devices();
-	delay( 1000 ); // Final pause before starting
+	delay( 1000 );									  // Final pause before starting
+	digitalWrite( ACT_DEVICE_4_WIRING_PI_PIN, HIGH ); // Turn on the indicator LED
 
 	_running = true;
 	_paused	 = false;
@@ -179,6 +180,7 @@ void ActionTracer::ActionTracer::stop() {
 		pause();
 	}
 	_running = false;
+	digitalWrite( ACT_DEVICE_4_WIRING_PI_PIN, LOW ); // Turn off the indicator LED
 
 	_supervisor->disconnect();
 
@@ -245,6 +247,9 @@ void ActionTracer::ActionTracer::reset() {
  * rate.
  */
 void ActionTracer::ActionTracer::initialize() {
+	pinMode( ACT_DEVICE_4_WIRING_PI_PIN, OUTPUT );
+	digitalWrite( ACT_DEVICE_4_WIRING_PI_PIN, LOW ); // Turn off the indicator LED
+
 	_supervisor = new Communication::Supervisor();
 	_supervisor->initialize( false );
 
@@ -504,6 +509,8 @@ bool ActionTracer::ActionTracer::_turn_off_all_devices() {
 	for( int i = 0; i < MAX_ACT_DEVICES; i++ ) {
 		digitalWrite( ALL_ACT_DEVICE_PINS[i], LOW );
 	}
+	digitalWrite( ACT_DEVICE_4_WIRING_PI_PIN, LOW ); // Turn off the indicator LED
+
 	return true;
 }
 

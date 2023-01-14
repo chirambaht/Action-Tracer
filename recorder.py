@@ -13,8 +13,8 @@ def parseACTMessage(actdnp):
     device_data = actdnp.device_data
 
     # time
-    timestamp = ((timestamp.send_time.seconds) +
-         timestamp.send_time.nanos / 1e9).__round__(4)
+    timestamp = ((timestamp.seconds) +
+         timestamp.nanos / 1e9).__round__(4)
     row_arr.append(timestamp)
 
     # packet number
@@ -40,9 +40,7 @@ def parseACTMessage(actdnp):
 
         row_arr.append(device.temperature) # temperature
 
-        
-    
-
+    session_recording_arr.append(row_arr)
 
 
 HOST = "192.168.1.75"
@@ -86,4 +84,13 @@ while(True):
     else:
         bad_messages += 1
 
-    
+
+print("Good messages: %d" % good_messages)
+print("Bad messages: %d" % bad_messages)
+
+s.close()
+temp_df = 
+# Save to file
+cols = ["Time", "Packet", "ID_1", "Quat_W_1", "Quat_X_1", "Quat_Y_1", "Quat_Z_1", "Accel_X_1", "Accel_Y_1", "Accel_Z_1", "Gyro_X_1", "Gyro_Y_1", "Gyro_Z_1", "Temp_1", "ID_2", "Quat_W_2", "Quat_X_2", "Quat_Y_2", "Quat_Z_2", "Accel_X_2", "Accel_Y_2", "Accel_Z_2", "Gyro_X_2", "Gyro_Y_2", "Gyro_Z_2", "Temp_2", "ID_3", "Quat_W_3", "Quat_X_3", "Quat_Y_3", "Quat_Z_3", "Accel_X_3", "Accel_Y_3", "Accel_Z_3", "Gyro_X_3", "Gyro_Y_3", "Gyro_Z_3", "Temp_3"]
+df = pd.DataFrame(session_recording_arr, columns=cols)
+df.to_csv(file_name + ".csv", index=False, header=False)
