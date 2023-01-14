@@ -161,6 +161,21 @@ int ActionTracer::Communication::Supervisor::send_packet( ActionDataPackage *dev
  * @return Nothing
  * @throws INVALID_ARGUMENT If there is no device connected to the system's network.
  */
+void ActionTracer::Communication::Supervisor::send_packet( ActionIdentifierPackage *package ) {
+	_net_package.Clear();
+
+	ActionDataNetworkPackage_ActionDeviceData *device_data = _net_package.add_device_data();
+	device_data->set_device_identifier_contents( package->get_device_identifier() );
+
+	_server.send_packet( &_net_package );
+	_net_package.Clear();
+}
+
+/**
+ * This is used to send the stored data packet to a given socket described by a socket descriptor
+ * @return Nothing
+ * @throws INVALID_ARGUMENT If there is no device connected to the system's network.
+ */
 void ActionTracer::Communication::Supervisor::send_packet() {
 	// If no socket descriptor is given, use the last device to be added to the network
 	if( !get_ready() ) {

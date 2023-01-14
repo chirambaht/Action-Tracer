@@ -272,6 +272,10 @@ void ActionTracer::ActionTracer::initialize() {
 
 		// Add the devices to the list of devices in use in correct spot
 		_devices_in_use[_get_body_identifier( device->get_identifier() )] = device;
+
+		ActionIdentifierPackage *package = new ActionIdentifierPackage( device->get_identifier() );
+		_supervisor->send_packet( package );
+		delete package;
 	}
 
 	_thread_data_collection = std::thread( &ActionTracer::_data_collection_thread, this, _supervisor, &_running,

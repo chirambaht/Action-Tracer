@@ -3,10 +3,63 @@ import action_definitions_pb2 as act
 import socket
 
 session_recording_arr = []
+DEVICES = 0
+HOST = "192.168.101.106"
+PORT = 9022
+DEVICE_ID = []
+ALL_PACKETS = []
 
+file_name = "rec_custom"
+
+def makeCols(n):
+    cols = ["time(s)", "packet"]
+    for i in range(1, 1+n):
+        cols.append("id_" + str(i))
+        cols.append("quat_w_" + str(i))
+        cols.append("quat_x_" + str(i))
+        cols.append("quat_y_" + str(i))
+        cols.append("quat_z_" + str(i))
+        cols.append("acc_x_" + str(i))
+        cols.append("acc_y_" + str(i))
+        cols.append("acc_z_" + str(i))
+        cols.append("gyro_x_" + str(i))
+        cols.append("gyro_y_" + str(i))
+        cols.append("gyro_z_" + str(i))
+        cols.append("temp_" + str(i))
+    
+    return cols
+
+def get_array_data(device):
+    data = []
+    data.append(device.device_identifier_contents)
+    data.append(device.quaternion.w)
+    data.append(device.quaternion.x)
+    data.append(device.quaternion.y)
+    data.append(device.quaternion.z)
+    data.append(device.accelerometer.x)
+    data.append(device.accelerometer.y)
+    data.append(device.accelerometer.z)
+    data.append(device.gyroscope.x)
+    data.append(device.gyroscope.y)
+    data.append(device.gyroscope.z)
+    data.append(device.temperature)
+    return data
+
+def get_last_device_packet_with_id(id):
+    global ALL_PACKETS
+    for packet in reversed(ALL_PACKETS):
+        for device in packet.device_data:
+            if device.device_identifier_contents == id:
+                return device
 
 def parseACTMessage(actdnp):
     global session_recording_arr
+    global DEVICES
+    global DEVICE_ID
+    global ALL_PACKETS
+
+    ALL_PACKETS.append(actdnp)
+
     row_arr = []
     timestamp = actdnp.send_time
     packet_number  = actdnp.packet_number
@@ -21,76 +74,109 @@ def parseACTMessage(actdnp):
     packet_number = int(packet_number)
     row_arr.append(packet_number)
 
+    if len(device_data) > DEVICES:
+        DEVICES = len(device_data)
     # device data
+    this_packet = []
     for device in device_data:
-        row_arr.append(device.device_identifier_contents) # id
+        this_packet.append(device.device_identifier_contents)
 
-        row_arr.append(device.quaternion.w) # w
-        row_arr.append(device.quaternion.x) # x
-        row_arr.append(device.quaternion.y) # y
-        row_arr.append(device.quaternion.z) # z
+        if device.device_identifier_contents not in DEVICE_ID:
+            DEVICE_ID.append(device.device_identifier_contents)
+            DEVICE_ID.sort()
+    
+    for i in DEVICE_ID:
+        if i not in this_packet:
+            last_device_packet = get_last_device_packet_with_id(i)
+            row_arr += get_array_data(last_device_packet)
 
-        row_arr.append(device.accelerometer.x) # x
-        row_arr.append(device.accelerometer.y) # y
-        row_arr.append(device.accelerometer.z) # z
-
-        row_arr.append(device.gyroscope.x) # x
-        row_arr.append(device.gyroscope.y) # y
-        row_arr.append(device.gyroscope.z) # z
-
-        row_arr.append(device.temperature) # temperature
-
+        else:
+            for device in device_data:
+                if device.device_identifier_contents == i:
+                    row_arr += get_array_data(device)
+                    break
+    
     session_recording_arr.append(row_arr)
 
+def condition_df(df):
+    pass
 
-HOST = "192.168.1.75"
-PORT = 9022
-
-file_name = "rec_custom"
-
-###  Metrics  ###
-bad_messages = 0
-good_messages = 0
-
-# Open socket
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-
-s.connect((HOST, PORT))
-
-print("Connected to %s on port %s" % (str(HOST), str(PORT)))
-
-while(True):
-    data_length = s.recv(4)
-    data_length = int.from_bytes(data_length, byteorder='little')
-    message = act.ActionMessage()
+def end_methods():
+    global session_recording_arr
+    global DEVICES
+    global file_name
     
-    data = s.recv(data_length)
+    temp_df = pd.DataFrame(session_recording_arr)
+
+    temp_df.to_csv("~" + file_name + "temp.csv", index=False, header=False)
+
+    cols = makeCols(DEVICES)
+
+    df = pd.DataFrame(session_recording_arr, columns=cols)
+
+    # correct time column
+    df['time(s)'] = (df['time(s)'] - df['time(s)'][0]).round(5)
+    # round all columns to 5 decimal places
+    df = df.round(5)
+    
+    # fix packet number
+    df['packet'] = df['packet'].astype(int)
+
+    df.to_csv(file_name + ".csv", index=False)
+    
+
+def main():
+    global DEVICES
+
+    ###  Metrics  ###
+    bad_messages = 0
+    good_messages = 0
+
+    # Open socket
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+
+    s.connect((HOST, PORT))
+
+    print("Connected to %s on port %s" % (str(HOST), str(PORT)))
+
+    while(True):
+        data_length = s.recv(4)
+        data_length = int.from_bytes(data_length, byteorder='little')
+        message = act.ActionMessage()
+        
+        data = s.recv(data_length)
+        try:
+            message.ParseFromString(data)
+        except:
+            message.Clear()
+            continue
+
+        # Handle different message types
+        if message.action == act.DISCONNECT:
+            print("Disconnecting...")
+            break
+        elif message.action == act.DATA:
+            parseACTMessage(message.data)
+            good_messages += 1
+        else:
+            bad_messages += 1
+
+    # save file
+    s.close()
+    print("Good messages: %d" % good_messages)
+    print("Bad messages: %d" % bad_messages)
+    end_methods()
+
+    
+
+if __name__ == "__main__":
     try:
-        message.ParseFromString(data)
-    except:
-        message.Clear()
-        continue
-
-    # Handle different message types
-    if message.action == act.DISCONNECT:
-        print("Disconnecting...")
-        break
-    elif message.action == act.DATA:
-        parseACTMessage(message.data)
-        good_messages += 1
-    else:
-        bad_messages += 1
-
-
-print("Good messages: %d" % good_messages)
-print("Bad messages: %d" % bad_messages)
-
-s.close()
-temp_df = 
-# Save to file
-cols = ["Time", "Packet", "ID_1", "Quat_W_1", "Quat_X_1", "Quat_Y_1", "Quat_Z_1", "Accel_X_1", "Accel_Y_1", "Accel_Z_1", "Gyro_X_1", "Gyro_Y_1", "Gyro_Z_1", "Temp_1", "ID_2", "Quat_W_2", "Quat_X_2", "Quat_Y_2", "Quat_Z_2", "Accel_X_2", "Accel_Y_2", "Accel_Z_2", "Gyro_X_2", "Gyro_Y_2", "Gyro_Z_2", "Temp_2", "ID_3", "Quat_W_3", "Quat_X_3", "Quat_Y_3", "Quat_Z_3", "Accel_X_3", "Accel_Y_3", "Accel_Z_3", "Gyro_X_3", "Gyro_Y_3", "Gyro_Z_3", "Temp_3"]
-df = pd.DataFrame(session_recording_arr, columns=cols)
-df.to_csv(file_name + ".csv", index=False, header=False)
+        main()
+    except Exception as e:
+        if len(session_recording_arr) > 0:
+            end_methods()
+        else:
+            print(e)

@@ -115,7 +115,8 @@ namespace ActionTracer::Communication {
 		~Supervisor();
 
 		void send_packet( void );
-		int	 send_packet( ActionDataPackage	*);
+		int	 send_packet( ActionDataPackage * );
+		void send_packet( ActionIdentifierPackage * );
 		void initialize();
 		void initialize( bool );
 
