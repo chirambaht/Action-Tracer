@@ -2,7 +2,7 @@ all: proto collector
 basic: proto basic_test
 
 HDRS = helper_3dmath.h I2Cdev.h MPU6050.h action_pi.hpp packager.h calibrator.hpp tracer_point.h action_tracer.h action_definitions.pb.h main.h 
-OBJSB = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o action_definitions.pb.o packager.o tracer_point.o action_tracer.o single_action_main.o
+OBJSB = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o action_definitions.pb.o packager.o tracer_point.o action_tracer.o basic_test.o
 OBJS = I2Cdev.o MPU6050.o MPU6050_6Axis_MotionApps20.o action_definitions.pb.o packager.o tracer_point.o action_tracer.o main.o
 PROTOGEN = action_definitions.pb.cc action_definitions.pb.h action_definitions_pb2.py ActionDefinitions.cs
 
