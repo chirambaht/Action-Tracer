@@ -2,20 +2,20 @@ name: Makefile CI
 
 on:
   push:
-    branches: [ "collection" ]
+    branches: ["collection"]
   pull_request:
-    branches: [ "collection" ]
+    branches: ["collection"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-         
-    - name: Install dependencies
-      run: make
-      
-    - name: Run documentation generator
-      run: make documentation
+      - uses: actions/checkout@v3
+
+      - name: Install Doxygen
+        run: sudo apt-get install doxygen -y
+        shell: bash
+
+      - name: Run documentation generator
+        run: make documentation

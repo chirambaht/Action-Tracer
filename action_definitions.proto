@@ -1,0 +1,107 @@
+syntax = "proto3";
+option csharp_namespace = "ActionTracer";
+
+package ActionTracer;
+
+enum ActionCommand {
+  UNKNOWN = 0;
+  START = 1;
+  STOP = 2;
+  MAPPING = 3;
+  UNMAPPING = 4;
+  OUTPUT_RATE = 5;
+  RESET = 6;
+  DATA = 7;
+  DISCONNECT = 8;
+}
+
+enum ActionBodyConnection {
+  WAIST = 0;
+  RIGHT_BICEP = 1;
+  RIGHT_FOREARM = 2;
+  RIGHT_HAND = 3;
+  LEFT_BICEP = 4;
+  LEFT_FOREARM = 5;
+  LEFT_HAND = 6;
+  CHEST = 7;
+  HEAD = 8;
+  RIGHT_THIGH = 9;
+  RIGHT_KNEE = 10;
+  RIGHT_FOOT = 11;
+  LEFT_THIGH = 12;
+  LEFT_KNEE = 13;
+  LEFT_FOOT = 14;
+  RIGHT_HIP = 15;
+  LEFT_HIP = 16;
+}
+
+enum ActionDeviceConnection {
+  ACT_0 = 0;
+  ACT_1 = 1;
+  ACT_2 = 2;
+  ACT_3 = 3;
+  ACT_4 = 4;
+  ACT_5 = 5;
+  ACT_6 = 6;
+  ACT_7 = 7;
+  ACT_8 = 8;
+  ACT_9 = 9;
+  ACT_10 = 10;
+  ACT_11 = 11;
+  ACT_12 = 12;
+  ACT_13 = 13;
+  ACT_14 = 14;
+  ACT_15 = 15;
+}
+
+message ActionTimestamp {
+
+  int64 seconds = 1;
+
+  int32 nanos = 2;
+}
+
+message ActionDataNetworkPackage {
+
+  ActionTimestamp send_time = 1;
+  uint32 packet_number = 2;
+
+  message ActionDeviceData {
+    uint32 device_identifier_contents = 4;
+
+    message ActionData1 { float x = 1; }
+
+    message ActionData3 {
+      float x = 1;
+      float y = 2;
+      float z = 3;
+    }
+
+    message ActionData4 {
+      float w = 1;
+      float x = 2;
+      float y = 3;
+      float z = 4;
+    }
+
+    ActionData4 quaternion = 5;
+    
+    ActionData3 accelerometer = 6;
+    ActionData3 gyroscope = 7;
+
+    float temperature = 8;
+    repeated ActionData3 extra = 9;
+  }
+
+  repeated ActionDeviceData device_data = 3;
+}
+
+message ActionMessage {
+
+  ActionCommand action = 1;
+  string name = 2;
+  int32 param = 3;
+  ActionBodyConnection body_connection = 4;
+  ActionDeviceConnection device_connection = 5;
+  ActionDataNetworkPackage data = 6;
+}
