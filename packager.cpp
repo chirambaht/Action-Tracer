@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <cerrno>
 #include <iomanip>
+#include <mqtt/client.h>
+#include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
 
@@ -42,6 +44,9 @@ ActionTracer::Communication::Supervisor::~Supervisor() {}
  */
 int ActionTracer::Communication::Supervisor::_socket_setup() {
 	_server.set_descriptor( socket( AF_INET, SOCK_STREAM, 0 ) );
+	mqtt_client = new mqtt::client( MQTT_ADDRESS, MQTT_CLIENT_ID );
+	mqtt_client->connect();
+
 	if( _server.get_descriptor() < 0 ) {
 		printf( "socket failed" );
 		exit( EXIT_FAILURE );
@@ -228,6 +233,14 @@ int ActionTracer::Communication::Supervisor::load_packet( ActionDataPackage *dev
 	device_data->set_device_identifier_contents( device_packet->get_device_identifier() );
 
 	_packed++;
+	std::string base_topic = std::to_string( device_packet->get_device_identifier() ) + "/";
+	std::string temperature_topic = base_topic + "/temperature";
+	std::string accelerometer_topic = base_topic + "/accelerometer";
+	std::string gyroscope_topic = base_topic + "/gyroscope";
+	std::string quaternion_topic = base_topic + "/quaternion";
+
+	mqtt::message_ptr temperature_message = mqtt::make_message( temperature_topic, &device_packet->data[10], sizeof(device_packet->data[10]) );
+
 
 	device_data->set_temperature( device_packet->data[10] );
 
@@ -481,7 +494,7 @@ int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetwor
  * @param package A pointer to the data packet to send
  */
 int16_t ActionTracer::Communication::ActionServer::send_packet( ActionDataNetworkPackage *package,
-	ActionServerClient *																  client ) {
+	ActionServerClient																   *client ) {
 	return client->send_packet( package, ActionCommand::DATA );
 }
 

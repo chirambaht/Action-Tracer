@@ -7,6 +7,9 @@
 #include <cstdio>
 #include <vector>
 
+#define MQTT_ADDRESS "mqtt://192.168.100.7:1883"
+#define MQTT_CLIENT_ID "action_tracer"
+
 namespace ActionTracer::Communication {
 
 	class ActionServerClient {
@@ -108,6 +111,7 @@ namespace ActionTracer::Communication {
 
 		uint8_t _wait_for_connection();
 		int		_socket_setup( void );
+		mqtt::client *mqtt_client;
 
 	  public:
 		Supervisor();

@@ -17,7 +17,7 @@ LOCAL_PORT = 5000
 
 collector: $(OBJS)  
 	@ echo "Compiled data collection program"
-	@ $(CXX) -o $(EXE) $^ -lwiringPi -lpthread -lprotobuf
+	@ $(CXX) -o $(EXE) $^ -lwiringPi -lpthread -lprotobuf -lpaho-mqttpp3 -lpaho-mqtt3as
 	@ echo "Program made!"
 
 basic_test: $(OBJSB) 
